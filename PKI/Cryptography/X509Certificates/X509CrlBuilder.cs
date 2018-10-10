@@ -123,7 +123,7 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates {
             // algorithm
             rawBytes.AddRange(signatureAlgorithm);
             // issuer
-            rawBytes.AddRange(issuer.IssuerName.RawData);
+            rawBytes.AddRange(issuer.SubjectName.RawData);
             // thisUpdate
             rawBytes.AddRange(Asn1Utils.EncodeDateTime(ThisUpdate));
             // nextUpdate. Not null at this point, because we do not support CRL generation with infinity validity.
