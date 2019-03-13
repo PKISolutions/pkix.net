@@ -307,19 +307,18 @@ namespace PKI.CertificateServices {
         }
         void getInfoFromDs() {
             if (IsEnterprise && DsUtils.Ping()) {
-                if (_certConfig.GetField(CertConfigConstants.FieldCommonName) == Name) {
-                    String cn = "CN=" + _certConfig.GetField(CertConfigConstants.FieldSanitizedShortName) +
-                        ",CN=Enrollment Services,CN=Public Key Services,CN=Services,CN=Configuration,DC=" +
-                        DsUtils.GetForestName().Replace(".", ",DC=");
-                    DistinguishedName = (String)DsUtils.GetEntryProperty(cn, DsUtils.PropDN);
-                    DisplayName = _certConfig.GetField(CertConfigConstants.FieldCommonName);
-                    try {
-                        String wes = _certConfig.GetField(CertConfigConstants.FieldEnrollmentServers);
-                        if (!String.IsNullOrEmpty(wes)) {
-                            getCesUri(wes);
-                        }
-                    } catch { }
-                }
+                string domain = (string) DsUtils.GetEntryProperty(String.Join(".", this.ComputerName.Split('.').Where((v, i) => i != 0)) + "/RootDSE", "rootDomainNamingContext");
+                String dn = "CN=" + this.Name +
+                    ",CN=Enrollment Services,CN=Public Key Services,CN=Services,CN=Configuration," + domain;
+                DistinguishedName = dn;
+                DisplayName = (String)DsUtils.GetEntryProperty(dn, "DisplayName");
+                try {
+                    String wes  = (String)DsUtils.GetEntryProperty(dn, "msPKI-Enrollment-Servers");
+                    if (!String.IsNullOrEmpty(wes)) {
+                        getCesUri(wes);
+                    }
+                } catch { }
+                
             }
             if (String.IsNullOrEmpty(DisplayName)) { DisplayName = Name; }
         }
