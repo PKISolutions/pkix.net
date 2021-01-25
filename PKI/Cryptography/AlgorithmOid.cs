@@ -45,5 +45,14 @@ namespace SysadminsLV.PKI.Cryptography {
         public const String ECDSA_P384      = "1.3.132.0.34";
         public const String ECDSA_P521      = "1.3.132.0.35";
         public const String ECDSA_P256      = "1.2.840.10045.3.1.7";
+
+        // symmetric alg group
+        public const String RC2             = "1.2.840.113549.3.2";
+        public const String RC4             = "1.2.840.113549.3.4";
+        public const String DES             = "1.3.14.3.2.7";
+        public const String TrippleDES      = "1.2.840.113549.3.7";
+        public const String AES128          = "2.16.840.1.101.3.4.1.2";
+        public const String AES192          = "2.16.840.1.101.3.4.1.22";
+        public const String AES256          = "2.16.840.1.101.3.4.1.42";
     }
 }
