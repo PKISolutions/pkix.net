@@ -177,23 +177,23 @@ namespace SysadminsLV.PKI.Utils.CLRExtensions {
             String provName;
             UInt32 provType;
             switch (privateKey) {
-                case RSACryptoServiceProvider _:
-                    keyContainer = ((RSACryptoServiceProvider)privateKey).CspKeyContainerInfo.KeyContainerName;
-                    provName = ((RSACryptoServiceProvider)privateKey).CspKeyContainerInfo.ProviderName;
-                    provType = (UInt32) ((RSACryptoServiceProvider)privateKey).CspKeyContainerInfo.ProviderType;
+                case RSACryptoServiceProvider rsaProv:
+                    keyContainer = rsaProv.CspKeyContainerInfo.KeyContainerName;
+                    provName = rsaProv.CspKeyContainerInfo.ProviderName;
+                    provType = (UInt32) rsaProv.CspKeyContainerInfo.ProviderType;
                     break;
-                case DSACryptoServiceProvider _:
-                    keyContainer = ((DSACryptoServiceProvider)privateKey).CspKeyContainerInfo.KeyContainerName;
-                    provName = ((DSACryptoServiceProvider)privateKey).CspKeyContainerInfo.ProviderName;
-                    provType = (UInt32) ((DSACryptoServiceProvider)privateKey).CspKeyContainerInfo.ProviderType;
+                case DSACryptoServiceProvider dsaProv:
+                    keyContainer = dsaProv.CspKeyContainerInfo.KeyContainerName;
+                    provName = dsaProv.CspKeyContainerInfo.ProviderName;
+                    provType = (UInt32) dsaProv.CspKeyContainerInfo.ProviderType;
                     break;
                 default:
                     privateKey.Dispose();
                     return false;
             }
             IntPtr phProv = IntPtr.Zero;
-            Boolean status1, status2 = false;
-            status1 = AdvAPI.CryptAcquireContext(
+            Boolean status2 = false;
+            Boolean status1 = AdvAPI.CryptAcquireContext(
                 ref phProv,
                 keyContainer,
                 provName,
