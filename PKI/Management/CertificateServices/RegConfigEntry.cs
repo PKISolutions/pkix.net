@@ -6,22 +6,6 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
     /// Represents a Certification Authority configuration entry to commit. This object is used in <see cref="CertSrvConfig.OnCommit"/> method.
     /// </summary>
     public class RegConfigEntry {
-
-        /// <summary>
-        /// Initializes a new instance of <strong>RegConfigEntry</strong> class using value name and optional node path without value.
-        /// This constructor sets <see cref="Action"/> member to <strong>Delete</strong>.
-        /// </summary>
-        /// <param name="name">Specifies the configuration value name.</param>
-        /// <param name="node">Optional node path under Certification Authority active node.</param>
-        public RegConfigEntry(String name, String node = null) {
-            if (String.IsNullOrWhiteSpace(name)) {
-                throw new ArgumentException("Value name cannot be null or empty string.");
-            }
-
-            Name = name;
-            Node = node;
-            Action = RegConfigEntryAction.Delete;
-        }
         /// <summary>
         /// Initializes a new instance of <strong>RegConfigEntry</strong> class using value name, optional node path and value to write.
         /// </summary>
@@ -38,7 +22,7 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
         /// <summary>
         /// Initializes a new instance of <strong>RegConfigEntry</strong> class using value name, optional node path and value to write.
         /// </summary>
-        /// <param name="name">Specifies the configuration value name.</param>s
+        /// <param name="name">Specifies the configuration value name.</param>
         /// <param name="value">
         /// A value to write. Value type must be of <see cref="String"/>, <see cref="Boolean"/>, <see cref="Int32"/>,
         /// <see cref="IEnumerable{String}"/> or <see cref="IEnumerable{Byte}"/>. Any other type will throw <see cref="ArgumentException"/>.
@@ -67,9 +51,9 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
         /// </summary>
         public Boolean IsRoot { get; set; }
         /// <summary>
-        ///  Gets the configuration value commit action.
+        ///  Gets or sets the configuration value commit action.
         /// </summary>
-        public RegConfigEntryAction Action { get; }
+        public RegConfigEntryAction Action { get; set; }
         /// <summary>
         /// Gets the value to write.
         /// </summary>
