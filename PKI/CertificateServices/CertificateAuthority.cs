@@ -264,7 +264,6 @@ namespace PKI.CertificateServices {
                 case 0x00060001: Version = CertSrvPlatformVersion.Win2012R2; break; // without [MSKB-3013769] can look like 2012 RTM
                 // there are no functional changes between 2016 and 2019, so treat them both as 2016
                 case 0x00070001: Version = CertSrvPlatformVersion.Win2016; break;
-                case 0x00080001: Version = CertSrvPlatformVersion.Win2019; break;
             }
             SetupStatus = (SetupStatusEnum)_regReader.GetNumericEntry("SetupStatus");
         }
