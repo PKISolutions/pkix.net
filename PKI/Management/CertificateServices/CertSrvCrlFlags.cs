@@ -26,7 +26,7 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
         CRLNumberCritical               = 0x00000004,    // 4
         /// <summary>
         /// The CA server will ignore certificate revocation checking failures.
-        /// <p><strong>Note</strong>: You should not enable this flag in productional envionments.</p>
+        /// <p><strong>Note</strong>: You should not enable this flag in production environments.</p>
         /// </summary>
         RevCheckIgnoreOffline           = 0x00000008,    // 8
         /// <summary>
@@ -70,7 +70,7 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
         /// <summary>
         ///  The CA will dump request response to console.
         /// </summary>
-        LogfullResponse                 = 0x00002000,    // 8192
+        LogFullResponse                 = 0x00002000,    // 8192
         /// <summary>
         /// Instructs CA server to use CA Exchange template instead of using automatically generated short-lived certificates for key archival.
         /// </summary>
@@ -106,6 +106,6 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
         /// N/A
         /// <para><strong>Windows Server 2003, Windows Server 2008</strong>: this flag is not supported.</para>
         /// </summary>
-        BuildRootCACRLEntriesBasedOnKey = 0x00200000    // 2097152
+        BuildRootCaCrlEntriesBasedOnKey = 0x00200000    // 2097152
     }
 }
