@@ -1,4 +1,5 @@
 ﻿using System;
+using PKI.Exceptions;
 using SysadminsLV.PKI.Dcom;
 using SysadminsLV.PKI.Dcom.Implementations;
 
@@ -97,6 +98,36 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
         /// <remarks>Active node is located at: System\CurrentControlSet\Services\CertSvc\Configuration\&lt;CA_Name&gt;</remarks>
         public Byte[] GetBinaryEntry(String entryName, String node = null) {
             return getConfigEntry<Byte[]>(entryName, node);
+        }
+
+        /// <summary>
+        /// Writes new value to Certification Authority configuration entry. Entry name is created if it doesn't exist.
+        /// </summary>
+        /// <param name="entryName">Configuration entry name.</param>
+        /// <param name="node">Optional node path under Certification Authority active node.</param>
+        /// <param name="value">Value to write.</param>
+        public void SetEntry(String entryName, String node, Object value) {
+            if (_certRegNative.IsAccessible) {
+                _certRegNative.SetConfigEntry(value, entryName, node);
+            } else if (_certRegD.IsAccessible) {
+                _certRegD.SetConfigEntry(value, entryName, node);
+            } else {
+                throw new ServerUnavailableException(ComputerName);
+            }
+        }
+        /// <summary>
+        /// Deletes configuration entry from CA configuration.
+        /// </summary>
+        /// <param name="entryName">Configuration entry name.</param>
+        /// <param name="node">Optional node path under Certification Authority active node.</param>
+        public void DeleteEntry(String entryName, String node = null) {
+            if (_certRegNative.IsAccessible) {
+                _certRegNative.DeleteConfigEntry(entryName, node);
+            } else if (_certRegD.IsAccessible) {
+                _certRegD.DeleteConfigEntry(entryName, node);
+            } else {
+                throw new ServerUnavailableException(ComputerName);
+            }
         }
 
         /// <summary>
