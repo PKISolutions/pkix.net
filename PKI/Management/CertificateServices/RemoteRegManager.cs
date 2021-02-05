@@ -63,9 +63,14 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
                 throw new ArgumentException("'entryName' parameter cannot be empty string.");
             }
 
+            String subKey = runtimePath;
+            if (!String.IsNullOrWhiteSpace(node)) {
+                subKey = runtimePath + node;
+            }
+
             using (RegistryKey key = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, ComputerName, RegistryView.Default)) {
                 RegistryKey root = key.OpenSubKey(runtimePath, false);
-                Object value = root?.GetValue(entryName, FAKE_VALUE);
+                Object value = root?.GetValue(subKey, FAKE_VALUE);
                 root?.Close();
                 if (value == null || FAKE_VALUE.Equals(value)) {
                     return null;
@@ -82,8 +87,13 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
                 throw new ArgumentException("'entryName' parameter cannot be empty string.");
             }
 
+            String subKey = runtimePath;
+            if (!String.IsNullOrWhiteSpace(node)) {
+                subKey = runtimePath + node;
+            }
+
             using (RegistryKey key = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, ComputerName, RegistryView.Default)) {
-                RegistryKey root = key.OpenSubKey(runtimePath, false);
+                RegistryKey root = key.OpenSubKey(subKey, false);
                 Object value = root?.GetValue(entryName, FAKE_VALUE);
                 root?.Close();
                 if (value == null || FAKE_VALUE.Equals(value)) {
@@ -160,8 +170,13 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
                 throw new ArgumentException("'entryName' parameter cannot be empty string.");
             }
 
+            String subKey = runtimePath;
+            if (!String.IsNullOrWhiteSpace(node)) {
+                subKey = runtimePath + node;
+            }
+
             using (RegistryKey key = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, ComputerName, RegistryView.Default)) {
-                RegistryKey root = key.OpenSubKey(runtimePath, true);
+                RegistryKey root = key.OpenSubKey(subKey, true);
                 root?.DeleteValue(entryName);
                 root?.Close();
             }
