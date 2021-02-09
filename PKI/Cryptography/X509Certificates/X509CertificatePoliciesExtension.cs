@@ -7,10 +7,10 @@ namespace System.Security.Cryptography.X509Certificates {
     ///		of which consists of an object identifier (OID) and optional qualifiers.
     /// </summary>
     public sealed class X509CertificatePoliciesExtension : X509Extension {
-        readonly Oid _oid = new Oid(X509ExtensionOid.X509CertificatePolicies);
+        readonly Oid _oid = new Oid(X509ExtensionOid.CertificatePolicies);
 
         internal X509CertificatePoliciesExtension(Byte[] rawData, Boolean critical)
-            : base(X509ExtensionOid.X509CertificatePolicies, rawData, critical) {
+            : base(X509ExtensionOid.CertificatePolicies, rawData, critical) {
             if (rawData == null) { throw new ArgumentNullException(nameof(rawData)); }
             m_decode(rawData);
         }

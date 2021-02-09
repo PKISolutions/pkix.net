@@ -150,7 +150,7 @@ namespace System.Security.Cryptography.X509Certificates {
             if (asn.MoveNext()) {
                 var extensions = new X509ExtensionCollection();
                 extensions.Decode(asn.GetTagRawData());
-                X509Extension crlReason = extensions[X509ExtensionOid.X509CRLReasonCode];
+                X509Extension crlReason = extensions[X509ExtensionOid.CRLReasonCode];
                 if (crlReason != null) {
                     ReasonCode = crlReason.RawData[2];
                 }

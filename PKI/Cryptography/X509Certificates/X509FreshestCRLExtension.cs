@@ -10,10 +10,10 @@ namespace System.Security.Cryptography.X509Certificates {
     /// </summary>
     /// <remarks>Delta CRLs are </remarks>
     public sealed class X509FreshestCRLExtension : X509Extension {
-        readonly Oid _oid = new Oid(X509ExtensionOid.X509FreshestCRL);
+        readonly Oid _oid = new Oid(X509ExtensionOid.FreshestCRL);
 
         internal X509FreshestCRLExtension(Byte[] rawData, Boolean critical)
-            : base(X509ExtensionOid.X509FreshestCRL, rawData, critical) {
+            : base(X509ExtensionOid.FreshestCRL, rawData, critical) {
             if (rawData == null) { throw new ArgumentNullException(nameof(rawData)); }
             m_decode(rawData);
         }

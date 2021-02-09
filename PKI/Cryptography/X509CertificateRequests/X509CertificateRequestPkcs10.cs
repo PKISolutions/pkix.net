@@ -123,7 +123,7 @@ namespace SysadminsLV.PKI.Cryptography.X509CertificateRequests {
             if (asn.PayloadLength == 0) { return; }
             do {
                 X509Attribute attribute = X509Attribute.Decode(asn.GetTagRawData());
-                if (attribute.Oid.Value == X509ExtensionOid.X509CertificateExtensions) {
+                if (attribute.Oid.Value == X509ExtensionOid.CertificateExtensions) {
                     //Extensions
                     Extensions.Decode(attribute.RawData);
                 } else {

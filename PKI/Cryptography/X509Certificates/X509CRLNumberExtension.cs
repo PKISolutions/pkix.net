@@ -10,7 +10,7 @@ namespace System.Security.Cryptography.X509Certificates {
     /// Represents a <strong>CRL Number</strong> certificate revocation list extension.
     /// </summary>
     public sealed class X509CRLNumberExtension : X509Extension {
-        readonly Oid _oid = new Oid(X509ExtensionOid.X509CRLNumber);
+        readonly Oid _oid = new Oid(X509ExtensionOid.CRLNumber);
 
         //public X509CRLNumberExtension() { Oid = _oid; }
         /// <summary>

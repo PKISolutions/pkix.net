@@ -29,7 +29,7 @@ namespace SysadminsLV.PKI.Management.ActiveDirectory {
                 return true;
             }
             if (status && cert.Version == 3) {
-                var ext = (X509EnhancedKeyUsageExtension)cert.Extensions[X509ExtensionOid.X509EnhancedKeyUsage];
+                var ext = (X509EnhancedKeyUsageExtension)cert.Extensions[X509ExtensionOid.EnhancedKeyUsage];
                 if (ext != null) {
                     foreach (Oid oid in ext.EnhancedKeyUsages) {
                         if (oid.Value == "1.3.6.1.4.1.311.21.6") {

@@ -114,7 +114,7 @@ namespace PKI.Web {
                         Subject = Certificate.SubjectName;
                         Issuer = Certificate.IssuerName;
                         if (Certificate.Extensions.Count > 0) {
-                            X509Extension rawExtension = Certificate.Extensions[X509ExtensionOid.X509SubjectAlternativeNames];
+                            X509Extension rawExtension = Certificate.Extensions[X509ExtensionOid.SubjectAlternativeNames];
                             if (rawExtension != null) {
                                 var sanExtension = new X509SubjectAlternativeNamesExtension(rawExtension, false);
                                 san.AddRange(sanExtension.AlternativeNames.Select(x => x.Format(false)));

@@ -13,7 +13,7 @@ namespace System.Security.Cryptography.X509Certificates {
     /// in a path contain an acceptable policy identifier.
     /// </summary>
     public sealed class X509CertificatePolicyConstraintsExtension : X509Extension {
-        readonly Oid _oid = new Oid(X509ExtensionOid.X509CertificatePolicyConstraints);
+        readonly Oid _oid = new Oid(X509ExtensionOid.CertificatePolicyConstraints);
         /// <summary>
         /// Initializes a new instance of the <strong>X509CertificatePolicyConstraintsExtension</strong> class from
         /// an <see cref="AsnEncodedData"/> object.
@@ -21,7 +21,7 @@ namespace System.Security.Cryptography.X509Certificates {
         /// <param name="constraints"></param>
         /// <exception cref="ArgumentNullException"></exception>
         public X509CertificatePolicyConstraintsExtension(AsnEncodedData constraints)
-            : base(X509ExtensionOid.X509CertificatePolicyConstraints, constraints.RawData, true){
+            : base(X509ExtensionOid.CertificatePolicyConstraints, constraints.RawData, true){
             if (constraints == null) { throw new ArgumentNullException(nameof(constraints)); }
             m_decode(constraints.RawData);
         }

@@ -18,7 +18,7 @@ namespace System.Security.Cryptography.X509Certificates {
     /// </para>
     /// </remarks>
     public class X509ArchiveCutoffExtension : X509Extension {
-        readonly Oid _oid = new Oid(X509ExtensionOid.X509ArchiveCutoff, "Archive Cutoff");
+        readonly Oid _oid = new Oid(X509ExtensionOid.ArchiveCutoff, "Archive Cutoff");
         /// <summary>
         /// Initializes a new instance of the <strong>X509ArchiveCutoffExtension</strong> class.
         /// </summary>
@@ -35,7 +35,7 @@ namespace System.Security.Cryptography.X509Certificates {
         /// The data in the <strong>value</strong> parameter is not valid extension value.
         /// </exception>
         public X509ArchiveCutoffExtension(AsnEncodedData value, Boolean critical)
-            : base(new Oid(X509ExtensionOid.X509OcspCRLReference, "Archive Cutoff"), value.RawData, critical) {
+            : base(new Oid(X509ExtensionOid.OcspCRLReference, "Archive Cutoff"), value.RawData, critical) {
             m_decode(value.RawData);
         }
         /// <summary>

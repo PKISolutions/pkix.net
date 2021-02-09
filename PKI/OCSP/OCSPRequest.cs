@@ -264,7 +264,7 @@ namespace PKI.OCSP {
         }
         static Uri getOcspUrl(IEnumerable<X509Certificate2> certs) {
             foreach (X509Certificate2 cert in certs.Where(x => !x.Handle.Equals(IntPtr.Zero))) {
-                X509Extension aiaExtension = cert.Extensions[X509ExtensionOid.X509AuthorityInformationAccess];
+                X509Extension aiaExtension = cert.Extensions[X509ExtensionOid.AuthorityInformationAccess];
                 if (aiaExtension == null) {
                     continue;
                 }

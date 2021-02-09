@@ -9,11 +9,11 @@ namespace System.Security.Cryptography.X509Certificates {
     /// implementation of <strong>Enhanced Key Usage</strong> extension.
     /// </summary>
     public sealed class X509ApplicationPoliciesExtension : X509Extension {
-        readonly Oid _oid = new Oid(X509ExtensionOid.X509ApplicationPolicies);
+        readonly Oid _oid = new Oid(X509ExtensionOid.ApplicationPolicies);
         readonly List<Oid> _oids = new List<Oid>();
 
         internal X509ApplicationPoliciesExtension(Byte[] rawData, Boolean critical)
-            : base(X509ExtensionOid.X509ApplicationPolicies, rawData, critical) {
+            : base(X509ExtensionOid.ApplicationPolicies, rawData, critical) {
             if (rawData == null) { throw new ArgumentNullException(nameof(rawData)); }
             m_decode(rawData);
         }

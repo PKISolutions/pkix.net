@@ -12,10 +12,10 @@ namespace System.Security.Cryptography.X509Certificates {
     /// certificate autoenrollment to perform certificate-based renewals.
     /// </summary>
     public sealed class X509CertificateTemplateExtension : X509Extension {
-        readonly Oid _eoid = new Oid(X509ExtensionOid.X509CertificateTemplate);
+        readonly Oid _eoid = new Oid(X509ExtensionOid.CertificateTemplate);
 
         internal X509CertificateTemplateExtension(Byte[] rawData, Boolean critical)
-            : base(X509ExtensionOid.X509CertificateTemplate, rawData, critical){
+            : base(X509ExtensionOid.CertificateTemplate, rawData, critical){
             if (rawData == null) { throw new ArgumentNullException(nameof(rawData)); }
             m_decode(rawData);
         }
@@ -70,9 +70,9 @@ namespace System.Security.Cryptography.X509Certificates {
                 fMinorVersion = true
             };
             UInt32 pcbEncoded = 0;
-            if (Crypt32.CryptEncodeObject(1, X509ExtensionOid.X509CertificateTemplate, ref pvStructInfo, null, ref pcbEncoded)) {
+            if (Crypt32.CryptEncodeObject(1, X509ExtensionOid.CertificateTemplate, ref pvStructInfo, null, ref pcbEncoded)) {
                 RawData = new Byte[pcbEncoded];
-                Crypt32.CryptEncodeObject(1, X509ExtensionOid.X509CertificateTemplate, ref pvStructInfo, RawData, ref pcbEncoded);
+                Crypt32.CryptEncodeObject(1, X509ExtensionOid.CertificateTemplate, ref pvStructInfo, RawData, ref pcbEncoded);
                 TemplateOid = new Oid(pvStructInfo.pszObjId);
                 MajorVersion = majorVersion;
                 MinorVersion = minorVersion;
@@ -82,9 +82,9 @@ namespace System.Security.Cryptography.X509Certificates {
         }
         void m_decode(Byte[] rawData) {
             UInt32 pcbStructInfo = 0;
-            if (Crypt32.CryptDecodeObject(1, X509ExtensionOid.X509CertificateTemplate, rawData, (UInt32)rawData.Length, 0, IntPtr.Zero, ref pcbStructInfo)) {
+            if (Crypt32.CryptDecodeObject(1, X509ExtensionOid.CertificateTemplate, rawData, (UInt32)rawData.Length, 0, IntPtr.Zero, ref pcbStructInfo)) {
                 IntPtr pbStructInfo = Marshal.AllocHGlobal((Int32)pcbStructInfo);
-                Crypt32.CryptDecodeObject(1, X509ExtensionOid.X509CertificateTemplate, rawData, (UInt32)rawData.Length, 0, pbStructInfo, ref pcbStructInfo);
+                Crypt32.CryptDecodeObject(1, X509ExtensionOid.CertificateTemplate, rawData, (UInt32)rawData.Length, 0, pbStructInfo, ref pcbStructInfo);
                 Wincrypt.CERT_TEMPLATE_EXT structure = (Wincrypt.CERT_TEMPLATE_EXT)Marshal.PtrToStructure(pbStructInfo, typeof(Wincrypt.CERT_TEMPLATE_EXT));
                 Marshal.FreeHGlobal(pbStructInfo);
                 TemplateOid = new Oid(structure.pszObjId);

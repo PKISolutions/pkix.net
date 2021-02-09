@@ -10,10 +10,10 @@ namespace System.Security.Cryptography.X509Certificates {
     /// locations. 
     /// </summary>
     public sealed class X509CRLDistributionPointsExtension : X509Extension {
-        readonly Oid _oid = new Oid(X509ExtensionOid.X509CRLDistributionPoints);
+        readonly Oid _oid = new Oid(X509ExtensionOid.CRLDistributionPoints);
 
         internal X509CRLDistributionPointsExtension(Byte[] rawData, Boolean critical)
-            : base(X509ExtensionOid.X509CRLDistributionPoints, rawData, critical) {
+            : base(X509ExtensionOid.CRLDistributionPoints, rawData, critical) {
             if (rawData == null) { throw new ArgumentNullException(nameof(rawData)); }
             m_decode(rawData);
         }

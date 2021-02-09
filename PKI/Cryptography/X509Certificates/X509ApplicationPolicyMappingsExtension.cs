@@ -9,7 +9,7 @@ namespace System.Security.Cryptography.X509Certificates {
     /// </summary>
     /// <remarks><see cref="X509Extension.Critical"/> member is always set to <strong>True</strong>.</remarks>
     public sealed class X509ApplicationPolicyMappingsExtension : X509Extension {
-        readonly Oid _oid = new Oid(X509ExtensionOid.X509ApplicationPolicyMappings);
+        readonly Oid _oid = new Oid(X509ExtensionOid.ApplicationPolicyMappings);
 
         /// <summary>
         /// Initializes a new instance of the <strong>X509ApplicationPolicyMappingsExtension</strong> class from
@@ -20,7 +20,7 @@ namespace System.Security.Cryptography.X509Certificates {
         /// <strong>mappings</strong> parameter is null.
         /// </exception>
         public X509ApplicationPolicyMappingsExtension(AsnEncodedData mappings) : base(
-            X509ExtensionOid.X509ApplicationPolicyMappings, mappings.RawData, true) {
+            X509ExtensionOid.ApplicationPolicyMappings, mappings.RawData, true) {
             if (mappings == null) { throw new ArgumentNullException(nameof(mappings)); }
             m_decode(mappings.RawData);
         }

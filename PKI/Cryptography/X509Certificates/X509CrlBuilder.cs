@@ -35,7 +35,7 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates {
                 existingCrl.Extensions
                     .Cast<X509Extension>()
                     // we do not add NextCrlPublish extension.
-                    .Where(x => x.Oid.Value != X509ExtensionOid.X509NextCRLPublish));
+                    .Where(x => x.Oid.Value != X509ExtensionOid.NextCRLPublish));
             RevokedCertificates.AddRange(existingCrl.RevokedCertificates);
         }
 
@@ -91,14 +91,14 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates {
         }
         void processAkiExtension(X509Certificate2 issuer) {
             // remove AKI extension from existing extensions
-            GenericArray.RemoveExtension(_extensions, X509ExtensionOid.X509AuthorityKeyIdentifier);
+            GenericArray.RemoveExtension(_extensions, X509ExtensionOid.AuthorityKeyIdentifier);
             // generate AKI from issuer certificate
             _extensions.Add(new X509AuthorityKeyIdentifierExtension(issuer, AuthorityKeyIdentifierFlags.KeyIdentifier, false));
         }
         void processCAVersionExtension(X509Certificate2 issuer) {
             // remove CA Version extension from existing extensions
-            GenericArray.RemoveExtension(_extensions, X509ExtensionOid.X509CAVersion);
-            X509Extension e = issuer.Extensions[X509ExtensionOid.X509CAVersion];
+            GenericArray.RemoveExtension(_extensions, X509ExtensionOid.CAVersion);
+            X509Extension e = issuer.Extensions[X509ExtensionOid.CAVersion];
             // if CA Version in issuer certificate is presented, copy it to CRL
             // otherwise, skip CA Version.
             if (e != null) {
@@ -114,12 +114,12 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates {
             5. if CrlNumberIncrement is zero or negative, no CRL Number extension is added.
             */
             BigInteger newCrlVersion = 0;
-            X509Extension crlNumberExt = _extensions.FirstOrDefault(x => x.Oid.Value == X509ExtensionOid.X509CRLNumber);
+            X509Extension crlNumberExt = _extensions.FirstOrDefault(x => x.Oid.Value == X509ExtensionOid.CRLNumber);
             if (crlNumberExt != null) {
                 newCrlVersion = ((X509CRLNumberExtension)crlNumberExt).CRLNumber + CrlNumberIncrement;
             }
             if (CrlNumberIncrement > 0) {
-                GenericArray.RemoveExtension(_extensions, X509ExtensionOid.X509CRLNumber);
+                GenericArray.RemoveExtension(_extensions, X509ExtensionOid.CRLNumber);
                 crlNumberExt = new X509CRLNumberExtension(newCrlVersion, false);
                 _extensions.Add(crlNumberExt);
             }
