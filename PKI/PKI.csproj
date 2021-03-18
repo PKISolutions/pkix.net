@@ -179,6 +179,7 @@
     <Compile Include="Management\CertificateServices\Database\AdcsDbReader.cs" />
     <Compile Include="Management\CertificateServices\Database\AdcsDbRow.cs" />
     <Compile Include="Management\CertificateServices\Database\AdcsDbSeekOperator.cs" />
+    <Compile Include="Management\CertificateServices\Database\AdcsDbSortOrder.cs" />
     <Compile Include="Management\CertificateServices\Database\AdcsDbTableName.cs" />
     <Compile Include="Management\CertificateServices\Database\AdcsDbViewTableName.cs" />
     <Compile Include="Management\CertificateServices\Database\AdcsDbColumnDataType.cs" />

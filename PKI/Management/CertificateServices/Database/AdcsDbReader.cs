@@ -302,7 +302,7 @@ namespace SysadminsLV.PKI.Management.CertificateServices.Database {
                 _caView.SetRestriction(
                     filter.ColumnID,
                     (Int32)filter.LogicalOperator,
-                    CertAdmConstants.CVR_SORT_NONE,
+                    (Int32)filter.SortOrder,
                     filter.QualifierValue);
             }
         }
