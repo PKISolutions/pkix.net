@@ -116,6 +116,7 @@
     <Compile Include="Cryptography\TspRfc3161Request.cs" />
     <Compile Include="Cryptography\TspStatusInfo.cs" />
     <Compile Include="Cryptography\TspValidationStatus.cs" />
+    <Compile Include="Cryptography\X509AttributeOid.cs" />
     <Compile Include="Cryptography\X509Certificates\X509ExtensionOid.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CertificateTrustList.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CRL2Collection.cs" />
@@ -166,6 +167,7 @@
     <Compile Include="Management\CertificateServices\CertSrvClientRole.cs" />
     <Compile Include="Management\CertificateServices\CertSrvConfig.cs" />
     <Compile Include="Management\CertificateServices\CertSrvConfigUtil.cs" />
+    <Compile Include="Management\CertificateServices\CertSrvCrlConfig.cs" />
     <Compile Include="Management\CertificateServices\CertSrvCryptographyConfig.cs" />
     <Compile Include="Management\CertificateServices\CertSrvPlatformVersion.cs" />
     <Compile Include="Management\CertificateServices\CertSrvCrlFlags.cs" />
@@ -212,6 +214,7 @@
     <Compile Include="Management\CertificateServices\PolicyEnrollAuthenticationType.cs" />
     <Compile Include="Management\CertificateServices\PolicyEnrollEndpointUri.cs" />
     <Compile Include="Management\CertificateServices\PolicyEnrollEndpointUriCollection.cs" />
+    <Compile Include="Management\CertificateServices\RegConfigEntry.cs" />
     <Compile Include="Management\CertificateServices\RemoteRegManager.cs" />
     <Compile Include="Management\CertificateServices\UrlProtocolScheme.cs" />
     <Compile Include="Security\AccessControl\CertTemplateAccessRule.cs" />

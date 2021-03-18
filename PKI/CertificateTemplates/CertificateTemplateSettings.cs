@@ -68,7 +68,7 @@ namespace PKI.CertificateTemplates {
         /// <summary>
         /// Gets or sets a list of OIDs that represent extended key usages (sertificate purposes).
         /// </summary>
-        public OidCollection EnhancedKeyUsage => ((X509EnhancedKeyUsageExtension)Extensions?[X509ExtensionOid.X509EnhancedKeyUsage])?.EnhancedKeyUsages;
+        public OidCollection EnhancedKeyUsage => ((X509EnhancedKeyUsageExtension)Extensions?[X509ExtensionOid.EnhancedKeyUsage])?.EnhancedKeyUsages;
 
         /// <summary>
         /// Gets issuance policies designated to the template.
@@ -261,22 +261,22 @@ namespace PKI.CertificateTemplates {
         void get_extensions() {
             schemaVersion = (Int32)_entry[DsUtils.PropPkiSchemaVersion];
             foreach (String oid in new [] {
-                X509ExtensionOid.X509KeyUsage,
-                X509ExtensionOid.X509EnhancedKeyUsage,
-                X509ExtensionOid.X509CertificatePolicies,
-                X509ExtensionOid.X509CertTemplateInfoV2,
-                X509ExtensionOid.X509BasicConstraints,
-                X509ExtensionOid.X509OcspRevNoCheck}) {
+                X509ExtensionOid.KeyUsage,
+                X509ExtensionOid.EnhancedKeyUsage,
+                X509ExtensionOid.CertificatePolicies,
+                X509ExtensionOid.CertTemplateInfoV2,
+                X509ExtensionOid.BasicConstraints,
+                X509ExtensionOid.OcspRevNoCheck}) {
                 switch (oid) {
-                    case X509ExtensionOid.X509KeyUsage:
-                        _exts.Add(new X509KeyUsageExtension(Cryptography.KeyUsage, test_critical(X509ExtensionOid.X509KeyUsage)));
+                    case X509ExtensionOid.KeyUsage:
+                        _exts.Add(new X509KeyUsageExtension(Cryptography.KeyUsage, test_critical(X509ExtensionOid.KeyUsage)));
                         break;
-                    case X509ExtensionOid.X509EnhancedKeyUsage:
+                    case X509ExtensionOid.EnhancedKeyUsage:
                         if (_ekus.Count == 0) { break; }
-                        _exts.Add(new X509EnhancedKeyUsageExtension(_ekus, test_critical(X509ExtensionOid.X509EnhancedKeyUsage)));
-                        _exts.Add(new X509ApplicationPoliciesExtension(_ekus, test_critical(X509ExtensionOid.X509ApplicationPolicies)));
+                        _exts.Add(new X509EnhancedKeyUsageExtension(_ekus, test_critical(X509ExtensionOid.EnhancedKeyUsage)));
+                        _exts.Add(new X509ApplicationPoliciesExtension(_ekus, test_critical(X509ExtensionOid.ApplicationPolicies)));
                         break;
-                    case X509ExtensionOid.X509CertificatePolicies:
+                    case X509ExtensionOid.CertificatePolicies:
                         if (CertificatePolicies.Count > 0) {
                             X509CertificatePolicyCollection policies = new X509CertificatePolicyCollection();
                             foreach (Oid poloid in CertificatePolicies) {
@@ -288,22 +288,22 @@ namespace PKI.CertificateTemplates {
                                 policies.Add(policy);
                             }
                             _exts.Add(new X509CertificatePoliciesExtension(policies, test_critical(
-                                X509ExtensionOid.X509CertificatePolicies)));
+                                X509ExtensionOid.CertificatePolicies)));
                         }
                         break;
-                    case X509ExtensionOid.X509CertTemplateInfoV2:
+                    case X509ExtensionOid.CertTemplateInfoV2:
                         if (schemaVersion == 1) {
-                            _exts.Add(new X509Extension(new Oid(X509ExtensionOid.X509CertTemplateInfoV2), Asn1Utils.EncodeBMPString((String)_entry[DsUtils.PropCN]), test_critical(
-                                X509ExtensionOid.X509CertTemplateInfoV2)));
+                            _exts.Add(new X509Extension(new Oid(X509ExtensionOid.CertTemplateInfoV2), Asn1Utils.EncodeBMPString((String)_entry[DsUtils.PropCN]), test_critical(
+                                X509ExtensionOid.CertTemplateInfoV2)));
                         } else {
                             Int32 major = (Int32)_entry[DsUtils.PropPkiTemplateMajorVersion];
                             Int32 minor = (Int32)_entry[DsUtils.PropPkiTemplateMinorVersion];
                             Oid tempoid = new Oid((String)_entry[DsUtils.PropCertTemplateOid]);
                             _exts.Add(new X509CertificateTemplateExtension(tempoid, major, minor));
-                            _exts[_exts.Count - 1].Critical = test_critical(X509ExtensionOid.X509CertificateTemplate);
+                            _exts[_exts.Count - 1].Critical = test_critical(X509ExtensionOid.CertificateTemplate);
                         }
                         break;
-                    case X509ExtensionOid.X509BasicConstraints:
+                    case X509ExtensionOid.BasicConstraints:
                         if (
                             SubjectType == CertTemplateSubjectType.CA ||
                             SubjectType == CertTemplateSubjectType.CrossCA ||
@@ -317,13 +317,13 @@ namespace PKI.CertificateTemplates {
                             }
                             Boolean hasConstraints = GetPathLengthConstraint() != -1;
                             _exts.Add(new X509BasicConstraintsExtension(isCA, hasConstraints, GetPathLengthConstraint(), test_critical(
-                                X509ExtensionOid.X509BasicConstraints)));
+                                X509ExtensionOid.BasicConstraints)));
                         }
                         break;
-                    case X509ExtensionOid.X509OcspRevNoCheck:
+                    case X509ExtensionOid.OcspRevNoCheck:
                         if ((EnrollmentOptions & (Int32)CertificateTemplateEnrollmentFlags.IncludeOcspRevNoCheck) != 0) {
-                            _exts.Add(new X509Extension(X509ExtensionOid.X509OcspRevNoCheck, new Byte[] { 5, 0 }, test_critical(
-                                X509ExtensionOid.X509OcspRevNoCheck)));
+                            _exts.Add(new X509Extension(X509ExtensionOid.OcspRevNoCheck, new Byte[] { 5, 0 }, test_critical(
+                                X509ExtensionOid.OcspRevNoCheck)));
                         }
                         break;
                 }

@@ -11,10 +11,10 @@ namespace System.Security.Cryptography.X509Certificates {
     /// Online Certificate Status Protocol (OCSP).
     /// </summary>
     public sealed class X509AuthorityInformationAccessExtension : X509Extension {
-        readonly Oid _oid = new Oid(X509ExtensionOid.X509AuthorityInformationAccess);
+        readonly Oid _oid = new Oid(X509ExtensionOid.AuthorityInformationAccess);
         
         internal X509AuthorityInformationAccessExtension(Byte[] rawData, Boolean critical)
-            : base(X509ExtensionOid.X509AuthorityInformationAccess, rawData, critical) {
+            : base(X509ExtensionOid.AuthorityInformationAccess, rawData, critical) {
             if (rawData == null) { throw new ArgumentNullException(nameof(rawData)); }
             m_decode(rawData);
         }

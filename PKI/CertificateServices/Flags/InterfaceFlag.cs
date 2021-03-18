@@ -6,11 +6,11 @@ using PKI.Utils;
 using SysadminsLV.PKI.Management.CertificateServices;
 
 namespace PKI.CertificateServices.Flags {
-	/// <summary>
-	/// Contains information about interface flags enabled on CA server. These settings affect CA management (<strong>ICertAdmin</strong>)
-	/// and enrollment (<strong>ICertRequest</strong>) interfaces.
-	/// </summary>
-	public class InterfaceFlag {
+    /// <summary>
+    /// Contains information about interface flags enabled on CA server. These settings affect CA management (<strong>ICertAdmin</strong>)
+    /// and enrollment (<strong>ICertRequest</strong>) interfaces.
+    /// </summary>
+    public class InterfaceFlag {
 		String configString;
 		CertSrvPlatformVersion version;
 
@@ -136,7 +136,6 @@ namespace PKI.CertificateServices.Flags {
 				case CertSrvPlatformVersion.Win2012:
 				case CertSrvPlatformVersion.Win2012R2:
 				case CertSrvPlatformVersion.Win2016:
-				case CertSrvPlatformVersion.Win2019:
 					InterfaceFlags = InterfaceFlagEnum.NoRemoteICertAdminBackup |
 					                 InterfaceFlagEnum.EnforceEncryptICertAdmin |
 					                 InterfaceFlagEnum.EnforceEncryptICertRequest |

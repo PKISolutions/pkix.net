@@ -9,10 +9,10 @@ namespace System.Security.Cryptography.X509Certificates {
     /// a certification authority to provide information about CRL publication location in Active Directory.
     /// </summary>
     public sealed class X509PublishedCrlLocationsExtension : X509Extension {
-        readonly Oid _oid = new Oid(X509ExtensionOid.X509PublishedCrlLocations);
+        readonly Oid _oid = new Oid(X509ExtensionOid.PublishedCrlLocations);
 
         internal X509PublishedCrlLocationsExtension(Byte[] rawData, Boolean critical)
-            : base(X509ExtensionOid.X509PublishedCrlLocations, rawData, critical) {
+            : base(X509ExtensionOid.PublishedCrlLocations, rawData, critical) {
             if (rawData == null) { throw new ArgumentNullException(nameof(rawData)); }
             m_decode(rawData);
         }

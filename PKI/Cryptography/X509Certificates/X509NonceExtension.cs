@@ -10,7 +10,7 @@ namespace System.Security.Cryptography.X509Certificates {
     /// This class cannot be inherited.
     /// </summary>
     public sealed class X509NonceExtension : X509Extension {
-        readonly Oid _oid = new Oid(X509ExtensionOid.X509OcspNonce, "OCSP Nonce");
+        readonly Oid _oid = new Oid(X509ExtensionOid.OcspNonce, "OCSP Nonce");
         /// <summary>
         /// Initializes a new instance of the <strong>X509NonceExtension</strong> class.
         /// </summary>
@@ -20,7 +20,7 @@ namespace System.Security.Cryptography.X509Certificates {
         /// <param name="nonceValue">The encoded data to use to create the extension.</param>
         /// <param name="critical"><strong>True</strong> if the extension is critical; otherwise, <strong>False</strong>.</param>
         public X509NonceExtension(AsnEncodedData nonceValue, Boolean critical)
-            : base(new Oid(X509ExtensionOid.X509OcspNonce, "OCSP Nonce") , nonceValue.RawData, critical) {
+            : base(new Oid(X509ExtensionOid.OcspNonce, "OCSP Nonce") , nonceValue.RawData, critical) {
             Asn1Reader asn = new Asn1Reader(nonceValue.RawData);
             Value = AsnFormatter.BinaryToString(asn.GetPayload(), EncodingType.Hex);
         }

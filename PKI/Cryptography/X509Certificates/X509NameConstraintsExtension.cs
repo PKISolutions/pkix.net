@@ -13,7 +13,7 @@ namespace System.Security.Cryptography.X509Certificates {
     /// <see href="https://tools.ietf.org/html/rfc5280#section-4.2.1.10">RFC 5280</see>.
     /// </summary>
     public sealed class X509NameConstraintsExtension : X509Extension {
-        readonly Oid _oid = new Oid(X509ExtensionOid.X509NameConstraints);
+        readonly Oid _oid = new Oid(X509ExtensionOid.NameConstraints);
 
         /// <summary>
         /// Intitializes a new instance of <strong>X509NameConstraintsExtension</strong> class from
@@ -24,7 +24,7 @@ namespace System.Security.Cryptography.X509Certificates {
         /// </exception>
         /// <param name="nameConstraints">An ASN.1-encoded Name Constraints extension value.</param>
         public X509NameConstraintsExtension(AsnEncodedData nameConstraints)
-            : base(new Oid(X509ExtensionOid.X509NameConstraints), nameConstraints.RawData, true) {
+            : base(new Oid(X509ExtensionOid.NameConstraints), nameConstraints.RawData, true) {
             if (nameConstraints == null) { throw new ArgumentNullException(nameof(nameConstraints)); }
             m_decode(nameConstraints.RawData);
         }

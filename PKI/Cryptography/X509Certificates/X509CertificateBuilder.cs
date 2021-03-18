@@ -28,8 +28,8 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates {
         readonly Byte[] _versionBytes = { 0xa0, 03, 02, 01, 02 };
         readonly HashSet<String> _excludedExtensions = new HashSet<String>(
             new[] {
-                X509ExtensionOid.X509SubjectKeyIdentifier,
-                X509ExtensionOid.X509AuthorityKeyIdentifier
+                X509ExtensionOid.SubjectKeyIdentifier,
+                X509ExtensionOid.AuthorityKeyIdentifier
             }
         );
         readonly List<X509Extension> _extensions = new List<X509Extension>();

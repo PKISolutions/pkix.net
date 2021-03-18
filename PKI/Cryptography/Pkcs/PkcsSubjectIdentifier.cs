@@ -124,7 +124,7 @@ namespace SysadminsLV.PKI.Cryptography.Pkcs {
         void encode(X509Certificate2 certificate) {
             switch (Type) {
                 case SubjectIdentifierType.SubjectKeyIdentifier:
-                    if (certificate.Extensions[X509ExtensionOid.X509SubjectKeyIdentifier] is X509SubjectKeyIdentifierExtension ski) {
+                    if (certificate.Extensions[X509ExtensionOid.SubjectKeyIdentifier] is X509SubjectKeyIdentifierExtension ski) {
                         Value = ski.SubjectKeyIdentifier;
                     } else {
                         throw new ArgumentException("Specified certificate does not contain X.509 Subject Key Identifier extension.");

@@ -492,7 +492,12 @@ namespace System.Security.Cryptography.X509Certificates {
 
                 String idnName = Encoding.UTF8.GetString(asn.GetPayload());
                 if (!String.IsNullOrEmpty(idnName)) {
-                    String uniName = new IdnMapping().GetUnicode(idnName);
+                    String uniName;
+                    try {
+                        uniName = new IdnMapping().GetUnicode(idnName);
+                    } catch {
+                        uniName = idnName;
+                    }
                     Value = idnName.Equals(uniName, StringComparison.OrdinalIgnoreCase)
                         ? idnName
                         : $"{uniName} ({idnName})";

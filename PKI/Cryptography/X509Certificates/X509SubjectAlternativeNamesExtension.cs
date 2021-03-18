@@ -8,11 +8,11 @@ namespace System.Security.Cryptography.X509Certificates {
     ///		the certificate.
     /// </summary>
     public sealed class X509SubjectAlternativeNamesExtension : X509Extension {
-        readonly Oid _oid = new Oid(X509ExtensionOid.X509SubjectAlternativeNames);
+        readonly Oid _oid = new Oid(X509ExtensionOid.SubjectAlternativeNames);
         X509AlternativeNameCollection alternativeNames = new X509AlternativeNameCollection();
 
         internal X509SubjectAlternativeNamesExtension(Byte[] rawData, Boolean critical)
-            : base(X509ExtensionOid.X509SubjectAlternativeNames, rawData, critical) {
+            : base(X509ExtensionOid.SubjectAlternativeNames, rawData, critical) {
             if (rawData == null) { throw new ArgumentNullException(nameof(rawData)); }
             m_decode(rawData);
         }

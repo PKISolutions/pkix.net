@@ -93,11 +93,11 @@ namespace PKI.OCSP {
         }
         void m_generateextensions(X509Certificate2 cert) {
             List<Byte> sext = new List<Byte>();
-            Oid oid = new Oid(X509ExtensionOid.X509ServiceLocator);
+            Oid oid = new Oid(X509ExtensionOid.ServiceLocator);
 
             sext.AddRange(cert.IssuerName.RawData);
             if (cert.Extensions.Count > 0) {
-                X509Extension ext = cert.Extensions[X509ExtensionOid.X509AuthorityInformationAccess];
+                X509Extension ext = cert.Extensions[X509ExtensionOid.AuthorityInformationAccess];
                 if (ext != null) {
                     sext.AddRange(ext.RawData);
                 }

@@ -13,6 +13,9 @@ namespace SysadminsLV.PKI.Cryptography.X509CertificateRequests {
     /// Represents a managed PKCS #10 request.
     /// </summary>
     public class X509CertificateRequestPkcs10 {
+        protected readonly X509AttributeCollection _attributes = new X509AttributeCollection();
+        protected readonly X509ExtensionCollection _extensions = new X509ExtensionCollection();
+
         /// <summary>
         /// Initializes a new empty instance of <strong>X509CertificateRequestPkcs10</strong> class.
         /// </summary>
@@ -61,12 +64,21 @@ namespace SysadminsLV.PKI.Cryptography.X509CertificateRequests {
         /// <summary>
         /// Gets a collection of <see cref="X509Extension"/> objects included in the request.
         /// </summary>
-        public X509ExtensionCollection Extensions { get; } = new X509ExtensionCollection();
+        public X509ExtensionCollection Extensions {
+            get {
+                var extensions = new X509ExtensionCollection();
+                foreach (X509Extension extension in _extensions) {
+                    extensions.Add(extension);
+                }
+
+                return extensions;
+            }
+        }
         /// <summary>
         /// Gets <see cref="X509AttributeCollection"/> object that contains a collection of attributes
         /// associated with the certificate request.
         /// </summary>
-        public X509AttributeCollection Attributes { get; } = new X509AttributeCollection();
+        public X509AttributeCollection Attributes => new X509AttributeCollection(_attributes);
         /// <summary>
         /// Gets the algorithm used to create the signature of a certificate request.
         /// </summary>
@@ -123,11 +135,15 @@ namespace SysadminsLV.PKI.Cryptography.X509CertificateRequests {
             if (asn.PayloadLength == 0) { return; }
             do {
                 X509Attribute attribute = X509Attribute.Decode(asn.GetTagRawData());
-                if (attribute.Oid.Value == X509ExtensionOid.X509CertificateExtensions) {
+                if (attribute.Oid.Value == X509ExtensionOid.CertificateExtensions) {
                     //Extensions
-                    Extensions.Decode(attribute.RawData);
+                    var extensions = new X509ExtensionCollection();
+                    extensions.Decode(attribute.RawData);
+                    foreach (X509Extension extension in extensions) {
+                        _extensions.Add(extension);
+                    }
                 } else {
-                    Attributes.Add(attribute);
+                    _attributes.Add(attribute);
                 }
             } while (asn.MoveNextCurrentLevel());
         }
@@ -146,8 +162,8 @@ Subject:
     {Subject ?? "EMPTY"}
 
 {PublicKey.Format().TrimEnd()}
-Request attributes (Count={Attributes.Count}):{formatAttributes().TrimEnd()}
-Request extensions (Count={Extensions.Count}):{formatExtensions().TrimEnd()}
+Request attributes (Count={_attributes.Count}):{formatAttributes().TrimEnd()}
+Request extensions (Count={_extensions.Count}):{formatExtensions().TrimEnd()}
 {blob.SignatureAlgorithm.ToString().TrimEnd()}    
 Signature: Unused bits={blob.Signature.UnusedBits}
     {AsnFormatter.BinaryToString(blob.Signature.Value.ToArray(), EncodingType.HexAddress).Replace("\r\n", "\r\n    ")}
@@ -158,13 +174,13 @@ Signature matches Public Key: {SignatureIsValid}
         }
         String formatAttributes() {
             StringBuilder sb = new StringBuilder();
-            if (Attributes.Count == 0) {
+            if (_attributes.Count == 0) {
                 return sb.ToString();
             }
 
             sb.AppendLine("");
-            for (Int32 index = 0; index < Attributes.Count; index++) {
-                X509Attribute attribute = Attributes[index];
+            for (Int32 index = 0; index < _attributes.Count; index++) {
+                X509Attribute attribute = _attributes[index];
                 sb.AppendLine(
                     $"  Attribute[{index}], Length={attribute.RawData.Length} ({attribute.RawData.Length:x2}):");
                 sb.AppendLine($"    {attribute.Format(true).Replace("\r\n", "\r\n    ")}");
@@ -173,12 +189,12 @@ Signature matches Public Key: {SignatureIsValid}
         }
         String formatExtensions() {
             StringBuilder sb = new StringBuilder();
-            if (Extensions.Count == 0) {
+            if (_extensions.Count == 0) {
                 return sb.ToString();
             }
 
             sb.AppendLine("");
-            foreach (X509Extension extension in Extensions) {
+            foreach (X509Extension extension in _extensions) {
                 sb.AppendLine($"    {extension.Oid.Format(true)}, Critial={extension.Critical}, Length={extension.RawData.Length:x2}:");
                 sb.AppendLine($"        {extension.Format(true).Replace("\r\n", "\r\n        ")}");
             }

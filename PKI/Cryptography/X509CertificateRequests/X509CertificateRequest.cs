@@ -36,12 +36,7 @@ namespace System.Security.Cryptography.X509CertificateRequests {
         /// </summary>
         public X509CertificateRequestType RequestType { get; private set; }
         /// <summary>
-        /// Gets the distinguished name of the request subject.
-        /// </summary>
-        [Obsolete("Use SubjectName instead.")]
-        public X500DistinguishedName SubjectDn => SubjectName;
-        /// <summary>
-        /// Gets external PKCS7/CMC envelope. External envelope is aplicable only for PKCS7/CMC requests.
+        /// Gets external PKCS7/CMC envelope. External envelope is applicable only for PKCS7/CMC requests.
         /// </summary>
         public X509CertificateRequestCmc ExternalData { get; private set; }
 
@@ -58,8 +53,8 @@ namespace System.Security.Cryptography.X509CertificateRequests {
                 Version = cmc.Content.Version;
                 SubjectName = cmc.Content.SubjectName;
                 PublicKey = cmc.Content.PublicKey;
-                Extensions.AddRange(cmc.Content.Extensions.Cast<X509Extension>());
-                Attributes.AddRange(cmc.Content.Attributes);
+                _extensions.AddRange(cmc.Content.Extensions.Cast<X509Extension>());
+                _attributes.AddRange(cmc.Content.Attributes);
                 SignatureAlgorithm = cmc.Content.SignatureAlgorithm;
                 SignatureIsValid = cmc.Content.SignatureIsValid;
                 ExternalData = cmc;
