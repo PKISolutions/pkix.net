@@ -11,10 +11,6 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
         CertSrvCdpPublishFlags flags = CertSrvCdpPublishFlags.None;
 
         CertSrvCdpUrlEntry(String uri, Boolean isConfigUri, CertSrvCdpPublishFlags publishFlags) {
-            if (String.IsNullOrEmpty(uri)) {
-                throw new ArgumentNullException(nameof(uri));
-            }
-
             if (isConfigUri) {
                 initializeFromConfig(uri, publishFlags);
             } else {
@@ -24,11 +20,9 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
             getUrlScheme();
         }
 
-
-        //public String RegURI { get; }
         /// <summary>
-        /// Gets an URL representation that is shown in Certification Authority MMC snap-in Extensions tab. See <see cref="RegURI">RegURI</see> property
-        /// description for detailed variable token replacement rules.</summary>
+        /// Gets an URL representation that is shown in Certification Authority MMC snap-in Extensions tab.
+        /// </summary>
         public String Uri { get; private set; }
         /// <summary>
         /// Gets the protocol scheme used by this object.

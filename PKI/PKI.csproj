@@ -175,6 +175,7 @@
     <Compile Include="Management\CertificateServices\CertSrvInterfaceFlags.cs" />
     <Compile Include="Management\CertificateServices\CertSrvKRAFlags.cs" />
     <Compile Include="Management\CertificateServices\CertSrvPolicyModuleFlags.cs" />
+    <Compile Include="Management\CertificateServices\CertSrvAiaConfig.cs" />
     <Compile Include="Management\CertificateServices\Database\AdcsDbColumnSchema.cs" />
     <Compile Include="Management\CertificateServices\Database\AdcsDbQueryFilter.cs" />
     <Compile Include="Management\CertificateServices\Database\AdcsDbReader.cs" />

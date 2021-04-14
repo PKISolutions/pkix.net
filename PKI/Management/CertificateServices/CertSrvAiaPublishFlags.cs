@@ -17,10 +17,10 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
         /// <summary>
         /// Include URL in Authority Information Access (AIA) extension of issued certificates as "Certification Authority Issuer" access method.
         /// </summary>
-        AddToCertAiaIssuer = 2,
+        AddToCertificateAia = 2,
         /// <summary>
         /// Include URL in Authority Information Access (AIA) extension of issued certificates as "Online Certificate Status Protocol" access method.
         /// </summary>
-        AddToCertAiaOcsp = 32
+        AddToCertificateOcsp = 32
     }
 }
