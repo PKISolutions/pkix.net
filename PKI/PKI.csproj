@@ -167,7 +167,7 @@
     <Compile Include="Management\CertificateServices\CertSrvClientRole.cs" />
     <Compile Include="Management\CertificateServices\CertSrvConfig.cs" />
     <Compile Include="Management\CertificateServices\CertSrvConfigUtil.cs" />
-    <Compile Include="Management\CertificateServices\CertSrvCrlConfig.cs" />
+    <Compile Include="Management\CertificateServices\CertSrvCrlPeriodConfig.cs" />
     <Compile Include="Management\CertificateServices\CertSrvCryptographyConfig.cs" />
     <Compile Include="Management\CertificateServices\CertSrvPlatformVersion.cs" />
     <Compile Include="Management\CertificateServices\CertSrvCrlFlags.cs" />

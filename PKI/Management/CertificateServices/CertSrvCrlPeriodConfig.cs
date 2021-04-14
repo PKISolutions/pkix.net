@@ -5,11 +5,11 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
     /// <summary>
     /// Represents Certification Authority object with defined certificate revocation list validity settings.
     /// </summary>
-    public class CertSrvCrlConfig : CertSrvConfig {
+    public class CertSrvCrlPeriodConfig : CertSrvConfig {
         String basePeriod, deltaPeriod, baseOverlap, deltaOverlap;
         Int32 baseUnits, baseOverlapUnits, deltaUnits, deltaOverlapUnits;
 
-        public CertSrvCrlConfig(String computerName) : base(computerName) {
+        public CertSrvCrlPeriodConfig(String computerName) : base(computerName) {
             ConfigManager.SetRootNode(true);
             initialize();
         }
