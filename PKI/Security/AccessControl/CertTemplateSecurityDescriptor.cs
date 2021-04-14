@@ -12,7 +12,7 @@ namespace SysadminsLV.PKI.Security.AccessControl {
     /// Represents managed ADCS certificate template security descriptor (ACL). This object is a wrapper around <see cref="ActiveDirectorySecurity"/>.
     /// </summary>
     public sealed class CertTemplateSecurityDescriptor : CommonObjectSecurity {
-        const String GUID_ENROLL     = "0e10c968-78fb-11d2-90d4-00c04f79dc55";
+        const String GUID_ENROLL = "0e10c968-78fb-11d2-90d4-00c04f79dc55";
         const String GUID_AUTOENROLL = "a05b8cc2-17bc-4802-a710-e7c15ab866a2";
         readonly String _x500Name;
         readonly Int32 _schemaVersion;
@@ -252,7 +252,12 @@ namespace SysadminsLV.PKI.Security.AccessControl {
                 dsSecurity = entry.ObjectSecurity;
             }
 
-            SetOwner(dsSecurity.GetOwner(typeof(NTAccount)));
+            try {
+                SetOwner(dsSecurity.GetOwner(typeof(NTAccount)));
+            } catch {
+                SetOwner(dsSecurity.GetOwner(typeof(SecurityIdentifier)));
+            }
+
             IEnumerable<IdentityReference> users = dsSecurity
                 .GetAccessRules(true, true, typeof(NTAccount))
                 .Cast<ActiveDirectoryAccessRule>()
