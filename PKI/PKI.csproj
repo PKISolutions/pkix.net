@@ -161,6 +161,7 @@
     <Compile Include="Management\ActiveDirectory\DsEnrollServerFlag.cs" />
     <Compile Include="Management\CertificateServices\CertSrvAiaUrlEntry.cs" />
     <Compile Include="Management\CertificateServices\CertSrvAiaUrlFlags.cs" />
+    <Compile Include="Management\CertificateServices\CertSrvCdpConfig.cs" />
     <Compile Include="Management\CertificateServices\CertSrvCdpUrlFlags.cs" />
     <Compile Include="Management\CertificateServices\CertSrvCdpUrlEntry.cs" />
     <Compile Include="Management\CertificateServices\CertSrvAuditFlags.cs" />
