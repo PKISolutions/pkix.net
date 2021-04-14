@@ -160,9 +160,9 @@
     <Compile Include="Management\ActiveDirectory\DsCertEnrollServer.cs" />
     <Compile Include="Management\ActiveDirectory\DsEnrollServerFlag.cs" />
     <Compile Include="Management\CertificateServices\CertSrvAiaUrlEntry.cs" />
-    <Compile Include="Management\CertificateServices\CertSrvAiaUrlFlags.cs" />
+    <Compile Include="Management\CertificateServices\CertSrvAiaPublishFlags.cs" />
     <Compile Include="Management\CertificateServices\CertSrvCdpConfig.cs" />
-    <Compile Include="Management\CertificateServices\CertSrvCdpUrlFlags.cs" />
+    <Compile Include="Management\CertificateServices\CertSrvCdpPublishFlags.cs" />
     <Compile Include="Management\CertificateServices\CertSrvCdpUrlEntry.cs" />
     <Compile Include="Management\CertificateServices\CertSrvAuditFlags.cs" />
     <Compile Include="Management\CertificateServices\CertSrvClientRole.cs" />

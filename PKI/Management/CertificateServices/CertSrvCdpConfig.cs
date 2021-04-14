@@ -14,32 +14,49 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
         void initialize() {
             String[] cdpEntry = ConfigManager.GetMultiStringEntry(ACTIVE_CRLPUBLICATIONURLS);
             foreach (String regEntry in cdpEntry) {
-                _entries.Add(new CertSrvCdpUrlEntry(regEntry));
+                _entries.Add(CertSrvCdpUrlEntry.FromRegUri(regEntry));
             }
         }
         public IEnumerator<CertSrvCdpUrlEntry> GetEnumerator() {
             return _entries.GetEnumerator();
         }
-        IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
+        IEnumerator IEnumerable.GetEnumerator() {
+            return GetEnumerator();
+        }
         public void Add(CertSrvCdpUrlEntry item) {
-            throw new NotImplementedException();
+            if (item == null) {
+                throw new ArgumentNullException(nameof(item));
+            }
+
+            _entries.Add(item);
+            IsModified = true;
+        }
+        public Boolean Remove(CertSrvCdpUrlEntry item) {
+            if (item == null) {
+                throw new ArgumentNullException(nameof(item));
+            }
+
+            Boolean result = _entries.Remove(item);
+
+            if (result) {
+                IsModified = true;
+            }
+
+            return result;
         }
         public void Clear() {
             _entries.Clear();
+            IsModified = true;
         }
+
         public Boolean Contains(CertSrvCdpUrlEntry item) {
-            throw new NotImplementedException();
+            return _entries.Contains(item);
         }
         public void CopyTo(CertSrvCdpUrlEntry[] array, Int32 arrayIndex) {
             _entries.CopyTo(array, arrayIndex);
         }
-        public Boolean Remove(CertSrvCdpUrlEntry item) {
-            throw new NotImplementedException();
-        }
+        
         public Int32 Count => _entries.Count;
-        public Boolean IsReadOnly => false;
-        public CertSrvCdpUrlEntry this[Int32 index] {
-            get => _entries[index];
-        }
+        public CertSrvCdpUrlEntry this[Int32 index] => _entries[index];
     }
 }

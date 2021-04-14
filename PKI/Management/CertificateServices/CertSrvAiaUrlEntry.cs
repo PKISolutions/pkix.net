@@ -52,29 +52,29 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
         /// Gets URL publication Flags.
         /// </summary>
         /// <remarks>Windows Server 2003 and higher: you cannot define custom CRT file publication local path.</remarks>
-        public CertSrvAiaUrlFlags Flags { get; private set; }
+        public CertSrvAiaPublishFlags Flags { get; private set; }
         /// <summary>
         /// Gets True if specified URL is configured to publish the CRT file to the specified location.
         /// </summary>
         /// <remarks>Only absolute (local), UNC and LDAP:// paths are supported.</remarks>
-        public Boolean ServerPublish => (Flags & CertSrvAiaUrlFlags.CertPublish) > 0;
+        public Boolean ServerPublish => (Flags & CertSrvAiaPublishFlags.CertPublish) > 0;
         /// <summary>
         /// Gets True if specified URL is configured to include specified URL to all issued certificate's Authority Information Access extension.
         /// </summary>
         /// <remarks>Only HTTP:// and LDAP:// paths are supported.</remarks>
-        public Boolean AddToCertAia => (Flags & CertSrvAiaUrlFlags.AddToCertAiaIssuer) > 0;
+        public Boolean AddToCertAia => (Flags & CertSrvAiaPublishFlags.AddToCertAiaIssuer) > 0;
         /// <summary>
         /// Gets True if specified URL is configured to include specified URL to all issued certificate's Authority Information Access extension as a OCSP Locator.
         /// </summary>
         /// <remarks>HTTP:// paths are supported.</remarks>
-        public Boolean OCSP => (Flags & CertSrvAiaUrlFlags.AddToCertAiaOcsp) > 0;
+        public Boolean OCSP => (Flags & CertSrvAiaPublishFlags.AddToCertAiaOcsp) > 0;
 
         void m_initialize() {
             var regex = new Regex(@"^\d+");
             Match match = regex.Match(RegURI);
             if (match.Success) {
                 Int16 matches = Convert.ToInt16(match.Value);
-                Flags = (CertSrvAiaUrlFlags)matches;
+                Flags = (CertSrvAiaPublishFlags)matches;
             } else { throw new FormatException(); }
             ConfigURI = RegURI
                 .Replace("%11", "<CAObjectClass>")
