@@ -622,7 +622,7 @@ namespace PKI.CertificateServices {
         /// <remarks>Returned object inherits from <see cref="CommonObjectSecurity"/> and implements common methods.</remarks>
         public CertSrvSecurityDescriptor GetSecurityDescriptor() {
             _regReader.SetRootNode(true);
-            if (!_regReader.RegistryOnline && _regReader.RegistryOnline) {
+            if (!_regReader.RegistryOnline && !_regReader.DcomOnline) {
                 ServerUnavailableException e = new ServerUnavailableException(DisplayName);
                 e.Data.Add(nameof(e.Source), OfflineSource.Registry | OfflineSource.DCOM);
                 throw e;
