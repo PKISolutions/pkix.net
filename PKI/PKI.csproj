@@ -161,6 +161,7 @@
     <Compile Include="Management\ActiveDirectory\DsEnrollServerFlag.cs" />
     <Compile Include="Management\CertificateServices\CertSrvAiaUrlEntry.cs" />
     <Compile Include="Management\CertificateServices\CertSrvAiaPublishFlags.cs" />
+    <Compile Include="Management\CertificateServices\CertSrvCdpAiaConfig.cs" />
     <Compile Include="Management\CertificateServices\CertSrvCdpConfig.cs" />
     <Compile Include="Management\CertificateServices\CertSrvCdpPublishFlags.cs" />
     <Compile Include="Management\CertificateServices\CertSrvCdpUrlEntry.cs" />
@@ -204,6 +205,7 @@
     <Compile Include="Management\ActiveDirectory\DsPkiContainer.cs" />
     <Compile Include="Management\ActiveDirectory\DsNTAuthContainer.cs" />
     <Compile Include="Management\CertificateServices\CertSrvSetupStatus.cs" />
+    <Compile Include="Management\CertificateServices\ICertSrvCdpAiaUri.cs" />
     <Compile Include="Management\CertificateServices\OcspResponder.cs" />
     <Compile Include="Management\CertificateServices\OcspResponderAuditFilter.cs" />
     <Compile Include="Management\CertificateServices\OcspResponderClientRole.cs" />

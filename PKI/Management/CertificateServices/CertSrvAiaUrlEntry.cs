@@ -1,25 +1,16 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using PKI.Management.CertificateServices;
 
 namespace SysadminsLV.PKI.Management.CertificateServices {
     /// <summary>
     /// Represents an Authority Information Access URL object. An object contains URL information and URL publication settings.
-    /// An URL indicates how clients can obtain presented certificate's issuer certificate, or how to locate authoritative OCSP responder. These URLs
-    /// are generally used for certificate chain building purposes to determine whether the presented certificate came from trusted CA.
+    /// An URL indicates how clients can obtain presented certificate's issuer certificate, or how to locate authoritative OCSP responder.
+    /// These URLs are generally used for certificate chain building purposes to determine whether the presented certificate came from trusted CA.
     /// </summary>
-    public class CertSrvAiaUrlEntry {
+    public sealed class CertSrvAiaUrlEntry : ICertSrvCdpAiaUri {
         CertSrvAiaPublishFlags flags;
 
-        /// <summary>Initializes a new instance of the <strong>CertSrvAiaUrlEntry</strong> class using URL string.</summary>
-        /// <param name="regUri">An URL that is formatted as follows: flags:protocol/ActualURL/options.
-        /// See <see cref="RegURI">RegURI</see> property for variable replacement tokens
-        /// and <see cref="flags">flags</see> property for detailed information about publication flags.</param>
-        /// <exception cref="ArgumentNullException">The <strong>regUri</strong> parameter is null or empty.</exception>
-        /// <exception cref="FormatException">The string in the <strong>regUri</strong> parameter does not match required pattern.</exception>
-        /// <remarks>
-        /// <p>Only absolute (local), UNC paths and LDAP:// URLs are supported for CRT file publishing.</p>
-        /// <p>Only LDAP:// and HTTP:// URLs are supported for CRT file retrieval.</p>
-        /// </remarks>
         CertSrvAiaUrlEntry(String uri, Boolean isConfigUri, CertSrvAiaPublishFlags publishFlags) {
             if (isConfigUri) {
                 initializeFromConfig(uri, publishFlags);
@@ -30,9 +21,7 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
             getUrlScheme();
         }
 
-        /// <summary>
-        /// Gets an URL representation that is shown in Certification Authority MMC snap-in Extensions tab. See <see cref="RegURI"> for detailed variable token
-        /// replacement rules.</see></summary>
+        /// <summary>Gets an URL representation that is shown in Certification Authority MMC snap-in Extensions tab.</summary>
         public String Uri { get; private set; }
         /// <summary>
         /// Gets the protocol scheme used by this object.
@@ -120,12 +109,26 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
         public override String ToString() {
             return Uri;
         }
+        /// <inheritdoc />
+        public override Boolean Equals(Object obj) {
+            return !ReferenceEquals(null, obj) && (ReferenceEquals(this, obj) ||
+                                                   obj.GetType() == GetType() && @equals((CertSrvAiaUrlEntry) obj));
+        }
+        Boolean @equals(CertSrvAiaUrlEntry other) {
+            return String.Equals(Uri, other.Uri, StringComparison.OrdinalIgnoreCase);
+        }
+        /// <inheritdoc />
+        public override Int32 GetHashCode() {
+            return StringComparer.OrdinalIgnoreCase.GetHashCode(Uri);
+        }
 
         /// <summary>
         /// Gets an URL that is formatted as follows: flags:protocol/ActualURL/options.
         /// <p>for example, an URL can be: 3:http://pki.company.com/AIA/%2_%3%4.crt </p>
         /// See <strong>Remarks</strong> for detailed URL structure.
         /// </summary>
+        /// <exception cref="ArgumentNullException">The <strong>uri</strong> parameter is null or empty.</exception>
+        /// <exception cref="FormatException">The string in the <strong>uri</strong> parameter does not match required pattern.</exception>
         /// <remarks>The following replacement tokens are defined for AIA URL variables:
         /// <p>%1 -  &lt;ServerDNSName&gt; (The DNS name of the certification authority server).</p>
         /// <p>%2 -  &lt;ServerShortName&gt; (The NetBIOS name of the certification authority server).</p>
@@ -143,6 +146,17 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
 
             return new CertSrvAiaUrlEntry(uri, false, CertSrvAiaPublishFlags.None);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <exception cref="ArgumentNullException">The <strong>uri</strong> parameter is null or empty.</exception>
+        /// <param name="uri"></param>
+        /// <param name="publishFlags"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// <p>Only absolute (local), UNC paths and LDAP:// URLs are supported for CRT file publishing.</p>
+        /// <p>Only LDAP:// and HTTP:// URLs are supported for CRT file retrieval.</p>
+        /// </remarks>
         public static CertSrvAiaUrlEntry FromConfigUri(String uri, CertSrvAiaPublishFlags publishFlags) {
             if (String.IsNullOrWhiteSpace(uri)) {
                 throw new ArgumentException("'uri' parameter cannot be null or empty string.");

@@ -26,7 +26,6 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
             if (!ConfigManager.RegistryOnline && !ConfigManager.DcomOnline) {
                 var e = new ServerUnavailableException(ComputerName);
                 e.Data.Add(nameof(e.Source), OfflineSource.All);
-
                 throw e;
             }
         }
@@ -187,6 +186,9 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
         /// Gets the CA configuration read/write manager used by implementers to read and write configuration.
         /// </summary>
         protected CertSrvConfigUtil ConfigManager { get; }
+        /// <summary>
+        /// Gets a collection of config entries to update when calling <see cref="Commit"/> method.
+        /// </summary>
         protected List<RegConfigEntry> ConfigEntries { get; } = new List<RegConfigEntry>();
 
         protected virtual void OnCommit() { }

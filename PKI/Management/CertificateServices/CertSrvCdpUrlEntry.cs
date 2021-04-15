@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using PKI.CertificateServices;
+using PKI.Management.CertificateServices;
 
 namespace SysadminsLV.PKI.Management.CertificateServices {
     /// <summary>
     /// Represents a CRL Distribution Point URL object. An object contains URL information and URL publication settings.
     /// </summary>
     /// <threadsafety static="true" instance="false"/>
-    public class CertSrvCdpUrlEntry {
+    public sealed class CertSrvCdpUrlEntry : ICertSrvCdpAiaUri {
         CertSrvCdpPublishFlags flags = CertSrvCdpPublishFlags.None;
 
         CertSrvCdpUrlEntry(String uri, Boolean isConfigUri, CertSrvCdpPublishFlags publishFlags) {
@@ -138,9 +139,9 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
         /// <inheritdoc />
         public override Boolean Equals(Object obj) {
             return !ReferenceEquals(null, obj) && (ReferenceEquals(this, obj) ||
-                                                   obj.GetType() == GetType() && Equals((CertSrvCdpUrlEntry) obj));
+                                                   obj.GetType() == GetType() && @equals((CertSrvCdpUrlEntry) obj));
         }
-        protected Boolean Equals(CertSrvCdpUrlEntry other) {
+        Boolean equals(CertSrvCdpUrlEntry other) {
             return String.Equals(Uri, other.Uri, StringComparison.OrdinalIgnoreCase);
         }
         /// <inheritdoc />
