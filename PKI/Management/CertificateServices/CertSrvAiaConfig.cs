@@ -13,7 +13,7 @@ namespace PKI.Management.CertificateServices {
         }
 
         void initialize() {
-            String[] cdpEntry = ConfigManager.GetMultiStringEntry(ACTIVE_CRLPUBLICATIONURLS);
+            String[] cdpEntry = ConfigManager.GetMultiStringEntry(ACTIVE_CACERTPUBLICATIONURLS);
             foreach (String regEntry in cdpEntry) {
                 _entries.Add(CertSrvAiaUrlEntry.FromRegUri(regEntry));
             }
