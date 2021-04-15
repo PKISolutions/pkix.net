@@ -24,6 +24,19 @@ namespace SysadminsLV.PKI.Management.CertificateServices.Database {
         /// </exception>
         public AdcsDbQueryFilter(String columnName, AdcsDbSeekOperator op, Object value)
             : this(columnName, op, AdcsDbSortOrder.None, value) { }
+        /// <summary>
+        /// Initializes a new instance of <strong>AdcsDbQueryFilter</strong> class from column name,
+        /// comparison operator, sorting order and filter qualifier value.
+        /// </summary>
+        /// <param name="columnName">A valid column name to use in the filter.</param>
+        /// <param name="op">A logical operator of the data-query qualifier.</param>
+        /// <param name="sort">Specifies the sort order for the column.</param>
+        /// <param name="value">A query qualifier value to use in the filter.</param>
+        /// <remarks>
+        /// Indexed columns with zero or one filter can include a sort order of <strong>Ascending</strong>
+        /// or <strong>Descending</strong>. Non-indexed columns or columns with two or more filters must use
+        /// <strong>None</strong>.
+        /// </remarks>
         public AdcsDbQueryFilter(String columnName, AdcsDbSeekOperator op, AdcsDbSortOrder sort, Object value) {
             if (String.IsNullOrEmpty(columnName)) {
                 throw new ArgumentNullException(nameof(columnName));
