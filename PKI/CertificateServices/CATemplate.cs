@@ -53,6 +53,10 @@ namespace PKI.CertificateServices {
                 throw new PlatformNotSupportedException();
             }
 
+            version = certificateAuthority.Version;
+            sku = certificateAuthority.Sku;
+            configString = certificateAuthority.ConfigString;
+
             ICertPropReaderD propReader;
             if (certificateAuthority.PingRequest()) {
                 propReader = new CertPropReaderD(configString, false);
@@ -67,9 +71,6 @@ namespace PKI.CertificateServices {
             Name = certificateAuthority.Name;
             DisplayName = certificateAuthority.DisplayName;
             ComputerName = certificateAuthority.ComputerName;
-            version = certificateAuthority.Version;
-            sku = certificateAuthority.Sku;
-            configString = certificateAuthority.ConfigString;
 
             String[,] templates = propReader.GetCaTemplates();
             for (Int32 i = 0; i <= templates.GetUpperBound(0); i++) {
