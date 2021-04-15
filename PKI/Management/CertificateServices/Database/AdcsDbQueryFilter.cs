@@ -22,13 +22,16 @@ namespace SysadminsLV.PKI.Management.CertificateServices.Database {
         /// <exception cref="ArgumentNullException">
         /// <strong>columnName</strong> or <strong>value</strong> parameters is null.
         /// </exception>
-        public AdcsDbQueryFilter(String columnName, AdcsDbSeekOperator op, Object value) {
+        public AdcsDbQueryFilter(String columnName, AdcsDbSeekOperator op, Object value)
+            : this(columnName, op, AdcsDbSortOrder.None, value) { }
+        public AdcsDbQueryFilter(String columnName, AdcsDbSeekOperator op, AdcsDbSortOrder sort, Object value) {
             if (String.IsNullOrEmpty(columnName)) {
                 throw new ArgumentNullException(nameof(columnName));
             }
 
             ColumnName = columnName;
             LogicalOperator = op;
+            SortOrder = sort;
             QualifierValue = value ?? throw new ArgumentNullException(nameof(value));
         }
 
@@ -42,6 +45,12 @@ namespace SysadminsLV.PKI.Management.CertificateServices.Database {
         /// is used with the <see cref="QualifierValue"/> property to define the data-query qualifier.
         /// </summary>
         public AdcsDbSeekOperator LogicalOperator { get; }
+        /// <summary>
+        /// Specifies the sort order of the date-query qualifier for the column. Indexed columns with zero or one filter can include
+        /// <strong>Ascending</strong> or <strong>Descending</strong>. Non-indexed columns or columns with two or more restrictions must
+        /// use <strong>None</strong> for sorting.
+        /// </summary>
+        public AdcsDbSortOrder SortOrder { get; }
         /// <summary>
         /// Specifies the data query qualifier applied to this column. This parameter, along with the
         /// <see cref="LogicalOperator"/> parameter, determines which data is returned to the Certificate Services view.
