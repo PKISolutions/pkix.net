@@ -130,7 +130,11 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
         public String GetRegUri() {
             return $"{(Int32)flags}:{translateConfigToRegVar(Uri)}";
         }
-
+        /// <summary>
+        /// Returns a bitwise combination of flags enabled for the current object.
+        /// </summary>
+        /// <returns>Enabled flags.</returns>
+        public CertSrvCdpPublishFlags GetPublishFlags() => flags;
         /// <inheritdoc />
         public override String ToString() {
             return Uri;
