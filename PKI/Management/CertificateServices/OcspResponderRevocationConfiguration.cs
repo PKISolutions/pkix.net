@@ -309,7 +309,7 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
             } catch {
                 return;
             }
-            for (Int32 i = 0; i < props.GetUpperBound(0); i++) {
+            for (Int32 i = 0; i <= props.GetUpperBound(0); i++) {
                 switch (props[i, 0]) {
                     case MSFT_PROV_ERRORCODE:
                         RevocationStatusCode = (Int32)props[i, 1];
