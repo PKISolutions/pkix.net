@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using PKI.Structs;
 using PKI.Utils;
+using SysadminsLV.Asn1Parser;
 using SysadminsLV.PKI.Win32;
 
 namespace System.Security.Cryptography {
@@ -45,9 +46,13 @@ namespace System.Security.Cryptography {
         /// domain-joined, an OID is searched by using local registration information.</param>
         public Oid2(String oid, OidGroupEnum group, Boolean searchInDirectory) {
             try {
-                CryptoConfig.EncodeOID(oid);
+                // try to validate if input OID contains OID value instead of friendly name
+                Asn1Utils.EncodeObjectIdentifier(new Oid(oid));
                 _searchBy = "ByValue";
-            } catch { _searchBy = "ByName"; }
+            } catch {
+                _searchBy = "ByName";
+            }
+
             if (Environment.OSVersion.Version.Major >= 6) { _cng = true; }
             if (searchInDirectory) {
                 if (DsUtils.Ping()) { initializeDS(oid, group); } else { initializeLocal(oid, group); }
@@ -399,10 +404,10 @@ namespace System.Security.Cryptography {
         public static Oid2[] GetAllOids(String value, Boolean searchInDirectory) {
             String oidvalue;
             try {
-                CryptoConfig.EncodeOID(value);
+                Asn1Utils.EncodeObjectIdentifier(new Oid(value));
                 oidvalue = value;
             } catch {
-                Oid oid = new Oid(value);
+                var oid = new Oid(value);
                 if (String.IsNullOrEmpty(oid.Value)) {
                     throw new ArgumentException("Specified OID value is not recognized.", nameof(value));
                 }
@@ -459,9 +464,18 @@ namespace System.Security.Cryptography {
         /// </remarks>
         /// <returns>Registered object identifier.</returns>
         public static Oid2 Register(String value, String friendlyName, OidGroupEnum group, Boolean writeInDirectory, CultureInfo localeId, String cpsUrl = null) {
-            if (String.IsNullOrEmpty(value)) { throw new ArgumentNullException(nameof(value)); }
-            if (String.IsNullOrEmpty(friendlyName)) { throw new ArgumentNullException(nameof(friendlyName)); }
-            try { CryptoConfig.EncodeOID(value); } catch { throw new InvalidDataException("The value is not valid OID string."); }
+            if (String.IsNullOrEmpty(value)) {
+                throw new ArgumentNullException(nameof(value));
+            }
+            if (String.IsNullOrEmpty(friendlyName)) {
+                throw new ArgumentNullException(nameof(friendlyName));
+            }
+            try {
+                Asn1Utils.EncodeObjectIdentifier(new Oid(value));
+            } catch {
+                throw new InvalidDataException("The value is not valid OID string.");
+            }
+
             String cn = null;
             if (writeInDirectory) {
                 if (!DsUtils.Ping()) { throw new NotSupportedException("Workgroup environment is not supported."); }
