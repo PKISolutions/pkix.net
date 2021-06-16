@@ -143,10 +143,15 @@ namespace System.Security.Cryptography.X509Certificates {
             if (asn.Tag != 48) { throw new Asn1InvalidTagException(asn.Offset); }
             asn.MoveNext();
             SerialNumber = Asn1Utils.DecodeInteger(asn.GetTagRawData(), true);
-            asn.MoveNext();
-            if (asn.Tag != (Byte)Asn1Type.UTCTime && asn.Tag != (Byte)Asn1Type.GeneralizedTime) { throw new Asn1InvalidTagException(asn.Offset); }
-            if (asn.Tag == (Byte)Asn1Type.UTCTime) { RevocationDate = new Asn1UtcTime(asn.GetTagRawData()).Value; }
-            if (asn.Tag == (Byte)Asn1Type.GeneralizedTime) { RevocationDate = Asn1Utils.DecodeGeneralizedTime(asn.GetTagRawData()); }
+            asn.MoveNextAndExpectTags((Byte)Asn1Type.UTCTime, (Byte)Asn1Type.GeneralizedTime);
+            switch (asn.Tag) {
+                case (Byte)Asn1Type.UTCTime:
+                    RevocationDate = new Asn1UtcTime(asn.GetTagRawData()).Value;
+                    break;
+                case (Byte)Asn1Type.GeneralizedTime:
+                    RevocationDate = Asn1Utils.DecodeGeneralizedTime(asn.GetTagRawData());
+                    break;
+            }
             if (asn.MoveNext()) {
                 var extensions = new X509ExtensionCollection();
                 extensions.Decode(asn.GetTagRawData());
