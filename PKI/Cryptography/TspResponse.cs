@@ -145,7 +145,7 @@ namespace SysadminsLV.PKI.Cryptography {
                     break;
             }
             getSigningTime();
-            _rawData.AddRange(asn.RawData);
+            _rawData.AddRange(asn.GetRawData());
             validate();
         }
         void getSigningTime() {

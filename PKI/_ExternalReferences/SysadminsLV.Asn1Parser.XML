@@ -599,9 +599,19 @@
             Gets the length of the current structure's payload.
             </summary>
         </member>
+        <member name="P:SysadminsLV.Asn1Parser.Asn1Reader.Length">
+            <summary>
+            Gets the internal ASN.1 stream length in bytes.
+            </summary>
+        </member>
         <member name="P:SysadminsLV.Asn1Parser.Asn1Reader.NextCurrentLevelOffset">
             <summary>
             This property is subject to change.
+            </summary>
+        </member>
+        <member name="P:SysadminsLV.Asn1Parser.Asn1Reader.NextSiblingOffset">
+            <summary>
+            Gets next structure's offset at same level (next sibling).
             </summary>
         </member>
         <member name="P:SysadminsLV.Asn1Parser.Asn1Reader.NextOffset">
@@ -618,6 +628,12 @@
             <summary>
             Get's original ASN.1-encoded byte array.
             </summary>
+        </member>
+        <member name="P:SysadminsLV.Asn1Parser.Asn1Reader.Item(System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="index"></param>
         </member>
         <member name="M:SysadminsLV.Asn1Parser.Asn1Reader.testNestedForUniversal(System.Int64,System.Int32)">
             <summary>
@@ -655,6 +671,12 @@
             Gets the raw data of the tag, which includes tag, length bytes and payload.
             </summary>
             <returns>A full binary copy of the tag.</returns>
+        </member>
+        <member name="M:SysadminsLV.Asn1Parser.Asn1Reader.GetRawData">
+            <summary>
+            Gets a copy of internal ASN.1 stream. The size of the stream is equals to <see cref="P:SysadminsLV.Asn1Parser.Asn1Reader.Length"/> member value.
+            </summary>
+            <returns>A full binary copy of the internal byte stream.</returns>
         </member>
         <member name="M:SysadminsLV.Asn1Parser.Asn1Reader.GetNestedNodeCount">
             <summary>

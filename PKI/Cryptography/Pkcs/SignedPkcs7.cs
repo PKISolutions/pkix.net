@@ -115,7 +115,7 @@ namespace SysadminsLV.PKI.Cryptography.Pkcs {
                         throw new ArgumentException("Invalid type.");
                 }
             }
-            _rawData.AddRange(asn.RawData);
+            _rawData.AddRange(asn.GetRawData());
             DecodeContent(content);
         }
         void reset() {

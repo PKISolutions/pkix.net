@@ -141,6 +141,7 @@
     <Compile Include="Dcom\ICertDbAdminD.cs" />
     <Compile Include="Dcom\ICertPropWriterD.cs" />
     <Compile Include="Dcom\Implementations\BulkRowRemovalOption.cs" />
+    <Compile Include="Dcom\Implementations\CertConfigD2.cs" />
     <Compile Include="Dcom\Implementations\CertConfigEnrollEndpointD.cs" />
     <Compile Include="Dcom\CertConfigOption.cs" />
     <Compile Include="Dcom\CertConfigLocation.cs" />

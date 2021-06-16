@@ -75,7 +75,7 @@ namespace System.Security.Cryptography {
                 switch (Oid.Value) {
                     // Content Type
                     case "1.2.840.113549.1.9.3":
-                        Oid value = Asn1Utils.DecodeObjectIdentifier(asn.RawData);
+                        Oid value = Asn1Utils.DecodeObjectIdentifier(asn.GetRawData());
                         SB.Append("Content type (OID=1.2.840.113549.1.9.3): ");
                         if (multiLine) {
                             SB.Append(Environment.NewLine + "    " + value.Value);
@@ -90,14 +90,14 @@ namespace System.Security.Cryptography {
                     case "1.2.840.113549.1.9.4":
                         SB.Append("Message Digest (OID=1.2.840.113549.1.9.4): ");
                         if (multiLine) {
-                            SB.Append(Environment.NewLine + Asn1Utils.DecodeOctetString(asn.RawData));
+                            SB.Append(Environment.NewLine + Asn1Utils.DecodeOctetString(asn.GetRawData()));
                         } else {
-                            SB.Append(Asn1Utils.DecodeOctetString(asn.RawData));
+                            SB.Append(Asn1Utils.DecodeOctetString(asn.GetRawData()));
                         }
                         break;
                     // Renewal certificate
                     case "1.3.6.1.4.1.311.13.1":
-                        X509Certificate2 cert = new X509Certificate2(asn.RawData);
+                        X509Certificate2 cert = new X509Certificate2(asn.GetRawData());
                         SB.Append("Renewal Certificate (OID=1.3.6.1.4.1.311.13.1): ");
                         if (multiLine) {
                             SB.Append(Environment.NewLine + "    " + cert.ToString().Replace("\r\n", "\r\n    "));

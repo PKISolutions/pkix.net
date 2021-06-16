@@ -295,14 +295,14 @@ namespace PKI.OCSP {
             }
             if (SignerCertificates.Count > 0) {
                 using (var signerInfo = new MessageSigner(SignerCertificates[0], new Oid2(signatureAlgorithm, false))) {
-                    SignatureIsValid = signerInfo.VerifyData(tbsResponseData.RawData, signature);
+                    SignatureIsValid = signerInfo.VerifyData(tbsResponseData.GetRawData(), signature);
                 }
             } else {
                 findCertInStore();
                 if (SignerCertificates.Count > 0) {
                     using (var signerInfo =
                         new MessageSigner(SignerCertificates[0], new Oid2(signatureAlgorithm, false))) {
-                        SignatureIsValid = signerInfo.VerifyData(tbsResponseData.RawData, signature);
+                        SignatureIsValid = signerInfo.VerifyData(tbsResponseData.GetRawData(), signature);
                     }
                 } else {
                     ResponseErrorInformation |= OCSPResponseComplianceError.MissingCert;

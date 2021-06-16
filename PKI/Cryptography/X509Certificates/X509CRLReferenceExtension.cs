@@ -92,7 +92,7 @@ namespace System.Security.Cryptography.X509Certificates {
                                 CRLNumber = SB.ToString();
                                 break;
                             case 162:
-                                ThisUpdate = Asn1Utils.DecodeGeneralizedTime(asn.RawData);
+                                ThisUpdate = Asn1Utils.DecodeGeneralizedTime(asn.GetRawData());
                                 break;
                         }
                     } while (asn.MoveNext());
