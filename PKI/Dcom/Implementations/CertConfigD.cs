@@ -1,88 +1,46 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using CERTCLILib;
 
 namespace SysadminsLV.PKI.Dcom.Implementations {
     /// <summary>
-    /// Represents Windows implementation for <see cref="ICertConfigD"/> interface.
+    /// Represents Windows implementation for <see cref="ICertConfigD"/> interface. This class represents an instance implementation
+    /// of <see cref="CertConfigD2"/> static class and can be used in dependency injection scenarios.
     /// </summary>
     public class CertConfigD : ICertConfigD {
-
-        String getConfig(CertConfigOption option) {
-            var certConfig = new CCertConfigClass();
-            try {
-                return certConfig.GetConfig((Int32)option);
-            } catch {
-                return null;
-            } finally {
-                Marshal.FinalReleaseComObject(certConfig);
-            }
-        }
-
         /// <inheritdoc />
         public String GetDefaultConfig() {
-            return getConfig(CertConfigOption.DefaultConfig);
+            return CertConfigD2.GetDefaultConfig();
         }
         /// <inheritdoc />
         public String GetFirstConfig() {
-            return getConfig(CertConfigOption.FirstConfig);
+            return CertConfigD2.GetFirstConfig();
         }
         /// <inheritdoc />
         public String GetLocalConfig() {
-            return getConfig(CertConfigOption.LocalConfig);
+            return CertConfigD2.GetLocalConfig();
         }
         /// <inheritdoc />
         public String GetLocalActiveConfig() {
-            return getConfig(CertConfigOption.LocalActiveConfig);
+            return CertConfigD2.GetLocalActiveConfig();
         }
         /// <inheritdoc />
         public String GetUIConfig() {
-            return getConfig(CertConfigOption.UIPickConfig);
+            return CertConfigD2.GetUIConfig();
         }
         /// <inheritdoc />
         public String GetUISkipLocalConfig() {
-            return getConfig(CertConfigOption.UIPickConfigSkipLocalCA);
+            return CertConfigD2.GetUISkipLocalConfig();
         }
         /// <inheritdoc />
         public ICertConfigEntryD[] EnumConfigEntries() {
-            var list = new List<ICertConfigEntryD>();
-            var certConfig = new CCertConfigClass();
-            while (certConfig.Next() >= 0) {
-                list.Add(new CertConfigEntryD(certConfig));
-            }
-            Marshal.FinalReleaseComObject(certConfig);
-            return list.ToArray();
+            return CertConfigD2.EnumConfigEntries();
         }
         /// <inheritdoc />
         public ICertConfigEntryD FindConfigEntryByCertificateName(String caName) {
-            var certConfig = new CCertConfigClass();
-
-            while (certConfig.Next() >= 0) {
-                try {
-                    if (certConfig.GetField("CommonName").Equals(caName, StringComparison.CurrentCultureIgnoreCase)) {
-                        var entry = new CertConfigEntryD(certConfig);
-                        Marshal.FinalReleaseComObject(certConfig);
-                        return entry;
-                    }
-                } catch { }
-            }
-            return null;
+            return CertConfigD2.FindConfigEntryByCertificateName(caName);
         }
         /// <inheritdoc />
         public ICertConfigEntryD FindConfigEntryByServerName(String computerName) {
-            var certConfig = new CCertConfigClass();
-
-            while (certConfig.Next() >= 0) {
-                try {
-                    if (certConfig.GetField("Server").Equals(computerName, StringComparison.OrdinalIgnoreCase)) {
-                        var entry = new CertConfigEntryD(certConfig);
-                        Marshal.FinalReleaseComObject(certConfig);
-                        return entry;
-                    }
-                } catch { }
-            }
-            return null;
+            return CertConfigD2.FindConfigEntryByServerName(computerName);
         }
     }
 }
