@@ -190,7 +190,9 @@ namespace System.Security.Cryptography {
                 OidGroup = OidGroupEnum.AllGroups;
                 DistinguishedName = String.Empty;
             }
-            if (!found) { initializeLocal(oid, group); }
+            if (!found) {
+                initializeLocal(oid, group);
+            }
         }
         Boolean Equals(Oid2 other) {
             return String.Equals(Value, other.Value)
