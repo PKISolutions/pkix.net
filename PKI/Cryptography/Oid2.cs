@@ -57,7 +57,11 @@ namespace System.Security.Cryptography {
 
             if (Environment.OSVersion.Version.Major >= 6) { _cng = true; }
             if (searchInDirectory) {
-                if (DsUtils.Ping()) { initializeDS(oid, group); } else { initializeLocal(oid, group); }
+                if (DsUtils.Ping()) {
+                    initializeDS(oid, group);
+                } else {
+                    initializeLocal(oid, group);
+                }
             } else {
                 initializeLocal(oid, group);
             }
