@@ -204,6 +204,7 @@ namespace SysadminsLV.PKI.Cryptography {
             }
             if (signedCms.Certificates.Count == 0) {
                 ResponseErrors |= TspValidationErrorStatus.MissingSigningCertificate;
+                return;
             }
             validateChain();
             validateSignature();
