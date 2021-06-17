@@ -45,9 +45,11 @@ namespace System.Security.Cryptography {
         /// <param name="searchInDirectory">Specifies whether to search for an object identifier in Active Directory. If the machine is not
         /// domain-joined, an OID is searched by using local registration information.</param>
         public Oid2(String oid, OidGroupEnum group, Boolean searchInDirectory) {
+            var flatOid = new Oid(oid);
             try {
                 // try to validate if input OID contains OID value instead of friendly name
-                Asn1Utils.EncodeObjectIdentifier(new Oid(oid));
+                Asn1Utils.EncodeObjectIdentifier(flatOid);
+                oid = flatOid.Value;
                 _searchBy = "ByValue";
             } catch {
                 _searchBy = "ByName";
