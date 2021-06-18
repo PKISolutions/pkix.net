@@ -36,7 +36,7 @@ namespace System.Security.Cryptography.X509Certificates {
         /// property.</param>
         /// <remarks>Use this property to retrieve an <see cref="X509CTLEntry"/> object from an <see cref="X509CTLEntryCollection"/>
         /// object if you know the <see cref="X509CTLEntry.Thumbprint">Thumbprint</see> value of the <see cref="X509CTLEntry"/>
-        /// object. You can use the <see cref="this[string]"/> property to retrieve an <see cref="X509CTLEntry"/> object if you know
+        /// object. You can use the <see cref="this[String]"/> property to retrieve an <see cref="X509CTLEntry"/> object if you know
         /// its location in the collection</remarks>
         /// <returns>An <see cref="X509CTLEntry"/> object.</returns>
         public X509CTLEntry this[String thumbprint] {

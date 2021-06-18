@@ -1,11 +1,10 @@
 ﻿using System.IO;
+using System.Linq;
 using System.Numerics;
 using System.Security.Permissions;
 using System.Text;
-using PKI.Cryptography.X509Certificates;
 using PKI.Exceptions;
 using PKI.ManagedAPI;
-using PKI.Structs;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
 using SysadminsLV.PKI.Cryptography;
@@ -19,6 +18,10 @@ namespace System.Security.Cryptography.X509Certificates {
     /// Provides methods that help you use X.509 certificate revocation lists (CRL).
     /// </summary>
     public class X509CRL2 : IDisposable {
+        readonly X509CRLEntryCollection _revokedCerts = new X509CRLEntryCollection();
+        readonly Byte[] _rawData;
+        readonly X509ExtensionCollection _extensions = new X509ExtensionCollection();
+
         Int32 sigUnused;
         Byte[] signature;
         /// <summary>
@@ -26,7 +29,8 @@ namespace System.Security.Cryptography.X509Certificates {
         /// </summary>
         /// <param name="path">The path to a CRL file.</param>
         public X509CRL2(String path) {
-            m_import(Crypt32Managed.CryptFileToBinary(path));
+            _rawData = Crypt32Managed.CryptFileToBinary(path);
+            m_decode();
         }
         /// <summary>
         /// Initializes a new instance of the <see cref="X509CRL2"/> class defined from a sequence of bytes representing
@@ -35,8 +39,11 @@ namespace System.Security.Cryptography.X509Certificates {
         /// <param name="rawData">A byte array containing data from an X.509 CRL.</param>
         /// <exception cref="ArgumentNullException"></exception>
         public X509CRL2(Byte[] rawData) {
-            if (rawData == null) { throw new ArgumentNullException(nameof(rawData)); }
-            m_import(rawData);
+            if (rawData == null) {
+                throw new ArgumentNullException(nameof(rawData));
+            }
+            _rawData = rawData.ToArray();
+            m_decode();
         }
 
         /// <summary>
@@ -98,20 +105,29 @@ namespace System.Security.Cryptography.X509Certificates {
         /// Common extensions include information regarding key identifiers (X509AuthorityKeyIdentifierExtension),
         /// CRL sequence numbers, additional revocation information (Delta CRL Locations), and other uses.</p>
         /// </remarks>
-        public X509ExtensionCollection Extensions { get; private set; } = new X509ExtensionCollection();
+        public X509ExtensionCollection Extensions {
+            get {
+                var retValue = new X509ExtensionCollection();
+                foreach (X509Extension extension in _extensions) {
+                    retValue.Add(extension);
+                }
+
+                return retValue;
+            }
+        }
         /// <summary>
         /// Gets a collection of <see cref="X509CRLEntry">X509CRLEntry</see> objects.
         /// </summary>
         /// <remarks><see cref="X509CRLEntry"/> object represents a CRL entry.
         /// Each entry contains at least the following information: <see cref="X509CRLEntry.SerialNumber">SerialNumber</see>
         /// of revoked certificate and <see cref="X509CRLEntry.RevocationDate">RevocationDate</see> that represents a date
-        /// and time at which certificate was revoked. Additionaly, revocation entry may contain additional information,
+        /// and time at which certificate was revoked. Additionally, revocation entry may contain additional information,
         /// such revocation reason.</remarks>
-        public X509CRLEntryCollection RevokedCertificates { get; } = new X509CRLEntryCollection();
+        public X509CRLEntryCollection RevokedCertificates => new X509CRLEntryCollection(_revokedCerts);
         /// <summary>
         /// Gets the raw data of a certificate revocation list.
         /// </summary>
-        public Byte[] RawData { get; private set; }
+        public Byte[] RawData => _rawData.ToArray();
         /// <summary>
         /// Gets a handle to a Microsoft Cryptographic API CRL context described by an unmanaged
         /// <strong>CRL_CONTEXT</strong> structure.
@@ -119,7 +135,7 @@ namespace System.Security.Cryptography.X509Certificates {
         /// <remarks>
         ///	This member is zero by default. In order, to retrieve unmanaged handle a <see cref="GetSafeContext"/>
         /// method must be called. When this handle is no longer necessary, it must be freed by calling
-        /// <see cref="Dispose(bool)"/> method.
+        /// <see cref="Dispose(Boolean)"/> method.
         /// </remarks>
         public SafeCRLHandleContext Handle { get; private set; } = new SafeCRLHandleContext();
         /// <summary>
@@ -131,21 +147,21 @@ namespace System.Security.Cryptography.X509Certificates {
         /// it is commonly used to find a particular certificate revocation list in a certificate store.</remarks>
         public String Thumbprint { get; private set; }
 
-        void m_decode(Byte[] rawData) {
+        void m_decode() {
             try {
                 Type = X509CrlType.BaseCrl;
-                var signedInfo = new SignedContentBlob(rawData, ContentBlobType.SignedBlob);
+                var signedInfo = new SignedContentBlob(_rawData, ContentBlobType.SignedBlob);
                 // signature and alg
                 signature = signedInfo.Signature.Value;
                 sigUnused = signedInfo.Signature.UnusedBits;
                 SignatureAlgorithm = signedInfo.SignatureAlgorithm.AlgorithmId;
                 // tbs
-                Asn1Reader asn = new Asn1Reader(signedInfo.ToBeSignedData);
+                var asn = new Asn1Reader(signedInfo.ToBeSignedData);
                 if (!asn.MoveNext()) { throw new Asn1InvalidTagException(); }
                 // version
                 if (asn.Tag == (Byte)Asn1Type.INTEGER) {
                     Version = (Int32)Asn1Utils.DecodeInteger(asn.GetTagRawData()) + 1;
-                    asn.MoveNextCurrentLevel();
+                    asn.MoveNextSibling();
                 } else {
                     Version = 1;
                 }
@@ -154,11 +170,11 @@ namespace System.Security.Cryptography.X509Certificates {
                 if (h.AlgorithmId.Value != SignatureAlgorithm.Value) {
                     throw new CryptographicException("Algorithm mismatch.");
                 }
-                if (!asn.MoveNextCurrentLevel()) { throw new Asn1InvalidTagException(); }
+                if (!asn.MoveNextSibling()) { throw new Asn1InvalidTagException(); }
                 // issuer
                 IssuerName = new X500DistinguishedName(asn.GetTagRawData());
                 // NextUpdate, RevokedCerts and Extensions are optional. Ref: RFC5280, p.118
-                if (!asn.MoveNextCurrentLevel()) { throw new Asn1InvalidTagException(); }
+                if (!asn.MoveNextSibling()) { throw new Asn1InvalidTagException(); }
                 switch (asn.Tag) {
                     case (Byte)Asn1Type.UTCTime:
                         ThisUpdate = new Asn1UtcTime(asn.GetTagRawData()).Value;
@@ -169,7 +185,7 @@ namespace System.Security.Cryptography.X509Certificates {
                     default:
                         throw new Asn1InvalidTagException();
                 }
-                if (!asn.MoveNextCurrentLevel()) { return; }
+                if (!asn.MoveNextSibling()) { return; }
                 switch (asn.Tag) {
                     case (Byte)Asn1Type.UTCTime:
                     case (Byte)Asn1Type.GeneralizedTime:
@@ -183,51 +199,48 @@ namespace System.Security.Cryptography.X509Certificates {
                             default:
                                 throw new Asn1InvalidTagException();
                         }
-                        if (!asn.MoveNextCurrentLevel()) { return; }
+                        if (!asn.MoveNextSibling()) { return; }
                         if (asn.Tag == 48) {
-                            getRevCerts(asn);
-                            if (!asn.MoveNextCurrentLevel()) { return; }
-                            getExts(asn);
+                            _revokedCerts.Decode(asn);
+                            if (!asn.MoveNextSibling()) { return; }
+                            readExtensions(asn);
                         } else {
-                            getExts(asn);
+                            readExtensions(asn);
                         }
                         break;
                     case 48:
                         if (asn.Tag == 48) {
-                            getRevCerts(asn);
-                            if (!asn.MoveNextCurrentLevel()) { return; }
-                            getExts(asn);
+                            _revokedCerts.Decode(asn);
+                            if (!asn.MoveNextSibling()) { return; }
+                            readExtensions(asn);
                         } else {
-                            getExts(asn);
+                            readExtensions(asn);
                         }
                         break;
                     default:
-                        getExts(asn);
+                        readExtensions(asn);
                         break;
                 }
+                calculateThumbprint();
             } catch (Exception e) {
                 throw new CryptographicException("Cannot find the requested object.", e);
             }
         }
-        void getRevCerts(Asn1Reader asn) {
-            RevokedCertificates.Decode(asn.GetTagRawData());
-            RevokedCertificates.Close();
-        }
-        void getExts(Asn1Reader asn) {
-            Extensions.Decode(asn.GetPayload());
-            if (Extensions[X509ExtensionOid.DeltaCRLIndicator] != null) {
+        void readExtensions(Asn1Reader asn) {
+            // extensions are explicitly tagged, so move to inner
+            asn.MoveNext();
+            // and then decode
+            _extensions.Decode(asn);
+            if (_extensions[X509ExtensionOid.DeltaCRLIndicator] != null) {
                 Type = X509CrlType.DeltaCrl;
             }
-            var crlNumExt = (X509CRLNumberExtension)Extensions[X509ExtensionOid.CRLNumber];
+            var crlNumExt = (X509CRLNumberExtension)_extensions[X509ExtensionOid.CRLNumber];
             CRLNumber = crlNumExt?.CRLNumber ?? 0;
         }
-        void m_import(Byte[] rawData) {
-            Reset();
-            m_decode(rawData);
-            RawData = rawData;
+        void calculateThumbprint() {
             var sb = new StringBuilder();
-            using (SHA256 hasher = SHA256.Create()) {
-                foreach (Byte b in hasher.ComputeHash(RawData)) {
+            using (var hasher = SHA256.Create()) {
+                foreach (Byte b in hasher.ComputeHash(_rawData)) {
                     sb.AppendFormat("{0:X2}", b);
                 }
             }
@@ -235,22 +248,26 @@ namespace System.Security.Cryptography.X509Certificates {
         }
         void genBriefString(StringBuilder SB) {
             String n = Environment.NewLine;
-            SB.Append($"[Type]{n}  {Type}{n}{n}");
-            SB.Append($"[Issuer]{n}  {Issuer}{n}{n}");
-            SB.Append($"[This Update]{n}  {ThisUpdate}{n}{n}");
-            SB.Append($"[Next Update]{n}  ");
+            SB.Append($@"[Type]
+  {Type}
+
+
+[Issuer]
+  {Issuer}
+
+
+[This Update]
+  {ThisUpdate}
+
+
+[Next Update]
+  ");
             if (NextUpdate == null) {
                 SB.Append("Infinity");
             } else {
                 SB.Append(NextUpdate);
             }
-            SB.Append($"{n}{n}[Revoked Certificate Count]{n}  ");
-            if (RevokedCertificates == null) {
-                SB.Append("0");
-            } else {
-                SB.Append(RevokedCertificates.Count);
-            }
-            SB.Append(n + n);
+            SB.Append($"{n}{n}[Revoked Certificate Count]{n}  {_revokedCerts.Count}{n}{n}");
         }
         void genVerboseString(StringBuilder SB) {
             String n = Environment.NewLine;
@@ -268,23 +285,23 @@ namespace System.Security.Cryptography.X509Certificates {
             } else {
                 SB.Append($"Next Update: {NextUpdate}{n}");
             }
-            if (RevokedCertificates == null) {
+            if (_revokedCerts.Count == 0) {
                 SB.Append($"CRL Entries: 0{n}");
             } else {
-                SB.Append($"CRL Entries: {RevokedCertificates.Count}{n}");
-                foreach (X509CRLEntry revcert in RevokedCertificates) {
-                    SB.Append($"    Serial Number: {revcert.SerialNumber}{n}");
-                    SB.Append($"    Revocation Date: {revcert.RevocationDate}{n}");
-                    if (revcert.ReasonCode != 0) {
-                        SB.Append($"    Revocation Reason: {revcert.ReasonMessage} ({revcert.ReasonCode}){n}");
+                SB.Append($"CRL Entries: {_revokedCerts.Count}{n}");
+                foreach (X509CRLEntry revCert in _revokedCerts) {
+                    SB.Append($"    Serial Number: {revCert.SerialNumber}{n}");
+                    SB.Append($"    Revocation Date: {revCert.RevocationDate}{n}");
+                    if (revCert.ReasonCode != 0) {
+                        SB.Append($"    Revocation Reason: {revCert.ReasonMessage} ({revCert.ReasonCode}){n}");
                     }
                     SB.Append(n);
                 }
             }
-            if (Extensions == null) {
+            if (_extensions == null) {
                 SB.Append($"CRL Extensions: 0{n}");
             } else {
-                SB.Append($"CRL Extensions: {Extensions.Count}{n}");
+                SB.Append($"CRL Extensions: {_extensions.Count}{n}");
                 foreach (X509Extension ext in Extensions) {
                     SB.Append($"  OID={ext.Oid.Format(true)}");
                     SB.Append($"Critical={ext.Critical}, Length={ext.RawData.Length} ({ext.RawData.Length:x2}):{n}");
@@ -299,28 +316,6 @@ namespace System.Security.Cryptography.X509Certificates {
         }
 
         /// <summary>
-        /// Populates an <see cref="X509CRL2"/> object with the CRL information from a file.
-        /// </summary>
-        /// <remarks>This method uses a CRL file, such as a file with a .crl extension, that represents
-        /// an X.509 certificate revocation list and populates the <see cref="X509CRL2"/> object with
-        /// the CRL the file contains. The method suppoers Base64-encoded or DER-encoded X.509 CRLs.
-        /// </remarks>
-        /// <param name="path">The path to a CRL file.</param>
-        [Obsolete("Deprecated.", true)]
-        public void Import(String path) {
-            Reset();
-            m_import(Crypt32Managed.CryptFileToBinary(path));
-        }
-        /// <summary>
-        /// Populates an <see cref="X509CRL2"/> object with the CRL information from a DER-encoded byte array.
-        /// </summary>
-        /// <param name="rawData">A byte array containing data from an X.509 CRL.</param>
-        [Obsolete("Deprecated.", true)]
-        public void Import(Byte[] rawData) {
-            Reset();
-            m_import(rawData);
-        }
-        /// <summary>
         /// Exports the current X509CRL2 object to a file.
         /// </summary>
         /// <param name="path">The path to a CRL file.</param>
@@ -328,19 +323,18 @@ namespace System.Security.Cryptography.X509Certificates {
         /// <exception cref="ArgumentException">Specified encoding type is not supported.</exception>
         /// <exception cref="UninitializedObjectException">An object is not initialized.</exception>
         public void Export(String path, X509EncodingType encoding) {
-            if (RawData == null) { throw new UninitializedObjectException(); }
             String Base64;
             switch (encoding) {
                 case X509EncodingType.Base64:
-                    Base64 = AsnFormatter.BinaryToString(RawData, EncodingType.Base64);
+                    Base64 = AsnFormatter.BinaryToString(_rawData, EncodingType.Base64);
                     File.WriteAllText(path, Base64);
                     break;
                 case X509EncodingType.Base64Header:
-                    Base64 = AsnFormatter.BinaryToString(RawData, EncodingType.Base64CrlHeader);
+                    Base64 = AsnFormatter.BinaryToString(_rawData, EncodingType.Base64CrlHeader);
                     File.WriteAllText(path, Base64);
                     break;
                 case X509EncodingType.Binary:
-                    File.WriteAllBytes(path, RawData);
+                    File.WriteAllBytes(path, _rawData);
                     break;
                 default:
                     throw new ArgumentException("Specified encoding is not supported.");
@@ -352,7 +346,7 @@ namespace System.Security.Cryptography.X509Certificates {
         /// <param name="encoding">Encoding type. Default is <strong>CRYPT_STRING_BASE64X509CRLHEADER</strong>.</param>
         /// <returns>Encoded text.</returns>
         /// <remarks>
-        ///		The following encoding types are not supported:
+        ///		The following encoding types are <strong>not</strong> supported:
         ///		<list type="bullet">
         ///			<item>Binary</item>
         ///			<item>Base64Any</item>
@@ -361,26 +355,25 @@ namespace System.Security.Cryptography.X509Certificates {
         ///		</list>
         /// </remarks>
         /// <exception cref="ArgumentException">Specified encoding type is not supported.</exception>
-        /// <exception cref="UninitializedObjectException">An object is not initialized.</exception>
         public String Encode(EncodingType encoding = EncodingType.Base64CrlHeader) {
-            if (RawData == null) { throw new UninitializedObjectException(); }
-            if (encoding == EncodingType.Binary) { throw new ArgumentException("Specified encoding is not supported."); }
-            return AsnFormatter.BinaryToString(RawData, encoding);
+            if (encoding == EncodingType.Binary) {
+                throw new ArgumentException("Specified encoding is not supported.");
+            }
+            return AsnFormatter.BinaryToString(_rawData, encoding);
         }
         /// <summary>
         /// Encodes the current X509CRL2 object and sends result to the output.
         /// </summary>
-        /// <param name="encoding">Encding type. Can be either Base64Header or Base64 (with no headers).</param>
+        /// <param name="encoding">Encoding type. Can be either Base64Header or Base64 (with no headers).</param>
         /// <returns>The Base64-encoded string.</returns>
         /// <remarks>This method is obsolete. A new overload is preferred.</remarks>
-        /// <exception cref="UninitializedObjectException">An object is not initialized.</exception>
+        [Obsolete("Use 'Encode(EncodingType)' overload instead.", true)]
         public String Encode(X509EncodingType encoding) {
-            if (RawData == null) { throw new UninitializedObjectException(); }
             switch (encoding) {
                 case X509EncodingType.Base64:
-                    return Convert.ToBase64String(RawData, Base64FormattingOptions.InsertLineBreaks);
+                    return Convert.ToBase64String(_rawData, Base64FormattingOptions.InsertLineBreaks);
                 case X509EncodingType.Base64Header:
-                    return AsnFormatter.BinaryToString(RawData, EncodingType.Base64CrlHeader);
+                    return AsnFormatter.BinaryToString(_rawData, EncodingType.Base64CrlHeader);
                 default:
                     throw new ArgumentException("Binary encoding is not supported.");
             }
@@ -389,18 +382,8 @@ namespace System.Security.Cryptography.X509Certificates {
         /// Resets the state of an X509CRL2.
         /// </summary>
         /// <remarks>This method can be used to reset the state of the CRL. It also frees any resources associated with the CRL.</remarks>
-        public void Reset() {
-            Dispose();
-            Extensions = new X509ExtensionCollection();
-            RevokedCertificates.Clear();
-            Version = 0;
-            Type = X509CrlType.BaseCrl;
-            IssuerName = null;
-            ThisUpdate = new DateTime();
-            NextUpdate = null;
-            SignatureAlgorithm = null;
-            RawData = null;
-        }
+        [Obsolete("This method is obsolete.", true)]
+        public void Reset() { }
         /// <summary>
         /// Displays an X.509 certificate revocation list in text format.
         /// </summary>
@@ -413,8 +396,7 @@ namespace System.Security.Cryptography.X509Certificates {
         /// <returns>The CRL information.</returns>
         /// <remarks>If the object is not initialized, the method returns class name.</remarks>
         public String ToString(Boolean verbose = false) {
-            if (RawData == null) { return base.ToString(); }
-            StringBuilder SB = new StringBuilder();
+            var SB = new StringBuilder();
             if (verbose) {
                 genVerboseString(SB);
             } else {
@@ -433,15 +415,13 @@ namespace System.Security.Cryptography.X509Certificates {
         ///		Specifies whether to perform CRL issuer and certificate's subject name binary comparison. This parameter is not implemented.
         /// </param>
         /// <exception cref="CryptographicException">
-        /// 		The data is invalid.
+        /// 	The data is invalid.
         ///  </exception>
-        /// <exception cref="UninitializedObjectException">An object is not initialized.</exception>
         ///  <returns>
         /// 		<strong>True</strong> if the specified certificate is signed this CRL. Otherwise <strong>False</strong>.
         ///  </returns>
         public Boolean VerifySignature(X509Certificate2 issuer, Boolean strict = false) {
-            if (RawData == null) { throw new UninitializedObjectException(); }
-            var signedInfo = new SignedContentBlob(RawData, ContentBlobType.SignedBlob);
+            var signedInfo = new SignedContentBlob(_rawData, ContentBlobType.SignedBlob);
             return MessageSigner.VerifyData(signedInfo, issuer.PublicKey);
         }
         /// <summary>
@@ -462,13 +442,10 @@ namespace System.Security.Cryptography.X509Certificates {
             if (cert == null) {
                 throw new ArgumentNullException(nameof(cert));
             }
-            if (RawData == null) {
-                throw new UninitializedObjectException();
-            }
-            if (RevokedCertificates.Count < 1) {
+            if (_revokedCerts.Count < 1) {
                 return false;
             }
-            return RevokedCertificates[cert.SerialNumber] == null;
+            return _revokedCerts[cert.SerialNumber] == null;
         }
         /// <summary>
         ///     Gets a <see cref="SafeCRLHandleContext" /> for the X509 certificate revocation list. The caller of this
@@ -479,10 +456,9 @@ namespace System.Security.Cryptography.X509Certificates {
         /// <permission cref="SecurityPermission">
         ///     The immediate caller must have SecurityPermission/UnmanagedCode to use this method
         /// </permission>
-        /// <exception cref="UninitializedObjectException">An object is not initialized.</exception>
         public void GetSafeContext() {
             if (Handle.IsInvalid || Handle.IsClosed) {
-                Handle = Handle = Crypt32.CertCreateCRLContext(65537, RawData, (UInt32)RawData.Length);
+                Handle = Handle = Crypt32.CertCreateCRLContext(65537, _rawData, (UInt32)_rawData.Length);
                 GC.KeepAlive(this);
             }
         }
@@ -491,33 +467,27 @@ namespace System.Security.Cryptography.X509Certificates {
         /// </summary>
         /// <returns>Certificate revocation list sequence number.</returns>
         /// <remarks>If CRL is X.509 CRL Version 1, or CRL does not contains 'CRL Number' extension, a zero is returned.</remarks>
-        /// <exception cref="UninitializedObjectException">An object is not initialized.</exception>
         public BigInteger GetCRLNumber() {
-            if (RawData == null) { throw new UninitializedObjectException(); }
-            X509Extension e = Extensions[X509ExtensionOid.CRLNumber];
+            X509Extension e = _extensions[X509ExtensionOid.CRLNumber];
             return ((X509CRLNumberExtension)e)?.CRLNumber ?? 0;
         }
         /// <summary>
         /// Gets the date and time when the next CRL is planned to be published. The method uses either <strong>Next CRL Publish</strong> extension
         /// or <strong>NextUpdate</strong> field to determine when a newer version should be issued.
         /// </summary>
-        /// <returns>A <see cref="DateTime"/> object, or <strong>NULL</strong>, if CRL is valid infinitly and no updates are expected.</returns>
-        /// <exception cref="UninitializedObjectException">An object is not initialized.</exception>
+        /// <returns>A <see cref="DateTime"/> object, or <strong>NULL</strong>, if CRL is valid infinitely and no updates are expected.</returns>
         public DateTime? GetNextPublish() {
-            if (RawData == null) { throw new UninitializedObjectException(); }
-            if (Extensions == null) { return NextUpdate; }
-            X509Extension e = Extensions[X509ExtensionOid.NextCRLPublish];
+            if (_extensions == null) { return NextUpdate; }
+            X509Extension e = _extensions[X509ExtensionOid.NextCRLPublish];
             return e == null ? NextUpdate : Asn1Utils.DecodeDateTime(e.RawData);
         }
         /// <summary>
-        /// Indiciates whether the current Base CRL has configured to use Delta CRLs too.
+        /// Indicates whether the current Base CRL has configured to use Delta CRLs too.
         /// </summary>
         /// <returns><strong>True</strong> is the current CRL is configured to use Delta CRLs, otherwise <strong>False</strong>.</returns>
         /// <remarks>If the current CRL type already is Delta CRL, the method returns <strong>False</strong>.</remarks>
-        /// <exception cref="UninitializedObjectException">An object is not initialized.</exception>
         public Boolean HasDelta() {
-            if (RawData == null) { throw new UninitializedObjectException(); }
-            return Type != X509CrlType.DeltaCrl && Extensions[X509ExtensionOid.FreshestCRL] != null;
+            return Type != X509CrlType.DeltaCrl && _extensions[X509ExtensionOid.FreshestCRL] != null;
         }
         /// <summary>
         /// Displays a X.509 Certificate Revocation List UI dialog.
@@ -542,7 +512,7 @@ namespace System.Security.Cryptography.X509Certificates {
             return !(obj is null) &&
                    (ReferenceEquals(this, obj)
                     || obj.GetType() == GetType()
-                    && Equals((X509CRL2) obj));
+                    && Equals((X509CRL2)obj));
         }
         Boolean Equals(X509CRL2 other) {
             return Version == other.Version

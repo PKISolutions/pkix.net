@@ -4,9 +4,6 @@ using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using PKI.Cryptography;
-using PKI.Cryptography.X509Certificates;
-using PKI.Structs;
 using PKI.Utils;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
@@ -165,7 +162,6 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates {
             // revokedCerts
             if (RevokedCertificates.Count > 0) {
                 rawBytes.AddRange(RevokedCertificates.Encode());
-                RevokedCertificates.Close();
             }
             // extensions
             if (Version == 2) {

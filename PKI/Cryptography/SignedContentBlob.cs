@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using PKI.Cryptography;
-using PKI.Structs;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
 using SysadminsLV.PKI.Tools.MessageOperations;
@@ -86,7 +84,7 @@ namespace SysadminsLV.PKI.Cryptography {
             ToBeSignedData = asn.GetTagRawData();
             asn.MoveNextCurrentLevelAndExpectTags(0x30);
             SignatureAlgorithm = new AlgorithmIdentifier(asn.GetTagRawData());
-            asn.MoveNextCurrentLevelAndExpectTags((Byte)Asn1Type.BIT_STRING);
+            asn.MoveNextSiblingAndExpectTags(Asn1Type.BIT_STRING);
             Signature = new Asn1BitString(asn);
         }
 

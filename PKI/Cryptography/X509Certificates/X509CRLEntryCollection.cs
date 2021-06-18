@@ -17,18 +17,14 @@ namespace System.Security.Cryptography.X509Certificates {
         /// </summary>
         /// <param name="entries"></param>
         public X509CRLEntryCollection(IEnumerable<X509CRLEntry> entries) : base(entries) { }
-
-        /// <summary>
-        /// Closes current collection state and makes it read-only. The collection cannot be modified further.
-        /// </summary>
-        public void Close() { IsReadOnly = true; }
+        
         /// <summary>
         /// Encodes a collection of <see cref="X509CRLEntry"/> objects to a ASN.1-encoded byte array.
         /// </summary>
         /// <returns>ASN.1-encoded byte array. If the collection is empty, a <strong>NULL</strong> is returned.</returns>
         public Byte[] Encode() {
             if (InternalList.Count == 0) { return null; }
-            List<Byte> rawData = new List<Byte>();
+            var rawData = new List<Byte>();
             foreach (X509CRLEntry item in InternalList) {
                 rawData.AddRange(item.Encode());
             }
@@ -40,14 +36,40 @@ namespace System.Security.Cryptography.X509Certificates {
         /// <param name="rawData">ASN.1-encoded byte array.</param>
         /// <exception cref="Asn1InvalidTagException">The encoded data is not valid.</exception>
         /// <exception cref="ArgumentNullException">The <strong>rawData</strong> parameter is null reference.</exception>
+        /// <remarks>This method removes any existing entries in the collection before decoding.</remarks>
         public void Decode(Byte[] rawData) {
-            if (rawData == null) { throw new ArgumentNullException(nameof(rawData)); }
-            Asn1Reader asn = new Asn1Reader(rawData);
-            if (asn.Tag != 48) { throw new Asn1InvalidTagException(asn.Offset); }
-            if (!asn.MoveNext()) { throw new Asn1InvalidTagException(asn.Offset); }
+            if (rawData == null) {
+                throw new ArgumentNullException(nameof(rawData));
+            }
+
+            Decode(new Asn1Reader(rawData));
+        }
+        /// <summary>
+        /// Decodes a ASN.1-encoded byte array that contains revoked certificate information to a collection.
+        /// </summary>
+        /// <param name="asn">ASN.1 that points to the beginning of the CRL entry collection structure.</param>
+        /// <exception cref="Asn1InvalidTagException">The encoded data is not valid.</exception>
+        /// <exception cref="ArgumentNullException">The <strong>rawData</strong> parameter is null reference.</exception>
+        /// <remarks>This method removes any existing entries in the collection before decoding.</remarks>
+        public void Decode(Asn1Reader asn) {
+            if (asn == null) {
+                throw new ArgumentNullException(nameof(asn));
+            }
+            if (asn.Tag != 48) {
+                throw new Asn1InvalidTagException(asn.Offset);
+            }
+            Int32 offset = asn.Offset;
+            InternalList.Clear();
+            InternalList.Capacity = asn.GetNestedNodeCount();
+            if (!asn.MoveNext()) {
+                throw new Asn1InvalidTagException(asn.Offset);
+            }
+
             do {
-                InternalList.Add(new X509CRLEntry(asn.GetTagRawData()));
-            } while (asn.MoveNextCurrentLevel());
+                InternalList.Add(new X509CRLEntry(asn));
+            } while (asn.MoveNextSibling());
+            
+            asn.Seek(offset);
         }
 
 
@@ -59,7 +81,7 @@ namespace System.Security.Cryptography.X509Certificates {
         /// property.</param>
         /// <remarks>Use this property to retrieve an <see cref="X509CRLEntry"/> object from an <see cref="X509CRLEntryCollection"/>
         /// object if you know the <see cref="X509CRLEntry.SerialNumber">SerialNumber</see> value of the <see cref="X509CRLEntry"/>
-        /// object. You can use the <see cref="this[string]"/> property to retrieve an <see cref="X509CRLEntry"/> object if you know
+        /// object. You can use the <see cref="this[String]"/> property to retrieve an <see cref="X509CRLEntry"/> object if you know
         /// its location in the collection</remarks>
         /// <returns>An <see cref="X509CRLEntry"/> object.</returns>
         public X509CRLEntry this[String serialNumber] {

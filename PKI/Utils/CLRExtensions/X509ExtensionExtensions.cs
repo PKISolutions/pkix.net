@@ -42,24 +42,37 @@ namespace SysadminsLV.PKI.Utils.CLRExtensions {
         /// <exception cref="Asn1InvalidTagException">Decoder encountered an unexpected ASN.1 type identifier.</exception>
         /// <returns>Decoded extension object.</returns>
         public static X509Extension Decode(Byte[] rawData) {
-            if (rawData == null) { throw new ArgumentNullException(nameof(rawData)); }
+            if (rawData == null) {
+                throw new ArgumentNullException(nameof(rawData));
+            }
 
-            Asn1Reader asn = new Asn1Reader(rawData);
-            if (asn.Tag != 48) { throw new Asn1InvalidTagException(asn.Offset); }
-
-            asn.MoveNext();
-            if (asn.Tag != (Byte)Asn1Type.OBJECT_IDENTIFIER) { throw new Asn1InvalidTagException(asn.Offset); }
-
+            return Decode(new Asn1Reader(rawData));
+        }
+        /// <summary>
+        /// Decodes ASN.1-encoded byte array to an instance of <see cref="X509Extension"/> class.
+        /// </summary>
+        /// <param name="asn">ASN.1 reader that points to the beginning of the X.509 extension structure.</param>
+        /// <exception cref="ArgumentNullException"><strong>asn</strong> parameter is null.</exception>
+        /// <exception cref="Asn1InvalidTagException">Decoder encountered an unexpected ASN.1 type identifier.</exception>
+        /// <returns>Decoded extension object.</returns>
+        public static X509Extension Decode(Asn1Reader asn) {
+            if (asn.Tag != 48) {
+                throw new Asn1InvalidTagException(asn.Offset);
+            }
+            Int32 offset = asn.Offset;
+            asn.MoveNextAndExpectTags((Byte)Asn1Type.OBJECT_IDENTIFIER);
             Oid oid = new Asn1ObjectIdentifier(asn).Value;
             Boolean critical = false;
-            asn.MoveNext();
+            asn.MoveNextAndExpectTags((Byte)Asn1Type.BOOLEAN, (Byte)Asn1Type.OCTET_STRING);
             if (asn.Tag == (Byte)Asn1Type.BOOLEAN) {
                 critical = Asn1Utils.DecodeBoolean(asn.GetTagRawData());
-                asn.MoveNext();
+                asn.MoveNextAndExpectTags((Byte)Asn1Type.OCTET_STRING);
             }
-            if (asn.Tag != (Byte)Asn1Type.OCTET_STRING) { throw new Asn1InvalidTagException(asn.Offset); }
+            // at this point ASN points to OCTET_STRING
 
-            return CryptographyUtils.ConvertExtension(new X509Extension(oid, asn.GetPayload(), critical));
+            X509Extension retValue = CryptographyUtils.ConvertExtension(new X509Extension(oid, asn.GetPayload(), critical));
+            asn.Seek(offset);
+            return retValue;
         }
     }
 }

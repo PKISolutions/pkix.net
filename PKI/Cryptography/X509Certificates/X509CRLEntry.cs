@@ -1,12 +1,12 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Numerics;
 using System.Text;
 using PKI.Exceptions;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
-using SysadminsLV.PKI.Utils.CLRExtensions;
 
 namespace System.Security.Cryptography.X509Certificates {
     /// <summary>
@@ -14,7 +14,6 @@ namespace System.Security.Cryptography.X509Certificates {
     /// </summary>
     /// <remarks>This class do not expose any public constructor.</remarks>
     public sealed class X509CRLEntry {
-
         /// <summary>
         /// Initializes a new instance of the <strong>X509CRLEntry</strong> class from a serial number, revocation date and revocation reason code.
         /// </summary>
@@ -33,9 +32,14 @@ namespace System.Security.Cryptography.X509Certificates {
         /// <exception cref="ArgumentNullException">The <strong>serialNumber</strong> parameter is null reference or empty string.</exception>
         /// <exception cref="ArgumentException">The <strong>reasonCode</strong> contains invalid reason code.</exception>
         public X509CRLEntry(String serialNumber, DateTime? revocationDate = null, Int32 reasonCode = 0) {
-            if (String.IsNullOrEmpty(serialNumber)) { throw new ArgumentNullException(nameof(serialNumber)); }
-            if (revocationDate == null) { revocationDate = DateTime.Now; }
-            m_initialize(serialNumber, revocationDate.Value, reasonCode);
+            if (String.IsNullOrEmpty(serialNumber)) {
+                throw new ArgumentNullException(nameof(serialNumber));
+            }
+            if (revocationDate == null) {
+                revocationDate = DateTime.Now;
+            }
+
+            encode(serialNumber, revocationDate.Value, reasonCode);
         }
         /// <summary>
         /// Initializes a new instance of the <strong>X509CRLEntry</strong> class from a ASN.1-encoded byte array.
@@ -44,8 +48,16 @@ namespace System.Security.Cryptography.X509Certificates {
         /// <exception cref="ArgumentNullException">The <strong>rawData</strong> parameter is null reference.</exception>
         /// <exception cref="InvalidDataException">The data do not contains valid CRL entry structure.</exception>
         public X509CRLEntry(Byte[] rawData) {
-            if (rawData == null) { throw new ArgumentNullException(nameof(rawData)); }
-            m_initialize(rawData);
+            if (rawData == null) {
+                throw new ArgumentNullException(nameof(rawData));
+            }
+            decode(new Asn1Reader(rawData));
+        }
+        public X509CRLEntry(Asn1Reader asn) {
+            if (asn == null) {
+                throw new ArgumentNullException(nameof(asn));
+            }
+            decode(asn);
         }
 
         /// <summary>
@@ -99,7 +111,7 @@ namespace System.Security.Cryptography.X509Certificates {
         ///		</item>
         ///		<item>
         ///			<term>7</term>
-        ///			<description><strong>Privilege Withdrawn</strong> - the certificate holder do not have required priveleges to use the certificate.</description>
+        ///			<description><strong>Privilege Withdrawn</strong> - the certificate holder do not have required privileges to use the certificate.</description>
         ///		</item>
         ///		<item>
         ///			<term>8</term>
@@ -118,14 +130,15 @@ namespace System.Security.Cryptography.X509Certificates {
         /// Gets the textual representation of RevocationCode. See <see cref="ReasonCode"/> for the list of possible values
         /// and code meanings.
         /// </summary>
-        public String ReasonMessage => get_reasontext(ReasonCode);
+        public String ReasonMessage => getReasonText(ReasonCode);
 
         /// <summary>
         /// Gets the ASN.1-encoded byte array.
         /// </summary>
+        [Obsolete("Use 'Encode()' method instead.")]
         public Byte[] RawData { get; private set; }
 
-        void m_initialize(String serialNumber, DateTime revocationDate, Int32 reasonCode) {
+        void encode(String serialNumber, DateTime revocationDate, Int32 reasonCode) {
             if (reasonCode < 0 || reasonCode > 10) {
                 throw new ArgumentException("Revocation reason code is incorrect.");
             }
@@ -138,12 +151,15 @@ namespace System.Security.Cryptography.X509Certificates {
             RawData = Encode();
         }
 
-        void m_initialize(Byte[] rawData) {
-            Asn1Reader asn = new Asn1Reader(rawData);
-            if (asn.Tag != 48) { throw new Asn1InvalidTagException(asn.Offset); }
+        void decode(Asn1Reader asn) {
+            if (asn.Tag != 48) {
+                throw new Asn1InvalidTagException(asn.Offset);
+            }
+            RawData = asn.GetTagRawData();
+            Int32 offset = asn.Offset;
             asn.MoveNext();
             SerialNumber = Asn1Utils.DecodeInteger(asn.GetTagRawData(), true);
-            asn.MoveNextAndExpectTags((Byte)Asn1Type.UTCTime, (Byte)Asn1Type.GeneralizedTime);
+            asn.MoveNextAndExpectTags(Asn1Type.UTCTime, Asn1Type.GeneralizedTime);
             switch (asn.Tag) {
                 case (Byte)Asn1Type.UTCTime:
                     RevocationDate = new Asn1UtcTime(asn.GetTagRawData()).Value;
@@ -152,18 +168,41 @@ namespace System.Security.Cryptography.X509Certificates {
                     RevocationDate = Asn1Utils.DecodeGeneralizedTime(asn.GetTagRawData());
                     break;
             }
-            if (asn.MoveNext()) {
-                var extensions = new X509ExtensionCollection();
-                extensions.Decode(asn.GetTagRawData());
-                X509Extension crlReason = extensions[X509ExtensionOid.CRLReasonCode];
-                if (crlReason != null) {
-                    ReasonCode = crlReason.RawData[2];
-                }
+            if (asn.MoveNextSibling()) {
+                // use high-performant extension decoder instead of generic one.
+                // Since CRLs may store a hundreds of thousands entries, this is
+                // pretty reasonable to save loops whenever possible.
+                readCrlReasonCode(asn);
             }
-            RawData = rawData;
+            asn.Seek(offset);
         }
-        static String get_reasontext(Int32 code) {
-            Hashtable Reasons = new Hashtable {
+        void readCrlReasonCode(Asn1Reader asn) {
+            if (asn.Tag != 48) {
+                return;
+            }
+            asn.MoveNext();
+            do {
+                Int32 offset = asn.Offset;
+                asn.MoveNextAndExpectTags(Asn1Type.OBJECT_IDENTIFIER);
+                var oid = new Asn1ObjectIdentifier(asn).Value;
+                if (oid.Value == X509ExtensionOid.CRLReasonCode) {
+                    asn.MoveNext();
+                    if (asn.Tag == (Byte)Asn1Type.BOOLEAN) {
+                        asn.MoveNext();
+                    }
+                    if (asn.Tag == (Byte)Asn1Type.OCTET_STRING) {
+                        asn.MoveNext();
+                        if (asn.PayloadLength > 0) {
+                            ReasonCode = asn[asn.PayloadStartOffset];
+                            break;
+                        }
+                    }
+                }
+                asn.Seek(offset);
+            } while (asn.MoveNextSibling());
+        }
+        static String getReasonText(Int32 code) {
+            var Reasons = new Hashtable {
                 {0, "Unspecified"},
                 {1, "Key compromise"},
                 {2, "CA Compromise"},
@@ -192,18 +231,21 @@ namespace System.Security.Cryptography.X509Certificates {
         /// </summary>
         /// <returns>ASN.1-encoded byte array</returns>
         public Byte[] Encode() {
-            if (String.IsNullOrEmpty(SerialNumber)) { throw new UninitializedObjectException(); }
-            List<Byte> rawData = new List<Byte>(AsnFormatter.StringToBinary(SerialNumber, EncodingType.Hex));
-            rawData = new List<Byte>(Asn1Utils.Encode(rawData.ToArray(), (Byte)Asn1Type.INTEGER));
-            rawData.AddRange(Asn1Utils.EncodeDateTime(RevocationDate));
-            if (ReasonCode != 0) {
-                Byte[] reasonEnum = { 10, 1, (Byte)ReasonCode };
-                X509ExtensionCollection exts = new X509ExtensionCollection();
-                X509Extension CRlReasonCode = new X509Extension("2.5.29.21", reasonEnum, false);
-                exts.Add(CRlReasonCode);
-                rawData.AddRange(exts.Encode());
+            if (String.IsNullOrEmpty(SerialNumber)) {
+                throw new UninitializedObjectException();
             }
-            return Asn1Utils.Encode(rawData.ToArray(), 48);
+            // TODO:  verify this
+            Asn1Builder builder = Asn1Builder.Create()
+                .AddInteger(BigInteger.Parse(SerialNumber, NumberStyles.AllowHexSpecifier))
+                .AddRfcDateTime(RevocationDate);
+            if (ReasonCode > 0) {
+                builder.AddSequence(x =>
+                                        x.AddSequence(y => {
+                                            y.AddObjectIdentifier(new Oid(X509ExtensionOid.CRLReasonCode));
+                                            return y.AddOctetString(z => z.AddEnumerated((UInt64)ReasonCode));
+                                        }));
+            }
+            return builder.GetEncoded();
         }
         /// <summary>
         /// Compares two <see cref="X509CRLEntry"/> objects for equality.
