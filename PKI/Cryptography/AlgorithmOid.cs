@@ -31,6 +31,7 @@ namespace SysadminsLV.PKI.Cryptography {
         public const String SHA512_RSA      = "1.2.840.113549.1.1.13";
         public const String SHA512_ECDSA    = "1.2.840.10045.4.3.4";
         // specified group
+        public const String Mgf1            = "1.2.840.113549.1.1.8";
         public const String RSA_PSS         = "1.2.840.113549.1.1.10";
         public const String ECDSA_SPECIFIED = "1.2.840.10045.4.3";
 
