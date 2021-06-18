@@ -6,7 +6,6 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.Win32.SafeHandles;
-using PKI.Cryptography;
 using PKI.Exceptions;
 using PKI.Structs;
 using PKI.Utils;
@@ -271,7 +270,7 @@ namespace SysadminsLV.PKI.Tools.MessageOperations {
                 ? new Oid2(new AlgorithmIdentifier(asn.GetPayload()).AlgorithmId, false)
                 : new Oid2(AlgorithmOid.SHA1, false);
             // feed asn reader to salt identifier
-            while (asn.MoveNextCurrentLevel() && asn.Tag != 0xa2) { }
+            while (asn.MoveNextSibling() && asn.Tag != 0xa2) { }
             PssSaltByteCount = asn.Tag == 0xa2
                 ? (Int32)Asn1Utils.DecodeInteger(asn.GetPayload())
                 : 20;
@@ -455,7 +454,7 @@ namespace SysadminsLV.PKI.Tools.MessageOperations {
                 hash.Length,
                 pbSignature,
                 pbSignature.Length,
-                out pcbResult,
+                out _,
                 PaddingScheme);
             if (hresult != 0) {
                 throw new CryptographicException(hresult);
