@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-using PKI.Management.CertificateServices;
 
 namespace SysadminsLV.PKI.Management.CertificateServices {
     /// <summary>

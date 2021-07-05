@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PKI.Management.CertificateServices {
+namespace SysadminsLV.PKI.Management.CertificateServices {
     /// <summary>
     /// Represents an abstraction over CRL Distribution Point or Authority Information Access configuration URL.
     /// </summary>

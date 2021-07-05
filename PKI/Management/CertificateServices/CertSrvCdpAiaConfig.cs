@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using SysadminsLV.PKI.Management.CertificateServices;
 
-namespace PKI.Management.CertificateServices {
+namespace SysadminsLV.PKI.Management.CertificateServices {
     /// <summary>
     /// Represents an abstraction class for ADCS CRL Distribution Point and Authority Information Access
     /// configuration entries.
     /// </summary>
     /// <typeparam name="T">The type of CDP/AIA URL implementation.</typeparam>
-    public abstract class CertSrvCdpAiaConfig<T> : CertSrvConfig, ICollection<T> where T : class, ICertSrvCdpAiaUri {
+    public abstract class CertSrvCdpAiaConfig<T> : CertSrvConfig where T : ICertSrvCdpAiaUri {
         readonly String _propertyName;
 
         /// <summary>
@@ -22,75 +20,64 @@ namespace PKI.Management.CertificateServices {
         protected CertSrvCdpAiaConfig(String computerName, String propertyName) : base(computerName) {
             _propertyName = propertyName;
             ConfigManager.SetRootNode(true);
-            Entries = new List<T>();
+            InternalEntries = new List<T>();
         }
 
         /// <summary>
         /// Gets the element at the specified index.
         /// </summary>
         /// <param name="index">The zero-based index of the element to get or set.</param>
-        public T this[Int32 index] => Entries[index];
+        public T this[Int32 index] => InternalEntries[index];
         /// <summary>
-        /// Gets a collection of URI entries.
+        /// Gets a writable collection of URI entries.
         /// </summary>
-        protected List<T> Entries { get; }
+        protected List<T> InternalEntries { get; }
 
         void modify() {
             ConfigEntries.Clear();
-            var entry = new RegConfigEntry(_propertyName, Entries.Select(x => x.GetRegUri()).ToArray()) {
+            var entry = new RegConfigEntry(_propertyName, InternalEntries.Select(x => x.GetRegUri()).ToArray()) {
                 Action = RegConfigEntryAction.Write
             };
             ConfigEntries.Add(entry);
             IsModified = true;
         }
 
-        /// <inheritdoc />
-        public IEnumerator<T> GetEnumerator() {
-            return Entries.GetEnumerator();
-        }
-        IEnumerator IEnumerable.GetEnumerator() {
-            return GetEnumerator();
-        }
-        /// <inheritdoc />
+        /// <inheritdoc cref="List{T}.Add"/>
         public void Add(T item) {
             if (item == null) {
                 throw new ArgumentNullException(nameof(item));
             }
 
-            Entries.Add(item);
+            InternalEntries.Add(item);
             modify();
         }
-        /// <inheritdoc />
+        /// <inheritdoc cref="List{T}.Remove"/>
         public Boolean Remove(T item) {
             if (item == null) {
                 throw new ArgumentNullException(nameof(item));
             }
 
-            Boolean result = Entries.Remove(item);
+            Boolean result = InternalEntries.Remove(item);
             if (result) {
                 modify();
             }
 
             return result;
         }
-        /// <inheritdoc />
+        /// <inheritdoc cref="List{T}.Clear"/>
         public void Clear() {
-            Entries.Clear();
+            InternalEntries.Clear();
             modify();
         }
-
-        /// <inheritdoc />
+        /// <inheritdoc cref="List{T}.Contains"/>
         public Boolean Contains(T item) {
-            return Entries.Contains(item);
+            return InternalEntries.Contains(item);
         }
-        /// <inheritdoc />
+        /// <inheritdoc cref="List{T}.CopyTo(T[], Int32)"/>
         public void CopyTo(T[] array, Int32 arrayIndex) {
-            Entries.CopyTo(array, arrayIndex);
+            InternalEntries.CopyTo(array, arrayIndex);
         }
-
-        /// <inheritdoc />
-        public Int32 Count => Entries.Count;
-        /// <inheritdoc />
-        public Boolean IsReadOnly => false;
+        /// <inheritdoc cref="List{T}.Count"/>
+        public Int32 Count => InternalEntries.Count;
     }
 }
