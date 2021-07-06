@@ -2,6 +2,7 @@
 using System.DirectoryServices;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using PKI.CertificateServices;
 using SysadminsLV.PKI.Dcom.Implementations;
 using SysadminsLV.PKI.Management.CertificateServices;
 
@@ -10,6 +11,7 @@ namespace SysadminsLV.PKI.Management.ActiveDirectory {
     /// Represents an Enterprise Certification Authority entry in Active Directory.
     /// </summary>
     public class DsCertEnrollServer {
+        readonly PolicyEnrollEndpointUriCollection _cesUriCollection = new PolicyEnrollEndpointUriCollection();
 
         internal DsCertEnrollServer(DirectoryEntry entry) {
             DistinguishedName = entry.Properties["distinguishedName"].Value?.ToString();
@@ -29,13 +31,13 @@ namespace SysadminsLV.PKI.Management.ActiveDirectory {
                     foreach (Object dsUri in uriArray) {
                         try {
                             var webUri = new PolicyEnrollEndpointUri(new CertConfigEnrollEndpointD(dsUri.ToString()));
-                            PolicyEnrollmentEndpoints.Add(webUri);
+                            _cesUriCollection.Add(webUri);
                         } catch { }
                     }
                 } else {
                     try {
                         var webUri = new PolicyEnrollEndpointUri(new CertConfigEnrollEndpointD(enrollUri.ToString()));
-                        PolicyEnrollmentEndpoints.Add(webUri);
+                        _cesUriCollection.Add(webUri);
                     } catch { }
                 }
 
@@ -74,9 +76,16 @@ namespace SysadminsLV.PKI.Management.ActiveDirectory {
         /// </summary>
         public DsEnrollServerFlag Flags { get; }
         /// <summary>
-        /// 
+        /// Gets a collection of Certificate Enrollment Web Service (CES) endpoint URIs.
         /// </summary>
-        public PolicyEnrollEndpointUriCollection PolicyEnrollmentEndpoints { get; }
-            = new PolicyEnrollEndpointUriCollection();
+        public PolicyEnrollEndpointUriCollection PolicyEnrollmentEndpoints => new PolicyEnrollEndpointUriCollection(_cesUriCollection);
+
+        /// <summary>
+        /// Gets a Certification Authority object associated with the current Enrollment Services entry.
+        /// </summary>
+        /// <returns>Certification Authority object.</returns>
+        public CertificateAuthority GetCertificateAuthority() {
+            return CertificateAuthority.Connect(ComputerName);
+        }
     }
 }

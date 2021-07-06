@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.DirectoryServices;
 using System.Linq;
-using PKI.CertificateServices;
 
 namespace SysadminsLV.PKI.Management.ActiveDirectory {
     /// <summary>
@@ -17,11 +16,6 @@ namespace SysadminsLV.PKI.Management.ActiveDirectory {
             readChildren();
         }
 
-        /// <summary>
-        /// Gets an array of registered in Active Directory enrollment services (Enterprise CAs).
-        /// </summary>
-        [Obsolete("Use 'EnrollmentServers' member instead", true)]
-        public CertificateAuthority[] CertificationAuthorities => CertificateAuthority.EnumEnterpriseCAs("Name", "*");
         /// <summary>
         /// Gets an array of registered in Active Directory enrollment service (Enterprise CAs) entries.
         /// </summary>
