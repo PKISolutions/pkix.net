@@ -82,6 +82,44 @@ namespace PKI.Structs {
             public String pszAlgId;
             public Int32 cbSalt;
         }
+        [StructLayout(LayoutKind.Sequential)]
+        public struct BCryptBuffer {
+            public Int32 cbBuffer;
+            public BCryptBufferType BufferType;
+            public IntPtr pvBuffer;
+        }
+        [StructLayout(LayoutKind.Sequential)]
+        public struct NCryptBufferDesc {
+            public Int32 ulVersion;
+            public Int32 cBuffers;
+            public IntPtr pBuffers;
+        }
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct PbeParams {
+            internal const Int32 RgbSaltSize = 8;
 
+            internal CryptPkcs12PbeParams Params;
+            internal IntPtr rgbSalt;
+        }
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct CryptPkcs12PbeParams {
+            internal Int32 iIterations;
+            internal Int32 cbSalt;
+        }
+    }
+
+    public enum BCryptBufferType {
+        PkcsAlgOid = 41,
+        PkcsAlgParam = 42,
+        PkcsName = 45,
+        PkcsSecret = 46,
+    }
+
+    [Flags]
+    public enum NCryptImportFlags {
+        None = 0,
+        NCRYPT_MACHINE_KEY_FLAG = 0x00000020,
+        NCRYPT_OVERWRITE_KEY_FLAG = 0x00000080,
+        NCRYPT_DO_NOT_FINALIZE_FLAG = 0x00000400,
     }
 }

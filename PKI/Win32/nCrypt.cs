@@ -62,7 +62,7 @@ namespace SysadminsLV.PKI.Win32 {
             [Out] out SafeNCryptKeyHandle phKey,
             [In] Byte[] pbData,
             [In] Int32 cbData,
-            [In] UInt32 dwFlags
+            [In] NCryptImportFlags dwFlags
         );
         [DllImport("ncrypt.dll", SetLastError = true)]
         public static extern Int32 NCryptExportKey(
@@ -72,10 +72,12 @@ namespace SysadminsLV.PKI.Win32 {
             [In]              String pszBlobType,
             [In, Optional]    IntPtr pParameterList,
             [Out, Optional]   Byte[] pbOutput,
-            [In]              UInt32 cbOutput,
-            [Out] out UInt32 pcbResult,
+            [In]              Int32  cbOutput,
+            [Out]             out Int32 pcbResult,
             [In]              UInt32 dwFlags
         );
+        [DllImport("ncrypt.dll", CharSet = CharSet.Unicode)]
+        internal static extern Int32 NCryptFinalizeKey(SafeNCryptKeyHandle hKey, Int32 dwFlags);
         [DllImport("ncrypt.dll", CharSet = CharSet.Auto, SetLastError = true)]
         internal static extern Int32 NCryptDeleteKey(
             [In] SafeNCryptKeyHandle hKey,
