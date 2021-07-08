@@ -88,11 +88,11 @@ namespace PKI.Utils {
 
         static void fixExportability(CngKey cngKey, Boolean machineScope) {
             String password = "1";
-            Byte[] encryptedPkcs8 = ExportEncryptedPkcs8(cngKey, password, 1);
+            Byte[] encryptedPkcs8 = exportEncryptedPkcs8(cngKey, password, 1);
             String keyName = cngKey.KeyName;
 
             using (SafeNCryptProviderHandle provHandle = cngKey.ProviderHandle) {
-                ImportEncryptedPkcs8Overwrite(
+                importEncryptedPkcs8Overwrite(
                     encryptedPkcs8,
                     keyName,
                     provHandle,
@@ -105,7 +105,7 @@ namespace PKI.Utils {
         static readonly Byte[] s_pkcs12TripleDesOidBytes =
             Encoding.ASCII.GetBytes("1.2.840.113549.1.12.1.3\0");
 
-        static Byte[] ExportEncryptedPkcs8(
+        static Byte[] exportEncryptedPkcs8(
             CngKey cngKey,
             String password,
             Int32 kdfCount) {
@@ -208,13 +208,13 @@ namespace PKI.Utils {
                 Marshal.FreeHGlobal(pbeParamsPtr);
                 Marshal.FreeHGlobal(descPtr);
                 Marshal.ZeroFreeGlobalAllocUnicode(passwordPtr);
-                Marshal.ZeroFreeGlobalAllocUnicode(oidPtr);
+                Marshal.FreeHGlobal(oidPtr);
 
                 return exported;
             }
         }
 
-        static void ImportEncryptedPkcs8Overwrite(
+        static void importEncryptedPkcs8Overwrite(
             Byte[] encryptedPkcs8,
             String keyName,
             SafeNCryptProviderHandle provHandle,
@@ -222,8 +222,8 @@ namespace PKI.Utils {
             String password) {
 
             // copy encrypted PKCS#8 to unmanaged memory
-            IntPtr encryptedPkcs8Ptr = Marshal.AllocHGlobal(encryptedPkcs8.Length);
-            Marshal.Copy(encryptedPkcs8, 0, encryptedPkcs8Ptr, encryptedPkcs8.Length);
+            //IntPtr encryptedPkcs8Ptr = Marshal.AllocHGlobal(encryptedPkcs8.Length);
+            //Marshal.Copy(encryptedPkcs8, 0, encryptedPkcs8Ptr, encryptedPkcs8.Length);
 
             // copy key name to unmanaged memory
             IntPtr keyNamePtr = Marshal.StringToHGlobalUni(keyName);
@@ -255,6 +255,8 @@ namespace PKI.Utils {
                 pBuffers = buffers,
                 ulVersion = 0
             };
+            IntPtr descPtr = Marshal.AllocHGlobal(Marshal.SizeOf(desc));
+            Marshal.StructureToPtr(desc, descPtr, false);
 
             NCryptImportFlags flags =
                 NCryptImportFlags.NCRYPT_OVERWRITE_KEY_FLAG |
@@ -264,13 +266,13 @@ namespace PKI.Utils {
                 flags |= NCryptImportFlags.NCRYPT_MACHINE_KEY_FLAG;
             }
 
-            Int32 errorCode = NativeMethods.NCrypt.NCryptImportKey(
+            Int32 errorCode = NCrypt.NCryptImportKey(
                 provHandle,
                 IntPtr.Zero,
                 NCRYPT_PKCS8_PRIVATE_KEY_BLOB,
-                ref desc,
+                descPtr,
                 out SafeNCryptKeyHandle keyHandle,
-                encryptedPkcs8Ptr,
+                encryptedPkcs8,
                 encryptedPkcs8.Length,
                 flags);
 
@@ -299,38 +301,8 @@ namespace PKI.Utils {
             }
 
             Marshal.FreeHGlobal(buffers);
-            Marshal.ZeroFreeGlobalAllocUnicode(encryptedPkcs8Ptr);
             Marshal.ZeroFreeGlobalAllocUnicode(keyNamePtr);
             Marshal.ZeroFreeGlobalAllocUnicode(passwordPtr);
-        }
-    }
-
-    static class NativeMethods {
-        internal static class NCrypt {
-            [DllImport("ncrypt.dll", CharSet = CharSet.Unicode)]
-            internal static extern Int32 NCryptExportKey(
-                SafeNCryptKeyHandle hKey,
-                IntPtr hExportKey,
-                String pszBlobType,
-                ref nCrypt2.NCryptBufferDesc pParameterList,
-                Byte[] pbOutput,
-                Int32 cbOutput,
-                [Out] out Int32 pcbResult,
-                Int32 dwFlags);
-
-
-
-
-            [DllImport("ncrypt.dll", CharSet = CharSet.Unicode)]
-            internal static extern Int32 NCryptImportKey(
-                SafeNCryptProviderHandle hProvider,
-                IntPtr hImportKey,
-                String pszBlobType,
-                ref nCrypt2.NCryptBufferDesc pParameterList,
-                out SafeNCryptKeyHandle phKey,
-                IntPtr pbData,
-                Int32 cbData,
-                NCryptImportFlags dwFlags);
         }
     }
 }
