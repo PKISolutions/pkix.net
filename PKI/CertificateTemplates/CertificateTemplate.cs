@@ -136,10 +136,10 @@ namespace PKI.CertificateTemplates {
         public CertificateTemplateSettings Settings { get; private set; }
 
         void m_initialize(String findType, String findValue) {
-            String cn = String.Empty;
+            String cn;
             switch (findType.ToLower()) {
                 case "name":
-                    cn = $"CN={escapeChars(findValue)},{_baseDsPath}";
+                    cn = DsUtils.Find(_baseDsPath, DsUtils.PropCertTemplateOid, escapeChars(findValue));
                     break;
                 case "displayname":
                     cn = DsUtils.Find(_baseDsPath, DsUtils.PropDisplayName, findValue);
@@ -149,6 +149,11 @@ namespace PKI.CertificateTemplates {
                     break;
                 default: throw new Exception("The value for 'findType' must be either 'Name', 'DisplayName' or 'OID'.");
             }
+
+            if (String.IsNullOrWhiteSpace(cn)) {
+                throw new ArgumentException("No certificate templates match search criteria.");
+            }
+
             m_fillproperties(cn);
         }
         void m_fillproperties(String ldapPath) {
