@@ -95,6 +95,10 @@ namespace PKI.CertificateTemplates {
         /// <item>Windows Server 2008 Standard, Enterprise, Datacenter editions</item>
         /// <item>Windows Server 2008 R2 Standard, Enterprise, Datacenter editions</item>
         /// <item>Windows Server 2012 Foundation, Essentials, Standard, Datacenter editions</item>
+        /// <item>Windows Server 2012 R2 Foundation, Essentials, Standard, Datacenter editions</item>
+        /// <item>Windows Server 2016 Standard, Datacenter editions</item>
+        /// <item>Windows Server 2019 Standard, Datacenter editions</item>
+        /// <item>Windows Server 2022 Standard, Datacenter editions</item>
         /// </list></description>
         /// </item>
         /// <item><term>2</term>
@@ -103,6 +107,10 @@ namespace PKI.CertificateTemplates {
         /// <item>Windows Server 2008 Enterprise, Datacenter editions</item>
         /// <item>Windows Server 2008 R2 Standard, Enterprise, Datacenter editions</item>
         /// <item>Windows Server 2012 Foundation, Essentials, Standard, Datacenter editions</item>
+        /// <item>Windows Server 2012 R2 Foundation, Essentials, Standard, Datacenter editions</item>
+        /// <item>Windows Server 2016 Standard, Datacenter editions</item>
+        /// <item>Windows Server 2019 Standard, Datacenter editions</item>
+        /// <item>Windows Server 2022 Standard, Datacenter editions</item>
         /// </list></description>
         /// </item>
         /// <item><term>3</term>
@@ -110,11 +118,19 @@ namespace PKI.CertificateTemplates {
         /// <item>Windows Server 2008 Enterprise, Datacenter editions</item>
         /// <item>Windows Server 2008 R2 Standard, Enterprise, Datacenter editions</item>
         /// <item>Windows Server 2012 Foundation, Essentials, Standard, Datacenter editions</item>
+        /// <item>Windows Server 2012 R2 Foundation, Essentials, Standard, Datacenter editions</item>
+        /// <item>Windows Server 2016 Standard, Datacenter editions</item>
+        /// <item>Windows Server 2019 Standard, Datacenter editions</item>
+        /// <item>Windows Server 2022 Standard, Datacenter editions</item>
         /// </list></description>
         /// </item>
         /// <item><term>4</term>
         /// <description><list type="bullet">
         /// <item>Windows Server 2012 Foundation, Essentials, Standard, Datacenter editions</item>
+        /// <item>Windows Server 2012 R2 Foundation, Essentials, Standard, Datacenter editions</item>
+        /// <item>Windows Server 2016 Standard, Datacenter editions</item>
+        /// <item>Windows Server 2019 Standard, Datacenter editions</item>
+        /// <item>Windows Server 2022 Standard, Datacenter editions</item>
         /// </list></description>
         /// </item>
         /// </list>
@@ -316,8 +332,8 @@ namespace PKI.CertificateTemplates {
                 ? $"  Check for existing certificate in DS: True{nl}"
                 : $"  Check for existing certificate in DS: False{nl}");
             SB.Append((Settings.EnrollmentOptions & (Int32) CertificateTemplateEnrollmentFlags.ReuseKeyTokenFull) > 0
-                ? $"  Reuse key when tokein is full: True{nl}"
-                : $"  Reuse key when tokein is full: False{nl}");
+                ? $"  Reuse key when token is full: True{nl}"
+                : $"  Reuse key when token is full: False{nl}");
             SB.Append($"[Subject]{nl}");
             SB.Append($"  {Settings.SubjectName}{nl}");
             SB.Append(Settings.Cryptography + nl);
