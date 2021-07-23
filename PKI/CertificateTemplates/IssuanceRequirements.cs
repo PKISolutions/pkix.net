@@ -54,18 +54,23 @@ namespace PKI.CertificateTemplates {
             enrollmentFlags = (Int32)_entry[DsUtils.PropPkiEnrollFlags];
             SignatureCount = (Int32)_entry[DsUtils.PropPkiRaSignature];
             if (SignatureCount > 0) {
+                readRaPolicies();
                 String ap = (String)_entry[DsUtils.PropPkiRaAppPolicy];
-                if (ap == null) { return; }
+                if (ap == null) {
+                    return;
+                }
                 if (ap.Contains("`")) {
-                    String[] splitstring = { "`" };
-                    String[] strings = ap.Split(splitstring, StringSplitOptions.RemoveEmptyEntries);
+                    String[] delimiter = { "`" };
+                    String[] strings = ap.Split(delimiter, StringSplitOptions.RemoveEmptyEntries);
                     for (Int32 index = 0; index < strings.Length; index += 3) {
                         switch (strings[index]) {
                             case DsUtils.PropPkiRaAppPolicy: ApplicationPolicy = new Oid(strings[index + 2]); break;
                         }
                     }
-                } else { ApplicationPolicy = new Oid(ap); }
-                readRaPolicies();
+                } else {
+                    ApplicationPolicy = new Oid(ap);
+                }
+
             }
         }
         void readRaPolicies() {
