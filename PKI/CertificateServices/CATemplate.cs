@@ -74,7 +74,7 @@ namespace PKI.CertificateServices {
 
             String[,] templates = propReader.GetCaTemplates();
             for (Int32 i = 0; i <= templates.GetUpperBound(0); i++) {
-                _templates.Add(new CertificateTemplate("Name", templates[i, 0]));
+                _templates.Add(CertificateTemplate.FromCommonName(templates[i, 0]));
             }
         }
         Boolean IsSupported(Int32 schemaVersion) {

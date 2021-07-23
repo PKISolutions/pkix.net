@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -23,17 +22,21 @@ namespace PKI.CertificateTemplates {
             Settings = new CertificateTemplateSettings(template);
         }
         /// <param name="name">Specifies the certificate template name.</param>
+        [Obsolete("Use 'CertificateTemplate.FromCommonName()' method instead.")]
         public CertificateTemplate(String name) : this("Name", name) { }
         /// <param name="findType">
         /// Specifies certificate template search type. The search type can be either:
         /// Name, DisplayName or OID.
         /// </param>
         /// <param name="findValue">
-        /// Specifies search pattern for a type specifed in <strong>findType</strong> argument.
+        /// Specifies search pattern for a type specified in <strong>findType</strong> argument.
         /// </param>
         /// <remarks>Wildcards are not allowed.</remarks>
+        [Obsolete("Use appropriate static factory method instead.")]
         public CertificateTemplate(String findType, String findValue) {
-            if (!DsUtils.Ping()) { throw new Exception(Error.E_DCUNAVAILABLE); }
+            if (!DsUtils.Ping()) {
+                throw new Exception(Error.E_DCUNAVAILABLE);
+            }
             m_initialize(findType, findValue);
         }
 
@@ -230,12 +233,17 @@ namespace PKI.CertificateTemplates {
         /// </summary>
         /// <returns>An array of certificate templates.</returns>
         public static CertificateTemplate[] EnumTemplates() {
-            if (DsUtils.Ping()) {
-                String cn = _baseDsPath;
-                DirectoryEntries entries = DsUtils.GetChildItems(cn);
-                return (from DirectoryEntry item in entries select new CertificateTemplate("name", (String) item.Properties["cn"].Value)).ToArray();
+            if (!DsUtils.Ping()) {
+                throw new Exception(Error.E_DCUNAVAILABLE);
             }
-            throw new Exception(Error.E_DCUNAVAILABLE);
+
+            var retValue = new List<CertificateTemplate>();
+            foreach (DirectoryEntry dsEntry in DsUtils.GetChildItems(_baseDsPath)) {
+                using (dsEntry) {
+                    retValue.Add(FromCommonName(dsEntry.Properties["cn"].Value.ToString())); 
+                }
+            }
+            return retValue.ToArray();
         }
 
         /// <summary>
@@ -325,6 +333,31 @@ namespace PKI.CertificateTemplates {
             }
             SB.Append(nl);
             return SB.ToString();
+        }
+
+        /// <summary>
+        /// Creates a new instance of <strong>CertificateTemplate</strong> object from certificate template's common name.
+        /// </summary>
+        /// <param name="cn">Certificate template's common name.</param>
+        /// <returns>Certificate template object.</returns>
+        public static CertificateTemplate FromCommonName(String cn) {
+            return new CertificateTemplate("Name", cn);
+        }
+        /// <summary>
+        /// Creates a new instance of <strong>CertificateTemplate</strong> object from certificate template's display name.
+        /// </summary>
+        /// <param name="displayName">Certificate template's display/friendly name.</param>
+        /// <returns>Certificate template object.</returns>
+        public static CertificateTemplate FromDisplayName(String displayName) {
+            return new CertificateTemplate("DisplayName", displayName);
+        }
+        /// <summary>
+        /// Creates a new instance of <strong>CertificateTemplate</strong> object from certificate template's object identifier (OID).
+        /// </summary>
+        /// <param name="oid">Certificate template's dot-decimal object identifier.</param>
+        /// <returns>Certificate template object.</returns>
+        public static CertificateTemplate FromOid(String oid) {
+            return new CertificateTemplate("OID", oid);
         }
     }
 }
