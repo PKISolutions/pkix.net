@@ -127,7 +127,7 @@ namespace PKI.Utils {
             using (var entry = new DirectoryEntry($"LDAP://{ldapPath}")) {
                 using (var searcher = new DirectorySearcher(entry)) {
                     searcher.Filter = $"{propName}={propValue}";
-                    return (String)searcher.FindOne().GetDirectoryEntry().Properties[PropDN].Value;
+                    return (String)searcher.FindOne()?.GetDirectoryEntry().Properties[PropDN].Value;
                 }
             }
         }
@@ -138,8 +138,9 @@ namespace PKI.Utils {
             } catch { return false; }
         }
         public static DirectoryEntries GetChildItems(String ldap) {
-            DirectoryEntry entry = new DirectoryEntry($"LDAP://{ldap}");
-            return entry.Children;
+            using (DirectoryEntry entry = new DirectoryEntry($"LDAP://{ldap}")) {
+                return entry.Children;
+            }
         }
         public static String BindServerToSite(String computerName) {
             if (String.IsNullOrEmpty(computerName)) { return null; }
