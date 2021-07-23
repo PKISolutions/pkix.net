@@ -311,7 +311,7 @@ namespace PKI.CertificateTemplates {
             SB.Append(Settings.RegistrationAuthority + nl);
             SB.Append(Settings.KeyArchivalSettings + nl);
             SB.Append($"[Superseded Templates]{nl}");
-            if (Settings.SupersededTemplates == null) {
+            if (Settings.SupersededTemplates.Length == 0) {
                 SB.Append($"  None{nl}");
             } else {
                 foreach(String template in Settings.SupersededTemplates) {
