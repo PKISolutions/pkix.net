@@ -155,7 +155,7 @@ namespace PKI.CertificateTemplates {
             String cn;
             switch (findType.ToLower()) {
                 case "name":
-                    cn = DsUtils.Find(_baseDsPath, DsUtils.PropCertTemplateOid, escapeChars(findValue));
+                    cn = DsUtils.Find(_baseDsPath, DsUtils.PropCN, escapeChars(findValue));
                     break;
                 case "displayname":
                     cn = DsUtils.Find(_baseDsPath, DsUtils.PropDisplayName, findValue);
