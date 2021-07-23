@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using Interop.CERTENROLLLib;
 using PKI.Utils;
+using SysadminsLV.PKI.Utils.CLRExtensions;
 
 namespace PKI.CertificateTemplates {
     /// <summary>
@@ -11,15 +13,16 @@ namespace PKI.CertificateTemplates {
     /// policy requirements.
     /// </summary>
     public class IssuanceRequirements {
+        readonly List<Oid> _certPolicies = new List<Oid>();
         readonly IDictionary<String, Object> _entry;
         Int32 enrollmentFlags;
 
         internal IssuanceRequirements(IX509CertificateTemplate template) {
-            InitializeCom(template);
+            initializeCom(template);
         }
         internal IssuanceRequirements(IDictionary<String, Object> Entry) {
             _entry = Entry;
-            InitializeDs();
+            initializeDs();
         }
         /// <summary>
         /// Gets the number of registration agent (aka enrollment agent) signatures that are required on a request
@@ -27,13 +30,19 @@ namespace PKI.CertificateTemplates {
         /// </summary>
         public Int32 SignatureCount { get; private set; }
         /// <summary>
-        /// Gets a set of application policy OID for the enrollment aget certificates.
+        /// Gets a set of application policy OID for the enrollment agent certificates.
         /// </summary>
         public Oid ApplicationPolicy { get; private set; }
         /// <summary>
-        /// Gets a set of certificate policy OIDs for the enrollment aget certificates.
+        /// Gets a set of certificate policy OIDs for the enrollment agent certificates.
         /// </summary>
-        public OidCollection CertificatePolicies { get; private set; }
+        public OidCollection CertificatePolicies {
+            get {
+                var oids = new OidCollection();
+                _certPolicies.ForEach(x => oids.Add(x));
+                return oids;
+            }
+        }
         /// <summary>
         /// Gets the certificate reenrollment requirements. If the property is set to <strong>True</strong>,
         /// existing valid certificate is sufficient for reenrollment, otherwise, the same enrollment
@@ -41,7 +50,7 @@ namespace PKI.CertificateTemplates {
         /// </summary>
         public Boolean ExistingCertForRenewal => (enrollmentFlags & (Int32)CertificateTemplateEnrollmentFlags.ReenrollExistingCert) > 0;
 
-        void InitializeDs() {
+        void initializeDs() {
             enrollmentFlags = (Int32)_entry[DsUtils.PropPkiEnrollFlags];
             SignatureCount = (Int32)_entry[DsUtils.PropPkiRaSignature];
             if (SignatureCount > 0) {
@@ -56,25 +65,23 @@ namespace PKI.CertificateTemplates {
                         }
                     }
                 } else { ApplicationPolicy = new Oid(ap); }
-                get_rapolicies();
+                readRaPolicies();
             }
         }
-        void get_rapolicies() {
-            OidCollection oids = new OidCollection();
+        void readRaPolicies() {
             try {
                 Object[] RaObject = (Object[])_entry[DsUtils.PropPkiRaCertPolicy];
                 if (RaObject != null) {
                     foreach (Object obj in RaObject) {
-                        oids.Add(new Oid(obj.ToString()));
+                        _certPolicies.Add(new Oid(obj.ToString()));
                     }
                 }
             } catch {
                 String RaString = (String)_entry[DsUtils.PropPkiRaCertPolicy];
-                oids.Add(new Oid(RaString));
+                _certPolicies.Add(new Oid(RaString));
             }
-            CertificatePolicies = oids;
         }
-        void InitializeCom(IX509CertificateTemplate template) {
+        void initializeCom(IX509CertificateTemplate template) {
             if (CryptographyUtils.TestOleCompat()) {
                 try {
                     SignatureCount = (Int32)template.Property[EnrollmentTemplateProperty.TemplatePropRASignatureCount];
@@ -98,10 +105,10 @@ namespace PKI.CertificateTemplates {
                     ApplicationPolicy = new Oid(oids[0].Value);
                 } catch { }
                 try {
-                    OidCollection raoids = new OidCollection();
                     IObjectIds oids = (IObjectIds)template.Property[EnrollmentTemplateProperty.TemplatePropRACertificatePolicies];
-                    foreach (IObjectId rapoid in oids) { raoids.Add(new Oid(rapoid.Value)); }
-                    CertificatePolicies = raoids;
+                    foreach (IObjectId rapoid in oids) {
+                        _certPolicies.Add(new Oid(rapoid.Value));
+                    }
                 } catch { }
             }
         }
@@ -111,21 +118,21 @@ namespace PKI.CertificateTemplates {
         /// </summary>
         /// <returns>A textual representation of the certificate template issuance settings.</returns>
         public override String ToString() {
-            StringBuilder SB = new StringBuilder();
+            var SB = new StringBuilder();
             SB.Append("[Issuance Requirements]" + Environment.NewLine);
             SB.Append("  Authorized signature count: " + SignatureCount + Environment.NewLine);
             if (SignatureCount > 0) {
                 if (ApplicationPolicy == null) {
-                    SB.Append("  Application policy required: none" + Environment.NewLine);
+                    SB.Append("  Application policy required: None" + Environment.NewLine);
                 } else {
-                    SB.Append("  Application policy required: " + ApplicationPolicy.FriendlyName + "(" + ApplicationPolicy.Value + ")" + Environment.NewLine);
+                    SB.Append("  Application policy required: " + ApplicationPolicy.Format(true) + Environment.NewLine);
                 }
-                if (CertificatePolicies == null) {
+                if (!_certPolicies.Any()) {
                     SB.Append("  Issuance policies required: None" + Environment.NewLine);
                 } else {
                     SB.Append("  Issuance policies required: ");
                     foreach (Oid oid in CertificatePolicies) {
-                        SB.Append(oid.FriendlyName + "(" + oid.Value + "); ");
+                        SB.Append(oid.Format(true) + "; ");
                     }
                     SB.Append(Environment.NewLine);
                 }
