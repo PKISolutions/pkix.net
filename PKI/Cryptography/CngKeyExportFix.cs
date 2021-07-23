@@ -6,134 +6,81 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Microsoft.Win32.SafeHandles;
 using PKI.Structs;
+using SysadminsLV.PKI.Utils.CLRExtensions;
 using SysadminsLV.PKI.Win32;
 
-namespace PKI.Utils {
-    static class Program {
-        public static void Main(Byte[] pfxBytes, String password) {
-            X509Certificate2 cert = importExportable(pfxBytes, password, machineScope: false);
+namespace SysadminsLV.PKI.Cryptography {
+    public static class CngKeyExportFix {
+        const String NCRYPT_PKCS8_PRIVATE_KEY_BLOB = "PKCS8_PRIVATEKEY";
+        static readonly Byte[] _pkcs12TripleDesOidBytes = Encoding.ASCII.GetBytes("1.2.840.113549.1.12.1.3\0");
 
-            try {
-                Boolean gotKey = Crypt32.CryptAcquireCertificatePrivateKey(
-                    cert.Handle,
-                    Wincrypt.CRYPT_ACQUIRE_ONLY_NCRYPT_KEY_FLAG,
-                    IntPtr.Zero,
-                    out SafeNCryptKeyHandle keyHandle,
-                    out UInt32 _,
-                    out Boolean _);
-
-                if (!gotKey) {
-                    throw new CryptographicException(Marshal.GetLastWin32Error());
-                }
-
-                using (var cngKey = CngKey.Open(keyHandle, 0)) {
-                    Console.WriteLine(cngKey.ExportPolicy);
-
-                    Console.WriteLine(
-                        Convert.ToBase64String(
-                            cngKey.Export(CngKeyBlobFormat.Pkcs8PrivateBlob)));
-                }
-            } finally {
-                cert.Reset();
-            }
-        }
-
-        static X509Certificate2 importExportable(Byte[] pfxBytes, String password, Boolean machineScope) {
-            X509KeyStorageFlags flags = X509KeyStorageFlags.Exportable;
-
-            flags |= machineScope
-                ? X509KeyStorageFlags.MachineKeySet
-                : X509KeyStorageFlags.UserKeySet;
+        public static Byte[] ConvertPfx2Pkcs8(Byte[] pfxBytes, String password) {
+            const X509KeyStorageFlags flags = X509KeyStorageFlags.Exportable | X509KeyStorageFlags.UserKeySet;
 
             var cert = new X509Certificate2(pfxBytes, password, flags);
-
             try {
-                Boolean gotKey = Crypt32.CryptAcquireCertificatePrivateKey(
-                    cert.Handle,
-                    Wincrypt.CRYPT_ACQUIRE_ONLY_NCRYPT_KEY_FLAG,
-                    IntPtr.Zero,
-                    out SafeNCryptKeyHandle keyHandle,
-                    out UInt32 keySpec,
-                    out Boolean callerFree);
+                return ConvertCert2Pkcs8(cert);
+            } finally {
+                cert.DeletePrivateKey();
+                cert.Reset();
+            }
+        }
+        public static Byte[] ConvertCert2Pkcs8(X509Certificate2 cert) {
+            if (cert == null) {
+                throw new ArgumentNullException(nameof(cert));
+            }
 
-                if (!gotKey) {
-                    keyHandle.Dispose();
-                    throw new InvalidOperationException("No private key");
-                }
+            Boolean gotKey = Crypt32.CryptAcquireCertificatePrivateKey(
+                cert.Handle,
+                Wincrypt.CRYPT_ACQUIRE_ALLOW_NCRYPT_KEY_FLAG,
+                IntPtr.Zero,
+                out SafeNCryptKeyHandle keyHandle,
+                out UInt32 keySpec,
+                out Boolean callerFree);
 
-                if (!callerFree) {
-                    keyHandle.SetHandleAsInvalid();
-                    keyHandle.Dispose();
-                    throw new InvalidOperationException("Key is not persisted");
-                }
+            if (!gotKey) {
+                keyHandle.Dispose();
+                throw new InvalidOperationException("No private key");
+            }
 
-                using (keyHandle) {
-                    // -1 == CNG, otherwise CAPI
-                    if (keySpec == UInt32.MaxValue) {
-                        using (CngKey cngKey = CngKey.Open(keyHandle, CngKeyHandleOpenOptions.None)) {
-                            // If the CNG->CAPI bridge opened the key then AllowPlaintextExport is already set.
-                            if ((cngKey.ExportPolicy & CngExportPolicies.AllowPlaintextExport) == 0) {
-                                fixExportability(cngKey, machineScope);
-                            }
-                        }
+            if (!callerFree) {
+                keyHandle.SetHandleAsInvalid();
+                keyHandle.Dispose();
+                throw new InvalidOperationException("Key is not persisted");
+            }
+
+            using (keyHandle) {
+                // -1 == CNG, otherwise CAPI
+                if (keySpec == UInt32.MaxValue) {
+                    using (var cngKey = CngKey.Open(keyHandle, CngKeyHandleOpenOptions.None)) {
+                        // If the CNG->CAPI bridge opened the key then AllowPlaintextExport is already set.
+                        return (cngKey.ExportPolicy & CngExportPolicies.AllowPlaintextExport) == 0
+                            ? fixExportability(cngKey)
+                            : cngKey.Export(CngKeyBlobFormat.Pkcs8PrivateBlob);
                     }
                 }
-            } catch {
-                cert.Reset();
-                throw;
-            }
 
-            return cert;
+                return null;
+            }
         }
 
-        static void fixExportability(CngKey cngKey, Boolean machineScope) {
-            String password = "1";
+        static Byte[] fixExportability(CngKey cngKey) {
+            const String password = "1";
             Byte[] encryptedPkcs8 = exportEncryptedPkcs8(cngKey, password, 1);
-            String keyName = cngKey.KeyName;
 
-            using (SafeNCryptProviderHandle provHandle = cngKey.ProviderHandle) {
-                importEncryptedPkcs8Overwrite(
-                    encryptedPkcs8,
-                    keyName,
-                    provHandle,
-                    machineScope,
-                    password);
+            using (cngKey.ProviderHandle) {
+                return importEncryptedPkcs8Overwrite(encryptedPkcs8, cngKey, password);
             }
         }
-
-        internal const String NCRYPT_PKCS8_PRIVATE_KEY_BLOB = "PKCS8_PRIVATEKEY";
-        static readonly Byte[] s_pkcs12TripleDesOidBytes =
-            Encoding.ASCII.GetBytes("1.2.840.113549.1.12.1.3\0");
-
         static Byte[] exportEncryptedPkcs8(
             CngKey cngKey,
             String password,
             Int32 kdfCount) {
-            var pbeParams = new nCrypt2.PbeParams {
-                rgbSalt = Marshal.AllocHGlobal(nCrypt2.PbeParams.RgbSaltSize)
-            };
-
-            Byte[] salt = new Byte[nCrypt2.PbeParams.RgbSaltSize];
-
-            using (var rng = RandomNumberGenerator.Create()) {
-                rng.GetBytes(salt);
-            }
-
-            pbeParams.Params.cbSalt = salt.Length;
-            Marshal.Copy(salt, 0, pbeParams.rgbSalt, salt.Length);
-            pbeParams.Params.iIterations = kdfCount;
-
-            // copy PBE params
-            IntPtr pbeParamsPtr = Marshal.AllocHGlobal(Marshal.SizeOf(pbeParams));
-            Marshal.StructureToPtr(pbeParams, pbeParamsPtr, false);
-
-            IntPtr passwordPtr = Marshal.StringToHGlobalUni(password);
-            IntPtr oidPtr = Marshal.AllocHGlobal(s_pkcs12TripleDesOidBytes.Length);
-            Marshal.Copy(s_pkcs12TripleDesOidBytes, 0, oidPtr, s_pkcs12TripleDesOidBytes.Length);
-
-
             IntPtr buffers = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(nCrypt2.BCryptBuffer)) * 3);
+            
+            
             IntPtr next = buffers;
+            IntPtr passwordPtr = Marshal.StringToHGlobalUni(password);
             var buff = new nCrypt2.BCryptBuffer {
                 BufferType = BCryptBufferType.PkcsSecret,
                 cbBuffer = 2 * (password.Length + 1),
@@ -143,14 +90,31 @@ namespace PKI.Utils {
                 buff.cbBuffer = 0;
             }
             Marshal.StructureToPtr(buff, next, false);
+
+            IntPtr oidPtr = Marshal.AllocHGlobal(_pkcs12TripleDesOidBytes.Length);
+            Marshal.Copy(_pkcs12TripleDesOidBytes, 0, oidPtr, _pkcs12TripleDesOidBytes.Length);
             buff = new nCrypt2.BCryptBuffer {
                 BufferType = BCryptBufferType.PkcsAlgOid,
-                cbBuffer = s_pkcs12TripleDesOidBytes.Length,
+                cbBuffer = _pkcs12TripleDesOidBytes.Length,
                 pvBuffer = oidPtr
             };
             next += Marshal.SizeOf(typeof(nCrypt2.BCryptBuffer));
             Marshal.StructureToPtr(buff, next, false);
 
+            // copy PBE params
+            var pbeParams = new nCrypt2.PbeParams {
+                rgbSalt = Marshal.AllocHGlobal(nCrypt2.PbeParams.RgbSaltSize)
+            };
+
+            Byte[] salt = new Byte[nCrypt2.PbeParams.RgbSaltSize];
+            using (var rng = RandomNumberGenerator.Create()) {
+                rng.GetBytes(salt);
+            }
+            pbeParams.Params.cbSalt = salt.Length;
+            Marshal.Copy(salt, 0, pbeParams.rgbSalt, salt.Length);
+            pbeParams.Params.iIterations = kdfCount;
+            IntPtr pbeParamsPtr = Marshal.AllocHGlobal(Marshal.SizeOf(pbeParams));
+            Marshal.StructureToPtr(pbeParams, pbeParamsPtr, false);
             buff = new nCrypt2.BCryptBuffer {
                 BufferType = BCryptBufferType.PkcsAlgParam,
                 cbBuffer = Marshal.SizeOf(typeof(nCrypt2.PbeParams)),
@@ -168,7 +132,7 @@ namespace PKI.Utils {
             Marshal.StructureToPtr(desc, descPtr, false);
 
 
-            using (var keyHandle = cngKey.Handle) {
+            using (SafeNCryptKeyHandle keyHandle = cngKey.Handle) {
                 Int32 result = NCrypt.NCryptExportKey(
                     keyHandle,
                     IntPtr.Zero,
@@ -214,19 +178,12 @@ namespace PKI.Utils {
             }
         }
 
-        static void importEncryptedPkcs8Overwrite(
+        static Byte[] importEncryptedPkcs8Overwrite(
             Byte[] encryptedPkcs8,
-            String keyName,
-            SafeNCryptProviderHandle provHandle,
-            Boolean machineScope,
+            CngKey cngKey,
             String password) {
-
-            // copy encrypted PKCS#8 to unmanaged memory
-            //IntPtr encryptedPkcs8Ptr = Marshal.AllocHGlobal(encryptedPkcs8.Length);
-            //Marshal.Copy(encryptedPkcs8, 0, encryptedPkcs8Ptr, encryptedPkcs8.Length);
-
             // copy key name to unmanaged memory
-            IntPtr keyNamePtr = Marshal.StringToHGlobalUni(keyName);
+            IntPtr keyNamePtr = Marshal.StringToHGlobalUni(cngKey.KeyName);
             // copy password to unmanaged memory
             IntPtr passwordPtr = Marshal.StringToHGlobalUni(password);
 
@@ -240,7 +197,7 @@ namespace PKI.Utils {
             }
             var buff2 = new nCrypt2.BCryptBuffer {
                 BufferType = BCryptBufferType.PkcsName,
-                cbBuffer = 2 * (keyName.Length + 1),
+                cbBuffer = 2 * (cngKey.KeyName.Length + 1),
                 pvBuffer = keyNamePtr
             };
 
@@ -262,12 +219,12 @@ namespace PKI.Utils {
                 NCryptImportFlags.NCRYPT_OVERWRITE_KEY_FLAG |
                 NCryptImportFlags.NCRYPT_DO_NOT_FINALIZE_FLAG;
 
-            if (machineScope) {
+            if (cngKey.IsMachineKey) {
                 flags |= NCryptImportFlags.NCRYPT_MACHINE_KEY_FLAG;
             }
 
             Int32 errorCode = NCrypt.NCryptImportKey(
-                provHandle,
+                cngKey.ProviderHandle,
                 IntPtr.Zero,
                 NCRYPT_PKCS8_PRIVATE_KEY_BLOB,
                 descPtr,
@@ -276,17 +233,21 @@ namespace PKI.Utils {
                 encryptedPkcs8.Length,
                 flags);
 
+            Marshal.FreeHGlobal(buffers);
+            Marshal.ZeroFreeGlobalAllocUnicode(keyNamePtr);
+            Marshal.ZeroFreeGlobalAllocUnicode(passwordPtr);
+
             if (errorCode != 0) {
                 keyHandle.Dispose();
                 throw new Win32Exception(errorCode);
             }
 
             using (keyHandle) {
-                using (var cngKey = CngKey.Open(keyHandle, CngKeyHandleOpenOptions.None)) {
+                using (var importedKey = CngKey.Open(keyHandle, CngKeyHandleOpenOptions.None)) {
                     const CngExportPolicies desiredPolicies =
                         CngExportPolicies.AllowExport | CngExportPolicies.AllowPlaintextExport;
 
-                    cngKey.SetProperty(
+                    importedKey.SetProperty(
                         new CngProperty(
                             "Export Policy",
                             BitConverter.GetBytes((Int32)desiredPolicies),
@@ -298,11 +259,11 @@ namespace PKI.Utils {
                         throw new Win32Exception(error);
                     }
                 }
-            }
 
-            Marshal.FreeHGlobal(buffers);
-            Marshal.ZeroFreeGlobalAllocUnicode(keyNamePtr);
-            Marshal.ZeroFreeGlobalAllocUnicode(passwordPtr);
+                using (var c = CngKey.Open(keyHandle, CngKeyHandleOpenOptions.None)) {
+                    return c.Export(CngKeyBlobFormat.Pkcs8PrivateBlob);
+                }
+            }
         }
     }
 }

@@ -100,6 +100,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cryptography\AlgorithmIdentifierCollection.cs" />
+    <Compile Include="Cryptography\CngKeyExportFix.cs" />
+    <Compile Include="Cryptography\SafeUnicodeStringHandle.cs" />
     <Compile Include="Cryptography\CspAlgorithmOperation.cs" />
     <Compile Include="Cryptography\CspAlgorithmType.cs" />
     <Compile Include="Cryptography\NonceStatus.cs" />
@@ -107,6 +109,7 @@
     <Compile Include="Cryptography\Pkcs\PkcsSignerInfoCollection.cs" />
     <Compile Include="Cryptography\Pkcs\SignedCmsBuilder.cs" />
     <Compile Include="Cryptography\CspProviderType.cs" />
+    <Compile Include="Cryptography\SafeAnsiStringHandle.cs" />
     <Compile Include="Cryptography\TspAuthenticodeRequest.cs" />
     <Compile Include="Cryptography\TspFailureStatus.cs" />
     <Compile Include="Cryptography\TspMessageImprint.cs" />
@@ -234,7 +237,6 @@
     <Compile Include="Security\AccessControl\OcspResponderAuditRule.cs" />
     <Compile Include="Security\AccessControl\OcspResponderRights.cs" />
     <Compile Include="Security\AccessControl\OcspResponderSecurityDescriptor.cs" />
-    <Compile Include="Utils\Class1.cs" />
     <Compile Include="Utils\CLRExtensions\FileInfoExtensions.cs" />
     <Compile Include="Win32\AdvAPI.cs" />
     <Compile Include="Base\BasicCollection.cs" />

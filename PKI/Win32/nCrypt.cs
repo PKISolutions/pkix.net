@@ -77,7 +77,9 @@ namespace SysadminsLV.PKI.Win32 {
             [In]              UInt32 dwFlags
         );
         [DllImport("ncrypt.dll", CharSet = CharSet.Unicode)]
-        internal static extern Int32 NCryptFinalizeKey(SafeNCryptKeyHandle hKey, Int32 dwFlags);
+        internal static extern Int32 NCryptFinalizeKey(
+            [In] SafeNCryptKeyHandle hKey,
+            [In] Int32 dwFlags);
         [DllImport("ncrypt.dll", CharSet = CharSet.Auto, SetLastError = true)]
         internal static extern Int32 NCryptDeleteKey(
             [In] SafeNCryptKeyHandle hKey,
