@@ -15,15 +15,15 @@ namespace PKI.CertificateTemplates {
     /// This class represents certificate template cryptography settings.
     /// </summary>
     public class CryptographyTemplateSettings {
-        Int32 pkf, schemaVersion;
+        Int32 schemaVersion;
         readonly IDictionary<String, Object> _entry;
 
         internal CryptographyTemplateSettings(IX509CertificateTemplate template) {
-            InitializeCom(template);
+            initializeFromCom(template);
         }
         internal CryptographyTemplateSettings(IDictionary<String, Object> Entry) {
             _entry = Entry;
-            InitializeDs();
+            initializeFromDs();
         }
 
         /// <summary>
@@ -47,18 +47,7 @@ namespace PKI.CertificateTemplates {
         /// <summary>
         /// Gets or sets private key options.
         /// </summary>
-        public PrivateKeyFlags PrivateKeyOptions {
-            get {
-                Int32 pkflags = 0;
-                if ((pkf & 0x001) > 0) { pkflags += 0x001; }
-                if ((pkf & 0x010) > 0) { pkflags += 0x010; }
-                if ((pkf & 0x020) > 0) { pkflags += 0x020; }
-                if ((pkf & 0x040) > 0) { pkflags += 0x040; }
-                if ((pkf & 0x080) > 0) { pkflags += 0x080; }
-                if ((pkf & 0x100) > 0) { pkflags += 0x100; }
-                return (PrivateKeyFlags)pkflags;
-            }
-        }
+        public PrivateKeyFlags PrivateKeyOptions { get; private set; }
         /// <summary>
         /// Indicates operations for which the private key can be used.
         /// </summary>
@@ -76,19 +65,19 @@ namespace PKI.CertificateTemplates {
         /// </summary>
         public String PrivateKeySecuritySDDL { get; private set; }
 
-        void InitializeDs() {
+        void initializeFromDs() {
             schemaVersion = (Int32)_entry[DsUtils.PropPkiSchemaVersion];
             KeyAlgorithm = new Oid("RSA");
             HashAlgorithm = new Oid("SHA1");
             MinimalKeyLength = (Int32)_entry[DsUtils.PropPkiKeySize];
-            pkf = (Int32)_entry[DsUtils.PropPkiPKeyFlags];
+            PrivateKeyOptions = (PrivateKeyFlags)_entry[DsUtils.PropPkiPKeyFlags];
             KeySpec = (X509KeySpecFlags)(Int32)_entry[DsUtils.PropPkiKeySpec];
-            get_csp();
-            get_keyusages();
+            readCsp();
+            readKeyUsages();
             String ap = (String)_entry[DsUtils.PropPkiRaAppPolicy];
             if (ap != null && ap.Contains("`")) {
-                String[] splitstring = { "`" };
-                String[] strings = ap.Split(splitstring, StringSplitOptions.RemoveEmptyEntries);
+                String[] delimiter = { "`" };
+                String[] strings = ap.Split(delimiter, StringSplitOptions.RemoveEmptyEntries);
                 for (Int32 index = 0; index < strings.Length; index += 3) {
                     switch (strings[index]) {
                         case DsUtils.PropPkiKeySddl: PrivateKeySecuritySDDL = strings[index + 2]; break;
@@ -100,21 +89,21 @@ namespace PKI.CertificateTemplates {
             }
 
         }
-        void get_csp() {
-            List<String> csplist = new List<String>();
+        void readCsp() {
+            var cspList = new List<String>();
 
             try {
                 Object[] CSPObject = (Object[])_entry[DsUtils.PropPkiKeyCsp];
                 if (CSPObject != null) {
-                    csplist.AddRange(CSPObject.Select(csp => Regex.Replace(csp.ToString(), "^\\d+,", String.Empty)));
+                    cspList.AddRange(CSPObject.Select(csp => Regex.Replace(csp.ToString(), "^\\d+,", String.Empty)));
                 }
             } catch {
                 String cspString = (String)_entry[DsUtils.PropPkiKeyCsp];
-                csplist.Add(Regex.Replace(cspString, "^\\d+,", String.Empty));
+                cspList.Add(Regex.Replace(cspString, "^\\d+,", String.Empty));
             }
-            CSPList = csplist.ToArray();
+            CSPList = cspList.ToArray();
         }
-        void get_keyusages() {
+        void readKeyUsages() {
             Byte[] ku = (Byte[])_entry[DsUtils.PropPkiKeyUsage];
             if (ku == null) {
                 KeyUsage = 0;
@@ -155,10 +144,10 @@ namespace PKI.CertificateTemplates {
                 CNGKeyUsage = cngUsages;
             }
         }
-        void InitializeCom(IX509CertificateTemplate template) {
+        void initializeFromCom(IX509CertificateTemplate template) {
             if (CryptographyUtils.TestOleCompat()) {
                 try {
-                    pkf = (Int32)template.Property[EnrollmentTemplateProperty.TemplatePropPrivateKeyFlags];
+                    PrivateKeyOptions = (PrivateKeyFlags)template.Property[EnrollmentTemplateProperty.TemplatePropPrivateKeyFlags];
                 } catch { }
                 MinimalKeyLength = (Int32)template.Property[EnrollmentTemplateProperty.TemplatePropMinimumKeySize];
                 KeySpec = (X509KeySpecFlags)(Int32)template.Property[EnrollmentTemplateProperty.TemplatePropKeySpec];
@@ -167,7 +156,7 @@ namespace PKI.CertificateTemplates {
                 } catch { }
             } else {
                 try {
-                    pkf = Convert.ToInt32((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropPrivateKeyFlags]);
+                    PrivateKeyOptions = (PrivateKeyFlags)Convert.ToInt32((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropPrivateKeyFlags]);
                 } catch { }
                 MinimalKeyLength = Convert.ToInt32((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropMinimumKeySize]);
                 KeySpec = (X509KeySpecFlags)Convert.ToInt32((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropKeySpec]);

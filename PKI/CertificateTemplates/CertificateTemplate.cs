@@ -325,13 +325,13 @@ namespace PKI.CertificateTemplates {
             SB.Append($"  Version: {Version}{nl}");
             SB.Append($"  Supported CA: {SupportedCA}{nl}");
             SB.Append($"  Subject type: {Settings.SubjectType}{nl}");
-            SB.Append((Settings.EnrollmentOptions & (Int32) CertificateTemplateEnrollmentFlags.DsPublish) > 0
+            SB.Append((Settings.EnrollmentOptions & CertificateTemplateEnrollmentFlags.DsPublish) > 0
                 ? $"  Publish to DS: True{nl}"
                 : $"  Publish to DS: False{nl}");
-            SB.Append((Settings.EnrollmentOptions & (Int32) CertificateTemplateEnrollmentFlags.AutoenrollmentCheckDsCert) > 0
+            SB.Append((Settings.EnrollmentOptions & CertificateTemplateEnrollmentFlags.AutoenrollmentCheckDsCert) > 0
                 ? $"  Check for existing certificate in DS: True{nl}"
                 : $"  Check for existing certificate in DS: False{nl}");
-            SB.Append((Settings.EnrollmentOptions & (Int32) CertificateTemplateEnrollmentFlags.ReuseKeyTokenFull) > 0
+            SB.Append((Settings.EnrollmentOptions & CertificateTemplateEnrollmentFlags.ReuseKeyTokenFull) > 0
                 ? $"  Reuse key when token is full: True{nl}"
                 : $"  Reuse key when token is full: False{nl}");
             SB.Append($"[Subject]{nl}");

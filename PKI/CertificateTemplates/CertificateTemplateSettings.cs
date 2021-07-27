@@ -49,13 +49,13 @@ namespace PKI.CertificateTemplates {
         /// </summary>
         public CertTemplateSubjectType SubjectType {
             get {
-                if ((GeneralFlags & (Int32)CertificateTemplateFlags.IsCA) > 0) {
+                if ((GeneralFlags & CertificateTemplateFlags.IsCA) > 0) {
                     return CertTemplateSubjectType.CA;
                 }
-                if ((GeneralFlags & (Int32)CertificateTemplateFlags.MachineType) > 0) {
+                if ((GeneralFlags & CertificateTemplateFlags.MachineType) > 0) {
                     return CertTemplateSubjectType.Computer;
                 }
-                return (GeneralFlags & (Int32)CertificateTemplateFlags.IsCrossCA) > 0
+                return (GeneralFlags & CertificateTemplateFlags.IsCrossCA) > 0
                     ? CertTemplateSubjectType.CrossCA
                     : CertTemplateSubjectType.User;
             }
@@ -94,10 +94,10 @@ namespace PKI.CertificateTemplates {
                 if (
                     Cryptography.KeyUsage == X509KeyUsageFlags.DigitalSignature &&
                     Cryptography.KeySpec == X509KeySpecFlags.AT_KEYEXCHANGE &&
-                    (EnrollmentOptions & (Int32)CertificateTemplateEnrollmentFlags.RemoveInvalidFromStore) == 0 &&
-                    (EnrollmentOptions & (Int32)CertificateTemplateEnrollmentFlags.IncludeSymmetricAlgorithms) == 0 &&
+                    (EnrollmentOptions & CertificateTemplateEnrollmentFlags.RemoveInvalidFromStore) == 0 &&
+                    (EnrollmentOptions & CertificateTemplateEnrollmentFlags.IncludeSymmetricAlgorithms) == 0 &&
                     (pkf & (Int32)PrivateKeyFlags.RequireKeyArchival) == 0 &&
-                    ((EnrollmentOptions & (Int32)CertificateTemplateEnrollmentFlags.RequireUserInteraction) != 0 ||
+                    ((EnrollmentOptions & CertificateTemplateEnrollmentFlags.RequireUserInteraction) != 0 ||
                     (pkf & (Int32)PrivateKeyFlags.RequireStrongProtection) != 0)
                 ) { return CertificateTemplatePurpose.SignatureAndSmartCardLogon; }
                 if (
@@ -105,7 +105,7 @@ namespace PKI.CertificateTemplates {
                     ((Int32)Cryptography.KeyUsage & (Int32)X509KeyUsageFlags.NonRepudiation) == 0 &&
                     ((Int32)Cryptography.KeyUsage & (Int32)X509KeyUsageFlags.CrlSign) == 0 &&
                     ((Int32)Cryptography.KeyUsage & (Int32)X509KeyUsageFlags.KeyCertSign) == 0 &&
-                    (EnrollmentOptions & (Int32)CertificateTemplateEnrollmentFlags.RemoveInvalidFromStore) == 0
+                    (EnrollmentOptions & CertificateTemplateEnrollmentFlags.RemoveInvalidFromStore) == 0
                     ) { return CertificateTemplatePurpose.Encryption; }
                 if (
                     ((Int32)Cryptography.KeyUsage & (Int32)X509KeyUsageFlags.CrlSign) == 0 &&
@@ -115,7 +115,7 @@ namespace PKI.CertificateTemplates {
                     ((Int32)Cryptography.KeyUsage & (Int32)X509KeyUsageFlags.DataEncipherment) == 0 &&
                     ((Int32)Cryptography.KeyUsage & (Int32)X509KeyUsageFlags.DecipherOnly) == 0 &&
                     Cryptography.KeySpec == X509KeySpecFlags.AT_SIGNATURE &&
-                    (EnrollmentOptions & (Int32)CertificateTemplateEnrollmentFlags.IncludeSymmetricAlgorithms) == 0 &&
+                    (EnrollmentOptions & CertificateTemplateEnrollmentFlags.IncludeSymmetricAlgorithms) == 0 &&
                     (pkf & (Int32)PrivateKeyFlags.RequireKeyArchival) == 0
                     ) { return CertificateTemplatePurpose.Signature; }
                 return CertificateTemplatePurpose.EncryptionAndSignature;
@@ -165,21 +165,23 @@ namespace PKI.CertificateTemplates {
         /// <summary>
         /// Stub.
         /// </summary>
-        public Int32 EnrollmentOptions { get; private set; }
+        public CertificateTemplateEnrollmentFlags EnrollmentOptions { get; private set; }
         /// <summary>
         /// Stub.
         /// </summary>
-        public Int32 GeneralFlags { get; private set; }
+        public CertificateTemplateFlags GeneralFlags { get; private set; }
 
         void initializeFromDsEntry() {
-            GeneralFlags = (Int32)_entry[DsUtils.PropFlags];
+            GeneralFlags = (CertificateTemplateFlags)_entry[DsUtils.PropFlags];
             subjectFlags = (Int32)_entry[DsUtils.PropPkiSubjectFlags];
-            EnrollmentOptions = (Int32)_entry[DsUtils.PropPkiEnrollFlags];
+            EnrollmentOptions = (CertificateTemplateEnrollmentFlags)_entry[DsUtils.PropPkiEnrollFlags];
             pkf = (Int32)_entry[DsUtils.PropPkiPKeyFlags];
             ValidityPeriod = readValidity((Byte[])_entry[DsUtils.PropPkiNotAfter]);
             RenewalPeriod = readValidity((Byte[])_entry[DsUtils.PropPkiRenewalPeriod]);
             pathLength = (Int32)_entry[DsUtils.PropPkiPathLength];
-            if ((EnrollmentOptions & 2) > 0) { CAManagerApproval = true; }
+            if ((EnrollmentOptions & CertificateTemplateEnrollmentFlags.CAManagerApproval) > 0) {
+                CAManagerApproval = true;
+            }
             readEKU();
             readCertPolicies();
             readCriticalExtensions();
@@ -188,14 +190,14 @@ namespace PKI.CertificateTemplates {
         }
         void initializeFromCOM(IX509CertificateTemplate template) {
             if (CryptographyUtils.TestOleCompat()) {
-                GeneralFlags = (Int32)template.Property[EnrollmentTemplateProperty.TemplatePropGeneralFlags];
-                EnrollmentOptions = (Int32)template.Property[EnrollmentTemplateProperty.TemplatePropEnrollmentFlags];
+                GeneralFlags = (CertificateTemplateFlags)template.Property[EnrollmentTemplateProperty.TemplatePropGeneralFlags];
+                EnrollmentOptions = (CertificateTemplateEnrollmentFlags)template.Property[EnrollmentTemplateProperty.TemplatePropEnrollmentFlags];
                 subjectFlags = (Int32)template.Property[EnrollmentTemplateProperty.TemplatePropSubjectNameFlags];
                 ValidityPeriod = readValidity(null, (Int64)template.Property[EnrollmentTemplateProperty.TemplatePropValidityPeriod]);
                 RenewalPeriod = readValidity(null, (Int64)template.Property[EnrollmentTemplateProperty.TemplatePropRenewalPeriod]);
             } else {
-                GeneralFlags = Convert.ToInt32((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropGeneralFlags]);
-                EnrollmentOptions = Convert.ToInt32((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropEnrollmentFlags]);
+                GeneralFlags = (CertificateTemplateFlags)Convert.ToInt32((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropGeneralFlags]);
+                EnrollmentOptions = (CertificateTemplateEnrollmentFlags)Convert.ToInt32((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropEnrollmentFlags]);
                 subjectFlags = unchecked((Int32)(UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropSubjectNameFlags]);
                 ValidityPeriod = readValidity(null, Convert.ToInt64((UInt64)template.Property[EnrollmentTemplateProperty.TemplatePropValidityPeriod]));
                 RenewalPeriod = readValidity(null, Convert.ToInt64((UInt64)template.Property[EnrollmentTemplateProperty.TemplatePropRenewalPeriod]));
@@ -334,7 +336,7 @@ namespace PKI.CertificateTemplates {
                         if (
                             SubjectType == CertTemplateSubjectType.CA ||
                             SubjectType == CertTemplateSubjectType.CrossCA ||
-                            (EnrollmentOptions & (Int32)CertificateTemplateEnrollmentFlags.BasicConstraintsInEndEntityCerts) != 0
+                            (EnrollmentOptions & CertificateTemplateEnrollmentFlags.BasicConstraintsInEndEntityCerts) > 0
                         ) {
                             Boolean isCA;
                             if (SubjectType == CertTemplateSubjectType.CA || SubjectType == CertTemplateSubjectType.CrossCA) {
@@ -348,7 +350,7 @@ namespace PKI.CertificateTemplates {
                         }
                         break;
                     case X509ExtensionOid.OcspRevNoCheck:
-                        if ((EnrollmentOptions & (Int32)CertificateTemplateEnrollmentFlags.IncludeOcspRevNoCheck) != 0) {
+                        if ((EnrollmentOptions & CertificateTemplateEnrollmentFlags.IncludeOcspRevNoCheck) > 0) {
                             _extensions.Add(new X509Extension(X509ExtensionOid.OcspRevNoCheck, new Byte[] { 5, 0 }, isExtensionCritical(
                                 X509ExtensionOid.OcspRevNoCheck)));
                         }
