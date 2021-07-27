@@ -11,7 +11,7 @@ namespace PKI.CertificateTemplates {
         /// This flag indicates that attestation data is not required when creating the certificate request.
         /// It also instructs the server to not add any attestation OIDs to the issued certificate.
         /// </summary>
-        None = 0,
+        None                               = 0,
         /// <summary>
         /// This flag instructs the client to create a key archival certificate request.
         /// </summary>

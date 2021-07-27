@@ -138,9 +138,12 @@ namespace PKI.Utils {
             } catch { return false; }
         }
         public static DirectoryEntries GetChildItems(String ldap) {
-            using (DirectoryEntry entry = new DirectoryEntry($"LDAP://{ldap}")) {
+            return new DirectoryEntry($"LDAP://{ldap}").Children;
+/*
+            using (var entry = new DirectoryEntry($"LDAP://{ldap}")) {
                 return entry.Children;
             }
+*/
         }
         public static String BindServerToSite(String computerName) {
             if (String.IsNullOrEmpty(computerName)) { return null; }

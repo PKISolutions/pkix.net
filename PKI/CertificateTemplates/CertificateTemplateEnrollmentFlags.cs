@@ -8,6 +8,10 @@ namespace PKI.CertificateTemplates {
     [Flags]
     public enum CertificateTemplateEnrollmentFlags {
         /// <summary>
+        /// None.
+        /// </summary>
+        None                             = 0,
+        /// <summary>
         /// This flag instructs the client and server to include a Secure/Multipurpose Internet Mail Extensions (S/MIME)
         /// certificate extension, as specified in <see href="http://tools.ietf.org/html/rfc4262">RFC4262</see>,
         /// in the request and in the issued certificate.
