@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -51,14 +50,6 @@ namespace SysadminsLV.PKI.Dcom.Implementations {
                                      index,
                                      (Int32)AdcsCAPropertyValueType.Long,
                                      0});
-            } catch (Exception ex) {
-                switch (ex.InnerException) {
-                    case ArgumentException _:
-                    case FileNotFoundException _:
-                        return -1;
-                    default:
-                        throw;
-                }
             } finally {
                 CryptographyUtils.ReleaseCom(instance);
             }
@@ -76,14 +67,6 @@ namespace SysadminsLV.PKI.Dcom.Implementations {
                                      (Int32)AdcsBinaryFormat.Base64NoHeader});
 
                 return Convert.FromBase64String(value);
-            } catch (Exception ex) {
-                switch (ex.InnerException) {
-                    case ArgumentException _:
-                    case FileNotFoundException _:
-                        return null;
-                    default:
-                        throw;
-                }
             } finally {
                 CryptographyUtils.ReleaseCom(instance);
             }
@@ -99,14 +82,6 @@ namespace SysadminsLV.PKI.Dcom.Implementations {
                                      index,
                                      (Int32)AdcsCAPropertyValueType.String,
                                      (Int32)AdcsBinaryFormat.Base64NoHeader});
-            } catch (Exception ex) {
-                switch (ex.InnerException) {
-                    case ArgumentException _:
-                    case FileNotFoundException _:
-                        return null;
-                    default:
-                        throw;
-                }
             } finally {
                 CryptographyUtils.ReleaseCom(instance);
             }
@@ -245,7 +220,7 @@ namespace SysadminsLV.PKI.Dcom.Implementations {
             }
 
             String[] tempArray = templates.TrimEnd().Split('\n');
-            var retValue = new String[tempArray.Length / 2, 2];
+            String[,] retValue = new String[tempArray.Length / 2, 2];
             for (Int32 index = 0; index < tempArray.Length; index += 2) {
                 retValue[index / 2, 0] = tempArray[index].TrimEnd();
                 retValue[index / 2, 1] = tempArray[index + 1].TrimEnd();
