@@ -57,6 +57,8 @@ namespace PKI.Utils {
                     return new X509BasicConstraintsExtension(asndata, extension.Critical);
                 case X509ExtensionOid.CRLNumber:
                     return new X509CRLNumberExtension(asndata, extension.Critical);
+                case X509ExtensionOid.IssuingDistributionPoint:
+                    return new X509IssuingDistributionPointsExtension(asndata, extension.Critical);
                 case X509ExtensionOid.NameConstraints:
                     return new X509NameConstraintsExtension(asndata);
                 case X509ExtensionOid.CRLDistributionPoints:

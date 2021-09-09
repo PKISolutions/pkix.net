@@ -117,12 +117,14 @@
     <Compile Include="Cryptography\TspStatusInfo.cs" />
     <Compile Include="Cryptography\TspValidationStatus.cs" />
     <Compile Include="Cryptography\X509AttributeOid.cs" />
+    <Compile Include="Cryptography\X509Certificates\IssuingDistributionPointScope.cs" />
     <Compile Include="Cryptography\X509Certificates\X509ExtensionOid.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CertificateTrustList.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CRL2Collection.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CertificateTrustListEntryCollection.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CertificateTrustListBuilder.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CertificateTrustListEntry.cs" />
+    <Compile Include="Cryptography\X509Certificates\X509IssuingDistributionPointsExtension.cs" />
     <Compile Include="Dcom\AdcsBinaryFormat.cs" />
     <Compile Include="Dcom\AdcsCAPropertyName.cs" />
     <Compile Include="Dcom\AdcsCrlReason.cs" />
@@ -260,7 +262,7 @@
     <Compile Include="Cryptography\X509Certificates\X509CertificatePolicyMappingsExtension.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CertificatePropertyType.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CrlBuilder.cs" />
-    <Compile Include="Cryptography\X509Certificates\X509CRLDistributionPoint.cs" />
+    <Compile Include="Cryptography\X509Certificates\X509DistributionPoint.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CrlType.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CrossCertificateDistributionPointsExtension.cs" />
     <Compile Include="Cryptography\X509Certificates\X509EnrollmentPropertyInfo.cs" />
