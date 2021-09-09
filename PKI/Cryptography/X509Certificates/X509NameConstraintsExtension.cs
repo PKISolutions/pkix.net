@@ -13,10 +13,12 @@ namespace System.Security.Cryptography.X509Certificates {
     /// <see href="https://tools.ietf.org/html/rfc5280#section-4.2.1.10">RFC 5280</see>.
     /// </summary>
     public sealed class X509NameConstraintsExtension : X509Extension {
+        readonly X509AlternativeNameCollection _permittedSubtree = new X509AlternativeNameCollection();
+        readonly X509AlternativeNameCollection _excludedSubtree = new X509AlternativeNameCollection();
         readonly Oid _oid = new Oid(X509ExtensionOid.NameConstraints);
 
         /// <summary>
-        /// Intitializes a new instance of <strong>X509NameConstraintsExtension</strong> class from
+        /// Initializes a new instance of <strong>X509NameConstraintsExtension</strong> class from
         /// ASN.1-encoded Name Constraints extension value. Name Constraints extension is always marked critical.
         /// </summary>
         /// <exception cref="ArgumentNullException">
@@ -29,7 +31,7 @@ namespace System.Security.Cryptography.X509Certificates {
             m_decode(nameConstraints.RawData);
         }
         /// <summary>
-        /// Intitializes a new instance of <strong>X509NameConstraintsExtension</strong> class from
+        /// Initializes a new instance of <strong>X509NameConstraintsExtension</strong> class from
         /// a collection of explicitly permitted and excluded subtrees. Name Constraints extension is
         /// always marked critical.
         /// </summary>
@@ -51,41 +53,43 @@ namespace System.Security.Cryptography.X509Certificates {
         /// collection is valid only if it is not listed in the <see cref="ExcludedSubtree"/> collection.
         /// member.
         /// </summary>
-        public X509AlternativeNameCollection PermittedSubtree { get; private set; }
+        public X509AlternativeNameCollection PermittedSubtree => new X509AlternativeNameCollection(_permittedSubtree);
         /// <summary>
         /// Gets a collection of explicitly disallowed names. Any name matching a restriction in this
         /// collection is invalid regardless of information appearing in the <see cref="PermittedSubtree"/>
         /// member.
         /// </summary>
-        public X509AlternativeNameCollection ExcludedSubtree { get; private set; }
+        public X509AlternativeNameCollection ExcludedSubtree => new X509AlternativeNameCollection(_excludedSubtree);
 
         void m_initialize(X509AlternativeNameCollection permittedSubtree, X509AlternativeNameCollection excludedSubtree) {
             Oid = _oid;
             Critical = true;
 
-            List<Byte> rawData = new List<Byte>();
+            var rawData = new List<Byte>();
             if (permittedSubtree != null) {
-                PermittedSubtree = encodeAltNames(permittedSubtree, rawData, 0xa0);
+                _permittedSubtree.AddRange(encodeAltNames(permittedSubtree, rawData, 0xa0));
             }
             if (excludedSubtree != null) {
-                ExcludedSubtree = encodeAltNames(excludedSubtree, rawData, 0xa1);
+                _excludedSubtree.AddRange(encodeAltNames(excludedSubtree, rawData, 0xa1));
             }
             RawData = Asn1Utils.Encode(rawData.ToArray(), 48);
         }
         void m_decode(Byte[] rawData) {
-            Asn1Reader asn = new Asn1Reader(rawData);
+            var asn = new Asn1Reader(rawData);
             asn.MoveNext();
             do {
-                switch (asn.Tag) {
-                    case 0xa0: PermittedSubtree = decodeNamesFromAsn(asn.GetTagRawData()); break;
-                    case 0xa1: ExcludedSubtree = decodeNamesFromAsn(asn.GetTagRawData()); break;
+                if (asn.PayloadLength > 0) {
+                    switch (asn.Tag) {
+                        case 0xa0: _permittedSubtree.AddRange(decodeNamesFromAsn(asn.GetTagRawData())); break;
+                        case 0xa1: _excludedSubtree.AddRange(decodeNamesFromAsn(asn.GetTagRawData())); break;
+                    }
                 }
-            } while (asn.MoveNextCurrentLevel());
+            } while (asn.MoveNextSibling());
         }
 
         static X509AlternativeNameCollection encodeAltNames(X509AlternativeNameCollection permittedSubtree, List<Byte> rawData, Byte tag) {
-            X509AlternativeNameCollection altNames = new X509AlternativeNameCollection();
-            List<Byte> tempRawData = new List<Byte>();
+            var altNames = new X509AlternativeNameCollection();
+            var tempRawData = new List<Byte>();
             foreach (X509AlternativeName name in permittedSubtree
                 .Where(x => x.Type != X509AlternativeNamesEnum.RegisteredId)) {
                 altNames.Add(name);
@@ -96,12 +100,12 @@ namespace System.Security.Cryptography.X509Certificates {
             return altNames;
         }
         static X509AlternativeNameCollection decodeNamesFromAsn(Byte[] rawData) {
-            X509AlternativeNameCollection altNames = new X509AlternativeNameCollection();
-            Asn1Reader asn = new Asn1Reader(rawData);
+            var altNames = new X509AlternativeNameCollection();
+            var asn = new Asn1Reader(rawData);
             asn.MoveNext();
             do {
                 altNames.Add(new X509AlternativeName(asn.GetPayload()));
-            } while (asn.MoveNextCurrentLevel());
+            } while (asn.MoveNextSibling());
             altNames.Close();
             return altNames;
         }
