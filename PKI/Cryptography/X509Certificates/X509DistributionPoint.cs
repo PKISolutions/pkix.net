@@ -1,6 +1,8 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
+using SysadminsLV.PKI.Cryptography.X509Certificates;
 
 namespace System.Security.Cryptography.X509Certificates {
     /// <summary>
@@ -8,6 +10,9 @@ namespace System.Security.Cryptography.X509Certificates {
     /// extension.
     /// </summary>
     public class X509DistributionPoint {
+        readonly List<Byte> _rawData = new List<Byte>();
+        readonly X509AlternativeNameCollection _fullNames = new X509AlternativeNameCollection();
+        readonly X509AlternativeNameCollection _crlIssuers = new X509AlternativeNameCollection();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="X509DistributionPoint"/> class from an array of URLs,
@@ -16,7 +21,7 @@ namespace System.Security.Cryptography.X509Certificates {
         /// <param name="uris">One or more URLs to include to the current distribution point.</param>
         public X509DistributionPoint(Uri[] uris) {
             if (uris == null) { throw new ArgumentNullException(nameof(uris)); }
-            m_encode(uris);
+            encode(uris);
         }
         /// <summary>
         /// Initializes a new instance of the <see cref="X509DistributionPoint"/> class from an ASN.1-encoded byte
@@ -25,16 +30,16 @@ namespace System.Security.Cryptography.X509Certificates {
         /// <param name="rawData">ASN.1-encoded byte array that represents single distribution point section.</param>
         public X509DistributionPoint(Byte[] rawData) {
             if (rawData == null) { throw new ArgumentNullException(nameof(rawData)); }
-            m_decode(rawData);
+            decode(rawData);
         }
 
         /// <summary>
         /// Gets a collection of alternative names associated with the current CRL, where each name provides current
         /// CRL locations.
         /// </summary>
-        public X509AlternativeNameCollection FullName { get; private set; }
+        public X509AlternativeNameCollection FullName => new X509AlternativeNameCollection(_fullNames);
         /// <summary>
-        /// Gets a X.500 distinguished name part relateive to CRL issuer.
+        /// Gets a X.500 distinguished name part relative to CRL issuer.
         /// </summary>
         /// <remarks>
         ///		This member is used only when CRL issuer is not the same entity that issued certificate
@@ -45,7 +50,7 @@ namespace System.Security.Cryptography.X509Certificates {
         /// Gets the list of reasons covered by CRLs in distribution point.
         /// </summary>
         /// <remarks>If this member is set to zero, then CRLs in this distribution point cover all reasons.</remarks>
-        public X509RevocationReasons Reasons { get; private set; }
+        public X509RevocationReasonFlag Reasons { get; private set; }
         /// <summary>
         /// Gets a collection of alternative names to identify CRL issuer.
         /// </summary>
@@ -53,18 +58,17 @@ namespace System.Security.Cryptography.X509Certificates {
         ///		This member is used only when CRL issuer is not the same entity that issued certificate
         ///		in subject.
         /// </remarks>
-        public X509AlternativeNameCollection CRLIssuer { get; private set; }
+        public X509AlternativeNameCollection CRLIssuer => new X509AlternativeNameCollection(_crlIssuers);
         /// <summary>
         /// Gets ASN.1-encoded byte array.
         /// </summary>
-        public Byte[] RawData { get; private set; }
+        public Byte[] RawData => _rawData.ToArray();
 
-        void m_decode(Byte[] rawData) {
+        void decode(Byte[] rawData) {
             Asn1Reader asn = new Asn1Reader(rawData);
             asn.MoveNext();
             if (asn.PayloadLength == 0) { return; }
             do {
-                Byte[] altNames;
                 switch (asn.Tag) {
                     case 0xA0:
                         Asn1Reader distName = new Asn1Reader(asn.GetPayload());
@@ -72,9 +76,7 @@ namespace System.Security.Cryptography.X509Certificates {
                             switch (distName.Tag) {
                                 case 0xA0:
                                     // full name
-                                    altNames = Asn1Utils.Encode(distName.GetPayload(), 48);
-                                    FullName = new X509AlternativeNameCollection();
-                                    FullName.Decode(altNames);
+                                    _fullNames.Decode(Asn1Utils.Encode(distName.GetPayload(), 48));
                                     break;
                                 case 0xA1:
                                     // relative to issuer name
@@ -84,52 +86,33 @@ namespace System.Security.Cryptography.X509Certificates {
                                 default:
                                     throw new InvalidDataException("The data is invalid");
                             }
-                        } while (distName.MoveNextCurrentLevel());
+                        } while (distName.MoveNextSibling());
                         break;
                     case 0xA1:
                         // reasons
                         Asn1BitString bs = new Asn1BitString(asn.GetPayload());
                         if (bs.Value[0] == 0) {
-                            Reasons = X509RevocationReasons.Unspecified;
-                            break;
+                            Reasons = X509RevocationReasonFlag.Unspecified;
+                        } else {
+                            Reasons = (X509RevocationReasonFlag) bs.Value[0];
                         }
-                        Byte mask = 1;
-                        do {
-                            if ((bs.Value[0] & mask) > 0) {
-                                switch (mask) {
-                                    case 1: Reasons += (Int32)X509RevocationReasons.AACompromise; break;
-                                    case 2: Reasons += (Int32)X509RevocationReasons.PrivilegeWithdrawn; break;
-                                    case 4: Reasons += (Int32)X509RevocationReasons.CertificateHold; break;
-                                    case 8: Reasons += (Int32)X509RevocationReasons.CeaseOfOperation; break;
-                                    case 16: Reasons += (Int32)X509RevocationReasons.Superseded; break;
-                                    case 32: Reasons += (Int32)X509RevocationReasons.ChangeOfAffiliation; break;
-                                    case 64: Reasons += (Int32)X509RevocationReasons.CACompromise; break;
-                                    case 128: Reasons += (Int32)X509RevocationReasons.KeyCompromise; break;
-                                }
-                            }
-                            mask <<= 1;
-                        } while (mask != 128);
                         break;
                     case 0xA2:
                         // crl issuer
-                        altNames = Asn1Utils.Encode(asn.GetPayload(), 48);
-                        CRLIssuer = new X509AlternativeNameCollection();
-                        CRLIssuer.Decode(altNames);
+                        _crlIssuers.Decode(Asn1Utils.Encode(asn.GetPayload(), 48));
                         break;
                     default:
                         throw new InvalidDataException("The data is invalid.");
                 }
-            } while (asn.MoveNextCurrentLevel());
-            RawData = rawData;
+            } while (asn.MoveNextSibling());
+            _rawData.AddRange(rawData);
         }
-        void m_encode(Uri[] uris) {
-            X509AlternativeNameCollection altnames = new X509AlternativeNameCollection();
+        void encode(IEnumerable<Uri> uris) {
             foreach (Uri uri in uris) {
-                altnames.Add(new X509AlternativeName(X509AlternativeNamesEnum.URL, uri.AbsoluteUri));
+                _fullNames.Add(new X509AlternativeName(X509AlternativeNamesEnum.URL, uri.AbsoluteUri));
             }
-            FullName = altnames;
-            Asn1Reader asn = new Asn1Reader(altnames.Encode());
-            RawData = Asn1Utils.Encode(asn.GetPayload(), 160);
+            Asn1Reader asn = new Asn1Reader(_fullNames.Encode());
+            _rawData.AddRange(Asn1Utils.Encode(asn.GetPayload(), 160));
         }
     }
 }
