@@ -32,6 +32,11 @@ namespace PKI.CertificateTemplates {
         /// </summary>
         public String[] CSPList { get; private set; }
         /// <summary>
+        /// Gets or sets a list of cryptographic service providers (CSPs) that are used to create the private key and public key.
+        /// If the property is null, a client may use any CSP installed on the client system.
+        /// </summary>
+        public String[] ProviderList { get; private set; }
+        /// <summary>
         /// Gets or sets key algorithm required by the certificate template.
         /// </summary>
         public Oid KeyAlgorithm { get; private set; }
@@ -93,9 +98,9 @@ namespace PKI.CertificateTemplates {
             var cspList = new List<String>();
 
             try {
-                Object[] CSPObject = (Object[])_entry[DsUtils.PropPkiKeyCsp];
-                if (CSPObject != null) {
-                    cspList.AddRange(CSPObject.Select(csp => Regex.Replace(csp.ToString(), "^\\d+,", String.Empty)));
+                Object[] cspObject = (Object[])_entry[DsUtils.PropPkiKeyCsp];
+                if (cspObject != null) {
+                    cspList.AddRange(cspObject.Select(csp => Regex.Replace(csp.ToString(), "^\\d+,", String.Empty)));
                 }
             } catch {
                 String cspString = (String)_entry[DsUtils.PropPkiKeyCsp];
@@ -104,9 +109,8 @@ namespace PKI.CertificateTemplates {
             CSPList = cspList.ToArray();
         }
         void readKeyUsages() {
-            Byte[] ku = (Byte[])_entry[DsUtils.PropPkiKeyUsage];
-            if (ku == null) {
-                KeyUsage = 0;
+            if (!(_entry[DsUtils.PropPkiKeyUsage] is Byte[] ku)) {
+                KeyUsage = X509KeyUsageFlags.None;
             } else {
                 if (ku.Length == 1) {
                     KeyUsage = (X509KeyUsageFlags)ku[0];
@@ -116,32 +120,33 @@ namespace PKI.CertificateTemplates {
                 }
             }
             if (schemaVersion > 2) {
-                X509CNGKeyUsages cngUsages = 0;
                 if (
-                    ((Int32)KeyUsage & (Int32)X509KeyUsageFlags.DataEncipherment) != 0 &&
-                    ((Int32)KeyUsage & (Int32)X509KeyUsageFlags.DecipherOnly) != 0 &&
-                    ((Int32)KeyUsage & (Int32)X509KeyUsageFlags.EncipherOnly) != 0 &&
-                    ((Int32)KeyUsage & (Int32)X509KeyUsageFlags.KeyEncipherment) != 0
-                ) { cngUsages |= X509CNGKeyUsages.DecryptOnly; }
+                    (KeyUsage & X509KeyUsageFlags.DataEncipherment) > 0 &&
+                    (KeyUsage & X509KeyUsageFlags.DecipherOnly) > 0 &&
+                    (KeyUsage & X509KeyUsageFlags.EncipherOnly) > 0 &&
+                    (KeyUsage & X509KeyUsageFlags.KeyEncipherment) > 0
+                ) { CNGKeyUsage |= X509CNGKeyUsages.DecryptOnly; }
+
                 if (
-                    ((Int32)KeyUsage & (Int32)X509KeyUsageFlags.CrlSign) != 0 &&
-                    ((Int32)KeyUsage & (Int32)X509KeyUsageFlags.DigitalSignature) != 0 &&
-                    ((Int32)KeyUsage & (Int32)X509KeyUsageFlags.KeyCertSign) != 0
-                ) { cngUsages |= X509CNGKeyUsages.SignatureOnly; }
-                if (((Int32)KeyUsage & (Int32)X509KeyUsageFlags.KeyAgreement) != 0) {
-                    cngUsages |= X509CNGKeyUsages.KeyAgreement;
+                    (KeyUsage & X509KeyUsageFlags.CrlSign) > 0 &&
+                    (KeyUsage & X509KeyUsageFlags.DigitalSignature) > 0 &&
+                    (KeyUsage & X509KeyUsageFlags.KeyCertSign) > 0
+                ) { CNGKeyUsage |= X509CNGKeyUsages.SignatureOnly; }
+
+                if ((KeyUsage & X509KeyUsageFlags.KeyAgreement) > 0) {
+                    CNGKeyUsage |= X509CNGKeyUsages.KeyAgreement;
                 }
+
                 if (
-                    (((Int32)KeyUsage & (Int32)X509KeyUsageFlags.DataEncipherment) != 0 ||
-                    ((Int32)KeyUsage & (Int32)X509KeyUsageFlags.DecipherOnly) != 0 ||
-                    ((Int32)KeyUsage & (Int32)X509KeyUsageFlags.EncipherOnly) != 0 ||
-                    ((Int32)KeyUsage & (Int32)X509KeyUsageFlags.KeyEncipherment) != 0) &&
-                    (((Int32)KeyUsage & (Int32)X509KeyUsageFlags.CrlSign) != 0 ||
-                    ((Int32)KeyUsage & (Int32)X509KeyUsageFlags.DigitalSignature) != 0 ||
-                    ((Int32)KeyUsage & (Int32)X509KeyUsageFlags.KeyCertSign) != 0) &&
-                    ((Int32)KeyUsage & (Int32)X509KeyUsageFlags.KeyAgreement) != 0
-                ) { cngUsages = X509CNGKeyUsages.AllUsages; }
-                CNGKeyUsage = cngUsages;
+                    ((KeyUsage & X509KeyUsageFlags.DataEncipherment) > 0 ||
+                    (KeyUsage & X509KeyUsageFlags.DecipherOnly) > 0 ||
+                    (KeyUsage & X509KeyUsageFlags.EncipherOnly) > 0 ||
+                    (KeyUsage & X509KeyUsageFlags.KeyEncipherment) > 0) &&
+                    ((KeyUsage & X509KeyUsageFlags.CrlSign) > 0 ||
+                    (KeyUsage & X509KeyUsageFlags.DigitalSignature) > 0 ||
+                    (KeyUsage & X509KeyUsageFlags.KeyCertSign) > 0) &&
+                    (KeyUsage & X509KeyUsageFlags.KeyAgreement) > 0
+                ) { CNGKeyUsage = X509CNGKeyUsages.AllUsages; }
             }
         }
         void initializeFromCom(IX509CertificateTemplate template) {
@@ -188,7 +193,7 @@ namespace PKI.CertificateTemplates {
         /// <returns>A textual representation of the certificate template cryptography settings</returns>
         public override String ToString() {
             String nl = Environment.NewLine;
-            StringBuilder SB = new StringBuilder();
+            var SB = new StringBuilder();
             SB.Append($"[Cryptography Settings]{nl}");
             SB.Append("  CSP list: ");
             if (CSPList == null) {
