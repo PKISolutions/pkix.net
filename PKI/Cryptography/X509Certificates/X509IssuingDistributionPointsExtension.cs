@@ -2,6 +2,7 @@
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using SysadminsLV.Asn1Parser;
+using SysadminsLV.Asn1Parser.Universal;
 
 namespace SysadminsLV.PKI.Cryptography.X509Certificates {
     public class X509IssuingDistributionPointsExtension : X509Extension {
@@ -24,14 +25,24 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates {
         }
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="X509IssuingDistributionPointsExtension"/> class using an
+        /// distribution point and partitioned CRL configuration.
         /// </summary>
-        /// <param name="distributionPoint"></param>
-        /// <param name="onlySomeReason">Specifies whether the CRL is partitioned by a subset of revocation reasons.</param>
+        /// <param name="distributionPoint">Specifies an instance of <see cref="X509DistributionPoint"/> that contains CRL location.</param>
         /// <param name="indirect">Specifies whether the CRL is indirect CRL.</param>
+        /// <param name="reasons">Specifies whether the CRL is partitioned by a subset of revocation reasons.</param>
         /// <param name="scope">Specifies the scope for CRL.</param>
-        public X509IssuingDistributionPointsExtension(X509DistributionPoint distributionPoint, Boolean onlySomeReason, Boolean indirect, IssuingDistributionPointScope scope) {
-            encode(distributionPoint, onlySomeReason, indirect, scope);
+        /// <exception cref="ArgumentNullException"><strong>distributionPoint</strong> parameter is NULL.</exception>
+        public X509IssuingDistributionPointsExtension(
+            X509DistributionPoint distributionPoint,
+            Boolean indirect = false,
+            X509RevocationReasonFlag reasons = X509RevocationReasonFlag.None,
+            IssuingDistributionPointScope scope = IssuingDistributionPointScope.None) {
+            if (distributionPoint == null) {
+                throw new ArgumentNullException(nameof(distributionPoint));
+            }
+
+            encode(distributionPoint, indirect, reasons, scope);
         }
 
         /// <summary>
@@ -53,39 +64,40 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates {
         /// <summary>
         /// Gets a status if CRL is partitioned by a subset of revocation reasons.
         /// </summary>
-        public Boolean OnlySomeReasons { get; private set; }
+        public X509RevocationReasonFlag Reasons { get; private set; }
         /// <summary>
         /// Gets a status if current CRL is indirect CRL.
         /// </summary>
         public Boolean IndirectCRL { get; private set; }
 
-        void encode(X509DistributionPoint distributionPoint, Boolean onlySomeReason, Boolean indirect, IssuingDistributionPointScope scope) {
+        void encode(X509DistributionPoint distributionPoint, Boolean indirect, X509RevocationReasonFlag reasons, IssuingDistributionPointScope scope) {
             Oid = _oid;
             Critical = true;
 
             var builder = Asn1Builder.Create();
             if (distributionPoint != null) {
                 DistributionPoint = distributionPoint;
-                builder.AddDerData(new Asn1Reader(distributionPoint.RawData).GetPayload());
+                builder.AddExplicit(0, distributionPoint.RawData, true);
             }
             if (scope == IssuingDistributionPointScope.OnlyUserCerts) {
                 OnlyUserCerts = true;
-                builder.AddExplicit(1, x => x.AddBoolean(true));
+                builder.AddImplicit(1, new Asn1Boolean(true).RawData, false);
             } else if (scope == IssuingDistributionPointScope.OnlyCaCerts) {
                 OnlyCaCerts = true;
-                builder.AddExplicit(2, x => x.AddBoolean(true));
+                builder.AddImplicit(2, new Asn1Boolean(true).RawData, false);
             }
-            if (onlySomeReason) {
-                OnlySomeReasons = true;
-                builder.AddExplicit(3, x => x.AddBoolean(true));
+            if (reasons != X509RevocationReasonFlag.None) {
+                Reasons = reasons;
+                // do encoding trick since encoding matches the Key Usage extension encoding
+                builder.AddExplicit(3, x => x.AddDerData(new X509KeyUsageExtension((X509KeyUsageFlags)reasons, false).RawData));
             }
             if (indirect) {
                 IndirectCRL = true;
-                builder.AddExplicit(4, x => x.AddBoolean(true));
+                builder.AddImplicit(4, new Asn1Boolean(true).RawData, false);
             }
             if (scope == IssuingDistributionPointScope.OnlyAttributeCerts) {
                 OnlyAttributeCerts = true;
-                builder.AddExplicit(5, x => x.AddBoolean(true));
+                builder.AddImplicit(5, new Asn1Boolean(true).RawData, false);
             }
 
             RawData = builder.GetEncoded();
@@ -110,7 +122,12 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates {
                         OnlyCaCerts = Asn1Utils.DecodeBoolean(asn.GetPayload());
                         break;
                     case 0xa3:
-                        OnlySomeReasons = Asn1Utils.DecodeBoolean(asn.GetPayload());
+                        var val = new Asn1BitString(asn.GetPayload());
+                        if (val.Value.Length > 1) {
+                            Reasons = (X509RevocationReasonFlag) BitConverter.ToUInt16(val.Value, 0);
+                        } else if (val.Value.Length == 1) {
+                            Reasons = (X509RevocationReasonFlag) val.Value[0];
+                        }
                         break;
                     case 0xa4:
                         IndirectCRL = Asn1Utils.DecodeBoolean(asn.GetPayload());
@@ -125,7 +142,7 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates {
 }
 /*
 IssuingDistributionPoint::= SEQUENCE {
-    distributionPoint          [0]     DistributionPointName OPTIONAL,
+    distributionPoint          [0] DistributionPointName OPTIONAL,
     onlyContainsUserCerts      [1] BOOLEAN DEFAULT FALSE,
     onlyContainsCACerts        [2] BOOLEAN DEFAULT FALSE,
     onlySomeReasons            [3] ReasonFlags OPTIONAL,
