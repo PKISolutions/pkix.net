@@ -30,7 +30,8 @@ namespace PKI.CertificateTemplates {
         /// Gets or sets a list of cryptographic service providers (CSPs) that are used to create the private key and public key.
         /// If the property is null, a client may use any CSP installed on the client system.
         /// </summary>
-        public String[] CSPList { get; private set; }
+        [Obsolete("Use 'ProviderList' member instead.", true)]
+        public String[] CSPList => ProviderList;
         /// <summary>
         /// Gets or sets a list of cryptographic service providers (CSPs) that are used to create the private key and public key.
         /// If the property is null, a client may use any CSP installed on the client system.
@@ -106,7 +107,7 @@ namespace PKI.CertificateTemplates {
                 String cspString = (String)_entry[DsUtils.PropPkiKeyCsp];
                 cspList.Add(Regex.Replace(cspString, "^\\d+,", String.Empty));
             }
-            CSPList = cspList.ToArray();
+            ProviderList = cspList.ToArray();
         }
         void readKeyUsages() {
             if (!(_entry[DsUtils.PropPkiKeyUsage] is Byte[] ku)) {
@@ -170,7 +171,7 @@ namespace PKI.CertificateTemplates {
                 } catch { }
             }
             try {
-                CSPList = (String[])template.Property[EnrollmentTemplateProperty.TemplatePropCryptoProviders];
+                ProviderList = (String[])template.Property[EnrollmentTemplateProperty.TemplatePropCryptoProviders];
             } catch { }
             try {
                 KeyAlgorithm = new Oid((String)template.Property[EnrollmentTemplateProperty.TemplatePropAsymmetricAlgorithm]);
@@ -196,11 +197,11 @@ namespace PKI.CertificateTemplates {
             var SB = new StringBuilder();
             SB.Append($"[Cryptography Settings]{nl}");
             SB.Append("  CSP list: ");
-            if (CSPList == null) {
+            if (ProviderList == null) {
                 SB.Append($"Any installed CSP{nl}");
             } else {
                 SB.Append(nl);
-                foreach (String csp in CSPList) {
+                foreach (String csp in ProviderList) {
                     SB.Append($"     {csp}{nl}");
                 }
                 SB.Append(nl);
