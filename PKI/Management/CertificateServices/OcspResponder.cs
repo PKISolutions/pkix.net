@@ -62,7 +62,7 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
         /// <summary>
         /// Gets the Array Controller of the current Online Responder Array.
         /// </summary>
-        public OcspResponder ArrayController => (OcspResponder)readValue(MSFT_ARRAY_CONTROLLER);
+        public OcspResponderMemberInfo ArrayController => (OcspResponderMemberInfo)readValue(MSFT_ARRAY_CONTROLLER);
         /// <summary>
         /// Gets a list of array members of the current Online Responder Array.
         /// </summary>
@@ -218,8 +218,8 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
                 switch (prop.Name) {
                     case MSFT_ARRAY_CONTROLLER:
                         return ComputerName.Equals(prop.Value.ToString(), StringComparison.OrdinalIgnoreCase)
-                            ? this
-                            : Connect(prop.Value.ToString());
+                            ? new OcspResponderMemberInfo(ComputerName)
+                            : new OcspResponderMemberInfo(prop.Value.ToString());
                     case MSFT_ARRAY_MEMBERS:
                         var list = new OcspResponderMemberInfoCollection();
                         foreach (String arrayMember in (Object[])prop.Value) {
