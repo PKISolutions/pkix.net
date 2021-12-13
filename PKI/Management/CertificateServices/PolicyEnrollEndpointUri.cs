@@ -53,7 +53,7 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
         /// </summary>
         /// <returns>Encoded and formatted string.</returns>
         public String Encode() {
-            return $"{Priority}\n{Authentication}\n{Convert.ToInt32(RenewalOnly)}\n{Uri.AbsoluteUri}";
+            return $"{Priority}\n{Convert.ToInt32(Authentication)}\n{Convert.ToInt32(RenewalOnly)}\n{Uri.AbsoluteUri}";
 
         }
 
