@@ -234,7 +234,7 @@ namespace PKI.CertificateTemplates {
                 Array.Reverse(rawData);
                 StringBuilder SB = new StringBuilder();
                 foreach (Byte item in rawData) { SB.Append($"{item:X2}"); }
-                hours = (long)(Convert.ToInt64(SB.ToString(), 16) * -.0000001 / 3600);
+                hours = (Int64)(Convert.ToInt64(SB.ToString(), 16) * -.0000001 / 3600);
             } else {
                 hours = fileTime / 3600;
             }
@@ -261,9 +261,9 @@ namespace PKI.CertificateTemplates {
         }
         void readEKU() {
             try {
-                object[] EkuObject = (object[])_entry[DsUtils.PropCertTemplateEKU];
+                Object[] EkuObject = (Object[])_entry[DsUtils.PropCertTemplateEKU];
                 if (EkuObject != null) {
-                    foreach (object item in EkuObject) {
+                    foreach (Object item in EkuObject) {
                         _ekuList.Add(new Oid(item.ToString()));
                     }
                 }
@@ -274,9 +274,9 @@ namespace PKI.CertificateTemplates {
         }
         void readCertPolicies() {
             try {
-                object[] oids = (object[])_entry[DsUtils.PropPkiCertPolicy];
+                Object[] oids = (Object[])_entry[DsUtils.PropPkiCertPolicy];
                 if (oids == null) { return; }
-                foreach (object oid in oids) {
+                foreach (Object oid in oids) {
                     _certPolicies.Add(new Oid((String)oid));
                 }
             } catch {
@@ -285,9 +285,9 @@ namespace PKI.CertificateTemplates {
         }
         void readCriticalExtensions() {
             try {
-                object[] oids = (object[])_entry[DsUtils.PropPkiCriticalExt];
+                Object[] oids = (Object[])_entry[DsUtils.PropPkiCriticalExt];
                 if (oids == null) { return; }
-                foreach (object oid in oids) {
+                foreach (Object oid in oids) {
                     _criticalExtensions.Add(new Oid((String)oid));
                 }
             } catch {
@@ -297,7 +297,7 @@ namespace PKI.CertificateTemplates {
         void readSuperseded() {
             List<String> temps = new List<String>();
             try {
-                object[] templates = (object[])_entry[DsUtils.PropPkiSupersede];
+                Object[] templates = (Object[])_entry[DsUtils.PropPkiSupersede];
                 if (templates != null) {
                     temps.AddRange(templates.Cast<String>());
                 }
