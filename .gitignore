@@ -236,3 +236,4 @@ _Pvt_Extensions
 .fake/
 /PKI.Test
 *.DotSettings
+/.editorconfig

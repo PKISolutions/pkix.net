@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Interop.CERTENROLLLib;
+using PKI.Utils;
+using SysadminsLV.Asn1Parser;
+using SysadminsLV.PKI.Cryptography.X509Certificates;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using Interop.CERTENROLLLib;
-using PKI.Utils;
-using SysadminsLV.Asn1Parser;
-using SysadminsLV.PKI.Cryptography.X509Certificates;
 using X509KeyUsageFlags = System.Security.Cryptography.X509Certificates.X509KeyUsageFlags;
 
 namespace PKI.CertificateTemplates {
@@ -41,9 +41,17 @@ namespace PKI.CertificateTemplates {
         /// </summary>
         public String ValidityPeriod { get; private set; }
         /// <summary>
+        /// Gets or sets the maximum validity timespan of the certificate
+        /// </summary>
+        public TimeSpan LifeSpan { get; private set; }
+        /// <summary>
         /// Gets or sets the time before a certificate expires, during which time, clients need to send a certificate renewal request.
         /// </summary>
         public String RenewalPeriod { get; private set; }
+        /// <summary>
+        /// Gets or sets the span of time before expiry that a client needs to send a certificate renewal request  
+        /// </summary>
+        public TimeSpan RenewalTimeSpan { get; private set; }
         /// <summary>
         /// Gets or sets certificate's subject type. Can be either: Computer, User, CA or CrossCA.
         /// </summary>
@@ -176,8 +184,8 @@ namespace PKI.CertificateTemplates {
             subjectFlags = (Int32)_entry[DsUtils.PropPkiSubjectFlags];
             EnrollmentOptions = (CertificateTemplateEnrollmentFlags)_entry[DsUtils.PropPkiEnrollFlags];
             pkf = (Int32)_entry[DsUtils.PropPkiPKeyFlags];
-            ValidityPeriod = readValidity((Byte[])_entry[DsUtils.PropPkiNotAfter]);
-            RenewalPeriod = readValidity((Byte[])_entry[DsUtils.PropPkiRenewalPeriod]);
+            getValidity((Byte[])_entry[DsUtils.PropPkiNotAfter]);
+            getRenewal((Byte[])_entry[DsUtils.PropPkiRenewalPeriod]);
             pathLength = (Int32)_entry[DsUtils.PropPkiPathLength];
             if ((EnrollmentOptions & CertificateTemplateEnrollmentFlags.CAManagerApproval) > 0) {
                 CAManagerApproval = true;
@@ -193,14 +201,14 @@ namespace PKI.CertificateTemplates {
                 GeneralFlags = (CertificateTemplateFlags)template.Property[EnrollmentTemplateProperty.TemplatePropGeneralFlags];
                 EnrollmentOptions = (CertificateTemplateEnrollmentFlags)template.Property[EnrollmentTemplateProperty.TemplatePropEnrollmentFlags];
                 subjectFlags = (Int32)template.Property[EnrollmentTemplateProperty.TemplatePropSubjectNameFlags];
-                ValidityPeriod = readValidity(null, (Int64)template.Property[EnrollmentTemplateProperty.TemplatePropValidityPeriod]);
-                RenewalPeriod = readValidity(null, (Int64)template.Property[EnrollmentTemplateProperty.TemplatePropRenewalPeriod]);
+                getValidity(null, (Int64)template.Property[EnrollmentTemplateProperty.TemplatePropValidityPeriod]);
+                getRenewal(null, (Int64)template.Property[EnrollmentTemplateProperty.TemplatePropRenewalPeriod]);
             } else {
                 GeneralFlags = (CertificateTemplateFlags)Convert.ToInt32((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropGeneralFlags]);
                 EnrollmentOptions = (CertificateTemplateEnrollmentFlags)Convert.ToInt32((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropEnrollmentFlags]);
                 subjectFlags = unchecked((Int32)(UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropSubjectNameFlags]);
-                ValidityPeriod = readValidity(null, Convert.ToInt64((UInt64)template.Property[EnrollmentTemplateProperty.TemplatePropValidityPeriod]));
-                RenewalPeriod = readValidity(null, Convert.ToInt64((UInt64)template.Property[EnrollmentTemplateProperty.TemplatePropRenewalPeriod]));
+                getValidity(null, Convert.ToInt64((UInt64)template.Property[EnrollmentTemplateProperty.TemplatePropValidityPeriod]));
+                getRenewal(null, Convert.ToInt64((UInt64)template.Property[EnrollmentTemplateProperty.TemplatePropRenewalPeriod]));
             }
             try {
                 SupersededTemplates = (String[])template.Property[EnrollmentTemplateProperty.TemplatePropSupersede];
@@ -210,28 +218,41 @@ namespace PKI.CertificateTemplates {
             List<X509Extension> exts2 = (from IX509Extension ext in (IX509Extensions)template.Property[EnrollmentTemplateProperty.TemplatePropExtensions] select new X509Extension(ext.ObjectId.Value, Convert.FromBase64String(ext.RawData[Interop.CERTENROLLLib.EncodingType.XCN_CRYPT_STRING_BASE64]), ext.Critical)).Select(CryptographyUtils.ConvertExtension).ToList();
             foreach (X509Extension ext in exts2) { _extensions.Add(ext); }
         }
-
-        static String readValidity(Byte[] rawData, Int64 fileTime = 0) {
-            Int64 Value;
-            String output;
+        void getValidity(Byte[] rawData, Int64 fileTime = 0) {
+            Int64 hours = readTimespan(rawData, fileTime);
+            LifeSpan = TimeSpan.FromHours(hours);
+            ValidityPeriod = readValidity(hours);
+        }
+        void getRenewal(Byte[] rawData, Int64 fileTime = 0) {
+            Int64 hours = readTimespan(rawData, fileTime);
+            RenewalTimeSpan = TimeSpan.FromHours(hours);
+            RenewalPeriod = readValidity(hours);
+        }
+        static Int64 readTimespan(Byte[] rawData, Int64 fileTime = 0) {
+            Int64 hours;
             if (rawData != null) {
                 Array.Reverse(rawData);
                 StringBuilder SB = new StringBuilder();
                 foreach (Byte item in rawData) { SB.Append($"{item:X2}"); }
-                Value = (Int64)(Convert.ToInt64(SB.ToString(), 16) * -.0000001 / 3600);
+                hours = (long)(Convert.ToInt64(SB.ToString(), 16) * -.0000001 / 3600);
             } else {
-                Value = fileTime / 3600;
+                hours = fileTime / 3600;
             }
-            if (Value % 8760 == 0 && Value / 8760 >= 1) {
-                output = Convert.ToString(Value / 8760) + " years";
-            } else if (Value % 720 == 0 && Value / 720 >= 1) {
-                output = Convert.ToString(Value / 720) + " months";
-            } else if (Value % 168 == 0 && Value / 168 >= 1) {
-                output = Convert.ToString(Value / 168) + " weeks";
-            } else if (Value % 24 == 0 && Value / 24 >= 1) {
-                output = Convert.ToString(Value / 24) + " days";
-            } else if (Value % 1 == 0 && Value / 1 >= 1) {
-                output = Convert.ToString(Value) + " hours";
+            return hours;
+        }
+
+        static String readValidity(Int64 hours) {
+            String output;
+            if (hours % 8760 == 0 && hours / 8760 >= 1) {
+                output = Convert.ToString(hours / 8760) + " years";
+            } else if (hours % 720 == 0 && hours / 720 >= 1) {
+                output = Convert.ToString(hours / 720) + " months";
+            } else if (hours % 168 == 0 && hours / 168 >= 1) {
+                output = Convert.ToString(hours / 168) + " weeks";
+            } else if (hours % 24 == 0 && hours / 24 >= 1) {
+                output = Convert.ToString(hours / 24) + " days";
+            } else if (hours % 1 == 0 && hours / 1 >= 1) {
+                output = Convert.ToString(hours) + " hours";
             } else {
                 output = "0 hours";
             }
@@ -240,9 +261,9 @@ namespace PKI.CertificateTemplates {
         }
         void readEKU() {
             try {
-                Object[] EkuObject = (Object[])_entry[DsUtils.PropCertTemplateEKU];
+                object[] EkuObject = (object[])_entry[DsUtils.PropCertTemplateEKU];
                 if (EkuObject != null) {
-                    foreach (Object item in EkuObject) {
+                    foreach (object item in EkuObject) {
                         _ekuList.Add(new Oid(item.ToString()));
                     }
                 }
@@ -253,9 +274,9 @@ namespace PKI.CertificateTemplates {
         }
         void readCertPolicies() {
             try {
-                Object[] oids = (Object[])_entry[DsUtils.PropPkiCertPolicy];
+                object[] oids = (object[])_entry[DsUtils.PropPkiCertPolicy];
                 if (oids == null) { return; }
-                foreach (Object oid in oids) {
+                foreach (object oid in oids) {
                     _certPolicies.Add(new Oid((String)oid));
                 }
             } catch {
@@ -264,9 +285,9 @@ namespace PKI.CertificateTemplates {
         }
         void readCriticalExtensions() {
             try {
-                Object[] oids = (Object[])_entry[DsUtils.PropPkiCriticalExt];
+                object[] oids = (object[])_entry[DsUtils.PropPkiCriticalExt];
                 if (oids == null) { return; }
-                foreach (Object oid in oids) {
+                foreach (object oid in oids) {
                     _criticalExtensions.Add(new Oid((String)oid));
                 }
             } catch {
@@ -276,7 +297,7 @@ namespace PKI.CertificateTemplates {
         void readSuperseded() {
             List<String> temps = new List<String>();
             try {
-                Object[] templates = (Object[])_entry[DsUtils.PropPkiSupersede];
+                object[] templates = (object[])_entry[DsUtils.PropPkiSupersede];
                 if (templates != null) {
                     temps.AddRange(templates.Cast<String>());
                 }
