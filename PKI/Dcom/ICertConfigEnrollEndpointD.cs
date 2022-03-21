@@ -22,6 +22,10 @@ namespace SysadminsLV.PKI.Dcom {
         /// Indicates whether the endpoint is for renewal requests only (<strong>True</strong>), or accepts initial requests (<strong>False</strong>).
         /// </summary>
         Boolean RenewalOnly { get; }
+        /// <summary>
+        /// Indicates whether the endpoint supports key-based renewal.
+        /// </summary>
+        Boolean KeyBasedRenewal { get; }
 
         /// <summary>
         /// Encodes a enrollment web service URL to an Active Directory compatible format.

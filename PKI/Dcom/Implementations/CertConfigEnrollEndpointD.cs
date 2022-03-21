@@ -13,14 +13,18 @@ namespace SysadminsLV.PKI.Dcom.Implementations {
             Authentication = (AdcsEnrollAuthenticationType)Convert.ToInt32(tokens[1]);
             RenewalOnly = Convert.ToBoolean(Byte.Parse(tokens[2]));
             Uri = tokens[3].TrimEnd();
+            if (tokens.Length > 4) {
+                KeyBasedRenewal = Convert.ToBoolean(Convert.ToInt32(tokens[4]));
+            }
         }
 
         public String Uri { get; }
         public AdcsEnrollAuthenticationType Authentication { get; }
         public Int32 Priority { get; }
         public Boolean RenewalOnly { get; }
+        public Boolean KeyBasedRenewal { get; }
         public String DsEncode() {
-            return $"{Priority}\n{Authentication}\n{Convert.ToInt32(RenewalOnly)}\n{Uri}";
+            return $"{Priority}\n{Authentication}\n{Convert.ToInt32(RenewalOnly)}\n{Uri}\n{Convert.ToInt32(KeyBasedRenewal)}";
         }
     }
 }
