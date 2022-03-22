@@ -25,7 +25,7 @@ namespace SysadminsLV.PKI.Dcom.Implementations {
         public Boolean KeyBasedRenewal { get; }
 
         public String DsEncode() {
-            return $"{Priority}\n{Convert.ToInt32(Authentication)}\n{Convert.ToInt32(RenewalOnly)}\n{Uri}\n{Convert.ToInt32(KeyBasedRenewal)}";
+            return $"{Priority}\n{Convert.ToInt32(Authentication)}\n{Convert.ToInt32(RenewalOnly)}\n{new Uri(Uri).AbsoluteUri}\n{Convert.ToInt32(KeyBasedRenewal)}";
         }
     }
 }
