@@ -269,50 +269,62 @@ namespace System.Security.Cryptography.X509Certificates {
             }
             SB.Append($"{n}{n}[Revoked Certificate Count]{n}  {_revokedCerts.Count}{n}{n}");
         }
-        void genVerboseString(StringBuilder SB) {
+        void genVerboseString(StringBuilder SB, Int32 revCertEntries) {
             String n = Environment.NewLine;
-            SB.Append($"X509 Certificate Revocation List:{n}");
-            SB.Append($"Version: {Version}{n}");
-            SB.Append($"Issuer: {n}");
+            SB.AppendLine("X509 Certificate Revocation List:");
+            SB.AppendLine($"Version: {Version}");
+            SB.AppendLine("Issuer: ");
             String[] tokens = Issuer.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             for (Int32 index = 0; index < tokens.Length; index++) {
                 tokens[index] = "    " + tokens[index].Trim();
             }
-            SB.Append(String.Join(n, tokens) + n);
-            SB.Append($"This Update: {ThisUpdate}{n}");
-            if (NextUpdate == null) {
-                SB.Append($"Next Update: Infinity{n}");
-            } else {
-                SB.Append($"Next Update: {NextUpdate}{n}");
-            }
-            if (_revokedCerts.Count == 0) {
-                SB.Append($"CRL Entries: 0{n}");
-            } else {
-                SB.Append($"CRL Entries: {_revokedCerts.Count}{n}");
-                foreach (X509CRLEntry revCert in _revokedCerts) {
-                    SB.Append($"    Serial Number: {revCert.SerialNumber}{n}");
-                    SB.Append($"    Revocation Date: {revCert.RevocationDate}{n}");
+            SB.AppendLine(String.Join(n, tokens));
+            SB.AppendLine();
+            SB.AppendLine($"This Update: {ThisUpdate}");
+            SB.AppendLine(NextUpdate == null
+                ? "Next Update: Infinity"
+                : $"Next Update: {NextUpdate}");
+            SB.AppendLine();
+            SB.AppendLine($"CRL Entries: {_revokedCerts.Count}");
+            if (_revokedCerts.Count > 0) {
+                Int32 upperBound = _revokedCerts.Count;
+                Int32 truncatedCount = 0;
+                if (revCertEntries > 0) {
+                    truncatedCount = _revokedCerts.Count - revCertEntries;
+                    upperBound = Math.Min(revCertEntries, _revokedCerts.Count);
+                }
+
+                for (Int32 index = 0; index < upperBound; index++) {
+                    X509CRLEntry revCert = _revokedCerts[index];
+                    SB.AppendLine($"    Serial Number: {revCert.SerialNumber}");
+                    SB.AppendLine($"    Revocation Date: {revCert.RevocationDate}");
                     if (revCert.ReasonCode != 0) {
-                        SB.Append($"    Revocation Reason: {revCert.ReasonMessage} ({revCert.ReasonCode}){n}");
+                        SB.AppendLine($"    Revocation Reason: {revCert.ReasonMessage} ({revCert.ReasonCode})");
                     }
-                    SB.Append(n);
+
+                    SB.AppendLine();
+                }
+
+                if (truncatedCount > 0) {
+                    SB.AppendLine("    <...>");
+                    SB.AppendLine($"    Next {truncatedCount} entries are truncated from dump.");
                 }
             }
-            if (_extensions == null) {
-                SB.Append($"CRL Extensions: 0{n}");
-            } else {
-                SB.Append($"CRL Extensions: {_extensions.Count}{n}");
-                foreach (X509Extension ext in Extensions) {
-                    SB.Append($"  OID={ext.Oid.Format(true)}");
-                    SB.Append($"Critical={ext.Critical}, Length={ext.RawData.Length} ({ext.RawData.Length:x2}):{n}");
-                    SB.Append($"    {ext.Format(true).Replace(n, $"{n}    ").TrimEnd()}{n}{n}");
+
+            SB.AppendLine($"CRL Extensions: {_extensions.Count}");
+            if (_extensions.Count > 0) {
+                foreach (X509Extension ext in _extensions) {
+                    SB.Append($"  OID={ext.Oid.Format(true)}, ");
+                    SB.AppendLine($"Critical={ext.Critical}, Length={ext.RawData.Length} ({ext.RawData.Length:x2}):");
+                    SB.AppendLine($"    {ext.Format(true).Replace(n, $"{n}    ").TrimEnd()}");
+                    SB.AppendLine();
                 }
             }
-            SB.Append("Signature Algorithm:" + n);
-            SB.Append($"    Algorithm ObjectId: {SignatureAlgorithm.Format(true)}{n}");
+            SB.AppendLine("Signature Algorithm:");
+            SB.AppendLine($"    Algorithm ObjectId: {SignatureAlgorithm.Format(true)}");
             SB.Append($"Signature: Unused bits={sigUnused}{n}    ");
             String tempString = AsnFormatter.BinaryToString(signature, EncodingType.HexAddress);
-            SB.Append($"{tempString.Replace(n, $"{n}    ").TrimEnd()}{n}");
+            SB.Append($"{tempString.Replace(n, $"{n}    ").TrimEnd()}");
         }
 
         /// <summary>
@@ -384,24 +396,46 @@ namespace System.Security.Cryptography.X509Certificates {
         /// <remarks>This method can be used to reset the state of the CRL. It also frees any resources associated with the CRL.</remarks>
         [Obsolete("This method is obsolete.", true)]
         public void Reset() { }
-        /// <summary>
-        /// Displays an X.509 certificate revocation list in text format.
-        /// </summary>
-        /// <param name="verbose">
-        ///		Specifies whether the simple or enhanced/verbose output is necessary.
-        ///		If this parameter is set to <strong>False</strong> (default value), the method returns a brief information about the
-        ///		current object. If this parameter is set to <strong>True</strong>, the method will return a full dump of the
-        ///		current object.
-        /// </param>
-        /// <returns>The CRL information.</returns>
-        /// <remarks>If the object is not initialized, the method returns class name.</remarks>
-        public String ToString(Boolean verbose = false) {
+        /// <inheritdoc />
+        public override String ToString() {
+            var SB = new StringBuilder();
+            genBriefString(SB);
+            
+            return SB.ToString();
+        }
+        ///  <summary>
+        ///  Displays an X.509 certificate revocation list in text format. This method is obsolete.
+        ///  </summary>
+        ///  <param name="verbose">
+        /// 		Specifies whether the simple or enhanced/verbose output is necessary.
+        /// 		If this parameter is set to <strong>False</strong> (default value), the method returns a brief information about the
+        /// 		current object. If this parameter is set to <strong>True</strong>, the method will return a full dump of the
+        /// 		current object.
+        ///  </param>
+        ///  <returns>The CRL information.</returns>
+        ///  <remarks>If the object is not initialized, the method returns class name.</remarks>
+        [Obsolete]
+        public String ToString(Boolean verbose) {
             var SB = new StringBuilder();
             if (verbose) {
-                genVerboseString(SB);
+                genVerboseString(SB, 0);
             } else {
                 genBriefString(SB);
             }
+            return SB.ToString();
+        }
+        /// <summary>
+        /// Displays an X.509 certificate revocation list in text format.
+        /// </summary>
+        /// <param name="revCertCount">
+        ///     Specifies the number of revoked certificate entries included in text dump. Zero value means that all entries
+        ///     are included which may negatively affect performance on large CRLs.
+        /// </param>
+        /// <returns>The CRL text dump.</returns>
+        public String ToString(Int32 revCertCount) {
+            var SB = new StringBuilder();
+            genVerboseString(SB, revCertCount);
+
             return SB.ToString();
         }
         ///  <summary>
@@ -507,7 +541,7 @@ namespace System.Security.Cryptography.X509Certificates {
         /// Determines whether the specified object is equal to the current object. Two CRLs are equal when
         /// they have same version, type, issuer, CRL number and <see cref="ThisUpdate"/> values.
         /// </summary>
-        /// <inheritdoc cref="Object.ToString" select="param|returns"/>
+        /// <inheritdoc cref="Object.Equals" select="param|returns"/>
         public override Boolean Equals(Object obj) {
             return !(obj is null) &&
                    (ReferenceEquals(this, obj)
