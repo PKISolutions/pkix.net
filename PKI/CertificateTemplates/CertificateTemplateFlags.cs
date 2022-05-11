@@ -44,13 +44,17 @@ namespace PKI.CertificateTemplates {
         /// </summary>
         IsCA                    = 0x80, // 128
         /// <summary>
-        /// Adds requester distinguished name 
+        /// Adds requester distinguished name.
         /// </summary>
-        AddDistinguishedName    = 0x100, // 256
+        AddDirectoryPath        = 0x100, // 256
         /// <summary>
         /// This flag indicates that a certificate based on this section needs to include a template name certificate extension.
         /// </summary>
         AddTemplateName         = 0x200, // 512
+        /// <summary>
+        /// Adds requester distinguished name.
+        /// </summary>
+        AddSubjectDirectoryPath = 0x400, // 1024
         /// <summary>
         /// This flag indicates a certificate request for cross-certifying a certificate.
         /// </summary>
