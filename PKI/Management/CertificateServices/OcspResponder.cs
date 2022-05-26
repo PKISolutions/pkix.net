@@ -39,7 +39,11 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
         readonly IOCSPAdmin _ocspAdmin = new OCSPAdminClass();
 
         OcspResponder(String serverName) {
-            if (String.IsNullOrEmpty(serverName) || "localhost".Equals(serverName, StringComparison.OrdinalIgnoreCase) || ".".Equals(serverName)) {
+            if (
+                String.IsNullOrEmpty(serverName)
+                || "localhost".Equals(serverName, StringComparison.OrdinalIgnoreCase)
+                || Environment.MachineName.Equals(serverName, StringComparison.OrdinalIgnoreCase)
+                || ".".Equals(serverName)) {
                 serverName = Environment.MachineName;
             }
 
@@ -190,23 +194,20 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
         }
 
         static String getComputerName(IOCSPAdmin ocspAdmin, String serverName) {
+            // if serverName contains dot, then FQDN name is used, return it as is.
             if (serverName.Contains(".")) {
                 return serverName;
             }
 
-            try {
-                var arrayMembers = (String[])((IOCSPProperty)ocspAdmin.OCSPServiceProperties.ItemByName[MSFT_ARRAY_MEMBERS]).Value;
-                foreach (String arrayMember in arrayMembers) {
-                    String[] tokens = arrayMember.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-                    // if we found match, assign FQDN to ComputerName property
-                    if (tokens[0].Equals(serverName, StringComparison.OrdinalIgnoreCase)) {
-                        return arrayMember;
-                    }
-                }
-            } catch { }
+            // otherwise, short name is passed, so current computer domain/workgroup is assumed
+            // retrieve domain suffix
+            String domainSuffix = DsUtils.GetCurrentDomainName();
+            // if empty, then current machine is not part of domain, so return host name
+            if (String.IsNullOrEmpty(domainSuffix)) {
+                return serverName;
+            }
 
-            // corner case when we can't 
-            return $"{serverName}.{DsUtils.GetCurrentDomainName()}";
+            return $"{serverName}.{domainSuffix}";
         }
 
         Object readValue(String propertyName) {
