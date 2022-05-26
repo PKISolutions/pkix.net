@@ -178,7 +178,9 @@ namespace PKI.Utils {
                                                      : SB.Append('!').Append(((Int32)c).ToString("x4")));
 
             String sanitizedString = sanitizedBuilder.ToString();
-            if (sanitizedString.Length <= maxLength) return sanitizedString;
+            if (sanitizedString.Length <= maxLength) {
+                return sanitizedString;
+            }
 
             String testForIncompleteSequence = sanitizedString.Substring(maxLength - 4, 4);
             Int32 i = testForIncompleteSequence.IndexOf('!');
