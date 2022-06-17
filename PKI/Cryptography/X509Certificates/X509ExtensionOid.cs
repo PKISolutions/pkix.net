@@ -18,6 +18,7 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates {
         public const String ApplicationPolicyMappings    = "1.3.6.1.4.1.311.21.11";
         public const String ApplicationPolicyConstraints = "1.3.6.1.4.1.311.21.12";
         public const String PublishedCrlLocations        = "1.3.6.1.4.1.311.21.14";
+        public const String MsftSecurityIdentifier       = "1.3.6.1.4.1.311.25.2";
         public const String AuthorityInformationAccess   = "1.3.6.1.5.5.7.1.1";
         public const String OcspNonce                    = "1.3.6.1.5.5.7.48.1.2";
         public const String OcspCRLReference             = "1.3.6.1.5.5.7.48.1.3";

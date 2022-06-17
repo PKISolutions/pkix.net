@@ -125,6 +125,7 @@
     <Compile Include="Cryptography\X509Certificates\X509CertificateTrustListBuilder.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CertificateTrustListEntry.cs" />
     <Compile Include="Cryptography\X509Certificates\X509IssuingDistributionPointsExtension.cs" />
+    <Compile Include="Cryptography\X509Certificates\X509MsSecurityIdentifierExtension.cs" />
     <Compile Include="Cryptography\X509Certificates\X509RevocationReasonFlag.cs" />
     <Compile Include="Dcom\AdcsBinaryFormat.cs" />
     <Compile Include="Dcom\AdcsCAPropertyName.cs" />

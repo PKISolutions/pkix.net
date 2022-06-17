@@ -35,6 +35,8 @@ namespace PKI.Utils {
                     return new X509ApplicationPolicyConstraintsExtension(asndata);
                 case X509ExtensionOid.PublishedCrlLocations:
                     return new X509PublishedCrlLocationsExtension(asndata, extension.Critical);
+                case X509ExtensionOid.MsftSecurityIdentifier:
+                    return new X509PublishedCrlLocationsExtension(asndata, extension.Critical);
                 case X509ExtensionOid.AuthorityInformationAccess:
                     return new X509AuthorityInformationAccessExtension(asndata, extension.Critical);
                 case X509ExtensionOid.OcspNonce:
