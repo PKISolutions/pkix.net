@@ -32,14 +32,14 @@ namespace SysadminsLV.PKI.Dcom.Implementations {
             // copy raw bytes right after length prefix
             Marshal.Copy(extension.RawData, 0, pbBstr + 4, extension.RawData.Length);
             // create an instance of VARIANT and configure it
-            var variant = new Oaidl.VARIANT {
-                vt = Oaidl.VT_BSTR,
+            var variant = new OleAut.VARIANT {
+                vt = OleAut.VT_BSTR,
                 // the pointer to BSTR doesn't include prefix length, so skip 4 bytes
                 pvRecord = pbBstr + 4
             };
             Int32 flags = extension.Critical ? 1 : 0;
 
-            IntPtr pvarValue = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(Oaidl.VARIANT)));
+            IntPtr pvarValue = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(OleAut.VARIANT)));
             Marshal.StructureToPtr(variant, pvarValue, false);
             try {
                 certAdmin.SetCertificateExtension(_configString, requestID, extension.Oid.Value, CertAdmConstants.ProptypeBinary, flags, pvarValue);

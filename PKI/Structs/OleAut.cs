@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 
 namespace SysadminsLV.PKI.Structs {
-    class Oaidl {
+    static class OleAut {
         // from [MS-OLEAUT]
         public const Int16 VT_NULL        = 0x0001;
         public const Int16 VT_I2          = 0x0002;

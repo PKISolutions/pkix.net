@@ -241,7 +241,7 @@
     <Compile Include="Security\AccessControl\OcspResponderAuditRule.cs" />
     <Compile Include="Security\AccessControl\OcspResponderRights.cs" />
     <Compile Include="Security\AccessControl\OcspResponderSecurityDescriptor.cs" />
-    <Compile Include="Structs\Oaidl.cs" />
+    <Compile Include="Structs\OleAut.cs" />
     <Compile Include="Utils\CLRExtensions\FileInfoExtensions.cs" />
     <Compile Include="Win32\AdvAPI.cs" />
     <Compile Include="Base\BasicCollection.cs" />
