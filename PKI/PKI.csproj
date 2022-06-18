@@ -8,7 +8,7 @@
     <ProjectGuid>{5AD7D76A-09A4-4E4F-AFA7-7798E0E9CD89}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PKI</RootNamespace>
+    <RootNamespace>SysadminsLV.PKI</RootNamespace>
     <AssemblyName>SysadminsLV.PKI</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -72,9 +72,10 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Interop.CERTADMINLib">
-      <HintPath>..\Interop\Interop.CERTADMINLib.dll</HintPath>
+    <Reference Include="Interop.CERTADMINLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>False</EmbedInteropTypes>
+      <HintPath>_ExternalReferences\Interop.CERTADMINLib.dll</HintPath>
     </Reference>
     <Reference Include="Interop.CERTCLILib">
       <HintPath>..\Interop\Interop.CERTCLILib.dll</HintPath>
@@ -144,6 +145,7 @@
     <Compile Include="Dcom\ICertCrlAdminD.cs" />
     <Compile Include="Dcom\ICertDbAdminD.cs" />
     <Compile Include="Dcom\ICertPropWriterD.cs" />
+    <Compile Include="Dcom\ICertRequestAdmin.cs" />
     <Compile Include="Dcom\Implementations\BulkRowRemovalOption.cs" />
     <Compile Include="Dcom\Implementations\CertConfigD2.cs" />
     <Compile Include="Dcom\Implementations\CertConfigEnrollEndpointD.cs" />
@@ -160,6 +162,7 @@
     <Compile Include="Dcom\Implementations\CertConfigD.cs" />
     <Compile Include="Dcom\Implementations\CertConfigEntryD.cs" />
     <Compile Include="Dcom\Implementations\CertPropWriterD.cs" />
+    <Compile Include="Dcom\Implementations\CertRequestAdminD.cs" />
     <Compile Include="Dcom\Implementations\CertSrvRegManagerD.cs" />
     <Compile Include="Dcom\Implementations\ImportForeignOption.cs" />
     <Compile Include="Management\ActiveDirectory\DsCertEnrollServer.cs" />
@@ -238,6 +241,7 @@
     <Compile Include="Security\AccessControl\OcspResponderAuditRule.cs" />
     <Compile Include="Security\AccessControl\OcspResponderRights.cs" />
     <Compile Include="Security\AccessControl\OcspResponderSecurityDescriptor.cs" />
+    <Compile Include="Structs\Oaidl.cs" />
     <Compile Include="Utils\CLRExtensions\FileInfoExtensions.cs" />
     <Compile Include="Win32\AdvAPI.cs" />
     <Compile Include="Base\BasicCollection.cs" />
