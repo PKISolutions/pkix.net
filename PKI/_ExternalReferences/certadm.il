@@ -10,7 +10,7 @@
   .publickeytoken = (B7 7A 5C 56 19 34 E0 89 )                         // .z\V.4..
   .ver 4:0:0:0
 }
-.assembly CERTADMINLib
+.assembly Interop.CERTADMINLib
 {
   .custom instance void [mscorlib]System.Runtime.InteropServices.GuidAttribute::.ctor(string) = ( 01 00 24 33 35 44 45 39 39 41 30 2D 37 46 42 36   // ..$35DE99A0-7FB6
                                                                                                   2D 31 31 44 30 2D 38 38 31 37 2D 30 30 41 30 43   // -11D0-8817-00A0C

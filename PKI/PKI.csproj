@@ -437,7 +437,9 @@
     <Content Include="_ExternalReferences\SysadminsLV.Asn1Parser.dll" />
     <Content Include="_ExternalReferences\SysadminsLV.Asn1Parser.XML" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="_ExternalReferences\certadm.il" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
