@@ -24,7 +24,6 @@ namespace PKI.CertificateServices {
     public class CertificateAuthority {
         readonly CertSrvConfigUtil _regReader;
         readonly ICertPropReaderD _propReader;
-        ICertConfigEntryD dsEntry;
         Boolean[] keyMap;
 
         /// <param name="computerName">Specifies the fully qualified domain name (FQDN) of the computer where Certificate Services
@@ -44,10 +43,11 @@ namespace PKI.CertificateServices {
             IsAccessible = Ping(computerName);
             _regReader = new CertSrvConfigUtil(computerName);
             // try to find in AD if possible
-            lookInDs(computerName);
+            ICertConfigEntryD dsEntry = lookInDs(computerName);
             // if we found in AD, then it is easy money. Or read directly from server
             if (dsEntry != null) {
-                readInfoFromDsEntry();
+                readInfoFromDsEntry(dsEntry);
+                getDistinguishedName(dsEntry);
             } else {
                 readInfoFromServer();
             }
@@ -56,10 +56,9 @@ namespace PKI.CertificateServices {
             initialize();
         }
         CertificateAuthority(ICertConfigEntryD entry) {
-            dsEntry = entry;
-            IsAccessible = Ping(dsEntry.ComputerName);
+            IsAccessible = Ping(entry.ComputerName);
             // write basic info from ICertConfig without contacting the server.
-            readInfoFromDsEntry();
+            readInfoFromDsEntry(entry);
             
             _regReader = new CertSrvConfigUtil(ComputerName); // Cause delay 2x (1xRegistry, 1xDCOM)
             _propReader = new CertPropReaderD(ComputerName, false);
@@ -182,23 +181,22 @@ namespace PKI.CertificateServices {
         internal CertSrvPlatformVersion Version { get; private set; }
         internal String Sku { get; private set; }
 
-        void lookInDs(String computerName) {
+        static ICertConfigEntryD lookInDs(String computerName) {
             if (!DsUtils.Ping()) {
                 // we are in workgroup, so try to get DsEntry from whatever source we have using the name caller specified
-                dsEntry = new CertConfigD().FindConfigEntryByServerName(computerName);
-            } else {
-                // we are connected to AD.
-                // If name is passed in NetBIOS form, then translate to FQDN, because DS entries reference by FQDN only
-                if (!computerName.Contains(".")) {
-                    computerName = $"{computerName}.{DsUtils.GetCurrentDomainName()}";
-                }
-                // try to find by FQDN
-                dsEntry = new CertConfigD().FindConfigEntryByServerName(computerName);
+                return new CertConfigD().FindConfigEntryByServerName(computerName);
             }
+
+            // we are connected to AD.
+            // If name is passed in NetBIOS form, then translate to FQDN, because DS entries reference by FQDN only
+            if (!computerName.Contains(".")) {
+                computerName = $"{computerName}.{DsUtils.GetCurrentDomainName()}";
+            }
+            // try to find by FQDN
+            return new CertConfigD().FindConfigEntryByServerName(computerName);
         }
         void initialize() {
             if (!_regReader.RegistryOnline && !_regReader.DcomOnline) {
-                getDistinguishedName();
                 return;
             }
 
@@ -208,9 +206,8 @@ namespace PKI.CertificateServices {
             getCaCertificate();
             buildKeyMap();
             getCertSvcServiceStatus();
-            getDistinguishedName();
         }
-        void readInfoFromDsEntry() {
+        void readInfoFromDsEntry(ICertConfigEntryD dsEntry) {
             ComputerName = dsEntry.ComputerName;
             Name = dsEntry.CommonName;
             DisplayName = dsEntry.DisplayName;
@@ -224,7 +221,7 @@ namespace PKI.CertificateServices {
             // at this point we can say that specified CA is not registered in AD or we are not connected there,
             // so try to connect to CA and read info directly from server.
             // Note: we do not read ComputerName from server. We are ok with supplied one if it works. If it doesn't, no one cares then.
-
+            _regReader.SetRootNode(true);
             Name = DisplayName = _regReader.GetStringEntry("CommonName");
             ConfigString = ComputerName + "\\" + Name;
         }
@@ -294,12 +291,12 @@ namespace PKI.CertificateServices {
                 ServiceStatus = "Unknown";
             }
         }
-        void getDistinguishedName() {
+        void getDistinguishedName(ICertConfigEntryD dsEntry) {
             if (dsEntry == null || (dsEntry.Flags & CertConfigLocation.DsEntry) == 0) {
                 return;
             }
             // at this point we know that we are connected to AD and can try to lookup for DistinguishedName attribute.
-            //Console.WriteLine($"DEBUG: user forest     : {DsUtils.GetUserForestName()}");
+            //Console.WriteLine($"DEBUG: user forest     : {DsUtils.GetCurrentForestName()}");
             //Console.WriteLine($"DEBUG: computer forest : {DsUtils.GetComputerForestName()}");
             //Console.WriteLine($"DEBUG: user domain     : {DsUtils.GetUserDomainName()}");
             //Console.WriteLine($"DEBUG: computer domain : {DsUtils.GetComputerDomainName()}");
