@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Linq;
-using System.Reflection;
 using System.Security.Cryptography;
 using CERTADMINLib;
 using CERTCLILib;
-using PKI.Utils;
 
 namespace SysadminsLV.PKI.Dcom.Implementations {
     /// <summary>
     /// Represents a Windows-specific implementation of <see cref="ICertPropReaderD"/> interface.
     /// </summary>
     public class CertPropReaderD : ICertPropReaderD {
-        const String GET_CA_PROPERTY = "GetCAProperty";
         readonly String _configString;
-        readonly Boolean _forceCertAdmin;
-        readonly MethodInfo _getCAProperty;
+        readonly Func<String, Int32, Int32, Int32, Int32, Object> _getCaPropertyFunc;
         const Int32 MAX_INDEX = unchecked((Int32)0xffffffff);
 
         /// <summary>
@@ -29,62 +25,21 @@ namespace SysadminsLV.PKI.Dcom.Implementations {
         /// </exception>
         public CertPropReaderD(String configString, Boolean forceCertAdmin) {
             _configString = configString ?? throw new ArgumentNullException(nameof(configString));
-            _forceCertAdmin = forceCertAdmin;
-            _getCAProperty = forceCertAdmin
-                ? typeof(CCertAdminClass).GetMethod(GET_CA_PROPERTY)
-                : typeof(CCertRequestClass).GetMethod(GET_CA_PROPERTY);
-        }
-        Object getCertInstance() {
-            return _forceCertAdmin
-                ? Activator.CreateInstance(typeof(CCertAdminClass))
-                : Activator.CreateInstance(typeof(CCertRequestClass));
+            if (forceCertAdmin) {
+                _getCaPropertyFunc = new CCertAdminClass().GetCAProperty;
+            } else {
+                _getCaPropertyFunc = new CCertRequestClass().GetCAProperty;
+            }
         }
         Int32 getIntegerProperty(AdcsCAPropertyName propID, Int32 index = 0) {
-            Object instance = getCertInstance();
-            try {
-                return (Int32)_getCAProperty.Invoke(
-                    instance,
-                    new Object[] {
-                                     _configString,
-                                     (Int32)propID,
-                                     index,
-                                     (Int32)AdcsCAPropertyValueType.Long,
-                                     0});
-            } finally {
-                CryptographyUtils.ReleaseCom(instance);
-            }
+            return (Int32)_getCaPropertyFunc.Invoke(_configString, (Int32)propID, index, (Int32)AdcsCAPropertyValueType.Long, 0);
         }
         Byte[] getBinaryProperty(AdcsCAPropertyName propID, Int32 index = 0) {
-            Object instance = getCertInstance();
-            try {
-                String value = (String)_getCAProperty.Invoke(
-                    instance,
-                    new Object[] {
-                                     _configString,
-                                     (Int32)propID,
-                                     index,
-                                     (Int32)AdcsCAPropertyValueType.Binary,
-                                     (Int32)AdcsBinaryFormat.Base64NoHeader});
-
-                return Convert.FromBase64String(value);
-            } finally {
-                CryptographyUtils.ReleaseCom(instance);
-            }
+            String value = (String)_getCaPropertyFunc.Invoke(_configString, (Int32)propID, index, (Int32)AdcsCAPropertyValueType.Binary, (Int32)AdcsBinaryFormat.Base64NoHeader);
+            return Convert.FromBase64String(value);
         }
         String getStringProperty(AdcsCAPropertyName propID, Int32 index = 0) {
-            Object instance = getCertInstance();
-            try {
-                return (String)_getCAProperty.Invoke(
-                    instance,
-                    new Object[] {
-                                     _configString,
-                                     (Int32)propID,
-                                     index,
-                                     (Int32)AdcsCAPropertyValueType.String,
-                                     (Int32)AdcsBinaryFormat.Base64NoHeader});
-            } finally {
-                CryptographyUtils.ReleaseCom(instance);
-            }
+            return (String)_getCaPropertyFunc.Invoke(_configString, (Int32)propID, index, (Int32)AdcsCAPropertyValueType.String, 0);
         }
 
         #region GetCAProperty
