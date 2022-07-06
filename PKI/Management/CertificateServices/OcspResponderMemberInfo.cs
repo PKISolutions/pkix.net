@@ -31,5 +31,11 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
         public OcspResponder Connect() {
             return OcspResponder.Connect(ComputerName);
         }
+
+        /// <inheritdoc />
+        public override String ToString() {
+            String status = IsRunning ? "online" : "offline";
+            return $"{ComputerName} ({status})";
+        }
     }
 }

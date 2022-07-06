@@ -99,6 +99,11 @@ namespace PKI.CertificateTemplates {
         /// This flag instructs autoenrollment client to not renew certificate although the certificate meets all conditions
         /// for automatic renewal, i.e. initial automatic certificate enrollment is enabled and subsequent renewal is disabled.
         /// </summary>
-        SkipAutoRenewal                  = 0x00040000
+        SkipAutoRenewal                  = 0x00040000,
+        /// <summary>
+        /// Instructs Enterprise CA to not include SID extension in issued certificates that use subject construction from Active Directory.
+        /// More information in <see href="https://support.microsoft.com/kb/5014754">KB5014754</see>
+        /// </summary>
+        DoNotIncludeSidExtension = 0x00080000
     }
 }
