@@ -60,12 +60,12 @@ namespace System.Security.Cryptography.X509Certificates {
         void m_initialize(IEnumerable<String> authorityIssuer, IEnumerable<String> ocsp, Boolean ocspFirst) {
             Oid = _oid;
             Critical = false;
-            List<String> aiaUrlStrings = new List<String>();
-            List<String> ocspUrlStrings = new List<String>();
+            var aiaUrlStrings = new List<String>();
+            var ocspUrlStrings = new List<String>();
             Byte[] aiaOidBytes = Asn1Utils.EncodeObjectIdentifier(new Oid("1.3.6.1.5.5.7.48.2"));
             Byte[] ocspOidBytes = Asn1Utils.EncodeObjectIdentifier(new Oid("1.3.6.1.5.5.7.48.1"));
-            List<Byte> aiaBytes = new List<Byte>();
-            List<Byte> ocspBytes = new List<Byte>();
+            var aiaBytes = new List<Byte>();
+            var ocspBytes = new List<Byte>();
             if (authorityIssuer != null) {
                 foreach (Uri uri in authorityIssuer.Select(url => new Uri(url))) {
                     aiaUrlStrings.Add(uri.AbsoluteUri);
@@ -74,6 +74,8 @@ namespace System.Security.Cryptography.X509Certificates {
                     aiaBytes = new List<Byte>(Asn1Utils.Encode(aiaBytes.ToArray(), 48));
                 }
                 CertificationAuthorityIssuer = aiaUrlStrings.ToArray();
+            } else {
+                CertificationAuthorityIssuer = Array.Empty<String>();
             }
             if (ocsp != null) {
                 foreach (Uri uri in ocsp.Select(url => new Uri(url))) {
@@ -83,6 +85,8 @@ namespace System.Security.Cryptography.X509Certificates {
                     ocspBytes = new List<Byte>(Asn1Utils.Encode(ocspBytes.ToArray(), 48));
                 }
                 OnlineCertificateStatusProtocol = ocspUrlStrings.ToArray();
+            } else {
+                OnlineCertificateStatusProtocol = Array.Empty<String>();
             }
             List<Byte> rawData;
             if (ocspFirst) {
@@ -95,9 +99,9 @@ namespace System.Security.Cryptography.X509Certificates {
             RawData = Asn1Utils.Encode(rawData.ToArray(), 48);
         }
         void m_decode(Byte[] rawData) {
-            List<String> aiaUrls = new List<String>();
-            List<String> ocspUrls = new List<String>();
-            Asn1Reader asn = new Asn1Reader(rawData);
+            var aiaUrls = new List<String>();
+            var ocspUrls = new List<String>();
+            var asn = new Asn1Reader(rawData);
             if (asn.Tag != 48) { throw new Asn1InvalidTagException(asn.Offset); }
             asn.MoveNext();
             do {

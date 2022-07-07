@@ -79,10 +79,10 @@ namespace System.Security.Cryptography.X509Certificates {
         /// Gets an array of certificate revocation list URLs listed in the extension.
         /// </summary>
         /// <returns>An array of URLs.</returns>
-        public String[] GetUrLs() {
-            List<String> urls = new List<String>();
-            foreach (X509DistributionPoint crldp in CRLDistributionPoints) {
-                urls.AddRange(from X509AlternativeName url in crldp.FullName where url.Type == X509AlternativeNamesEnum.URL select url.Value);
+        public String[] GetURLs() {
+            var urls = new List<String>();
+            foreach (X509DistributionPoint distPoint in CRLDistributionPoints) {
+                urls.AddRange(from X509AlternativeName url in distPoint.FullName where url.Type == X509AlternativeNamesEnum.URL select url.Value);
             }
             return urls.ToArray();
         }
