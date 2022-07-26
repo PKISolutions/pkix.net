@@ -18,65 +18,65 @@ namespace PKI.Utils {
         /// </summary>
         /// <param name="extension">Default instance of <see cref="X509Extension"/> class.</param>
         /// <returns>Explicit extension implementation if defined, otherwise, the same object is returned.</returns>
-        public static X509Extension ConvertExtension(X509Extension extension) {
-            AsnEncodedData asndata = new AsnEncodedData(extension.Oid, extension.RawData);
+        public static X509Extension ConvertExtension(this X509Extension extension) {
+            AsnEncodedData asnData = new AsnEncodedData(extension.Oid, extension.RawData);
             switch (extension.Oid.Value) {
                 case X509ExtensionOid.CAVersion:
-                    return new X509CAVersionExtension(asndata, extension.Critical);
+                    return new X509CAVersionExtension(asnData, extension.Critical);
                 case X509ExtensionOid.NextCRLPublish:
-                    return new X509NextCRLPublishExtension(asndata, extension.Critical);
-                case X509ExtensionOid.CertificateTemplate:
-                    return new X509CertificateTemplateExtension(asndata, extension.Critical);
+                    return new X509NextCRLPublishExtension(asnData, extension.Critical);
+                case X509ExtensionOid.CertTemplateInfoV2:
+                    return new X509CertificateTemplateExtension(asnData, extension.Critical);
                 case X509ExtensionOid.ApplicationPolicies:
-                    return new X509ApplicationPoliciesExtension(asndata, extension.Critical);
+                    return new X509ApplicationPoliciesExtension(asnData, extension.Critical);
                 case X509ExtensionOid.ApplicationPolicyMappings:
-                    return new X509ApplicationPolicyMappingsExtension(asndata);
+                    return new X509ApplicationPolicyMappingsExtension(asnData);
                 case X509ExtensionOid.ApplicationPolicyConstraints:
-                    return new X509ApplicationPolicyConstraintsExtension(asndata);
+                    return new X509ApplicationPolicyConstraintsExtension(asnData);
                 case X509ExtensionOid.PublishedCrlLocations:
-                    return new X509PublishedCrlLocationsExtension(asndata, extension.Critical);
+                    return new X509PublishedCrlLocationsExtension(asnData, extension.Critical);
                 case X509ExtensionOid.MsftSecurityIdentifier:
-                    return new X509PublishedCrlLocationsExtension(asndata, extension.Critical);
+                    return new X509PublishedCrlLocationsExtension(asnData, extension.Critical);
                 case X509ExtensionOid.AuthorityInformationAccess:
-                    return new X509AuthorityInformationAccessExtension(asndata, extension.Critical);
+                    return new X509AuthorityInformationAccessExtension(asnData, extension.Critical);
                 case X509ExtensionOid.OcspNonce:
-                    return new X509NonceExtension(asndata, extension.Critical);
+                    return new X509NonceExtension(asnData, extension.Critical);
                 case X509ExtensionOid.OcspCRLReference:
-                    return new X509CRLReferenceExtension(asndata, extension.Critical);
+                    return new X509CRLReferenceExtension(asnData, extension.Critical);
                 case X509ExtensionOid.ArchiveCutoff:
-                    return new X509ArchiveCutoffExtension(asndata, extension.Critical);
+                    return new X509ArchiveCutoffExtension(asnData, extension.Critical);
                 case X509ExtensionOid.ServiceLocator:
-                    return new X509ServiceLocatorExtension(asndata, extension.Critical);
+                    return new X509ServiceLocatorExtension(asnData, extension.Critical);
                 case X509ExtensionOid.SubjectKeyIdentifier:
-                    return new X509SubjectKeyIdentifierExtension(asndata, extension.Critical);
+                    return new X509SubjectKeyIdentifierExtension(asnData, extension.Critical);
                 case X509ExtensionOid.KeyUsage:
-                    return new X509KeyUsageExtension(asndata, extension.Critical);
+                    return new X509KeyUsageExtension(asnData, extension.Critical);
                 case X509ExtensionOid.SubjectAlternativeNames:
-                    return new X509SubjectAlternativeNamesExtension(asndata, extension.Critical);
+                    return new X509SubjectAlternativeNamesExtension(asnData, extension.Critical);
                 case X509ExtensionOid.IssuerAlternativeNames:
-                    return new X509IssuerAlternativeNamesExtension(asndata, extension.Critical);
+                    return new X509IssuerAlternativeNamesExtension(asnData, extension.Critical);
                 case X509ExtensionOid.BasicConstraints:
-                    return new X509BasicConstraintsExtension(asndata, extension.Critical);
+                    return new X509BasicConstraintsExtension(asnData, extension.Critical);
                 case X509ExtensionOid.CRLNumber:
-                    return new X509CRLNumberExtension(asndata, extension.Critical);
+                    return new X509CRLNumberExtension(asnData, extension.Critical);
                 case X509ExtensionOid.IssuingDistributionPoint:
-                    return new X509IssuingDistributionPointsExtension(asndata, extension.Critical);
+                    return new X509IssuingDistributionPointsExtension(asnData, extension.Critical);
                 case X509ExtensionOid.NameConstraints:
-                    return new X509NameConstraintsExtension(asndata);
+                    return new X509NameConstraintsExtension(asnData);
                 case X509ExtensionOid.CRLDistributionPoints:
-                    return new X509CRLDistributionPointsExtension(asndata, extension.Critical);
+                    return new X509CRLDistributionPointsExtension(asnData, extension.Critical);
                 case X509ExtensionOid.CertificatePolicies:
-                    return new X509CertificatePoliciesExtension(asndata, extension.Critical);
+                    return new X509CertificatePoliciesExtension(asnData, extension.Critical);
                 case X509ExtensionOid.CertificatePolicyMappings:
-                    return new X509CertificatePolicyMappingsExtension(asndata);
+                    return new X509CertificatePolicyMappingsExtension(asnData);
                 case X509ExtensionOid.AuthorityKeyIdentifier:
-                    return new X509AuthorityKeyIdentifierExtension(asndata, extension.Critical);
+                    return new X509AuthorityKeyIdentifierExtension(asnData, extension.Critical);
                 case X509ExtensionOid.CertificatePolicyConstraints:
-                    return new X509CertificatePolicyConstraintsExtension(asndata);
+                    return new X509CertificatePolicyConstraintsExtension(asnData);
                 case X509ExtensionOid.EnhancedKeyUsage:
-                    return new X509EnhancedKeyUsageExtension(asndata, extension.Critical);
+                    return new X509EnhancedKeyUsageExtension(asnData, extension.Critical);
                 case X509ExtensionOid.FreshestCRL:
-                    return new X509FreshestCRLExtension(asndata, extension.Critical);
+                    return new X509FreshestCRLExtension(asnData, extension.Critical);
                 default:
                     return extension;
             }

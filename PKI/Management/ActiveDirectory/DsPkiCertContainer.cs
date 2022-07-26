@@ -221,7 +221,7 @@ namespace SysadminsLV.PKI.Management.ActiveDirectory {
                 } else {
                     // if Basic Constraints is presented, check if isCA attribute.
                     // if isCA = TRUE, use subject name, otherwise use issuer name
-                    var bc = (X509BasicConstraintsExtension)CryptographyUtils.ConvertExtension(ext);
+                    var bc = (X509BasicConstraintsExtension)ext.ConvertExtension();
                     fullSubject = bc.CertificateAuthority
                         ? fromCert.SubjectName
                         : fromCert.IssuerName;

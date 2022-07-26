@@ -61,7 +61,7 @@ namespace SysadminsLV.PKI.Utils.CLRExtensions {
             if (cert.Extensions.Count == 0) { return cert.Extensions; }
             X509ExtensionCollection extensions = new X509ExtensionCollection();
             foreach (var ext in cert.Extensions) {
-                extensions.Add(CryptographyUtils.ConvertExtension(ext));
+                extensions.Add(ext.ConvertExtension());
             }
             return extensions;
         }

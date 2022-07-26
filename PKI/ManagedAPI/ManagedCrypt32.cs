@@ -228,7 +228,7 @@ namespace PKI.ManagedAPI {
             if (asn.Tag != (Byte) Asn1Type.OCTET_STRING) {
                 throw new Asn1InvalidTagException(asn.Offset);
             }
-            return CryptographyUtils.ConvertExtension(new X509Extension(oid, asn.GetPayload(), critical));
+            return new X509Extension(oid, asn.GetPayload(), critical).ConvertExtension();
         }
         /// <summary>
         /// 

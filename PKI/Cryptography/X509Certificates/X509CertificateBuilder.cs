@@ -5,8 +5,6 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using PKI.Cryptography;
-using PKI.Cryptography.X509Certificates;
 using PKI.Structs;
 using PKI.Utils;
 using SysadminsLV.Asn1Parser;
@@ -127,7 +125,7 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates {
                 if (_excludedExtensions.Contains(extension.Oid.Value)) {
                     continue;
                 }
-                _extensions.Add(CryptographyUtils.ConvertExtension(extension));
+                _extensions.Add(extension.ConvertExtension());
             }
             finalExtensions = new X509ExtensionCollection();
             foreach (var extension in _extensions) {

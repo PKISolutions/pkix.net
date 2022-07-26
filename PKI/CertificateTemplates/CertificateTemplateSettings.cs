@@ -205,7 +205,7 @@ namespace PKI.CertificateTemplates {
             try {
                 SupersededTemplates = (String[])template.Property[EnrollmentTemplateProperty.TemplatePropSupersede];
             } catch {
-                SupersededTemplates = new String[0];
+                SupersededTemplates = Array.Empty<String>();
             }
             List<X509Extension> exts2 = (from IX509Extension ext in (IX509Extensions)template.Property[EnrollmentTemplateProperty.TemplatePropExtensions] select new X509Extension(ext.ObjectId.Value, Convert.FromBase64String(ext.RawData[Interop.CERTENROLLLib.EncodingType.XCN_CRYPT_STRING_BASE64]), ext.Critical)).Select(CryptographyUtils.ConvertExtension).ToList();
             foreach (X509Extension ext in exts2) { _extensions.Add(ext); }

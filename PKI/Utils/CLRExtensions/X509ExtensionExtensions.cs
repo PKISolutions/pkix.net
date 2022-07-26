@@ -70,7 +70,7 @@ namespace SysadminsLV.PKI.Utils.CLRExtensions {
             }
             // at this point ASN points to OCTET_STRING
 
-            X509Extension retValue = CryptographyUtils.ConvertExtension(new X509Extension(oid, asn.GetPayload(), critical));
+            X509Extension retValue = new X509Extension(oid, asn.GetPayload(), critical).ConvertExtension();
             asn.Seek(offset);
             return retValue;
         }

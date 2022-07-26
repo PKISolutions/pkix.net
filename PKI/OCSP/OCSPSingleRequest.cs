@@ -103,7 +103,7 @@ namespace PKI.OCSP {
                 }
             }
             sext = new List<Byte>(Asn1Utils.Encode(sext.ToArray(), 48));
-            _listExtensions.Add(CryptographyUtils.ConvertExtension(new X509Extension(oid, sext.ToArray(), false)));
+            _listExtensions.Add(new X509Extension(oid, sext.ToArray(), false).ConvertExtension());
         }
         /// <summary>
         /// Encodes OCSPSingleRequest object to a ASN.1-encoded byte aray.

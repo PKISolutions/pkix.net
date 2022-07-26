@@ -254,7 +254,7 @@ namespace PKI.OCSP {
                     var extensions = new X509ExtensionCollection();
                     extensions.Decode(tbsResponseData.GetPayload());
                     foreach (X509Extension item in extensions) {
-                        _listExtensions.Add(CryptographyUtils.ConvertExtension(item));
+                        _listExtensions.Add(item.ConvertExtension());
                         if (_listExtensions[_listExtensions.Count - 1].Oid.Value == X509ExtensionOid.OcspNonce) {
                             NonceReceived = true;
                             NonceValue = _listExtensions[_listExtensions.Count - 1].Format(false);
