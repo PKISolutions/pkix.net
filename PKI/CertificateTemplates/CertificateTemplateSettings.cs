@@ -307,9 +307,9 @@ namespace PKI.CertificateTemplates {
                         break;
                     case X509ExtensionOid.CertificatePolicies:
                         if (_certPolicies.Count > 0) {
-                            X509CertificatePolicyCollection policies = new X509CertificatePolicyCollection();
+                            var policies = new X509CertificatePolicyCollection();
                             foreach (Oid policyOid in _certPolicies) {
-                                Oid2 oid2 = new Oid2(policyOid.Value, OidGroupEnum.IssuancePolicy, true);
+                                var oid2 = new Oid2(policyOid.Value, OidGroupEnum.IssuancePolicy, true);
                                 X509CertificatePolicy policy = new X509CertificatePolicy(policyOid.Value);
                                 try {
                                     policy.Add(new X509PolicyQualifier(oid2.GetCPSLinks()[0]));
@@ -322,14 +322,14 @@ namespace PKI.CertificateTemplates {
                         break;
                     case X509ExtensionOid.CertTemplateInfoV2:
                         if (schemaVersion == 1) {
-                            _extensions.Add(new X509Extension(new Oid(X509ExtensionOid.CertTemplateInfoV2), Asn1Utils.EncodeBMPString((String)_entry[DsUtils.PropCN]), isExtensionCritical(
+                            _extensions.Add(new X509Extension(new Oid(X509ExtensionOid.CertificateTemplate), Asn1Utils.EncodeBMPString((String)_entry[DsUtils.PropCN]), isExtensionCritical(
                                 X509ExtensionOid.CertTemplateInfoV2)));
                         } else {
                             Int32 major = (Int32)_entry[DsUtils.PropPkiTemplateMajorVersion];
                             Int32 minor = (Int32)_entry[DsUtils.PropPkiTemplateMinorVersion];
-                            Oid templateOid = new Oid((String)_entry[DsUtils.PropCertTemplateOid]);
+                            var templateOid = new Oid((String)_entry[DsUtils.PropCertTemplateOid]);
                             _extensions.Add(new X509CertificateTemplateExtension(templateOid, major, minor));
-                            _extensions[_extensions.Count - 1].Critical = isExtensionCritical(X509ExtensionOid.CertificateTemplate);
+                            _extensions[_extensions.Count - 1].Critical = isExtensionCritical(X509ExtensionOid.CertTemplateInfoV2);
                         }
                         break;
                     case X509ExtensionOid.BasicConstraints:
