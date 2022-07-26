@@ -15,7 +15,7 @@ namespace System.Security.Cryptography.X509Certificates {
         readonly Oid _oid = new Oid(X509ExtensionOid.CertTemplateInfoV2);
 
         internal X509CertificateTemplateExtension(Byte[] rawData, Boolean critical)
-            : base(X509ExtensionOid.CertificateTemplate, rawData, critical) {
+            : base(X509ExtensionOid.CertTemplateInfoV2, rawData, critical) {
             if (rawData == null) { throw new ArgumentNullException(nameof(rawData)); }
             m_decode(rawData);
         }
