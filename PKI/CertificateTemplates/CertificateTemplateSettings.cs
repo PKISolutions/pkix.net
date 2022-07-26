@@ -321,15 +321,17 @@ namespace PKI.CertificateTemplates {
                         }
                         break;
                     case X509ExtensionOid.CertTemplateInfoV2:
+                        Boolean isCritical = isExtensionCritical(X509ExtensionOid.CertTemplateInfoV2);
                         if (schemaVersion == 1) {
-                            _extensions.Add(new X509Extension(new Oid(X509ExtensionOid.CertificateTemplate), Asn1Utils.EncodeBMPString((String)_entry[DsUtils.PropCN]), isExtensionCritical(
-                                X509ExtensionOid.CertTemplateInfoV2)));
+                            _extensions.Add(new X509Extension(new Oid(X509ExtensionOid.CertificateTemplate), Asn1Utils.EncodeBMPString((String)_entry[DsUtils.PropCN]), isCritical));
                         } else {
                             Int32 major = (Int32)_entry[DsUtils.PropPkiTemplateMajorVersion];
                             Int32 minor = (Int32)_entry[DsUtils.PropPkiTemplateMinorVersion];
                             var templateOid = new Oid((String)_entry[DsUtils.PropCertTemplateOid]);
-                            _extensions.Add(new X509CertificateTemplateExtension(templateOid, major, minor));
-                            _extensions[_extensions.Count - 1].Critical = isExtensionCritical(X509ExtensionOid.CertTemplateInfoV2);
+                            var extension = new X509CertificateTemplateExtension(templateOid, major, minor) {
+                                Critical = isCritical
+                            };
+                            _extensions.Add(extension);
                         }
                         break;
                     case X509ExtensionOid.BasicConstraints:
