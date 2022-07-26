@@ -8,12 +8,12 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates {
     /// <remarks>Do not rely on this class until further notice. It is going to change at some point.</remarks>
     public static class X509ExtensionOid {
         public const String CertificateExtensions        = "1.2.840.113549.1.9.14";
-        public const String CertificateTemplate          = "1.3.6.1.4.1.311.21.2";
+        public const String CertificateTemplate          = "1.3.6.1.4.1.311.20.2";
         public const String CAVersion                    = "1.3.6.1.4.1.311.21.1";
         public const String PreviousCaHash               = "1.3.6.1.4.1.311.21.2";
         public const String VirtualBaseCRL               = "1.3.6.1.4.1.311.21.3";
         public const String NextCRLPublish               = "1.3.6.1.4.1.311.21.4";
-        public const String CertTemplateInfoV2           = "1.3.6.1.4.1.311.20.7";
+        public const String CertTemplateInfoV2           = "1.3.6.1.4.1.311.21.7";
         public const String ApplicationPolicies          = "1.3.6.1.4.1.311.21.10";
         public const String ApplicationPolicyMappings    = "1.3.6.1.4.1.311.21.11";
         public const String ApplicationPolicyConstraints = "1.3.6.1.4.1.311.21.12";
