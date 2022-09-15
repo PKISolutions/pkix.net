@@ -44,17 +44,19 @@ namespace System.Security.Cryptography.X509Certificates {
                 throw new ArgumentNullException(nameof(rawData));
             }
             InternalList.Clear();
-            Asn1Reader asn = new Asn1Reader(rawData);
+            var asn = new Asn1Reader(rawData);
             if (asn.Tag != 48) {
                 throw new Asn1InvalidTagException(asn.Offset);
             }
-            asn.MoveNext();
+            if (!asn.MoveNext()) {
+                return;
+            }
             do {
                 if (asn.Tag != 49) {
                     throw new Asn1InvalidTagException(asn.Offset);
                 }
                 InternalList.Add(new X500RdnAttribute(asn.GetPayload()));
-            } while (asn.MoveNextCurrentLevel());
+            } while (asn.MoveNextSibling());
             // reverse list to get attributes from leaf to root.
             InternalList.Reverse();
         }

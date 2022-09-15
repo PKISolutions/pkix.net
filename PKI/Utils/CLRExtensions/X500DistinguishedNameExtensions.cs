@@ -16,10 +16,16 @@ namespace SysadminsLV.PKI.Utils.CLRExtensions {
         /// <param name="name">Existing instance of <strong>X500DistinguishedName</strong>.</param>
         /// <returns>A collection of RDN attributes.</returns>
         public static X500RdnAttributeCollection GetRdnAttributes(this X500DistinguishedName name) {
-            if (name == null) { throw new ArgumentNullException(nameof(name)); }
-            if (name.RawData == null || name.RawData.Length == 0) { return null; }
+            if (name == null) {
+                throw new ArgumentNullException(nameof(name));
+            }
+            if (name.RawData == null || name.RawData.Length == 0) {
+                return null;
+            }
+
             var retValue = new X500RdnAttributeCollection();
             retValue.Decode(name.RawData);
+            
             return retValue;
         }
 
@@ -30,14 +36,19 @@ namespace SysadminsLV.PKI.Utils.CLRExtensions {
             }
 
             var sb = new StringBuilder();
-            var rdnAttributes = name.GetRdnAttributes();
-            if (multiLine) {
-                foreach (X500RdnAttribute rdn in rdnAttributes) {
-                    sb.AppendLine(rdn.Format(false));
+            X500RdnAttributeCollection rdnAttributes = name.GetRdnAttributes();
+            if (rdnAttributes.Any()) {
+                if (multiLine) {
+                    foreach (X500RdnAttribute rdn in rdnAttributes) {
+                        sb.AppendLine(rdn.Format(false));
+                    }
+                } else {
+                    sb.Append(String.Join(", ", rdnAttributes.Select(x => x.Format(false))));
                 }
             } else {
-                sb.Append(String.Join(", ", rdnAttributes.Select(x => x.Format(false))));
+                sb.Append("EMPTY");
             }
+            
 
             return sb.ToString().TrimEnd();
         }
