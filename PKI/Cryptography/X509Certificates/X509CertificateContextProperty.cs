@@ -1,10 +1,10 @@
 ﻿using System.Runtime.InteropServices;
 using System.Text;
-using PKI.Cryptography.X509Certificates;
 using PKI.Exceptions;
 using PKI.OCSP;
 using PKI.Structs;
 using SysadminsLV.Asn1Parser;
+using SysadminsLV.PKI.Cryptography.X509Certificates;
 using SysadminsLV.PKI.Utils.CLRExtensions;
 
 namespace System.Security.Cryptography.X509Certificates {
@@ -55,6 +55,10 @@ namespace System.Security.Cryptography.X509Certificates {
                 case X509CertificatePropertyType.EnrollmentInfo:
                     initializeStruct(bytes);
                     break;
+                case X509CertificatePropertyType.Archived:
+                    UnderlyingType = typeof(Boolean);
+                    PropertyValue = true;
+                    break;
                 // byte[]
                 default:
                     initializeHash(bytes);
@@ -103,8 +107,8 @@ namespace System.Security.Cryptography.X509Certificates {
                     break;
                 case X509CertificatePropertyType.InsertTimeStamp:
                     UnderlyingType = typeof(DateTime);
-                    Int64 filetime = BitConverter.ToInt64(bytes, 0);
-                    PropertyValue = DateTime.FromFileTimeUtc(filetime);
+                    Int64 fileTime = BitConverter.ToInt64(bytes, 0);
+                    PropertyValue = DateTime.FromFileTimeUtc(fileTime);
                     break;
                 default:
                     UnderlyingType = typeof(Int32);

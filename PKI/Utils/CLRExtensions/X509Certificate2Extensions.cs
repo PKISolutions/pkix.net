@@ -57,10 +57,14 @@ namespace SysadminsLV.PKI.Utils.CLRExtensions {
         /// Non-supported extensions will be returned as an <see cref="X509Extension"/> object.
         /// </remarks>
         public static X509ExtensionCollection ResolveExtensions (this X509Certificate2 cert) {
-            if (cert == null) { throw new ArgumentNullException(nameof(cert)); }
-            if (cert.Extensions.Count == 0) { return cert.Extensions; }
-            X509ExtensionCollection extensions = new X509ExtensionCollection();
-            foreach (var ext in cert.Extensions) {
+            if (cert == null) {
+                throw new ArgumentNullException(nameof(cert));
+            }
+            if (cert.Extensions.Count == 0) {
+                return cert.Extensions;
+            }
+            var extensions = new X509ExtensionCollection();
+            foreach (X509Extension ext in cert.Extensions) {
                 extensions.Add(ext.ConvertExtension());
             }
             return extensions;
@@ -78,9 +82,13 @@ namespace SysadminsLV.PKI.Utils.CLRExtensions {
         /// </exception>
         /// <returns>An array of certificate context property types associated with the current certificate.</returns>
         public static X509CertificatePropertyType[] GetCertificateContextPropertyList(this X509Certificate2 cert) {
-            if (cert == null) { throw new ArgumentNullException(nameof(cert)); }
-            if (IntPtr.Zero.Equals(cert.Handle)) { throw new UninitializedObjectException(); }
-            List<X509CertificatePropertyType> props = new List<X509CertificatePropertyType>();
+            if (cert == null) {
+                throw new ArgumentNullException(nameof(cert));
+            }
+            if (IntPtr.Zero.Equals(cert.Handle)) {
+                throw new UninitializedObjectException();
+            }
+            var props = new List<X509CertificatePropertyType>();
             UInt32 propID = 0;
             while ((propID = Crypt32.CertEnumCertificateContextProperties(cert.Handle, propID)) > 0) {
                 props.Add((X509CertificatePropertyType)propID);
