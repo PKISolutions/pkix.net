@@ -140,6 +140,14 @@
         /// </summary>
         RequestOriginatorMachine = 71,
         /// <summary>
+        /// A string that represents enrollment service location.
+        /// </summary>
+        SourceLocation = 72,
+        /// <summary>
+        /// A string that represents enrollment service URL.
+        /// </summary>
+        SourceUrl = 73,
+        /// <summary>
         /// Prefix of the OCSP response cache entry.
         /// </summary>
         OcspCachePrefix = 75,

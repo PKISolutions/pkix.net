@@ -315,11 +315,11 @@ namespace PKI.Structs {
         public struct CRYPT_KEY_PROV_INFO {
             public String pwszContainerName;
             public String pwszProvName;
-            public UInt32 dwProvType;
-            public UInt32 dwFlags;
-            public UInt32 cProvParam;
+            public Int32 dwProvType;
+            public Int32 dwFlags;
+            public Int32 cProvParam;
             public IntPtr rgProvParam;
-            public UInt32 dwKeySpec;
+            public Int32 dwKeySpec;
         }
         [StructLayout(LayoutKind.Sequential)]
         public struct PROV_ENUMALGS_EX {
