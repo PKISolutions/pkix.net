@@ -129,7 +129,7 @@
     <Compile Include="Cryptography\X509Certificates\X509CertificateTrustListBuilder.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CertificateTrustListEntry.cs" />
     <Compile Include="Cryptography\X509Certificates\X509IssuingDistributionPointsExtension.cs" />
-    <Compile Include="Cryptography\X509Certificates\X509MsSecurityIdentifierExtension.cs" />
+    <Compile Include="Cryptography\X509Certificates\X509NtdsSecurityExtension.cs" />
     <Compile Include="Cryptography\X509Certificates\X509RevocationReasonFlag.cs" />
     <Compile Include="Dcom\AdcsBinaryFormat.cs" />
     <Compile Include="Dcom\AdcsCAPropertyName.cs" />
@@ -441,6 +441,9 @@
     <Content Include="_ExternalReferences\SysadminsLV.Asn1Parser.XML" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\.editorconfig">
+      <Link>.editorconfig</Link>
+    </None>
     <None Include="_ExternalReferences\certadm.il" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
