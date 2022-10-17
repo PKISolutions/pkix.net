@@ -12,7 +12,7 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 /// <see href="https://support.microsoft.com/kb/5014754">KB5014754</see> for more information.
 /// </summary>
 public sealed class X509NtdsSecurityExtension : X509Extension {
-    static readonly Oid _oid = new Oid(X509ExtensionOid.MsftSecurityIdentifier, "Microsoft Security Identifier");
+    static readonly Oid _oid = new Oid(X509ExtensionOid.NtdsSecurityExtension, "NTDS Security");
 
     /// <summary>
     ///     Initializes a new instance of the <strong>X509NtdsSecurityExtension</strong> class from
