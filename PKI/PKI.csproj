@@ -88,9 +88,8 @@
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="SysadminsLV.Asn1Parser, Version=1.2.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Asn1DerParser.NET\Asn1Parser\bin\Release\SysadminsLV.Asn1Parser.dll</HintPath>
+    <Reference Include="SysadminsLV.Asn1Parser, Version=1.2.7.62, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SysadminsLV.Asn1Parser.1.2.7.62\lib\net472\SysadminsLV.Asn1Parser.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.DirectoryServices" />
@@ -437,13 +436,12 @@
     <Content Include="_ExternalReferences\Interop.CERTADMINLib.dll" />
     <Content Include="_ExternalReferences\Interop.CERTCLILib.dll" />
     <Content Include="_ExternalReferences\Interop.CERTENROLLLib.dll" />
-    <Content Include="_ExternalReferences\SysadminsLV.Asn1Parser.dll" />
-    <Content Include="_ExternalReferences\SysadminsLV.Asn1Parser.XML" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.editorconfig">
       <Link>.editorconfig</Link>
     </None>
+    <None Include="packages.config" />
     <None Include="_ExternalReferences\certadm.il" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
