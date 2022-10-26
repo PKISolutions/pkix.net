@@ -25,7 +25,6 @@ Global
 		{359ED8C6-47B5-4321-9B60-62E0F53A5384}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{359ED8C6-47B5-4321-9B60-62E0F53A5384}.Debug|Any CPU.Build.0 = Debug|x64
 		{359ED8C6-47B5-4321-9B60-62E0F53A5384}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{359ED8C6-47B5-4321-9B60-62E0F53A5384}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
