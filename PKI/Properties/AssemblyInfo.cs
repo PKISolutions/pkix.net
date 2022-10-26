@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("PKI Solutions Inc.")]
 [assembly: AssemblyProduct("PowerShell PKI Module")]
-[assembly: AssemblyCopyright("Copyright © 2012-2021, PKI Solutions")]
+[assembly: AssemblyCopyright("Copyright © 2012-2022, PKI Solutions")]
 [assembly: AssemblyTrademark("PKI Solutions")]
 [assembly: AssemblyCulture("")]
 
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("3.7.26.0")]
-[assembly: AssemblyFileVersion("3.7.26.0")]
+[assembly: AssemblyVersion("3.7.27.0")]
+[assembly: AssemblyFileVersion("3.7.27.0")]

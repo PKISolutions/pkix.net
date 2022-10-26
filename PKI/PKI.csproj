@@ -184,6 +184,7 @@
     <Compile Include="Management\CertificateServices\CertSrvConfigUtil.cs" />
     <Compile Include="Management\CertificateServices\CertSrvCrlPeriodConfig.cs" />
     <Compile Include="Management\CertificateServices\CertSrvCryptographyConfig.cs" />
+    <Compile Include="Management\CertificateServices\CertSrvDbFlags.cs" />
     <Compile Include="Management\CertificateServices\CertSrvPlatformVersion.cs" />
     <Compile Include="Management\CertificateServices\CertSrvCrlFlags.cs" />
     <Compile Include="Management\CertificateServices\CertSrvInterfaceFlags.cs" />
