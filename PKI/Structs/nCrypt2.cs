@@ -16,7 +16,7 @@ namespace PKI.Structs {
         public const UInt32 NCRYPT_ASYMMETRIC_ENCRYPTION_OPERATION    = 0x00000004;
         public const UInt32 NCRYPT_SECRET_AGREEMENT_OPERATION         = 0x00000008;
         public const UInt32 NCRYPT_SIGNATURE_OPERATION                = 0x00000010;
-        public const UInt32 NCRYPT_MACHINE_KEY_FLAG                   = 0x00000020;
+        public const Int32 NCRYPT_MACHINE_KEY_FLAG                    = 0x00000020;
 
         // Key Storage Property Identifiers
         public const String NCRYPT_NAME_PROPERTY                   = "Name";

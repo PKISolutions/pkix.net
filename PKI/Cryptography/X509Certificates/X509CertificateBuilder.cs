@@ -160,9 +160,9 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates {
             // write key info to cert property
             var keyInfo = new Wincrypt.CRYPT_KEY_PROV_INFO {
                 pwszProvName = PrivateKeyInfo.ProviderName,
-                dwProvType = (UInt32)PrivateKeyInfo.ProviderType,
+                dwProvType = PrivateKeyInfo.ProviderType,
                 pwszContainerName = PrivateKeyInfo.KeyContainerName,
-                dwKeySpec = (UInt32)PrivateKeyInfo.KeySpec
+                dwKeySpec = PrivateKeyInfo.KeySpec
             };
             if (PrivateKeyInfo.MachineContext) {
                 keyInfo.dwFlags = nCrypt2.NCRYPT_MACHINE_KEY_FLAG;

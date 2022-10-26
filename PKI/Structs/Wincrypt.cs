@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
 
 namespace PKI.Structs {
     public static class Wincrypt {
@@ -319,7 +320,7 @@ namespace PKI.Structs {
             public Int32 dwFlags;
             public Int32 cProvParam;
             public IntPtr rgProvParam;
-            public Int32 dwKeySpec;
+            public X509KeySpecFlags dwKeySpec;
         }
         [StructLayout(LayoutKind.Sequential)]
         public struct PROV_ENUMALGS_EX {
