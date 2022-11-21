@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>SysadminsLV.PKI</id>
+    <version>$version$</version>
+    <authors>Vadims Podans</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MS-PL</license>
+    <projectUrl>https://github.com/PKISolutions/pkix.net</projectUrl>
+    <description>This project is a framework library that provides extended classes to standard .NET Framework BCL and Microsoft Active Directory Certificate Services management managed functionality.</description>
+    <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
+    <copyright>$copyright$</copyright>
+    <tags>X509 PKI PKIX</tags>
+    <dependencies>
+      <group targetFramework=".NETFramework4.7.2"/>
+    </dependencies>
+  </metadata>
+    <files>
+        <file src="..\PKI\bin\Release\*.*" target="lib/net472"/>
+    </files>
+</package>
