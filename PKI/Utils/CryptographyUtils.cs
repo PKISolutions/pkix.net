@@ -104,6 +104,7 @@ public static class CryptographyUtils {
     /// <remarks>
     /// Windows operating systems starting with Windows Vista/Windows Server 2008 always return <strong>True</strong>.
     /// </remarks>
+    [Obsolete("This method is obsolete.", true)]
     public static Boolean TestCNGCompat() {
         return Environment.OSVersion.Version.Major >= 6;
     }
@@ -117,6 +118,7 @@ public static class CryptographyUtils {
     /// <remarks>
     /// Windows operating systems starting with Windows 8.1/Windows Server 2012 R2 return <strong>True</strong>.
     /// </remarks>
+    [Obsolete("This method is obsolete.", true)]
     public static Boolean TestOleCompat() {
         if (Environment.OSVersion.Version.Major < 6) { return false; }
         return Environment.OSVersion.Version.Major != 6 || Environment.OSVersion.Version.Minor >= 3;

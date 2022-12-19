@@ -17,10 +17,6 @@ namespace SysadminsLV.PKI.Cryptography {
         /// </exception>
         /// <returns>A collection of registered providers.</returns>
         public static CspProviderInfoCollection GetProviderInfo() {
-            if (!CryptographyUtils.TestCNGCompat()) {
-                throw new PlatformNotSupportedException();
-            }
-
             var providers = new CCspInformations();
             providers.AddAvailableCsps();
             var retValue = new CspProviderInfoCollection();
@@ -38,9 +34,6 @@ namespace SysadminsLV.PKI.Cryptography {
         /// </exception>
         /// <returns>Specified provider information. Method returns null if provider is not found.</returns>
         public static CspProviderInfo GetProviderInfo(String name) {
-            if (!CryptographyUtils.TestCNGCompat()) {
-                throw new PlatformNotSupportedException();
-            }
             var providers = new CCspInformations();
             providers.AddAvailableCsps();
             try {
