@@ -19,7 +19,7 @@ public class CertificateTemplate {
     static readonly String _baseDsPath = $"CN=Certificate Templates, CN=Public Key Services, CN=Services,{DsUtils.ConfigContext}";
 
     internal CertificateTemplate(IX509CertificateTemplate template) {
-        initializeCom(template);
+        initializeFromCom(template);
         Settings = new CertificateTemplateSettings(template);
     }
     /// <param name="findType">
@@ -256,7 +256,7 @@ public class CertificateTemplate {
             _ => "Unknown"
         };
     }
-    void initializeCom(IX509CertificateTemplate template) {
+    void initializeFromCom(IX509CertificateTemplate template) {
         Name = (String)template.Property[EnrollmentTemplateProperty.TemplatePropCommonName];
         DisplayName = (String)template.Property[EnrollmentTemplateProperty.TemplatePropFriendlyName];
         OID = new Oid(((IObjectId)template.Property[EnrollmentTemplateProperty.TemplatePropOID]).Value);
