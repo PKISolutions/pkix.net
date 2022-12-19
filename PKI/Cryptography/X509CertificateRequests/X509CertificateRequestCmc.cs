@@ -66,7 +66,7 @@ namespace SysadminsLV.PKI.Cryptography.X509CertificateRequests {
         protected override void DecodeContent(Byte[] rawData) {
             var asn = new Asn1Reader(rawData);
             asn.MoveNextAndExpectTags(0x30);             // ControlSequence  ::=    SEQUENCE OF TaggedAttribute
-            asn.MoveNextCurrentLevelAndExpectTags(0x30); // ReqSequence      ::=    SEQUENCE OF TaggedRequest
+            asn.MoveNextSiblingAndExpectTags(0x30); // ReqSequence      ::=    SEQUENCE OF TaggedRequest
             asn.MoveNextAndExpectTags(0xa0);
             asn.MoveNextAndExpectTags((Byte)Asn1Type.INTEGER);
             asn.MoveNextAndExpectTags(0x30);

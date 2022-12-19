@@ -10,7 +10,7 @@ namespace System.Security.Cryptography.X509Certificates {
     /// </summary>
     /// <remarks>Delta CRLs are </remarks>
     public sealed class X509FreshestCRLExtension : X509Extension {
-        readonly Oid _oid = new Oid(X509ExtensionOid.FreshestCRL);
+        readonly Oid _oid = new(X509ExtensionOid.FreshestCRL);
 
         internal X509FreshestCRLExtension(Byte[] rawData, Boolean critical)
             : base(X509ExtensionOid.FreshestCRL, rawData, critical) {
@@ -71,7 +71,7 @@ namespace System.Security.Cryptography.X509Certificates {
             asn.MoveNext();
             do {
                 urls.Add(new X509DistributionPoint(asn.GetTagRawData()));
-            } while (asn.MoveNextCurrentLevel());
+            } while (asn.MoveNextSibling());
             FreshestCrlDistributionPoints = urls.ToArray();
         }
 

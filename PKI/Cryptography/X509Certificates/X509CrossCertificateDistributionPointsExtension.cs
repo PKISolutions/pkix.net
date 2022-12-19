@@ -1,7 +1,7 @@
-﻿using SysadminsLV.Asn1Parser;
-using SysadminsLV.Asn1Parser.Universal;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using SysadminsLV.Asn1Parser;
+using SysadminsLV.Asn1Parser.Universal;
 
 #region asn module
 //CrossCertDistPoints ::= SEQUENCE {
@@ -21,7 +21,7 @@ namespace System.Security.Cryptography.X509Certificates {
     /// process.  
     /// </summary>
     public sealed class X509CrossCertificateDistributionPointsExtension : X509Extension {
-        readonly Oid _oid = new Oid("1.3.6.1.4.1.311.10.9.1");
+        readonly Oid _oid = new("1.3.6.1.4.1.311.10.9.1");
         
         /// <summary>
         /// Initializes a new instance of the <see cref="X509CrossCertificateDistributionPointsExtension"/> class
@@ -99,7 +99,7 @@ namespace System.Security.Cryptography.X509Certificates {
                 var altNames = new X509AlternativeNameCollection();
                 altNames.Decode(asn.GetTagRawData());
                 CrossCertDistributionPoints.AddRange(altNames);
-            } while (asn.MoveNextCurrentLevel());
+            } while (asn.MoveNextSibling());
             CrossCertDistributionPoints.Close();
         }
 

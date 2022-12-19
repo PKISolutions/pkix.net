@@ -48,7 +48,7 @@ namespace System.Security.Cryptography {
             asn.MoveNext();
             do {
                 InternalList.Add(X509Attribute.Decode(asn.GetTagRawData()));
-            } while (asn.MoveNextCurrentLevel());
+            } while (asn.MoveNextSibling());
         }
         /// <summary>
         /// Encodes current collection to an ASN.1-encoded byte array.
@@ -56,7 +56,7 @@ namespace System.Security.Cryptography {
         /// <returns></returns>
         public Byte[] Encode() {
             if (Count == 0) {
-                return new Byte[0];
+                return Array.Empty<Byte>();
             }
             var rawData = new List<Byte>();
             foreach (X509Attribute attribute in this) {

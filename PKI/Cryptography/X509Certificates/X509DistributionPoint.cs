@@ -10,9 +10,9 @@ namespace System.Security.Cryptography.X509Certificates {
     /// extension.
     /// </summary>
     public class X509DistributionPoint {
-        readonly List<Byte> _rawData = new List<Byte>();
-        readonly X509AlternativeNameCollection _fullNames = new X509AlternativeNameCollection();
-        readonly X509AlternativeNameCollection _crlIssuers = new X509AlternativeNameCollection();
+        readonly List<Byte> _rawData = new();
+        readonly X509AlternativeNameCollection _fullNames = new();
+        readonly X509AlternativeNameCollection _crlIssuers = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="X509DistributionPoint"/> class from an array of URLs,
@@ -37,7 +37,7 @@ namespace System.Security.Cryptography.X509Certificates {
         /// Gets a collection of alternative names associated with the current CRL, where each name provides current
         /// CRL locations.
         /// </summary>
-        public X509AlternativeNameCollection FullName => new X509AlternativeNameCollection(_fullNames);
+        public X509AlternativeNameCollection FullName => new(_fullNames);
         /// <summary>
         /// Gets a X.500 distinguished name part relative to CRL issuer.
         /// </summary>
@@ -58,7 +58,7 @@ namespace System.Security.Cryptography.X509Certificates {
         ///		This member is used only when CRL issuer is not the same entity that issued certificate
         ///		in subject.
         /// </remarks>
-        public X509AlternativeNameCollection CRLIssuer => new X509AlternativeNameCollection(_crlIssuers);
+        public X509AlternativeNameCollection CRLIssuer => new(_crlIssuers);
         /// <summary>
         /// Gets ASN.1-encoded byte array.
         /// </summary>

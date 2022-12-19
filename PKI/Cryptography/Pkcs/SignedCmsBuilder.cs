@@ -67,23 +67,23 @@ namespace SysadminsLV.PKI.Cryptography.Pkcs {
         /// <summary>
         /// Gets the object identifier that identifies the content type stored in current object.
         /// </summary>
-        public Oid ContentType => new Oid(_contentType);
+        public Oid ContentType => new(_contentType);
         /// <summary>
         /// Gets a collection of hashing algorithms.
         /// </summary>
-        public AlgorithmIdentifierCollection DigestAlgorithms { get; } = new AlgorithmIdentifierCollection();
+        public AlgorithmIdentifierCollection DigestAlgorithms { get; } = new();
         /// <summary>
         /// Gets a collection of certificates contained in signed message.
         /// </summary>
-        public X509Certificate2Collection Certificates { get; } = new X509Certificate2Collection();
+        public X509Certificate2Collection Certificates { get; } = new();
         /// <summary>
         /// Gets an array of certificate revocation lists contained in the message.
         /// </summary>
-        public X509CRL2Collection RevocationLists { get; } = new X509CRL2Collection();
+        public X509CRL2Collection RevocationLists { get; } = new();
         /// <summary>
         /// Gets a collection of signer infos. This collection is read-only and populated automatically by signing current object.
         /// </summary>
-        public PkcsSignerInfoCollection SignerInfos { get; } = new PkcsSignerInfoCollection();
+        public PkcsSignerInfoCollection SignerInfos { get; } = new();
 
         Byte[] encodeSignedData() {
             var builder = new Asn1Builder()

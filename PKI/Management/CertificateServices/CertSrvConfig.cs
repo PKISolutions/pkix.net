@@ -189,7 +189,7 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
         /// <summary>
         /// Gets a collection of config entries to update when calling <see cref="Commit"/> method.
         /// </summary>
-        protected List<RegConfigEntry> ConfigEntries { get; } = new List<RegConfigEntry>();
+        protected List<RegConfigEntry> ConfigEntries { get; } = new();
 
         protected virtual void OnCommit() { }
 

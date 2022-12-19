@@ -11,7 +11,7 @@ namespace SysadminsLV.PKI.Management.ActiveDirectory {
     /// Represents an Enterprise Certification Authority entry in Active Directory.
     /// </summary>
     public class DsCertEnrollServer {
-        readonly PolicyEnrollEndpointUriCollection _cesUriCollection = new PolicyEnrollEndpointUriCollection();
+        readonly PolicyEnrollEndpointUriCollection _cesUriCollection = new();
 
         internal DsCertEnrollServer(DirectoryEntry entry) {
             DistinguishedName = entry.Properties["distinguishedName"].Value?.ToString();
@@ -78,7 +78,7 @@ namespace SysadminsLV.PKI.Management.ActiveDirectory {
         /// <summary>
         /// Gets a collection of Certificate Enrollment Web Service (CES) endpoint URIs.
         /// </summary>
-        public PolicyEnrollEndpointUriCollection PolicyEnrollmentEndpoints => new PolicyEnrollEndpointUriCollection(_cesUriCollection);
+        public PolicyEnrollEndpointUriCollection PolicyEnrollmentEndpoints => new(_cesUriCollection);
 
         /// <summary>
         /// Gets a Certification Authority object associated with the current Enrollment Services entry.

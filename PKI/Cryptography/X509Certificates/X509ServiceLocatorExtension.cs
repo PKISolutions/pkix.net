@@ -15,7 +15,7 @@ namespace System.Security.Cryptography.X509Certificates {
     /// </summary>
     public sealed class X509ServiceLocatorExtension : X509Extension {
         Byte[] AIARaw;
-        readonly Oid _oid = new Oid(X509ExtensionOid.ServiceLocator, "OCSP Service Locator");
+        readonly Oid _oid = new(X509ExtensionOid.ServiceLocator, "OCSP Service Locator");
         
         /// <summary>
         /// Initializes a new instance of the <strong>X509ServiceLocatorExtension</strong> class.

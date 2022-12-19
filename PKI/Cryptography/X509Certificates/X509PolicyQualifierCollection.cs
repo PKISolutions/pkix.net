@@ -43,7 +43,7 @@ namespace System.Security.Cryptography.X509Certificates {
             asn.MoveNext();
             do {
                 InternalList.Add(new X509PolicyQualifier(asn.GetTagRawData()));
-            } while (asn.MoveNextCurrentLevel());
+            } while (asn.MoveNextSibling());
         }
     }
 }

@@ -13,7 +13,7 @@ namespace SysadminsLV.PKI.Cryptography {
     /// </summary>
     /// <remarks>This class supports PKCS#2.1 signature format.</remarks>
     public class AlgorithmIdentifier {
-        readonly List<Byte> _rawData = new List<Byte>();
+        readonly List<Byte> _rawData = new();
         Oid algId;
         Byte[] param;
 
@@ -63,7 +63,7 @@ namespace SysadminsLV.PKI.Cryptography {
         /// <summary>
         /// Gets an object identifier of an algorithm.
         /// </summary>
-        public Oid AlgorithmId => new Oid(algId.Value, algId.FriendlyName);
+        public Oid AlgorithmId => new(algId.Value, algId.FriendlyName);
         /// <summary>
         /// Gets a byte array that provides encoded algorithm-specific parameters. In many cases, there are no
         /// parameters.

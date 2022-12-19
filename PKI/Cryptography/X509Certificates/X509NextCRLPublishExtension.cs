@@ -11,7 +11,7 @@ namespace System.Security.Cryptography.X509Certificates {
 	/// </para>
 	/// </summary>
 	public sealed class X509NextCRLPublishExtension : X509Extension {
-		readonly Oid _oid = new Oid(X509ExtensionOid.NextCRLPublish);
+		readonly Oid _oid = new(X509ExtensionOid.NextCRLPublish);
 
 		/// <summary>
 		/// Initializes a new instance of the <strong>X509CRLReferenceExtension</strong> class using an

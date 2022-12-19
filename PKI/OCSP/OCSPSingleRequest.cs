@@ -15,7 +15,7 @@ namespace PKI.OCSP {
     /// </summary>
     /// <remarks>Currently only <strong>Service Locator</strong> extension is supported.</remarks>
     public class OCSPSingleRequest {
-        readonly List<X509Extension> _listExtensions = new List<X509Extension>();
+        readonly List<X509Extension> _listExtensions = new();
 
         /// <summary>
         /// Intitializes a new instance of <strong>OCSPSingleRequest</strong> class from a certificate to include

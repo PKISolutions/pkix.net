@@ -18,7 +18,7 @@ namespace System.Security.Cryptography.X509Certificates {
     /// </para>
     /// </remarks>
     public class X509ArchiveCutoffExtension : X509Extension {
-        readonly Oid _oid = new Oid(X509ExtensionOid.ArchiveCutoff, "Archive Cutoff");
+        readonly Oid _oid = new(X509ExtensionOid.ArchiveCutoff, "Archive Cutoff");
         /// <summary>
         /// Initializes a new instance of the <strong>X509ArchiveCutoffExtension</strong> class.
         /// </summary>

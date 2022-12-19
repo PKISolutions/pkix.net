@@ -8,8 +8,8 @@ namespace System.Security.Cryptography.X509Certificates {
     ///		That is, issuer alternative names are not used in name chaining and name constraints are not enforced.
     /// </summary>
     public sealed class X509IssuerAlternativeNamesExtension : X509Extension {
-        readonly Oid _oid = new Oid(X509ExtensionOid.IssuerAlternativeNames);
-        X509AlternativeNameCollection alternativeNames = new X509AlternativeNameCollection();
+        readonly Oid _oid = new(X509ExtensionOid.IssuerAlternativeNames);
+        X509AlternativeNameCollection alternativeNames = new();
 
         internal X509IssuerAlternativeNamesExtension(Byte[] rawData, Boolean critical)
             : base(X509ExtensionOid.IssuerAlternativeNames, rawData, critical) {

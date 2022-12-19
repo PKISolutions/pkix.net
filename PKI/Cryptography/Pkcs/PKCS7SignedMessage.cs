@@ -18,12 +18,12 @@ namespace SysadminsLV.PKI.Cryptography.Pkcs {
     /// </summary>
     [Obsolete("Use SignedPkcs7 class or its inheritors instead.", true), SecurityCritical]
     public class PKCS7SignedMessage {
-        readonly List<X509Attribute> _attributes          = new List<X509Attribute>();
-        readonly List<Oid> _digestAlgs                    = new List<Oid>();
-        readonly List<X509CRL2> _crls                     = new List<X509CRL2>();
-        readonly X509Certificate2Collection _certificates = new X509Certificate2Collection();
-        readonly List<X509CertificateRequest> _requests   = new List<X509CertificateRequest>();
-        readonly List<PkcsSignerInfo> _signerInfos        = new List<PkcsSignerInfo>();
+        readonly List<X509Attribute> _attributes          = new();
+        readonly List<Oid> _digestAlgs                    = new();
+        readonly List<X509CRL2> _crls                     = new();
+        readonly X509Certificate2Collection _certificates = new();
+        readonly List<X509CertificateRequest> _requests   = new();
+        readonly List<PkcsSignerInfo> _signerInfos        = new();
 
         /// <param name="path">Specifies the path to a file that contains either binary or Base64-encoded PKCS#7 message.</param>
         /// <exception cref="ArgumentException"><strong>path</strong> parameter is null or empty string.</exception>
@@ -89,7 +89,7 @@ namespace SysadminsLV.PKI.Cryptography.Pkcs {
         /// <summary>
         /// Gets a collection of certificates contained in the message.
         /// </summary>
-        public X509Certificate2Collection Certificates => new X509Certificate2Collection(_certificates);
+        public X509Certificate2Collection Certificates => new(_certificates);
         /// <summary>
         /// Gets an array of certificate revocation lists contained in the message.
         /// </summary>
@@ -97,7 +97,7 @@ namespace SysadminsLV.PKI.Cryptography.Pkcs {
         /// <summary>
         /// Gets a collection of tagged attributes associated with the message.
         /// </summary>
-        public X509AttributeCollection Attributes => new X509AttributeCollection(_attributes.ToArray());
+        public X509AttributeCollection Attributes => new(_attributes.ToArray());
         /// <summary>
         /// Gets an array of signer information that were used to sign the message.
         /// </summary>

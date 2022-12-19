@@ -15,7 +15,7 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates {
     /// Represents X.509 certificate revocation list (CRL) generator class.
     /// </summary>
     public class X509CrlBuilder {
-        readonly List<X509Extension> _extensions = new List<X509Extension>();
+        readonly List<X509Extension> _extensions = new();
 
         /// <summary>
         /// Initializes a new instance of <strong>X509CrlBuilder</strong> with no CRL information.
@@ -74,11 +74,11 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates {
         /// <summary>
         /// Gets or adds a list of revoked certificates contained in CRL.
         /// </summary>
-        public X509CRLEntryCollection RevokedCertificates { get; } = new X509CRLEntryCollection();
+        public X509CRLEntryCollection RevokedCertificates { get; } = new();
         /// <summary>
         /// Gets or sets hashing algorithm to use during encoding. If not set, default value 'SHA256' is set.
         /// </summary>
-        public Oid HashingAlgorithm { get; set; } = new Oid(AlgorithmOid.SHA256);
+        public Oid HashingAlgorithm { get; set; } = new(AlgorithmOid.SHA256);
 
         void generateExtensions(X509Certificate2 issuer) {
             processAkiExtension(issuer);

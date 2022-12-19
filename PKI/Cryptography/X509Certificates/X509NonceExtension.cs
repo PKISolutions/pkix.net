@@ -10,7 +10,7 @@ namespace System.Security.Cryptography.X509Certificates {
     /// This class cannot be inherited.
     /// </summary>
     public sealed class X509NonceExtension : X509Extension {
-        readonly Oid _oid = new Oid(X509ExtensionOid.OcspNonce, "OCSP Nonce");
+        readonly Oid _oid = new(X509ExtensionOid.OcspNonce, "OCSP Nonce");
         /// <summary>
         /// Initializes a new instance of the <strong>X509NonceExtension</strong> class.
         /// </summary>

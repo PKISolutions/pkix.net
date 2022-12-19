@@ -19,7 +19,7 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
         /// <summary>
         /// Gets a read-only collection of CRL Distribution Point configuration URLs.
         /// </summary>
-        public CertSrvCdpUrlCollection Entries => new CertSrvCdpUrlCollection(InternalEntries);
+        public CertSrvCdpUrlCollection Entries => new(InternalEntries);
 
         void initialize() {
             String[] regEntries = ConfigManager.GetMultiStringEntry(ACTIVE_CRLPUBLICATIONURLS);

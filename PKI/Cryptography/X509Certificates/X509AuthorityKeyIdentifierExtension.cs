@@ -10,7 +10,7 @@ namespace System.Security.Cryptography.X509Certificates {
     /// identifying the public key corresponding to the private key used to sign a certificate.
     /// </summary>
     public sealed class X509AuthorityKeyIdentifierExtension : X509Extension {
-        readonly Oid _oid = new Oid(X509ExtensionOid.AuthorityKeyIdentifier);
+        readonly Oid _oid = new(X509ExtensionOid.AuthorityKeyIdentifier);
 
         /// <summary>
         /// Intitializes a new instance of <strong>X509AuthorityKeyIdentifierExtension</strong> class from
@@ -135,7 +135,7 @@ namespace System.Security.Cryptography.X509Certificates {
                         IncludedComponents |= AuthorityKeyIdentifierFlags.SerialNumber;
                         break;
                 }
-            } while (asn.MoveNextCurrentLevel());
+            } while (asn.MoveNextSibling());
         }
 
         /// <summary>

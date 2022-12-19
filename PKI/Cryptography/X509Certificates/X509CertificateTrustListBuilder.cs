@@ -17,7 +17,7 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates {
     /// </summary>
     public class X509CertificateTrustListBuilder {
         const String CTL_CONTENT_TYPE = "1.3.6.1.4.1.311.10.1";
-        readonly Oid oid = new Oid(CTL_CONTENT_TYPE);
+        readonly Oid oid = new(CTL_CONTENT_TYPE);
 
         /// <summary>
         /// Initializes a new instance of <strong>X509CertificateTrustListBuilder</strong>
@@ -59,15 +59,15 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates {
         /// Gets a list that identifies the intended usage of the list as a sequence of object identifiers. This is the same as in
         /// the Enhanced Key Usage extension.
         /// </summary>
-        public OidCollection SubjectUsages { get; } = new OidCollection();
+        public OidCollection SubjectUsages { get; } = new();
         /// <summary>
         /// Gets a collection of trust list entries associated with trust list.
         /// </summary>
-        public X509CertificateTrustListEntryCollection Entries { get; } = new X509CertificateTrustListEntryCollection();
+        public X509CertificateTrustListEntryCollection Entries { get; } = new();
         /// <summary>
         /// Gets or sets the hashing algorithm used to create trust list entries. Default algorithm is SHA1.
         /// </summary>
-        public Oid HashAlgorithm { get; set; } = new Oid(AlgorithmOid.SHA1);
+        public Oid HashAlgorithm { get; set; } = new(AlgorithmOid.SHA1);
         /// <summary>
         /// Gets or sets the date and time when trust list validity begins. Default value is current date and time.
         /// </summary>

@@ -9,7 +9,7 @@ namespace System.Security.Cryptography.X509Certificates {
     /// </summary>
     /// <remarks><see cref="X509Extension.Critical"/> member is always set to <strong>True</strong>.</remarks>
     public sealed class X509CertificatePolicyMappingsExtension : X509Extension {
-        readonly Oid _oid = new Oid(X509ExtensionOid.CertificatePolicyMappings);
+        readonly Oid _oid = new(X509ExtensionOid.CertificatePolicyMappings);
 
         /// <summary>
         /// Initializes a new instance of the <strong>X509CertificatePolicyMappingsExtension</strong> class from
@@ -64,7 +64,7 @@ namespace System.Security.Cryptography.X509Certificates {
             List<OidMapping> mappings = new List<OidMapping>();
             do {
                 mappings.Add(new OidMapping(asn.GetTagRawData()));
-            } while (asn.MoveNextCurrentLevel());
+            } while (asn.MoveNextSibling());
             OidMappings = mappings.ToArray();
         }
     }

@@ -107,8 +107,8 @@ namespace System.Security.Cryptography.X509Certificates {
                         asn.MoveNext();
                         asn.MoveNext();
                         NoticeNumber = (Int32)Asn1Utils.DecodeInteger(asn.GetTagRawData());
-                        asn.MoveToPosition(offset);
-                        if (asn.MoveNextCurrentLevel()) {
+                        asn.Seek(offset);
+                        if (asn.MoveNextSibling()) {
                             NoticeText = Asn1Utils.DecodeAnyString(asn.GetTagRawData(), new[] { Asn1Type.IA5String, Asn1Type.VisibleString, Asn1Type.BMPString, Asn1Type.UTF8String });
                         }
                     } else {

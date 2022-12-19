@@ -9,7 +9,7 @@ namespace System.Security.Cryptography.X509Certificates {
     /// a certification authority to provide information about CRL publication location in Active Directory.
     /// </summary>
     public sealed class X509PublishedCrlLocationsExtension : X509Extension {
-        readonly Oid _oid = new Oid(X509ExtensionOid.PublishedCrlLocations);
+        readonly Oid _oid = new(X509ExtensionOid.PublishedCrlLocations);
 
         X509PublishedCrlLocationsExtension(Byte[] rawData, Boolean critical)
             : base(X509ExtensionOid.PublishedCrlLocations, rawData, critical) {
@@ -69,7 +69,7 @@ namespace System.Security.Cryptography.X509Certificates {
             asn.MoveNext();
             do {
                 urls.Add(new X509DistributionPoint(asn.GetTagRawData()));
-            } while (asn.MoveNextCurrentLevel());
+            } while (asn.MoveNextSibling());
             CRLDistributionPoints = urls.ToArray();
         }
 

@@ -31,7 +31,7 @@ namespace SysadminsLV.PKI.Cryptography {
         void decode(Asn1Reader asn) {
             asn.MoveNextAndExpectTags((Byte)Asn1Type.INTEGER);
             ResponseStatus = (TspResponseStatus)(Int32)new Asn1Integer(asn).Value;
-            while (asn.MoveNextCurrentLevel()) {
+            while (asn.MoveNextSibling()) {
                 switch (asn.Tag) {
                     case (Byte)Asn1Type.INTEGER:
                         ErrorCode = (TspFailureStatus)((Int32)new Asn1Integer(asn).Value + 1);

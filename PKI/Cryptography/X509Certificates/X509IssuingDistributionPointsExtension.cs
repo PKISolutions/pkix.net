@@ -6,7 +6,7 @@ using SysadminsLV.Asn1Parser.Universal;
 
 namespace SysadminsLV.PKI.Cryptography.X509Certificates {
     public class X509IssuingDistributionPointsExtension : X509Extension {
-        readonly Oid _oid = new Oid(X509ExtensionOid.IssuingDistributionPoint);
+        readonly Oid _oid = new(X509ExtensionOid.IssuingDistributionPoint);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="X509IssuingDistributionPointsExtension"/> class using an

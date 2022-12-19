@@ -32,7 +32,7 @@ namespace PKI.OCSP {
         /// <summary>
         /// Gets optional extensions about the status of the certificate in the subject.
         /// </summary>
-        public X509ExtensionCollection Extensions { get; } = new X509ExtensionCollection();
+        public X509ExtensionCollection Extensions { get; } = new();
         /// <summary>
         /// If the certificate in the subject is revoked, OCSP responder may include CRL entry with this certificate.
         /// </summary>
@@ -41,11 +41,11 @@ namespace PKI.OCSP {
         void m_initialize(Asn1Reader response) {
             response.MoveNext();
             CertId = new CertID(Asn1Utils.Encode(response.GetPayload(), 48));
-            response.MoveNextCurrentLevel();
+            response.MoveNextSibling();
             switch (response.Tag) {
                 case 128:
                     CertStatus = CertificateStatus.Good;
-                    response.MoveNextCurrentLevel();
+                    response.MoveNextSibling();
                     break;
                 case 161: 
                     CertStatus = CertificateStatus.Revoked;
@@ -62,12 +62,12 @@ namespace PKI.OCSP {
                     break;
                 case 130:
                     CertStatus = CertificateStatus.Unknown;
-                    response.MoveNextCurrentLevel();
+                    response.MoveNextSibling();
                     break;
             }
             //response.MoveNextCurrentLevel();
             ThisUpdate = Asn1Utils.DecodeGeneralizedTime(response.GetTagRawData());
-            while (response.MoveNextCurrentLevel()) {
+            while (response.MoveNextSibling()) {
                 switch (response.Tag) {
                     case 160:
                         Asn1Reader asn = new Asn1Reader(response.GetPayload());

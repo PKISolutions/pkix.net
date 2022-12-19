@@ -10,7 +10,7 @@ namespace System.Security.Cryptography.X509Certificates {
     /// </summary>
     /// <remarks>The class do not expose public constructors.</remarks>
     public sealed class X509CRLReferenceExtension : X509Extension {
-        readonly Oid _oid = new Oid(X509ExtensionOid.OcspCRLReference, "OCSP CRL Reference");
+        readonly Oid _oid = new(X509ExtensionOid.OcspCRLReference, "OCSP CRL Reference");
 
         internal X509CRLReferenceExtension(Byte[] rawData, Boolean critical)
             : base(new Oid(X509ExtensionOid.OcspCRLReference, "OCSP CRL Reference"), rawData, critical) {

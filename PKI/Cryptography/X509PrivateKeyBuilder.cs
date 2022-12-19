@@ -54,7 +54,7 @@ namespace SysadminsLV.PKI.Cryptography {
         /// a particular cryptographic service provider (CSP or KSP).
         /// </summary>
         public Oid PublicKeyAlgorithm {
-            get => new Oid(_keyGen.Algorithm.Value);
+            get => new(_keyGen.Algorithm.Value);
             set {
                 var coid = new CObjectIdClass();
                 coid.InitializeFromValue(value.Value);

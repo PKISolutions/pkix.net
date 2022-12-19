@@ -13,7 +13,7 @@ namespace SysadminsLV.PKI.Cryptography.Pkcs {
     /// </summary>
     /// <remarks>This class is a replacement for for a .NET native <see cref="SubjectIdentifier"/> class.</remarks>
     public sealed class PkcsSubjectIdentifier {
-        readonly List<Byte> _rawData = new List<Byte>();
+        readonly List<Byte> _rawData = new();
 
         /// <summary>
         /// Initializes a new instance of <strong>PkcsSubjectIdentifier</strong> class using signer certificate and type how this certificate

@@ -18,9 +18,9 @@ namespace System.Security.Cryptography.X509Certificates {
     /// Provides methods that help you use X.509 certificate revocation lists (CRL).
     /// </summary>
     public class X509CRL2 : IDisposable {
-        readonly X509CRLEntryCollection _revokedCerts = new X509CRLEntryCollection();
+        readonly X509CRLEntryCollection _revokedCerts = new();
         readonly Byte[] _rawData;
-        readonly X509ExtensionCollection _extensions = new X509ExtensionCollection();
+        readonly X509ExtensionCollection _extensions = new();
 
         Int32 sigUnused;
         Byte[] signature;
@@ -123,7 +123,7 @@ namespace System.Security.Cryptography.X509Certificates {
         /// of revoked certificate and <see cref="X509CRLEntry.RevocationDate">RevocationDate</see> that represents a date
         /// and time at which certificate was revoked. Additionally, revocation entry may contain additional information,
         /// such revocation reason.</remarks>
-        public X509CRLEntryCollection RevokedCertificates => new X509CRLEntryCollection(_revokedCerts);
+        public X509CRLEntryCollection RevokedCertificates => new(_revokedCerts);
         /// <summary>
         /// Gets the raw data of a certificate revocation list.
         /// </summary>
@@ -137,7 +137,7 @@ namespace System.Security.Cryptography.X509Certificates {
         /// method must be called. When this handle is no longer necessary, it must be freed by calling
         /// <see cref="Dispose(Boolean)"/> method.
         /// </remarks>
-        public SafeCRLHandleContext Handle { get; private set; } = new SafeCRLHandleContext();
+        public SafeCRLHandleContext Handle { get; private set; } = new();
         /// <summary>
         /// Gets a thumbprint of the current CRL object. Default thumbprint algorithm is SHA256.
         /// </summary>

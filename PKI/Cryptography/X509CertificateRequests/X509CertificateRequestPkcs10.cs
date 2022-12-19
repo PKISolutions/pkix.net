@@ -13,8 +13,8 @@ namespace SysadminsLV.PKI.Cryptography.X509CertificateRequests {
     /// Represents a managed PKCS #10 request.
     /// </summary>
     public class X509CertificateRequestPkcs10 {
-        protected readonly X509AttributeCollection _attributes = new X509AttributeCollection();
-        protected readonly X509ExtensionCollection _extensions = new X509ExtensionCollection();
+        protected readonly X509AttributeCollection _attributes = new();
+        protected readonly X509ExtensionCollection _extensions = new();
 
         /// <summary>
         /// Initializes a new empty instance of <strong>X509CertificateRequestPkcs10</strong> class.
@@ -78,7 +78,7 @@ namespace SysadminsLV.PKI.Cryptography.X509CertificateRequests {
         /// Gets <see cref="X509AttributeCollection"/> object that contains a collection of attributes
         /// associated with the certificate request.
         /// </summary>
-        public X509AttributeCollection Attributes => new X509AttributeCollection(_attributes);
+        public X509AttributeCollection Attributes => new(_attributes);
         /// <summary>
         /// Gets the algorithm used to create the signature of a certificate request.
         /// </summary>
@@ -110,7 +110,7 @@ namespace SysadminsLV.PKI.Cryptography.X509CertificateRequests {
             getPublicKey(asn);
             // if we reach this far, then we can verify request attribute.
             SignatureIsValid = MessageSigner.VerifyData(blob, PublicKey);
-            asn.MoveNextCurrentLevel();
+            asn.MoveNextSibling();
             if (asn.Tag == 0xa0) {
                 getAttributes(asn);
             }
@@ -121,13 +121,13 @@ namespace SysadminsLV.PKI.Cryptography.X509CertificateRequests {
             Version = (Int32)(Asn1Utils.DecodeInteger(asn.GetTagRawData()) + 1);
         }
         void getSubject(Asn1Reader asn) {
-            asn.MoveNextCurrentLevelAndExpectTags(0x30);
+            asn.MoveNextSiblingAndExpectTags(0x30);
             if (asn.PayloadLength != 0) {
                 SubjectName = new X500DistinguishedName(asn.GetTagRawData());
             }
         }
         void getPublicKey(Asn1Reader asn) {
-            asn.MoveNextCurrentLevel();
+            asn.MoveNextSibling();
             PublicKey = PublicKeyExtensions.FromRawData(asn.GetTagRawData());
         }
         void getAttributes(Asn1Reader asn) {
@@ -145,7 +145,7 @@ namespace SysadminsLV.PKI.Cryptography.X509CertificateRequests {
                 } else {
                     _attributes.Add(attribute);
                 }
-            } while (asn.MoveNextCurrentLevel());
+            } while (asn.MoveNextSibling());
         }
 
         /// <summary>

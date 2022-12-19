@@ -12,7 +12,7 @@ namespace PKI.OCSP {
     ///  The class represents an object to identify the certificate to include in OCSP Request. Also this object is returned by the OCSP Responder.
     /// </summary>
     public class CertID {
-        Oid hashAlgorithm = new Oid("1.3.14.3.2.26"); // sha1
+        Oid hashAlgorithm = new("1.3.14.3.2.26"); // sha1
         readonly X500DistinguishedName _issuerName;
         Byte[] issuerPublicKey, serialNumber;
 
@@ -102,13 +102,13 @@ namespace PKI.OCSP {
             }
             asn.MoveNext();
             HashingAlgorithm = new AlgorithmIdentifier(Asn1Utils.Encode(asn.GetPayload(), 48)).AlgorithmId;
-            asn.MoveNextCurrentLevelAndExpectTags((Byte)Asn1Type.OCTET_STRING);
+            asn.MoveNextSiblingAndExpectTags((Byte)Asn1Type.OCTET_STRING);
             // issuerNameHash
             IssuerNameId = AsnFormatter.BinaryToString(asn.GetPayload()).Trim();
-            asn.MoveNextCurrentLevelAndExpectTags((Byte)Asn1Type.OCTET_STRING);
+            asn.MoveNextSiblingAndExpectTags((Byte)Asn1Type.OCTET_STRING);
             // issuerKeyId
             IssuerKeyId = AsnFormatter.BinaryToString(asn.GetPayload()).Trim();
-            asn.MoveNextCurrentLevelAndExpectTags((Byte)Asn1Type.INTEGER);
+            asn.MoveNextSiblingAndExpectTags((Byte)Asn1Type.INTEGER);
             // serialnumber
             serialNumber = asn.GetPayload();
             IsReadOnly = true;

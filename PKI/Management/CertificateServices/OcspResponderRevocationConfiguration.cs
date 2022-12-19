@@ -39,7 +39,7 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
         const String MSFT_PROV_ERRORCODE                  = "RevocationErrorCode";
         const String MSFT_PROV_SERIALNUMBERSDIRS          = "IssuedSerialNumbersDirectories";
         #endregion
-        readonly X509CRLEntryCollection _crlEntries = new X509CRLEntryCollection();
+        readonly X509CRLEntryCollection _crlEntries = new();
         readonly ISet<String> _updateList = new HashSet<String>();
 
         Int32 crlUrlTimeout, refreshTimeout, reminderDuration;
@@ -178,7 +178,7 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
         /// Gets the local revocation information.
         /// </summary>
         public X509CRLEntryCollection LocalRevocationInformation {
-            get => new X509CRLEntryCollection(_crlEntries);
+            get => new(_crlEntries);
             set {
                 _crlEntries.Clear();
                 if (value != null && value.Any()) {

@@ -14,7 +14,7 @@ namespace PKI.CertificateServices {
 	/// </summary>
 	public class KRA {
 		String ConfigString;
-		readonly List<X509Certificate2> _certs = new List<X509Certificate2>();
+		readonly List<X509Certificate2> _certs = new();
 
 		/// <param name="certificateAuthority">Specifies an existing <see cref="CertificateServices"/> object.</param>
 		/// <exception cref="UninitializedObjectException">An object in the <strong>certificateAuthority</strong> parameter is not initialized.</exception>

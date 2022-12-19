@@ -12,7 +12,7 @@ namespace PKI.CertificateServices {
 	public class CRLDistributionPoint {
 		String ConfigString;
 		CDP[] m_cdp;
-		readonly Hashtable _variableValueMapping = new Hashtable();
+		readonly Hashtable _variableValueMapping = new();
 		Boolean[] keyMap;
 
 		/// <param name="certificateAuthority">Specifies an existing <see cref="CertificateAuthority"/> object.</param>

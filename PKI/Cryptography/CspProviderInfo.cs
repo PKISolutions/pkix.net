@@ -12,7 +12,7 @@ namespace SysadminsLV.PKI.Cryptography {
     ///		This class has no public constructors. Instead, use <see cref="CspProviderInfoCollection.GetProviderInfo()"/> method to access this object.
     /// </remarks>
     public class CspProviderInfo {
-        readonly CspProviderAlgorithmInfoCollection _algorithms = new CspProviderAlgorithmInfoCollection();
+        readonly CspProviderAlgorithmInfoCollection _algorithms = new();
 
         internal CspProviderInfo(ICspInformation csp) {
             Name = csp.Name;
@@ -43,7 +43,7 @@ namespace SysadminsLV.PKI.Cryptography {
         /// Gets a collection of <see cref="CspProviderAlgorithmInfo"/> objects that contains information about the algorithms
         /// supported by the provider.
         /// </summary>
-        public CspProviderAlgorithmInfoCollection Algorithms => new CspProviderAlgorithmInfoCollection(_algorithms);
+        public CspProviderAlgorithmInfoCollection Algorithms => new(_algorithms);
         /// <summary>
         /// Gets a Boolean value that determines whether the provider is implemented in a hardware device.
         /// </summary>

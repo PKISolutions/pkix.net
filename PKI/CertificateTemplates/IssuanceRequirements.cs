@@ -14,7 +14,7 @@ namespace PKI.CertificateTemplates;
 /// policy requirements.
 /// </summary>
 public class IssuanceRequirements {
-    readonly List<Oid> _certPolicies = new List<Oid>();
+    readonly List<Oid> _certPolicies = new();
     readonly IDictionary<String, Object> _entry;
     Int32 enrollmentFlags;
 

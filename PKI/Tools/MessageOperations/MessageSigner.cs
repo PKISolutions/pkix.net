@@ -27,8 +27,8 @@ namespace SysadminsLV.PKI.Tools.MessageOperations {
     public class MessageSigner : IDisposable {
         const String MSFT_KSP_NAME = "Microsoft Software Key Storage Provider";
         Boolean disposed, isCng, nullSigned;
-        SafeNCryptKeyHandle phPrivKey = new SafeNCryptKeyHandle();
-        SafeNCryptKeyHandle phPubKey = new SafeNCryptKeyHandle();
+        SafeNCryptKeyHandle phPrivKey = new();
+        SafeNCryptKeyHandle phPubKey = new();
         KeyType keyType;
         AsymmetricAlgorithm legacyKey;
         Oid2 hashAlgorithm;
@@ -691,11 +691,10 @@ namespace SysadminsLV.PKI.Tools.MessageOperations {
                 throw new InvalidOperationException("The blob is not signed.");
             }
 
-            using (var signerInfo = new MessageSigner()) {
-                signerInfo.acquirePublicKey(publicKey);
-                signerInfo.getConfiguration(blob.SignatureAlgorithm.RawData);
-                return signerInfo.VerifyData(blob.ToBeSignedData, blob.GetRawSignature());
-            }
+            using var signerInfo = new MessageSigner();
+            signerInfo.acquirePublicKey(publicKey);
+            signerInfo.getConfiguration(blob.SignatureAlgorithm.RawData);
+            return signerInfo.VerifyData(blob.ToBeSignedData, blob.GetRawSignature());
         }
 
         /// <summary>

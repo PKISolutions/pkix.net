@@ -47,7 +47,7 @@ namespace SysadminsLV.PKI.Cryptography {
             asn.MoveNext();
             do {
                 InternalList.Add(new AlgorithmIdentifier(asn.GetTagRawData()));
-            } while (asn.MoveNextCurrentLevel());
+            } while (asn.MoveNextSibling());
         }
         /// <summary>
         /// Encodes current collection to an ASN.1-encoded byte array.

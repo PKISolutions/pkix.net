@@ -30,7 +30,7 @@ namespace SysadminsLV.PKI.Utils.CLRExtensions {
             Oid pubKeyOid = Asn1Utils.DecodeObjectIdentifier(pubKeyOidIdReader.GetTagRawData());
             pubKeyOidIdReader.MoveNext();
             AsnEncodedData encodedParams = new AsnEncodedData(pubKeyOid, pubKeyOidIdReader.GetTagRawData());
-            asn.MoveNextCurrentLevel();
+            asn.MoveNextSibling();
             AsnEncodedData encodedKey = new AsnEncodedData(pubKeyOid, new Asn1BitString(asn.GetTagRawData()).Value.ToArray());
             return new PublicKey(pubKeyOid, encodedParams, encodedKey);
         }

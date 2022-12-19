@@ -9,7 +9,7 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
         /// <summary>
         /// Gets a read-only collection of Authority Information Access config URLs.
         /// </summary>
-        public CertSrvAiaUrlCollection Entries => new CertSrvAiaUrlCollection(InternalEntries);
+        public CertSrvAiaUrlCollection Entries => new(InternalEntries);
 
         void initialize() {
             String[] regEntries = ConfigManager.GetMultiStringEntry(ACTIVE_CACERTPUBLICATIONURLS);

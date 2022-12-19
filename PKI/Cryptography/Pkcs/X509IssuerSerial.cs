@@ -11,7 +11,7 @@ namespace SysadminsLV.PKI.Cryptography.Pkcs {
     /// This class is a replacement for a .NET native <see href="http://msdn.microsoft.com/en-us/library/system.security.cryptography.xml.x509issuerserial.aspx">X509IssuerSerial</see> structure.
     /// </remarks>
     public sealed class X509IssuerSerial {
-        readonly List<Byte> _rawData = new List<Byte>();
+        readonly List<Byte> _rawData = new();
         /// <param name="issuer">An <see cref="X500DistinguishedName"/> object that represents issuer name.</param>
         /// <param name="serialNumber">A string that contains issuer certificate's serial number.</param>
         /// <exception cref="ArgumentNullException">
@@ -58,7 +58,7 @@ namespace SysadminsLV.PKI.Cryptography.Pkcs {
             var asn = new Asn1Reader(rawData);
             asn.MoveNext();
             IssuerName = new X500DistinguishedName(asn.GetTagRawData());
-            asn.MoveNextCurrentLevelAndExpectTags((Byte)Asn1Type.INTEGER);
+            asn.MoveNextSiblingAndExpectTags((Byte)Asn1Type.INTEGER);
             SerialNumber = AsnFormatter.BinaryToString(asn);
             _rawData.AddRange(rawData);
         }

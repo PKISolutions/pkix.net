@@ -12,7 +12,7 @@ namespace System.Security.Cryptography.X509Certificates {
     /// certificate autoenrollment to perform certificate-based renewals.
     /// </summary>
     public sealed class X509CertificateTemplateExtension : X509Extension {
-        readonly Oid _oid = new Oid(X509ExtensionOid.CertTemplateInfoV2);
+        readonly Oid _oid = new(X509ExtensionOid.CertTemplateInfoV2);
 
         internal X509CertificateTemplateExtension(Byte[] rawData, Boolean critical)
             : base(X509ExtensionOid.CertTemplateInfoV2, rawData, critical) {

@@ -8,7 +8,7 @@ namespace System.Security.Cryptography.X509Certificates {
     /// Represents a single certificate policy which consists of an object identifier (OID) and optional qualifiers.
     /// </summary>
     public class X509CertificatePolicy {
-        readonly List<Byte> _rawData = new List<Byte>();
+        readonly List<Byte> _rawData = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="X509CertificatePolicy"/> class from a string that represents a

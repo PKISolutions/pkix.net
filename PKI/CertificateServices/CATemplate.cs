@@ -15,7 +15,7 @@ namespace PKI.CertificateServices {
     public class CATemplate {
         String sku, configString;
         CertSrvPlatformVersion version;
-        readonly List<CertificateTemplate> _templates = new List<CertificateTemplate>();
+        readonly List<CertificateTemplate> _templates = new();
 
         /// <param name="certificateAuthority">Specifies an existing <see cref="CertificateServices"/> object.</param>
         /// <exception cref="UninitializedObjectException">An object in the <strong>certificateAuthority</strong> parameter is not initialized.</exception>

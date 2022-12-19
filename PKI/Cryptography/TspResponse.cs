@@ -24,8 +24,8 @@ namespace SysadminsLV.PKI.Cryptography {
         const String TSP_OID = "1.3.6.1.5.5.7.3.8";
         const String SIGNING_TIME = "1.2.840.113549.1.9.5";
         readonly IList<X509Extension> _extensions = new List<X509Extension>();
-        readonly List<Byte> _rawData = new List<Byte>();
-        readonly X509AlternativeNameCollection _tsaName = new X509AlternativeNameCollection();
+        readonly List<Byte> _rawData = new();
+        readonly X509AlternativeNameCollection _tsaName = new();
         DefaultSignedPkcs7 signedCms;
         Byte[] nonce;
 
@@ -48,7 +48,7 @@ namespace SysadminsLV.PKI.Cryptography {
         /// <summary>
         /// Gets the status of Time-Stamp Response and additional information if error occured.
         /// </summary>
-        public TspStatusInfo Status { get; private set; } = new TspStatusInfo();
+        public TspStatusInfo Status { get; private set; } = new();
         /// <summary>
         /// Gets the response type. This value is Time-Stamp Token Info (1.2.840.113549.1.9.16.1.4) or PKCS 7 Data (1.2.840.113549.1.7.1).
         /// </summary>
@@ -95,7 +95,7 @@ namespace SysadminsLV.PKI.Cryptography {
         /// <summary>
         /// Gets the name of TSA server. This property can be empty collection.
         /// </summary>
-        public X509AlternativeNameCollection TsaName => new X509AlternativeNameCollection(_tsaName);
+        public X509AlternativeNameCollection TsaName => new(_tsaName);
         /// <summary>
         /// Gets a collection of optional extensions associated with the current TSP request.
         /// </summary>
@@ -128,9 +128,9 @@ namespace SysadminsLV.PKI.Cryptography {
                 if (Status.ResponseStatus != TspResponseStatus.Granted && Status.ResponseStatus != TspResponseStatus.GrantedWithModifications) {
                     return;
                 }
-                asn.MoveNextCurrentLevelAndExpectTags(48);
+                asn.MoveNextSiblingAndExpectTags(48);
             } else {
-                asn.MoveToPosition(0);
+                asn.Seek(0);
             }
             signedCms = new DefaultSignedPkcs7(asn.GetTagRawData());
 
@@ -161,7 +161,7 @@ namespace SysadminsLV.PKI.Cryptography {
             PolicyID = new Asn1ObjectIdentifier(asn).Value;
             asn.MoveNextAndExpectTags(48);
             RequestMessage = new TspMessageImprint(asn.GetTagRawData());
-            asn.MoveNextCurrentLevelAndExpectTags((Byte)Asn1Type.INTEGER);
+            asn.MoveNextSiblingAndExpectTags((Byte)Asn1Type.INTEGER);
             SerialNumber = new Asn1Integer(asn).Value;
             asn.MoveNextAndExpectTags((Byte)Asn1Type.GeneralizedTime);
             GenerationTimestamp = new Asn1GeneralizedTime(asn).Value;
@@ -169,7 +169,7 @@ namespace SysadminsLV.PKI.Cryptography {
             decodeOptionalFields(asn);
         }
         void decodeOptionalFields(Asn1Reader asn) {
-            while (asn.MoveNextCurrentLevel()) {
+            while (asn.MoveNextSibling()) {
                 switch (asn.Tag) {
                     case (Byte)Asn1Type.BOOLEAN:
                         Ordering = new Asn1Boolean(asn).Value;
@@ -254,7 +254,7 @@ namespace SysadminsLV.PKI.Cryptography {
         /// </remarks>
         public Byte[] GetNonceBytes() {
             return nonce == default
-                ? new Byte[0]
+                ? Array.Empty<Byte>()
                 : nonce.ToArray();
         }
 

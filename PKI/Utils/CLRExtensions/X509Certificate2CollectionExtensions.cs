@@ -51,7 +51,7 @@ namespace SysadminsLV.PKI.Utils.CLRExtensions {
             }
             do {
                 collection.Add(new X509Certificate2(asn.GetTagRawData()));
-            } while (asn.MoveNextCurrentLevel());
+            } while (asn.MoveNextSibling());
         }
     }
 }

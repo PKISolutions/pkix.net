@@ -28,7 +28,7 @@ namespace SysadminsLV.PKI.Management.CertificateServices.Database {
         /// <summary>
         /// Gets a collection of properties associated with the current row object.
         /// </summary>
-        public AdcsDbPropertyCollection Properties { get; } = new AdcsDbPropertyCollection();
+        public AdcsDbPropertyCollection Properties { get; } = new();
         
     }
 }

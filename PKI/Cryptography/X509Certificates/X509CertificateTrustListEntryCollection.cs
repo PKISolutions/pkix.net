@@ -65,7 +65,7 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates {
             do {
                 var entry = new X509CertificateTrustListEntry(new AsnEncodedData(asn.GetTagRawData()));
                 InternalList.Add(entry);
-            } while (asn.MoveNextCurrentLevel());
+            } while (asn.MoveNextSibling());
         }
     }
 }

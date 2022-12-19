@@ -13,9 +13,9 @@ namespace System.Security.Cryptography.X509Certificates {
     /// <see href="https://tools.ietf.org/html/rfc5280#section-4.2.1.10">RFC 5280</see>.
     /// </summary>
     public sealed class X509NameConstraintsExtension : X509Extension {
-        readonly X509AlternativeNameCollection _permittedSubtree = new X509AlternativeNameCollection();
-        readonly X509AlternativeNameCollection _excludedSubtree = new X509AlternativeNameCollection();
-        readonly Oid _oid = new Oid(X509ExtensionOid.NameConstraints);
+        readonly X509AlternativeNameCollection _permittedSubtree = new();
+        readonly X509AlternativeNameCollection _excludedSubtree = new();
+        readonly Oid _oid = new(X509ExtensionOid.NameConstraints);
 
         /// <summary>
         /// Initializes a new instance of <strong>X509NameConstraintsExtension</strong> class from
@@ -53,13 +53,13 @@ namespace System.Security.Cryptography.X509Certificates {
         /// collection is valid only if it is not listed in the <see cref="ExcludedSubtree"/> collection.
         /// member.
         /// </summary>
-        public X509AlternativeNameCollection PermittedSubtree => new X509AlternativeNameCollection(_permittedSubtree);
+        public X509AlternativeNameCollection PermittedSubtree => new(_permittedSubtree);
         /// <summary>
         /// Gets a collection of explicitly disallowed names. Any name matching a restriction in this
         /// collection is invalid regardless of information appearing in the <see cref="PermittedSubtree"/>
         /// member.
         /// </summary>
-        public X509AlternativeNameCollection ExcludedSubtree => new X509AlternativeNameCollection(_excludedSubtree);
+        public X509AlternativeNameCollection ExcludedSubtree => new(_excludedSubtree);
 
         void m_initialize(X509AlternativeNameCollection permittedSubtree, X509AlternativeNameCollection excludedSubtree) {
             Oid = _oid;

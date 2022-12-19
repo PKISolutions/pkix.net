@@ -13,7 +13,7 @@ namespace System.Security.Cryptography.X509Certificates {
     /// in a path contain an acceptable policy identifier.
     /// </summary>
     public sealed class X509CertificatePolicyConstraintsExtension : X509Extension {
-        readonly Oid _oid = new Oid(X509ExtensionOid.CertificatePolicyConstraints);
+        readonly Oid _oid = new(X509ExtensionOid.CertificatePolicyConstraints);
         /// <summary>
         /// Initializes a new instance of the <strong>X509CertificatePolicyConstraintsExtension</strong> class from
         /// an <see cref="AsnEncodedData"/> object.
@@ -90,7 +90,7 @@ namespace System.Security.Cryptography.X509Certificates {
                     case 0x81: InhibitPolicyMapping = (Int32)Asn1Utils.DecodeInteger(integer); break;
                     default: throw new InvalidDataException("The data is invalid");
                 }
-            } while (asn.MoveNextCurrentLevel());
+            } while (asn.MoveNextSibling());
         }
     }
 }
