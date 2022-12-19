@@ -184,27 +184,27 @@ namespace PKI.CertificateTemplates {
         public override String ToString() {
             String nl = Environment.NewLine;
             var SB = new StringBuilder();
-            SB.Append($"[Cryptography Settings]{nl}");
-            SB.Append("  CSP list: ");
+            SB.Append(@"
+[Cryptography Settings]
+  CSP list: ");
             if (ProviderList == null) {
-                SB.Append($"Any installed CSP{nl}");
+                SB.AppendLine("Any installed CSP");
             } else {
                 SB.Append(nl);
                 foreach (String csp in ProviderList) {
-                    SB.Append($"     {csp}{nl}");
+                    SB.AppendLine($"     {csp}");
                 }
-                SB.Append(nl);
             }
-            SB.Append($"  Key Algorithm: {KeyAlgorithm.Format(true)}{nl}");
-            SB.Append($"  Hash Algorithm: {HashAlgorithm.Format(true)}{nl}");
-            SB.Append($"  Key Length: {MinimalKeyLength}{nl}");
-            SB.Append($"  Private key options: {PrivateKeyOptions}{nl}");
-            SB.Append($"  KeySpec: {KeySpec}{nl}");
-            SB.Append($"  CNG key usage: {CNGKeyUsage}");
+            SB.AppendLine(@$"  Key Algorithm: {KeyAlgorithm.Format(true)}
+  Hash Algorithm: {HashAlgorithm.Format(true)}
+  Key Length: {MinimalKeyLength}
+  Private key options: {PrivateKeyOptions}
+  KeySpec: {KeySpec}
+  CNG key usage: {CNGKeyUsage}");
             if (!String.IsNullOrEmpty(PrivateKeySecuritySDDL)) {
                 SB.Append($"{nl}  Private key security descriptor: {PrivateKeySecuritySDDL}");
             }
-            return SB.ToString();
+            return SB.ToString().Trim();
         }
     }
 }

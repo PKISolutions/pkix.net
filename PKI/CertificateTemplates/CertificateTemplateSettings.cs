@@ -190,11 +190,11 @@ public class CertificateTemplateSettings {
         readExtensions();
     }
     void initializeFromCOM(IX509CertificateTemplate template) {
-        GeneralFlags = (CertificateTemplateFlags)Convert.ToInt32((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropGeneralFlags]);
-        EnrollmentOptions = (CertificateTemplateEnrollmentFlags)Convert.ToInt32((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropEnrollmentFlags]);
-        subjectFlags = unchecked((Int32)(UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropSubjectNameFlags]);
-        ValidityPeriod = readValidity(null, Convert.ToInt64((UInt64)template.Property[EnrollmentTemplateProperty.TemplatePropValidityPeriod]));
-        RenewalPeriod = readValidity(null, Convert.ToInt64((UInt64)template.Property[EnrollmentTemplateProperty.TemplatePropRenewalPeriod]));
+        GeneralFlags = (CertificateTemplateFlags)Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropGeneralFlags]);
+        EnrollmentOptions = (CertificateTemplateEnrollmentFlags)Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropEnrollmentFlags]);
+        subjectFlags = Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropSubjectNameFlags]);
+        ValidityPeriod = readValidity(null, Convert.ToInt64(template.Property[EnrollmentTemplateProperty.TemplatePropValidityPeriod]));
+        RenewalPeriod = readValidity(null, Convert.ToInt64(template.Property[EnrollmentTemplateProperty.TemplatePropRenewalPeriod]));
         try {
             SupersededTemplates = (String[])template.Property[EnrollmentTemplateProperty.TemplatePropSupersede];
         } catch {

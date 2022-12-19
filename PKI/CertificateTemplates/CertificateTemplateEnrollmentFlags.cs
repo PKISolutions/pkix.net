@@ -104,6 +104,6 @@ namespace PKI.CertificateTemplates {
         /// Instructs Enterprise CA to not include SID extension in issued certificates that use subject construction from Active Directory.
         /// More information in <see href="https://support.microsoft.com/kb/5014754">KB5014754</see>
         /// </summary>
-        DoNotIncludeSidExtension = 0x00080000
+        DoNotIncludeSidExtension         = 0x00080000
     }
 }

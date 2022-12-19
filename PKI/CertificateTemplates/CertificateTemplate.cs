@@ -351,42 +351,39 @@ public class CertificateTemplate {
     /// <returns>Certificate template textual representation.</returns>
     public String Format() {
         String nl = Environment.NewLine;
-        StringBuilder SB = new StringBuilder();
-        SB.Append($"[General Settings]{nl}");
-        SB.Append($"  Common name: {Name}{nl}");
-        SB.Append($"  Display name: {DisplayName}{nl}");
-        SB.Append($"  Version: {Version}{nl}");
-        SB.Append($"  Supported CA: {SupportedCA}{nl}");
-        SB.Append($"  Subject type: {Settings.SubjectType}{nl}");
-        SB.Append((Settings.EnrollmentOptions & CertificateTemplateEnrollmentFlags.DsPublish) > 0
-            ? $"  Publish to DS: True{nl}"
-            : $"  Publish to DS: False{nl}");
-        SB.Append((Settings.EnrollmentOptions & CertificateTemplateEnrollmentFlags.AutoenrollmentCheckDsCert) > 0
-            ? $"  Check for existing certificate in DS: True{nl}"
-            : $"  Check for existing certificate in DS: False{nl}");
-        SB.Append((Settings.EnrollmentOptions & CertificateTemplateEnrollmentFlags.ReuseKeyTokenFull) > 0
-            ? $"  Reuse key when token is full: True{nl}"
-            : $"  Reuse key when token is full: False{nl}");
-        SB.Append($"[Subject]{nl}");
-        SB.Append($"  {Settings.SubjectName}{nl}");
-        SB.Append(Settings.Cryptography + nl);
-        SB.Append(Settings.RegistrationAuthority + nl);
-        SB.Append(Settings.KeyArchivalSettings + nl);
-        SB.Append($"[Superseded Templates]{nl}");
+        var SB = new StringBuilder();
+        SB.AppendLine(@$"
+[General Settings]
+  Common name: {Name}
+  Display name: {DisplayName}
+  Version: {Version}
+  Supported CA: {SupportedCA}
+  Subject type: {Settings.SubjectType}
+  Publish to DS: {(Settings.EnrollmentOptions & CertificateTemplateEnrollmentFlags.DsPublish) > 0}
+  Check for existing certificate in DS: {(Settings.EnrollmentOptions & CertificateTemplateEnrollmentFlags.AutoenrollmentCheckDsCert) > 0}
+  Reuse key when token is full: {(Settings.EnrollmentOptions & CertificateTemplateEnrollmentFlags.ReuseKeyTokenFull) > 0}
+[Subject]
+  {Settings.SubjectName}
+{Settings.Cryptography}
+{Settings.RegistrationAuthority}
+{Settings.KeyArchivalSettings}
+[Superseded Templates]");
         if (Settings.SupersededTemplates.Length == 0) {
-            SB.Append($"  None{nl}");
+            SB.AppendLine("  None");
         } else {
             foreach (String template in Settings.SupersededTemplates) {
-                SB.Append($"  {template}{nl}");
+                SB.AppendLine($"  {template}");
             }
         }
-        SB.Append($"[Extensions]{nl}");
+        SB.AppendLine("[Extensions]");
         foreach (X509Extension ext in Settings.Extensions) {
-            SB.Append($"  Extension name:{nl}    {ext.Oid.FriendlyName}{nl}");
-            SB.Append($"  Extension value:{nl}    {ext.Format(true).Replace("\r\n", "\r\n    ")}{nl}");
+            SB.AppendLine(@$"  Extension name:
+    {ext.Oid.FriendlyName}
+  Extension value:
+    {ext.Format(true).TrimEnd().Replace("\r\n", "\r\n    ")}");
         }
-        SB.Append(nl);
-        return SB.ToString();
+
+        return SB.ToString().Trim();
     }
 
     /// <summary>
