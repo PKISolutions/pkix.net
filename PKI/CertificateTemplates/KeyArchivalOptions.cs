@@ -50,28 +50,16 @@ namespace PKI.CertificateTemplates {
             }
         }
         void InitializeCom(IX509CertificateTemplate template) {
-            if (CryptographyUtils.TestOleCompat()) {
-                if (((Int32)template.Property[EnrollmentTemplateProperty.TemplatePropPrivateKeyFlags] & (Int32)PrivateKeyFlags.RequireKeyArchival) > 0) {
-                    KeyArchival = true;
-                    try {
-                        IObjectId soid = (IObjectId)template.Property[EnrollmentTemplateProperty.TemplatePropSymmetricAlgorithm];
-                        EncryptionAlgorithm = new Oid(soid.Value);
-                    } catch { }
-                    try {
-                        KeyLength = (Int32)template.Property[EnrollmentTemplateProperty.TemplatePropSymmetricKeyLength];
-                    } catch { }
-                }
-            } else {
-                if (((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropPrivateKeyFlags] & (Int32)PrivateKeyFlags.RequireKeyArchival) > 0) {
-                    KeyArchival = true;
-                    try {
-                        IObjectId soid = (IObjectId)template.Property[EnrollmentTemplateProperty.TemplatePropSymmetricAlgorithm];
-                        EncryptionAlgorithm = new Oid(soid.Value);
-                    } catch { }
-                    try {
-                        KeyLength = Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropSymmetricKeyLength]);
-                    } catch { }
-                }
+            Int32 pkFlags = Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropPrivateKeyFlags]);
+            if ((pkFlags & (Int32)PrivateKeyFlags.RequireKeyArchival) > 0) {
+                KeyArchival = true;
+                try {
+                    var symmetricAlgorithmID = (IObjectId)template.Property[EnrollmentTemplateProperty.TemplatePropSymmetricAlgorithm];
+                    EncryptionAlgorithm = new Oid(symmetricAlgorithmID.Value);
+                } catch { }
+                try {
+                    KeyLength = Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropSymmetricKeyLength]);
+                } catch { }
             }
         }
 

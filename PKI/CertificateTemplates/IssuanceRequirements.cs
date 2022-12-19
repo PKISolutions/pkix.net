@@ -87,22 +87,12 @@ namespace PKI.CertificateTemplates {
             }
         }
         void initializeCom(IX509CertificateTemplate template) {
-            if (CryptographyUtils.TestOleCompat()) {
-                try {
-                    SignatureCount = (Int32)template.Property[EnrollmentTemplateProperty.TemplatePropRASignatureCount];
-                    enrollmentFlags = (Int32)template.Property[EnrollmentTemplateProperty.TemplatePropEnrollmentFlags];
-                } catch {
-                    SignatureCount = 0;
-                    enrollmentFlags = 0;
-                }
-            } else {
-                try {
-                    SignatureCount = Convert.ToInt32((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropRASignatureCount]);
-                    enrollmentFlags = Convert.ToInt32((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropEnrollmentFlags]);
-                } catch {
-                    SignatureCount = 0;
-                    enrollmentFlags = 0;
-                }
+            try {
+                SignatureCount = (Int32)template.Property[EnrollmentTemplateProperty.TemplatePropRASignatureCount];
+                enrollmentFlags = (Int32)template.Property[EnrollmentTemplateProperty.TemplatePropEnrollmentFlags];
+            } catch {
+                SignatureCount = 0;
+                enrollmentFlags = 0;
             }
             if (SignatureCount > 0) {
                 try {

@@ -151,25 +151,14 @@ namespace PKI.CertificateTemplates {
             }
         }
         void initializeFromCom(IX509CertificateTemplate template) {
-            if (CryptographyUtils.TestOleCompat()) {
-                try {
-                    PrivateKeyOptions = (PrivateKeyFlags)template.Property[EnrollmentTemplateProperty.TemplatePropPrivateKeyFlags];
-                } catch { }
-                MinimalKeyLength = (Int32)template.Property[EnrollmentTemplateProperty.TemplatePropMinimumKeySize];
-                KeySpec = (X509KeySpecFlags)(Int32)template.Property[EnrollmentTemplateProperty.TemplatePropKeySpec];
-                try {
-                    CNGKeyUsage = (X509CNGKeyUsages)(Int32)template.Property[EnrollmentTemplateProperty.TemplatePropKeyUsage];
-                } catch { }
-            } else {
-                try {
-                    PrivateKeyOptions = (PrivateKeyFlags)Convert.ToInt32((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropPrivateKeyFlags]);
-                } catch { }
-                MinimalKeyLength = Convert.ToInt32((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropMinimumKeySize]);
-                KeySpec = (X509KeySpecFlags)Convert.ToInt32((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropKeySpec]);
-                try {
-                    CNGKeyUsage = (X509CNGKeyUsages)Convert.ToInt32((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropKeyUsage]);
-                } catch { }
-            }
+            try {
+                PrivateKeyOptions = (PrivateKeyFlags)Convert.ToInt32((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropPrivateKeyFlags]);
+            } catch { }
+            MinimalKeyLength = Convert.ToInt32((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropMinimumKeySize]);
+            KeySpec = (X509KeySpecFlags)Convert.ToInt32((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropKeySpec]);
+            try {
+                CNGKeyUsage = (X509CNGKeyUsages)Convert.ToInt32((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropKeyUsage]);
+            } catch { }
             try {
                 ProviderList = (String[])template.Property[EnrollmentTemplateProperty.TemplatePropCryptoProviders];
             } catch { }
