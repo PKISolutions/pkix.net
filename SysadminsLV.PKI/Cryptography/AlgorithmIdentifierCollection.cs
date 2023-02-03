@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using SysadminsLV.Asn1Parser;
 
 namespace SysadminsLV.PKI.Cryptography {
     /// <summary>
@@ -19,14 +18,14 @@ namespace SysadminsLV.PKI.Cryptography {
         public AlgorithmIdentifierCollection(IEnumerable<AlgorithmIdentifier> algIdentifiers) : base(algIdentifiers) { }
 
         /// <summary>
-        /// Gets an <see cref="SysadminsLV.PKI.Cryptography.AlgorithmIdentifier"/> object from the <see cref="AlgorithmIdentifierCollection"/> object by attributes object identifier.
+        /// Gets an <see cref="AlgorithmIdentifier"/> object from the <see cref="AlgorithmIdentifierCollection"/> object by attributes object identifier.
         /// </summary>
         /// <param name="oid">A string that represents algorithm identifier.</param>
-        /// <remarks>Use this property to retrieve an <see cref="SysadminsLV.PKI.Cryptography.AlgorithmIdentifier"/> object from an <see cref="AlgorithmIdentifierCollection"/>
-        /// object if you know the value of the object identifier the <see cref="SysadminsLV.PKI.Cryptography.AlgorithmIdentifier"/>
-        /// object. You can use the <see cref="this[int]"/> property to retrieve an <see cref="SysadminsLV.PKI.Cryptography.AlgorithmIdentifier"/> object if you know
+        /// <remarks>Use this property to retrieve an <see cref="AlgorithmIdentifier"/> object from an <see cref="AlgorithmIdentifierCollection"/>
+        /// object if you know the value of the object identifier the <see cref="AlgorithmIdentifier"/>
+        /// object. You can use the <see cref="this[Int32]"/> property to retrieve an <see cref="AlgorithmIdentifier"/> object if you know
         /// its location in the collection</remarks>
-        /// <returns>An <see cref="SysadminsLV.PKI.Cryptography.AlgorithmIdentifier"/> object.</returns>
+        /// <returns>An <see cref="AlgorithmIdentifier"/> object.</returns>
         public AlgorithmIdentifier this[String oid] {
             get {
                 return InternalList.FirstOrDefault(x => x.AlgorithmId.Value.Equals(oid, StringComparison.OrdinalIgnoreCase));
@@ -36,7 +35,7 @@ namespace SysadminsLV.PKI.Cryptography {
         /// Decodes ASN.1-encoded algorithm identifier collection.
         /// </summary>
         /// <param name="rawData">ASN.1-encoded byte array that represents algorithm identifier collection.</param>
-        /// <exception cref="ArgumentNullException">
+        /// <exception cref="System.ArgumentNullException">
         /// <strong>rawData</strong> parameter is null.
         /// </exception>
         public void Decode(Byte[] rawData) {
