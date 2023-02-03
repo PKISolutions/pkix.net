@@ -113,7 +113,6 @@
     <Compile Include="Cryptography\TspResponse.cs" />
     <Compile Include="Cryptography\TspRfc3161Request.cs" />
     <Compile Include="Cryptography\TspStatusInfo.cs" />
-    <Compile Include="Cryptography\TspValidationStatus.cs" />
     <Compile Include="Cryptography\X509AttributeOid.cs" />
     <Compile Include="Cryptography\X509Certificates\IssuingDistributionPointScope.cs" />
     <Compile Include="Cryptography\X509Certificates\KeyProviderInfo.cs" />
