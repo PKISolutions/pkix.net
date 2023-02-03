@@ -147,7 +147,7 @@ public class OCSPRequest {
     public Oid2[] AcceptedSignatureAlgorithms {
         get => responseAlgIDs;
         set {
-            if (value.Any(oid => oid.OidGroup != OidGroupEnum.SignatureAlgorithm)) {
+            if (value.Any(oid => oid.OidGroup != OidGroup.SignatureAlgorithm)) {
                 throw new InvalidDataException("One or more object identifiers are invalid.");
             }
             responseAlgIDs = value;

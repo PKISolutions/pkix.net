@@ -329,7 +329,6 @@
     <Compile Include="CertificateTemplates\IssuanceRequirements.cs" />
     <Compile Include="CertificateTemplates\KeyArchivalOptions.cs" />
     <Compile Include="CertificateTemplates\PrivateKeyFlags.cs" />
-    <Compile Include="Cryptography\OidGroupEnum.cs" />
     <Compile Include="Cryptography\Oid2.cs" />
     <Compile Include="Cryptography\Pkcs\ContentInfo2.cs" />
     <Compile Include="Cryptography\Pkcs\PKCS7SignedMessage.cs" />

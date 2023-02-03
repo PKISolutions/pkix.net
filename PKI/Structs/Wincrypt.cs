@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
 namespace PKI.Structs {
@@ -290,7 +291,7 @@ namespace PKI.Structs {
             public String pszOID;
             [MarshalAs(UnmanagedType.LPWStr)]
             public String pwszName;
-            public Int32 dwGroupId;
+            public OidGroup dwGroupId;
             public Int32 dwValue;
             public CRYPTOAPI_BLOB ExtraInfo;
             [MarshalAs(UnmanagedType.LPWStr)]
@@ -298,17 +299,7 @@ namespace PKI.Structs {
             [MarshalAs(UnmanagedType.LPWStr)]
             public String pwszCNGExtraAlgid;
         }
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-        public struct CRYPT_OID_INFO_Win2k3 {
-            public Int32 cbSize;
-            [MarshalAs(UnmanagedType.LPStr)]
-            public String pszOID;
-            [MarshalAs(UnmanagedType.LPWStr)]
-            public String pwszName;
-            public Int32 dwGroupId;
-            public Int32 dwValue;
-            public CRYPTOAPI_BLOB ExtraInfo;
-        }
+
         #endregion
 
         #region service providers

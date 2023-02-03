@@ -66,10 +66,10 @@ namespace PKI.OCSP {
         /// </remarks>
         /// </summary>
         public Oid HashingAlgorithm {
-            get { return hashAlgorithm; }
+            get => hashAlgorithm;
             set {
                 if (IsReadOnly) { throw new InvalidOperationException(); }
-                Oid2 oid2 = new Oid2(value.Value, OidGroupEnum.HashAlgorithm, false);
+                var oid2 = new Oid2(value.Value, OidGroup.HashAlgorithm, false);
                 if (String.IsNullOrEmpty(oid2.Value)) {
                     throw new ArgumentException("The algorithm is invalid");
                 }
@@ -91,7 +91,7 @@ namespace PKI.OCSP {
 
         /// <summary>
         /// Gets the status of the object and an ability to change <see cref="HashAlgorithm"/> member.
-        /// If thie member is set to <strong>True</strong>, <see cref="HashAlgorithm"/> property is read-only.
+        /// If the member is set to <strong>True</strong>, <see cref="HashAlgorithm"/> property is read-only.
         /// </summary>
         public Boolean IsReadOnly { get; private set; }
 

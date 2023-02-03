@@ -215,19 +215,8 @@ namespace SysadminsLV.PKI.Win32 {
         );
         [SecurityCritical]
         [DllImport("Crypt32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern Boolean CryptRegisterOIDInfo(
-            [In] Wincrypt.CRYPT_OID_INFO_Win2k3 pInfo,
-            [In] UInt32 dwFlags
-        );
-        [SecurityCritical]
-        [DllImport("Crypt32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern Boolean CryptUnregisterOIDInfo(
             [In] Wincrypt.CRYPT_OID_INFO pInfo
-        );
-        [SecurityCritical]
-        [DllImport("Crypt32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern Boolean CryptUnregisterOIDInfo(
-            [In] Wincrypt.CRYPT_OID_INFO_Win2k3 pInfo
         );
         #endregion
         [DllImport("Crypt32.dll", CharSet = CharSet.Auto, SetLastError = true)]

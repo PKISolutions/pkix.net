@@ -90,7 +90,7 @@ namespace PKI.Utils {
             return key.VerifyData(message, signature);
         }
         static Boolean verifySignature(PublicKey publicKey, Byte[] message, Byte[] signature, Oid hashalgorithm) {
-            Oid2 oid = new Oid2(hashalgorithm.Value, OidGroupEnum.SignatureAlgorithm, true);
+            Oid2 oid = new Oid2(hashalgorithm.Value, OidGroup.SignatureAlgorithm, true);
             if (String.IsNullOrEmpty(oid.FriendlyName)) {
                 throw new ArgumentException("Specified signature algorithm is not supported.");
             }

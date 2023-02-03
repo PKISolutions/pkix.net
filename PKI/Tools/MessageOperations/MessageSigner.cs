@@ -58,7 +58,7 @@ namespace SysadminsLV.PKI.Tools.MessageOperations {
         /// <strong>signer</strong> parameter is null.
         /// </exception>
         public MessageSigner(X509Certificate2 signer)
-            : this(signer, new Oid2(AlgorithmOid.SHA256, OidGroupEnum.HashAlgorithm, false)) {
+            : this(signer, new Oid2(AlgorithmOid.SHA256, OidGroup.HashAlgorithm, false)) {
 
         }
         /// <summary>
@@ -117,7 +117,7 @@ namespace SysadminsLV.PKI.Tools.MessageOperations {
         public Oid2 HashingAlgorithm {
             get => hashAlgorithm;
             set {
-                if (value == null || value.OidGroup != OidGroupEnum.HashAlgorithm && value.OidGroup != OidGroupEnum.SignatureAlgorithm) {
+                if (value == null || value.OidGroup != OidGroup.HashAlgorithm && value.OidGroup != OidGroup.SignatureAlgorithm) {
                     return;
                 }
                 initializeHashAlgorithm(value);
@@ -149,7 +149,7 @@ namespace SysadminsLV.PKI.Tools.MessageOperations {
             }
         }
         void initializeHashAlgorithm(Oid2 hashAlg) {
-            if (hashAlg.OidGroup == OidGroupEnum.SignatureAlgorithm) {
+            if (hashAlg.OidGroup == OidGroup.SignatureAlgorithm) {
                 mapSignatureAlgorithmToHashAlgorithm(hashAlg.Value, null);
             } else {
                 hashAlgorithm = hashAlg;

@@ -132,7 +132,7 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
                 if (value == null) {
                     throw new ArgumentNullException(nameof(value));
                 }
-                if (value.OidGroup != OidGroupEnum.HashAlgorithm) {
+                if (value.OidGroup != OidGroup.HashAlgorithm) {
                     throw new ArgumentException("Specified algorithm identifier does not belong to hashing algorithm group.");
                 }
                 if (!value.Equals(hashAlgorithm)) {
@@ -286,7 +286,7 @@ namespace SysadminsLV.PKI.Management.CertificateServices {
         }
 
         void readProperties(IOCSPCAConfiguration config) {
-            try { hashAlgorithm = new Oid2(config.HashAlgorithm, OidGroupEnum.HashAlgorithm, false); } catch { }
+            try { hashAlgorithm = new Oid2(config.HashAlgorithm, OidGroup.HashAlgorithm, false); } catch { }
             try { signingFlags = (OcspSigningFlags)config.SigningFlags; } catch { }
             try {
                 signingCertificate = config.SigningCertificate == null

@@ -307,7 +307,7 @@ public class CertificateTemplateSettings {
                     if (_certPolicies.Count > 0) {
                         var policies = new X509CertificatePolicyCollection();
                         foreach (Oid policyOid in _certPolicies) {
-                            var oid2 = new Oid2(policyOid.Value, OidGroupEnum.IssuancePolicy, true);
+                            var oid2 = new Oid2(policyOid.Value, OidGroup.Policy, true);
                             X509CertificatePolicy policy = new X509CertificatePolicy(policyOid.Value);
                             try {
                                 policy.Add(new X509PolicyQualifier(oid2.GetCPSLinks()[0]));
