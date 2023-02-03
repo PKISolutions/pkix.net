@@ -8,4 +8,9 @@
     <PackageReference Include="SysadminsLV.Asn1Parser" Version="1.2.7.62" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Cryptography\" />
+    <Folder Include="CLRExtensions\" />
+  </ItemGroup>
+
 </Project>
