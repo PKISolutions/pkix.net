@@ -108,7 +108,6 @@
     <Compile Include="Cryptography\Pkcs\SignedCmsBuilder.cs" />
     <Compile Include="Cryptography\CspProviderType.cs" />
     <Compile Include="Cryptography\TspAuthenticodeRequest.cs" />
-    <Compile Include="Cryptography\TspFailureStatus.cs" />
     <Compile Include="Cryptography\TspMessageImprint.cs" />
     <Compile Include="Cryptography\TspRequest.cs" />
     <Compile Include="Cryptography\TspResponse.cs" />
