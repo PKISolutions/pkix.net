@@ -16,7 +16,7 @@ public class X500RdnAttributeCollection : BasicCollection<X500RdnAttribute> {
     /// </summary>
     /// <returns>ASN.1-encoded byte array.</returns>
     public Byte[] Encode() {
-        List<Byte> rawData = new List<Byte>();
+        var rawData = new List<Byte>();
         if (InternalList.Count == 0) {
             return new Byte[] { 48, 0 };
         }
