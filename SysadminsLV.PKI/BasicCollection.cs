@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using PKI.Utils;
 
 namespace SysadminsLV.PKI {
     /// <summary>
@@ -26,7 +25,7 @@ namespace SysadminsLV.PKI {
         /// from the specified collection and has sufficient capacity to accommodate the number of elements copied.
         /// </summary>
         /// <param name="collection">The collection whose elements are copied to the new list.</param>
-        /// <exception cref="ArgumentNullException"><strong>collection</strong> is null.</exception>
+        /// <exception cref="System.ArgumentNullException"><strong>collection</strong> is null.</exception>
         protected BasicCollection(IEnumerable<T> collection) {
             InternalList = new List<T>(collection);
         }
@@ -44,7 +43,7 @@ namespace SysadminsLV.PKI {
         /// <inheritdoc />
         public Int32 Count => InternalList.Count;
         /// <inheritdoc />
-        public Boolean IsReadOnly { get; protected set; }
+        public Boolean IsReadOnly { get; }
         /// <inheritdoc />
         public T this[Int32 index] {
             get => InternalList[index];
@@ -54,23 +53,16 @@ namespace SysadminsLV.PKI {
         /// <inheritdoc />
         /// <exception cref="T:System.AccessViolationException">A collection is read-only.</exception>
         public virtual void Add(T item) {
-            if (IsReadOnly) {
-                throw new AccessViolationException(Error.E_COLLECTIONCLOSED);
-            }
             InternalList.Add(item);
         }
-        /// <inheritdoc cref="List{T}"/>
-        /// <exception cref="AccessViolationException">A collection is read-only.</exception>
+        /// <inheritdoc cref="System.Collections.Generic.List{T}"/>
+        /// <exception cref="System.AccessViolationException">A collection is read-only.</exception>
         public virtual void AddRange(IEnumerable<T> collection) {
-            if (IsReadOnly) {
-                throw new AccessViolationException(Error.E_COLLECTIONCLOSED);
-            }
             InternalList.AddRange(collection);
         }
         /// <inheritdoc />
         public void Clear() {
             InternalList.Clear();
-            IsReadOnly = false;
         }
         /// <inheritdoc />
         public Boolean Contains(T item) {
@@ -81,11 +73,8 @@ namespace SysadminsLV.PKI {
             InternalList.CopyTo(array, arrayIndex);
         }
         /// <inheritdoc />
-        /// <exception cref="AccessViolationException">A collection is read-only.</exception>
+        /// <exception cref="System.AccessViolationException">A collection is read-only.</exception>
         public virtual Boolean Remove(T item) {
-            if (IsReadOnly) {
-                throw new AccessViolationException(Error.E_COLLECTIONCLOSED);
-            }
             return InternalList.Remove(item);
         }
         /// <inheritdoc />
@@ -93,19 +82,13 @@ namespace SysadminsLV.PKI {
             return InternalList.IndexOf(item);
         }
         /// <inheritdoc />
-        /// <exception cref="AccessViolationException">A collection is read-only.</exception>
+        /// <exception cref="System.AccessViolationException">A collection is read-only.</exception>
         public virtual void Insert(Int32 index, T item) {
-            if (IsReadOnly) {
-                throw new AccessViolationException(Error.E_COLLECTIONCLOSED);
-            }
             InternalList.Insert(index, item);
         }
         /// <inheritdoc />
-        /// <exception cref="AccessViolationException">A collection is read-only.</exception>
+        /// <exception cref="System.AccessViolationException">A collection is read-only.</exception>
         public virtual void RemoveAt(Int32 index) {
-            if (IsReadOnly) {
-                throw new AccessViolationException(Error.E_COLLECTIONCLOSED);
-            }
             InternalList.RemoveAt(index);
         }
     }

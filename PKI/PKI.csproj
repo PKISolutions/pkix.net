@@ -247,7 +247,6 @@
     <Compile Include="Structs\OleAut.cs" />
     <Compile Include="Utils\CLRExtensions\FileInfoExtensions.cs" />
     <Compile Include="Win32\AdvAPI.cs" />
-    <Compile Include="Base\BasicCollection.cs" />
     <Compile Include="Management\CertificateServices\Database\AdcsDbPropertyCollection.cs" />
     <Compile Include="CertificateServices\UrlProtocolSchemes.cs" />
     <Compile Include="CertificateTemplates\CertTemplateSubjectType.cs" />
@@ -447,6 +446,9 @@
       <Project>{0f2d01f9-e1a3-44f9-a4b2-d4ad1921dc94}</Project>
       <Name>SysadminsLV.PKI</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Base\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
