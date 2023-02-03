@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SysadminsLV.PKI", "SysadminsLV.PKI\SysadminsLV.PKI.csproj", "{0F2D01F9-E1A3-44F9-A4B2-D4AD1921DC94}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{359ED8C6-47B5-4321-9B60-62E0F53A5384}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{359ED8C6-47B5-4321-9B60-62E0F53A5384}.Debug|Any CPU.Build.0 = Debug|x64
 		{359ED8C6-47B5-4321-9B60-62E0F53A5384}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F2D01F9-E1A3-44F9-A4B2-D4AD1921DC94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F2D01F9-E1A3-44F9-A4B2-D4AD1921DC94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F2D01F9-E1A3-44F9-A4B2-D4AD1921DC94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F2D01F9-E1A3-44F9-A4B2-D4AD1921DC94}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
