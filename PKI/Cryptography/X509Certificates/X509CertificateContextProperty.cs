@@ -140,7 +140,6 @@ public class X509CertificateContextProperty {
                 UnderlyingType = typeof(X509AlternativeNameCollection);
                 PropertyValue = new X509AlternativeNameCollection();
                 ((X509AlternativeNameCollection)PropertyValue).Decode(bytes);
-                ((X509AlternativeNameCollection)PropertyValue).Close();
                 break;
         }
     }

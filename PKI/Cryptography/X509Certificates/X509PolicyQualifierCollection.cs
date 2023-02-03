@@ -8,11 +8,6 @@ namespace System.Security.Cryptography.X509Certificates {
     /// </summary>
     public class X509PolicyQualifierCollection : BasicCollection<X509PolicyQualifier> {
         /// <summary>
-        /// Closes current collection state and makes it read-only. The collection cannot be modified further.
-        /// </summary>
-        public void Close() { IsReadOnly = true; }
-
-        /// <summary>
         /// Encodes an array of <see cref="X509PolicyQualifier"/> to an ASN.1-encoded byte array.
         /// </summary>
         /// <returns>ASN.1-encoded byte array.</returns>

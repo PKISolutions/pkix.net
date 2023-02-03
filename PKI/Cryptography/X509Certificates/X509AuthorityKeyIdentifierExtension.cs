@@ -90,7 +90,6 @@ namespace System.Security.Cryptography.X509Certificates {
                 AsnEncodedData encoded = new AsnEncodedData(san.RawData);
                 var sanExt = new X509SubjectAlternativeNamesExtension(encoded, false);
                 IssuerNames = sanExt.AlternativeNames;
-                IssuerNames.Close();
                 Asn1Reader asn = new Asn1Reader(san.RawData);
                 rawData.AddRange(Asn1Utils.Encode(asn.GetPayload(), 0x81));
                 IncludedComponents |= AuthorityKeyIdentifierFlags.AlternativeNames;
@@ -127,7 +126,6 @@ namespace System.Security.Cryptography.X509Certificates {
                         IssuerNames = new X509AlternativeNameCollection();
                         var bytes = Asn1Utils.Encode(asn.GetPayload(), 48);
                         IssuerNames.Decode(bytes);
-                        IssuerNames.Close();
                         IncludedComponents |= AuthorityKeyIdentifierFlags.AlternativeNames;
                         break;
                     case 0x82:

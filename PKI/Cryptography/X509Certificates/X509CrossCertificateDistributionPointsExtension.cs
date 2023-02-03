@@ -80,7 +80,6 @@ namespace System.Security.Cryptography.X509Certificates {
             foreach (Uri url in uris) {
                 CrossCertDistributionPoints.Add(new X509AlternativeName(X509AlternativeNamesEnum.URL, url));
             }
-            CrossCertDistributionPoints.Close();
             rawData.AddRange(Asn1Utils.Encode(CrossCertDistributionPoints.Encode(), 48));
             RawData = rawData.ToArray();
         }
@@ -100,7 +99,6 @@ namespace System.Security.Cryptography.X509Certificates {
                 altNames.Decode(asn.GetTagRawData());
                 CrossCertDistributionPoints.AddRange(altNames);
             } while (asn.MoveNextSibling());
-            CrossCertDistributionPoints.Close();
         }
 
         /// <summary>

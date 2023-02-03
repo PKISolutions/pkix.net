@@ -56,11 +56,5 @@ namespace System.Security.Cryptography.X509Certificates {
                 InternalList.Add(new X509AlternativeName(asn.GetTagRawData()));
             } while (asn.MoveNextSibling());
         }
-        /// <summary>
-        /// Closes current collection state and makes it read-only. The collection cannot be modified further.
-        /// </summary>
-        public void Close() {
-            IsReadOnly = true;
-        }
     }
 }

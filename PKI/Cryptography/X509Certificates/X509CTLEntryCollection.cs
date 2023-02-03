@@ -23,11 +23,7 @@ namespace System.Security.Cryptography.X509Certificates {
             if (InternalList.Contains(entry)) { return; }
             InternalList.Add(entry);
         }
-        /// <summary>
-        /// Closes current collection state and makes it read-only. The collection cannot be modified further.
-        /// </summary>
-        public void Close() { IsReadOnly = true; }
-
+        
         /// <summary>
         /// Gets an <see cref="X509CTLEntry"/> object from the <see cref="X509CTLEntryCollection"/> object by certificate's
         /// Thumbprint value.

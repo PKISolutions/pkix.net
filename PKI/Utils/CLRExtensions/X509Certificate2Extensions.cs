@@ -156,7 +156,6 @@ namespace SysadminsLV.PKI.Utils.CLRExtensions {
             foreach (X509CertificatePropertyType propID in props) {
                 properties.Add(GetCertificateContextProperty(cert, propID));
             }
-            properties.Close();
             return properties;
         }
         /// <summary>

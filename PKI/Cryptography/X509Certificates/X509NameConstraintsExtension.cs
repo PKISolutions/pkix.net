@@ -96,7 +96,6 @@ namespace System.Security.Cryptography.X509Certificates {
                 tempRawData.AddRange(Asn1Utils.Encode(name.RawData, 48));
             }
             rawData.AddRange(Asn1Utils.Encode(tempRawData.ToArray(), tag));
-            altNames.Close();
             return altNames;
         }
         static X509AlternativeNameCollection decodeNamesFromAsn(Byte[] rawData) {
@@ -106,7 +105,6 @@ namespace System.Security.Cryptography.X509Certificates {
             do {
                 altNames.Add(new X509AlternativeName(asn.GetPayload()));
             } while (asn.MoveNextSibling());
-            altNames.Close();
             return altNames;
         }
     }

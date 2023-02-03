@@ -70,12 +70,6 @@ namespace System.Security.Cryptography.X509Certificates {
                 : new X500DistinguishedName(Encode());
         }
         /// <summary>
-        /// Closes current collection state and makes it read-only. The collection cannot be modified further.
-        /// </summary>
-        public void Close() {
-            IsReadOnly = true;
-        }
-        /// <summary>
         /// Gets an <see cref="X500RdnAttribute"/> object from the <see cref="X500RdnAttributeCollection"/> object.
         /// </summary>
         /// <param name="oid">The location of the <see cref="X500RdnAttribute"/> object in the collection.</param>
