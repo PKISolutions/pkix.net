@@ -445,6 +445,12 @@
     <None Include="packages.config" />
     <None Include="_ExternalReferences\certadm.il" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SysadminsLV.PKI\SysadminsLV.PKI.csproj">
+      <Project>{0f2d01f9-e1a3-44f9-a4b2-d4ad1921dc94}</Project>
+      <Name>SysadminsLV.PKI</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
