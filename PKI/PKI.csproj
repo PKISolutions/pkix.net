@@ -279,7 +279,6 @@
     <Compile Include="Utils\IServiceOperationResult.cs" />
     <Compile Include="Utils\CLRExtensions\X509Certificate2Extensions.cs" />
     <Compile Include="Utils\ErrorSeverity.cs" />
-    <Compile Include="Utils\CLRExtensions\BigIntegerExtensions.cs" />
     <Compile Include="Utils\CLRExtensions\X500DistinguishedNameExtensions.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CRLNumberExtension.cs" />
     <Compile Include="Cryptography\X509Certificates\X509FreshestCRLExtension.cs" />
@@ -328,8 +327,6 @@
     <Compile Include="Cryptography\Pkcs\PkcsSubjectIdentifier.cs" />
     <Compile Include="Cryptography\Pkcs\X509IssuerSerial.cs" />
     <Compile Include="Cryptography\X509Certificates\X509IssuerAlternativeNamesExtension.cs" />
-    <Compile Include="Cryptography\X509Certificates\X509AlternativeNameCollection.cs" />
-    <Compile Include="Cryptography\X509Certificates\X509AlternativeName.cs" />
     <Compile Include="Cryptography\X509Certificates\X509ArchiveCutoffExtension.cs" />
     <Compile Include="Cryptography\X509Certificates\X509ApplicationPoliciesExtension.cs" />
     <Compile Include="Cryptography\X509Certificates\X509AuthorityInformationAccessExtension.cs" />

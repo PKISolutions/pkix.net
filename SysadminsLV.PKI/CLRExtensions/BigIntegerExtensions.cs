@@ -3,7 +3,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 
-namespace SysadminsLV.PKI.Utils.CLRExtensions {
+namespace SysadminsLV.PKI.CLRExtensions {
     /// <summary>
     /// Contains CLR extensions for <see cref="BigInteger"/> class.
     /// </summary>
@@ -36,14 +36,14 @@ namespace SysadminsLV.PKI.Utils.CLRExtensions {
         /// <param name="bigint">Current <see cref="BigInteger"/> object.</param>
         /// <returns>Binary string.</returns>
         public static String ToBinaryString(this BigInteger bigint) {
-            var bytes = bigint.ToByteArray();
-            var idx = bytes.Length - 1;
+            Byte[] bytes = bigint.ToByteArray();
+            Int32 idx = bytes.Length - 1;
 
             // Create a StringBuilder having appropriate capacity.
             var base2 = new StringBuilder(bytes.Length * 8);
 
             // Convert first byte to binary.
-            var binary = Convert.ToString(bytes[idx], 2);
+            String binary = Convert.ToString(bytes[idx], 2);
 
             // Ensure leading zero exists if value is positive.
             if (binary[0] != '0' && bigint.Sign == 1) {

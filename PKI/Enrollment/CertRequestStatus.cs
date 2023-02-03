@@ -10,10 +10,10 @@ namespace PKI.Enrollment {
 	/// </summary>
 	public class CertRequestStatus {
 
-		/// <summary>
-		/// Gets or sets <see cref="CertificateServices.CertificateAuthority">CertificateAuthority</see> object.
-		/// </summary>
-		public CertificateAuthority CertificationAuthority { get; set; }
+        /// <summary>
+        /// Gets or sets <see cref="CertificateAuthority">CertificateAuthority</see> object.
+        /// </summary>
+        public CertificateAuthority CertificationAuthority { get; set; }
 		/// <summary>
 		/// Gets or sets request ID returned by CA server.
 		/// </summary>

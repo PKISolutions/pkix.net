@@ -6,7 +6,7 @@ namespace System.Security.Cryptography.X509Certificates {
     /// <summary>
     /// <para>
     /// SafeCTLHandleContext provides a SafeHandle class for an <see cref="X509CTL"/> context
-    /// as stored in its <see cref="System.Security.Cryptography.X509Certificates.X509CTL.Handle" />
+    /// as stored in its <see cref="X509CTL.Handle" />
     /// property.  This can be used instead of the raw IntPtr to avoid races with the garbage
     /// collector, ensuring that the X509Certificate object is not cleaned up from underneath you
     /// while you are still using the handle pointer.
@@ -16,7 +16,7 @@ namespace System.Security.Cryptography.X509Certificates {
     /// </para>
     /// <para>
     /// A SafeCTLHandleContext for an X509CTL can be obtained by calling the <see
-    /// cref="System.Security.Cryptography.X509Certificates.X509CTL.GetSafeContext" /> extension method.
+    /// cref="X509CTL.GetSafeContext" /> extension method.
     /// </para>
     /// </summary>
     /// <permission cref="SecurityPermission">

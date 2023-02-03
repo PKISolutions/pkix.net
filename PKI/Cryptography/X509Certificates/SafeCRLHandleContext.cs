@@ -6,7 +6,7 @@ namespace System.Security.Cryptography.X509Certificates {
     /// <summary>
     /// <para>
     /// SafeCRLHandleContext provides a SafeHandle class for an X509CRL2 certificate revocation list context
-    /// as stored in its <see cref="System.Security.Cryptography.X509Certificates.X509CRL2.Handle" />
+    /// as stored in its <see cref="X509CRL2.Handle" />
     /// property.  This can be used instead of the raw IntPtr to avoid races with the garbage
     /// collector, ensuring that the X509Certificate object is not cleaned up from underneath you
     /// while you are still using the handle pointer.
@@ -16,7 +16,7 @@ namespace System.Security.Cryptography.X509Certificates {
     /// </para>
     /// <para>
     /// A SafeCRLHandleContext for an X509CRL2 can be obtained by calling the <see
-    /// cref="System.Security.Cryptography.X509Certificates.X509CRL2.GetSafeContext" /> extension method.
+    /// cref="X509CRL2.GetSafeContext" /> extension method.
     /// </para>
     /// </summary>
     /// <permission cref="SecurityPermission">
