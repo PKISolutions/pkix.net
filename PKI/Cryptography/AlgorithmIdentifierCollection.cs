@@ -5,28 +5,28 @@ using SysadminsLV.Asn1Parser;
 
 namespace SysadminsLV.PKI.Cryptography {
     /// <summary>
-    /// Represents a collection of <see cref="AlgorithmIdentifier"/> objects.
+    /// Represents a collection of <see cref="SysadminsLV.PKI.Cryptography.AlgorithmIdentifier"/> objects.
     /// </summary>
     public class AlgorithmIdentifierCollection : BasicCollection<AlgorithmIdentifier> {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AlgorithmIdentifierCollection"/> class without any <see cref="AlgorithmIdentifier"/> information.
+        /// Initializes a new instance of the <see cref="AlgorithmIdentifierCollection"/> class without any <see cref="SysadminsLV.PKI.Cryptography.AlgorithmIdentifier"/> information.
         /// </summary>
         public AlgorithmIdentifierCollection() { }
         /// <summary>
-        /// Initializes a new instance of the <see cref="AlgorithmIdentifierCollection"/> class from an array of <see cref="AlgorithmIdentifier"/> objects.
+        /// Initializes a new instance of the <see cref="AlgorithmIdentifierCollection"/> class from an array of <see cref="SysadminsLV.PKI.Cryptography.AlgorithmIdentifier"/> objects.
         /// </summary>
-        /// <param name="algIdentifiers">An array of <see cref="AlgorithmIdentifier"/> objects.</param>
+        /// <param name="algIdentifiers">An array of <see cref="SysadminsLV.PKI.Cryptography.AlgorithmIdentifier"/> objects.</param>
         public AlgorithmIdentifierCollection(IEnumerable<AlgorithmIdentifier> algIdentifiers) : base(algIdentifiers) { }
 
         /// <summary>
-        /// Gets an <see cref="AlgorithmIdentifier"/> object from the <see cref="AlgorithmIdentifierCollection"/> object by attributes object identifier.
+        /// Gets an <see cref="SysadminsLV.PKI.Cryptography.AlgorithmIdentifier"/> object from the <see cref="AlgorithmIdentifierCollection"/> object by attributes object identifier.
         /// </summary>
         /// <param name="oid">A string that represents algorithm identifier.</param>
-        /// <remarks>Use this property to retrieve an <see cref="AlgorithmIdentifier"/> object from an <see cref="AlgorithmIdentifierCollection"/>
-        /// object if you know the value of the object identifier the <see cref="AlgorithmIdentifier"/>
-        /// object. You can use the <see cref="this[int]"/> property to retrieve an <see cref="AlgorithmIdentifier"/> object if you know
+        /// <remarks>Use this property to retrieve an <see cref="SysadminsLV.PKI.Cryptography.AlgorithmIdentifier"/> object from an <see cref="AlgorithmIdentifierCollection"/>
+        /// object if you know the value of the object identifier the <see cref="SysadminsLV.PKI.Cryptography.AlgorithmIdentifier"/>
+        /// object. You can use the <see cref="this[int]"/> property to retrieve an <see cref="SysadminsLV.PKI.Cryptography.AlgorithmIdentifier"/> object if you know
         /// its location in the collection</remarks>
-        /// <returns>An <see cref="AlgorithmIdentifier"/> object.</returns>
+        /// <returns>An <see cref="SysadminsLV.PKI.Cryptography.AlgorithmIdentifier"/> object.</returns>
         public AlgorithmIdentifier this[String oid] {
             get {
                 return InternalList.FirstOrDefault(x => x.AlgorithmId.Value.Equals(oid, StringComparison.OrdinalIgnoreCase));

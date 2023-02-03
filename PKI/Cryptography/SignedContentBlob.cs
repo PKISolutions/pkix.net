@@ -51,7 +51,7 @@ public class SignedContentBlob {
     /// </summary>
     public Byte[] ToBeSignedData { get; private set; }
     /// <summary>
-    /// An <see cref="AlgorithmIdentifier"/> object that contains the signature algorithm type and
+    /// An <see cref="SysadminsLV.PKI.Cryptography.AlgorithmIdentifier"/> object that contains the signature algorithm type and
     /// any associated additional parameters.
     /// </summary>
     public AlgorithmIdentifier SignatureAlgorithm { get; private set; }
