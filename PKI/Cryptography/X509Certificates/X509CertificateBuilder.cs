@@ -116,7 +116,7 @@ public class X509CertificateBuilder {
             _extensions.Add(ext);
         }
         if (signer != null) {
-            var ext = new X509AuthorityKeyIdentifierExtension(signer, AuthorityKeyIdentifierFlags.KeyIdentifier, false);
+            var ext = new X509AuthorityKeyIdentifierExtension(signer, AuthorityKeyIdentifierType.KeyIdentifier, false);
             _extensions.Add(ext);
         }
     }

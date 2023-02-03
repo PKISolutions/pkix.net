@@ -13,7 +13,7 @@ namespace System.Security.Cryptography.X509Certificates {
         readonly Oid _oid = new(X509ExtensionOid.AuthorityKeyIdentifier);
 
         /// <summary>
-        /// Intitializes a new instance of <strong>X509AuthorityKeyIdentifierExtension</strong> class from
+        /// Initializes a new instance of <strong>X509AuthorityKeyIdentifierExtension</strong> class from
         /// ASN.1-encoded AKI extension value and a value that identifies whether the extension is critical.
         /// </summary>
         /// <param name="aki">An ASN.1-encoded Authority Key Identifier extension value.</param>
@@ -27,7 +27,7 @@ namespace System.Security.Cryptography.X509Certificates {
             m_decode(aki.RawData);
         }
         /// <summary>
-        /// Intitializes a new instance of <strong>X509AuthorityKeyIdentifierExtension</strong> class from
+        /// Initializes a new instance of <strong>X509AuthorityKeyIdentifierExtension</strong> class from
         /// a key identifier value and a value that identifies whether the extension is critical.
         /// </summary>
         /// <param name="keyIdentifier">Must be a hex string that represents hash value.</param>
@@ -40,12 +40,12 @@ namespace System.Security.Cryptography.X509Certificates {
             initializeFromKeyId(keyIdentifier, critical);
         }
         /// <summary>
-        /// Intitializes a new instance of <strong>X509AuthorityKeyIdentifierExtension</strong> class from
+        /// Initializes a new instance of <strong>X509AuthorityKeyIdentifierExtension</strong> class from
         /// an issuer certificate, extension generation flags an a value that identifies whether the extension
         /// is critical.
         /// </summary>
         /// <param name="issuer">Issuer certificate which is used to construct the AKI extension.</param>
-        /// <param name="flags">
+        /// <param name="type">
         /// Indicates which issuer components are included in the AKI extension. If the value is zero (None),
         /// then default <strong>KeyIdentifier</strong> component will be included.
         /// </param>
@@ -59,32 +59,32 @@ namespace System.Security.Cryptography.X509Certificates {
         /// is ignored. If <strong>AlternativeNames</strong> is the only flag, and SAN extension is missing, only
         /// <strong>KeyIdentifier</strong> component will be included.
         /// </remarks>
-        public X509AuthorityKeyIdentifierExtension(X509Certificate2 issuer, AuthorityKeyIdentifierFlags flags, Boolean critical) {
+        public X509AuthorityKeyIdentifierExtension(X509Certificate2 issuer, AuthorityKeyIdentifierType type, Boolean critical) {
             if (issuer == null || IntPtr.Zero.Equals(issuer.Handle)) { throw new ArgumentNullException(nameof(issuer)); }
-            if (flags == AuthorityKeyIdentifierFlags.AlternativeNames && issuer.Extensions[X509ExtensionOid.SubjectAlternativeNames] == null) {
-                flags = AuthorityKeyIdentifierFlags.KeyIdentifier;
+            if (type == AuthorityKeyIdentifierType.AlternativeNames && issuer.Extensions[X509ExtensionOid.SubjectAlternativeNames] == null) {
+                type = AuthorityKeyIdentifierType.KeyIdentifier;
             }
-            if (flags == AuthorityKeyIdentifierFlags.None) {
-                flags |= AuthorityKeyIdentifierFlags.KeyIdentifier;
+            if (type == AuthorityKeyIdentifierType.None) {
+                type |= AuthorityKeyIdentifierType.KeyIdentifier;
             }
-            initializeFromCert(issuer, flags, critical);
+            initializeFromCert(issuer, type, critical);
         }
 
-        void initializeFromCert(X509Certificate2 issuer, AuthorityKeyIdentifierFlags flags, Boolean critical) {
+        void initializeFromCert(X509Certificate2 issuer, AuthorityKeyIdentifierType type, Boolean critical) {
             Oid = _oid;
             Critical = critical;
-            IncludedComponents = AuthorityKeyIdentifierFlags.None;
+            IncludedComponents = AuthorityKeyIdentifierType.None;
             // TODO rawData is not used
             List<Byte> rawData = new List<Byte>();
-            if ((flags & AuthorityKeyIdentifierFlags.KeyIdentifier) > 0) {
+            if ((type & AuthorityKeyIdentifierType.KeyIdentifier) > 0) {
                 using (var hasher = SHA1.Create()) {
                     var hashbytes = hasher.ComputeHash(issuer.PublicKey.EncodedKeyValue.RawData);
                     KeyIdentifier = AsnFormatter.BinaryToString(hashbytes, EncodingType.HexRaw, EncodingFormat.NOCRLF);
                     rawData.AddRange(Asn1Utils.Encode(hashbytes, 0x80));
                 }
-                IncludedComponents |= AuthorityKeyIdentifierFlags.KeyIdentifier;
+                IncludedComponents |= AuthorityKeyIdentifierType.KeyIdentifier;
             }
-            if ((flags & AuthorityKeyIdentifierFlags.AlternativeNames) > 0) {
+            if ((type & AuthorityKeyIdentifierType.AlternativeNames) > 0) {
                 X509Extension san = issuer.Extensions[X509ExtensionOid.SubjectAlternativeNames];
                 Debug.Assert(san != null, "san != null");
                 AsnEncodedData encoded = new AsnEncodedData(san.RawData);
@@ -92,19 +92,19 @@ namespace System.Security.Cryptography.X509Certificates {
                 IssuerNames = sanExt.AlternativeNames;
                 Asn1Reader asn = new Asn1Reader(san.RawData);
                 rawData.AddRange(Asn1Utils.Encode(asn.GetPayload(), 0x81));
-                IncludedComponents |= AuthorityKeyIdentifierFlags.AlternativeNames;
+                IncludedComponents |= AuthorityKeyIdentifierType.AlternativeNames;
             }
-            if ((flags & AuthorityKeyIdentifierFlags.SerialNumber) > 0) {
+            if ((type & AuthorityKeyIdentifierType.SerialNumber) > 0) {
                 SerialNumber = issuer.SerialNumber;
                 rawData.AddRange(Asn1Utils.Encode(issuer.GetSerialNumber().Reverse().ToArray(), 0x82));
-                IncludedComponents |= AuthorityKeyIdentifierFlags.SerialNumber;
+                IncludedComponents |= AuthorityKeyIdentifierType.SerialNumber;
             }
             RawData = Asn1Utils.Encode(rawData.ToArray(), 48);
         }
         void initializeFromKeyId(String keyId, Boolean critical) {
             Oid = _oid;
             Critical = critical;
-            IncludedComponents = AuthorityKeyIdentifierFlags.KeyIdentifier;
+            IncludedComponents = AuthorityKeyIdentifierType.KeyIdentifier;
 
             Byte[] keyIdBytes = AsnFormatter.StringToBinary(keyId);
             KeyIdentifier = AsnFormatter.BinaryToString(keyIdBytes, EncodingType.HexRaw, EncodingFormat.NOCRLF);
@@ -115,22 +115,22 @@ namespace System.Security.Cryptography.X509Certificates {
             Asn1Reader asn = new Asn1Reader(rawData);
             if (asn.Tag != 48) { throw new Asn1InvalidTagException(asn.Offset); }
             asn.MoveNext();
-            IncludedComponents = AuthorityKeyIdentifierFlags.None;
+            IncludedComponents = AuthorityKeyIdentifierType.None;
             do {
                 switch (asn.Tag) {
                     case 0x80:
                         KeyIdentifier = AsnFormatter.BinaryToString(asn.GetPayload(), EncodingType.HexRaw, EncodingFormat.NOCRLF);
-                        IncludedComponents |= AuthorityKeyIdentifierFlags.KeyIdentifier;
+                        IncludedComponents |= AuthorityKeyIdentifierType.KeyIdentifier;
                         break;
                     case 0xa1:
                         IssuerNames = new X509AlternativeNameCollection();
                         var bytes = Asn1Utils.Encode(asn.GetPayload(), 48);
                         IssuerNames.Decode(bytes);
-                        IncludedComponents |= AuthorityKeyIdentifierFlags.AlternativeNames;
+                        IncludedComponents |= AuthorityKeyIdentifierType.AlternativeNames;
                         break;
                     case 0x82:
                         SerialNumber = AsnFormatter.BinaryToString(asn.GetPayload());
-                        IncludedComponents |= AuthorityKeyIdentifierFlags.SerialNumber;
+                        IncludedComponents |= AuthorityKeyIdentifierType.SerialNumber;
                         break;
                 }
             } while (asn.MoveNextSibling());
@@ -139,7 +139,7 @@ namespace System.Security.Cryptography.X509Certificates {
         /// <summary>
         /// Indicates which components are included in the Authority Key Identifier extension.
         /// </summary>
-        public AuthorityKeyIdentifierFlags IncludedComponents { get; private set; }
+        public AuthorityKeyIdentifierType IncludedComponents { get; private set; }
         /// <summary>
         /// Gets an octet string of the KeyIdientifier component. May be null.
         /// </summary>

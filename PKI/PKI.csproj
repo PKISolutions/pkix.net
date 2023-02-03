@@ -250,7 +250,6 @@
     <Compile Include="Cryptography\X509CertificateRequests\X509CertificateRequestCmc.cs" />
     <Compile Include="Cryptography\X509CertificateRequests\X509CertificateRequestPkcs10.cs" />
     <Compile Include="Cryptography\Pkcs\SignedPkcs7.cs" />
-    <Compile Include="Cryptography\X509Certificates\AuthorityKeyIdentifierFlags.cs" />
     <Compile Include="Cryptography\X509Certificates\CertificateStoreObjectAccessStateEnum.cs" />
     <Compile Include="Cryptography\X509Certificates\X500RdnAttributeCollection.cs" />
     <Compile Include="Cryptography\X509Certificates\X509ApplicationPolicyConstraintsExtension.cs" />

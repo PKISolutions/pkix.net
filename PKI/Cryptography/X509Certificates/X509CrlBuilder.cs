@@ -90,7 +90,7 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates {
             // remove AKI extension from existing extensions
             GenericArray.RemoveExtension(_extensions, X509ExtensionOid.AuthorityKeyIdentifier);
             // generate AKI from issuer certificate
-            _extensions.Add(new X509AuthorityKeyIdentifierExtension(issuer, AuthorityKeyIdentifierFlags.KeyIdentifier, false));
+            _extensions.Add(new X509AuthorityKeyIdentifierExtension(issuer, AuthorityKeyIdentifierType.KeyIdentifier, false));
         }
         void processCAVersionExtension(X509Certificate2 issuer) {
             // remove CA Version extension from existing extensions
