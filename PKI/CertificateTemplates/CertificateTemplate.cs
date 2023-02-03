@@ -7,7 +7,6 @@ using System.Text;
 using Interop.CERTENROLLLib;
 using PKI.Utils;
 using SysadminsLV.PKI.Security.AccessControl;
-using SysadminsLV.PKI.Utils.CLRExtensions;
 
 namespace PKI.CertificateTemplates;
 
@@ -329,14 +328,14 @@ public class CertificateTemplate {
     /// name and OID values.
     /// </remarks>
     protected Boolean Equals(CertificateTemplate other) {
-        return String.Equals(Name, other.Name) && OID.Equals2(other.OID);
+        return String.Equals(Name, other.Name) && OID?.Value == other.OID?.Value;
     }
     /// <summary>
     /// Serves as a hash function for a particular type.
     /// </summary>
     /// <returns>The hash code for the certificate template as an integer.</returns>
     public override Int32 GetHashCode() {
-        unchecked { return (Name.GetHashCode() * 397) ^ OID.GetHashCode2(); }
+        unchecked { return (Name.GetHashCode() * 397) ^ OID?.Value.GetHashCode() ?? 0; }
     }
     /// <summary>
     /// Gets access control list (security descriptor) of the current certificate template.

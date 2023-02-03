@@ -7,6 +7,7 @@ using PKI.Exceptions;
 using PKI.ManagedAPI;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
+using SysadminsLV.PKI.CLRExtensions;
 using SysadminsLV.PKI.Cryptography;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
 using SysadminsLV.PKI.Tools.MessageOperations;

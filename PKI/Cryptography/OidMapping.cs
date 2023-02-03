@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using SysadminsLV.Asn1Parser;
+using SysadminsLV.PKI.CLRExtensions;
 using SysadminsLV.PKI.Utils.CLRExtensions;
 
 namespace System.Security.Cryptography {

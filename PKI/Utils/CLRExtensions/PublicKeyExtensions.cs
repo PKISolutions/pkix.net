@@ -8,6 +8,7 @@ using System.Text;
 using PKI.Utils;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
+using SysadminsLV.PKI.CLRExtensions;
 using SysadminsLV.PKI.Cryptography;
 
 namespace SysadminsLV.PKI.Utils.CLRExtensions {

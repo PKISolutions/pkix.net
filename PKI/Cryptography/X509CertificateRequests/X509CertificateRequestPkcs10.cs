@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using SysadminsLV.Asn1Parser;
+using SysadminsLV.PKI.CLRExtensions;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
 using SysadminsLV.PKI.Tools.MessageOperations;
 using SysadminsLV.PKI.Utils.CLRExtensions;
