@@ -57,7 +57,7 @@ public class TspMessageImprint {
     public Byte[] MessageHash => _msgHash.ToArray();
 
     void encode(Oid hashAlgorithm, Byte[] data) {
-        using var hasher = getAlgId(hashAlgorithm);
+        using HashAlgorithm hasher = getAlgId(hashAlgorithm);
         _msgHash.AddRange(hasher.ComputeHash(data));
     }
     HashAlgorithm getAlgId(Oid hashAlgorithm) {
@@ -66,7 +66,7 @@ public class TspMessageImprint {
             throw new CryptographicException("Invalid hashing algorithm specified.");
         }
         var oid = new Oid(hashAlgorithm.Value);
-        AlgorithmIdentifier = new AlgorithmIdentifier(oid, new Byte[0]);
+        AlgorithmIdentifier = new AlgorithmIdentifier(oid, Array.Empty<Byte>());
         return hasher;
     }
     void decode(Asn1Reader asn) {
