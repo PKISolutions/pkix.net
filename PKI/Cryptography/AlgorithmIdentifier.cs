@@ -75,7 +75,7 @@ namespace SysadminsLV.PKI.Cryptography {
         public Byte[] RawData => _rawData.ToArray();
 
         void decode(Byte[] rawData) {
-            Asn1Reader asn = new Asn1Reader(rawData);
+            var asn = new Asn1Reader(rawData);
             if (asn.Tag != 48) {
                 throw new Asn1InvalidTagException(asn.Offset);
             }
@@ -88,7 +88,7 @@ namespace SysadminsLV.PKI.Cryptography {
         }
         void encode(Oid oid, Byte[] parameters) {
             // if empty array received, then parameters is set to ASN.1 NULL type => 5, 0
-            param = parameters != null && parameters.Length == 0
+            param = parameters is { Length: 0 }
                 ? new Byte[] { 5, 0 }
                 : parameters;
 
