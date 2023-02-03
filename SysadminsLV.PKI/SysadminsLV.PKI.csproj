@@ -9,8 +9,4 @@
     <PackageReference Include="SysadminsLV.Asn1Parser" Version="1.2.7.62" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Cryptography\X509Certificates\" />
-  </ItemGroup>
-
 </Project>
