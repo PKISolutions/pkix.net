@@ -48,6 +48,11 @@ public static class AlgorithmOid {
     public const String ECDSA_P521      = "1.3.132.0.35";
     public const String ECDSA_P256      = "1.2.840.10045.3.1.7";
 
+    // ecdsa
+    // ecdsa
+    public const String ECDSA_PRIME1    = "1.2.840.10045.1.1";
+    public const String ECDSA_CHAR2     = "1.2.840.10045.1.2";
+
     // symmetric alg group
     public const String RC2             = "1.2.840.113549.3.2";
     public const String RC4             = "1.2.840.113549.3.4";
