@@ -363,7 +363,6 @@
     <Compile Include="Cryptography\X509Certificates\X509NonceExtension.cs" />
     <Compile Include="Cryptography\X509Certificates\SafeCTLHandleContext.cs" />
     <Compile Include="Cryptography\X509Certificates\SafeCRLHandleContext.cs" />
-    <Compile Include="Cryptography\X509Certificates\X509EncodingType.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CRL2.cs" />
     <Compile Include="Win32\CertAdm.cs" />
     <Compile Include="Win32\Kernel32.cs" />

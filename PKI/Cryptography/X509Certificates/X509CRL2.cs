@@ -333,25 +333,22 @@ namespace System.Security.Cryptography.X509Certificates {
         /// </summary>
         /// <param name="path">The path to a CRL file.</param>
         /// <param name="encoding">Encoding of the exported file.</param>
-        /// <exception cref="ArgumentException">Specified encoding type is not supported.</exception>
-        /// <exception cref="UninitializedObjectException">An object is not initialized.</exception>
-        public void Export(String path, X509EncodingType encoding) {
+        public void Export(String path, EncodingType encoding = EncodingType.Base64CrlHeader) {
             String Base64;
+
             switch (encoding) {
-                case X509EncodingType.Base64:
-                    Base64 = AsnFormatter.BinaryToString(_rawData, EncodingType.Base64);
-                    File.WriteAllText(path, Base64);
-                    break;
-                case X509EncodingType.Base64Header:
+                case EncodingType.Base64Header:
                     Base64 = AsnFormatter.BinaryToString(_rawData, EncodingType.Base64CrlHeader);
-                    File.WriteAllText(path, Base64);
                     break;
-                case X509EncodingType.Binary:
+                case EncodingType.Binary:
                     File.WriteAllBytes(path, _rawData);
-                    break;
+                    return;
                 default:
-                    throw new ArgumentException("Specified encoding is not supported.");
+                    Base64 = AsnFormatter.BinaryToString(_rawData, encoding);
+                    break;
             }
+
+            File.WriteAllText(path, Base64);
         }
         /// <summary>
         /// Encodes the current X509CRL2 object to a form specified in the <strong>encoding</strong> parameter.
@@ -374,29 +371,6 @@ namespace System.Security.Cryptography.X509Certificates {
             }
             return AsnFormatter.BinaryToString(_rawData, encoding);
         }
-        /// <summary>
-        /// Encodes the current X509CRL2 object and sends result to the output.
-        /// </summary>
-        /// <param name="encoding">Encoding type. Can be either Base64Header or Base64 (with no headers).</param>
-        /// <returns>The Base64-encoded string.</returns>
-        /// <remarks>This method is obsolete. A new overload is preferred.</remarks>
-        [Obsolete("Use 'Encode(EncodingType)' overload instead.", true)]
-        public String Encode(X509EncodingType encoding) {
-            switch (encoding) {
-                case X509EncodingType.Base64:
-                    return Convert.ToBase64String(_rawData, Base64FormattingOptions.InsertLineBreaks);
-                case X509EncodingType.Base64Header:
-                    return AsnFormatter.BinaryToString(_rawData, EncodingType.Base64CrlHeader);
-                default:
-                    throw new ArgumentException("Binary encoding is not supported.");
-            }
-        }
-        /// <summary>
-        /// Resets the state of an X509CRL2.
-        /// </summary>
-        /// <remarks>This method can be used to reset the state of the CRL. It also frees any resources associated with the CRL.</remarks>
-        [Obsolete("This method is obsolete.", true)]
-        public void Reset() { }
         /// <inheritdoc />
         public override String ToString() {
             var SB = new StringBuilder();
