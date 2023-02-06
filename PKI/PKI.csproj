@@ -363,7 +363,6 @@
     <Compile Include="Cryptography\X509Certificates\X509KeySpecFlags.cs" />
     <Compile Include="Cryptography\X509CertificateRequests\X509CertificateRequestType.cs" />
     <Compile Include="Cryptography\X509CertificateRequests\X509CertificateRequest.cs" />
-    <Compile Include="Cryptography\X509Certificates\X509CRLReferenceExtension.cs" />
     <Compile Include="Cryptography\X509Certificates\X509ServiceLocatorExtension.cs" />
     <Compile Include="Cryptography\X509Certificates\X509NonceExtension.cs" />
     <Compile Include="Cryptography\X509Certificates\SafeCTLHandleContext.cs" />
