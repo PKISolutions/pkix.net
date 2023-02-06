@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SysadminsLV.PKI.Cryptography.X509Certificates; 
+namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
 /// <summary>
 /// Contains OIDs for most commonly used X.509 certificate and certificate revocation list
@@ -9,6 +9,7 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 /// <remarks>Do not rely on this class until further notice. It is going to change at some point.</remarks>
 public static class X509ExtensionOid {
     public const String CertificateExtensions        = "1.2.840.113549.1.9.14";
+    public const String CrossCDP                     = "1.3.6.1.4.1.311.10.9.1";
     public const String CertificateTemplate          = "1.3.6.1.4.1.311.20.2";
     public const String CAVersion                    = "1.3.6.1.4.1.311.21.1";
     public const String PreviousCaHash               = "1.3.6.1.4.1.311.21.2";
