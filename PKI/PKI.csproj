@@ -367,7 +367,6 @@
     <Compile Include="Utils\GenericArray.cs" />
     <Compile Include="Web\ServerCertificateValidationObject.cs" />
     <Compile Include="Web\WebSSL.cs" />
-    <Compile Include="Cryptography\X509Certificates\X509CNGKeyUsages.cs" />
     <Compile Include="Cryptography\X509Certificates\X509KeySpecFlags.cs" />
     <Compile Include="Cryptography\X509CertificateRequests\X509CertificateRequestType.cs" />
     <Compile Include="Cryptography\X509CertificateRequests\X509CertificateRequest.cs" />
@@ -378,7 +377,6 @@
     <Compile Include="Cryptography\X509Certificates\SafeCRLHandleContext.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CRLEntryCollection.cs" />
     <Compile Include="Cryptography\X509Certificates\X509EncodingType.cs" />
-    <Compile Include="Cryptography\X509Certificates\X509CRLEntry.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CRL2.cs" />
     <Compile Include="Win32\CertAdm.cs" />
     <Compile Include="Win32\Kernel32.cs" />
