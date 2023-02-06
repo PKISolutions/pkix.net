@@ -185,7 +185,7 @@ public class TspRfc3161Request : TspRequest {
     /// <remarks>In the current implementation, random byte array is generated from random GUID instance.</remarks>
     public Byte[] GetNonceBytes() {
         return nonce == default
-            ? new Byte[0]
+            ? Array.Empty<Byte>()
             : nonce.ToArray();
     }
 
