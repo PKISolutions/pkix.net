@@ -236,7 +236,6 @@
     <Compile Include="Management\CertificateServices\Database\AdcsDbPropertyCollection.cs" />
     <Compile Include="CertificateServices\UrlProtocolSchemes.cs" />
     <Compile Include="CertificateTemplates\CertTemplateSubjectType.cs" />
-    <Compile Include="Cryptography\ContentBlobType.cs" />
     <Compile Include="Cryptography\Pkcs\DefaultSignedPkcs7.cs" />
     <Compile Include="Cryptography\X509CertificateRequests\X509CertificateRequestCmc.cs" />
     <Compile Include="Cryptography\X509CertificateRequests\X509CertificateRequestPkcs10.cs" />

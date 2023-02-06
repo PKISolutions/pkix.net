@@ -147,9 +147,9 @@ public class X509CertificateBuilder {
         IntPtr ptr = Marshal.AllocHGlobal(stringBytes.Length);
         Marshal.Copy(stringBytes, 0, ptr, stringBytes.Length);
         var blob = new Wincrypt.CRYPTOAPI_BLOB {
-                                                   cbData = (UInt32)stringBytes.Length,
-                                                   pbData = ptr
-                                               };
+            cbData = (UInt32)stringBytes.Length,
+            pbData = ptr
+        };
         IntPtr blobPtr = Marshal.AllocHGlobal(Marshal.SizeOf(blob));
         Marshal.StructureToPtr(blob, blobPtr, false);
         Crypt32.CertSetCertificateContextProperty(cert.Handle, X509CertificatePropertyType.FriendlyName, 0, blobPtr);
@@ -159,11 +159,11 @@ public class X509CertificateBuilder {
     void postGenerate(X509Certificate2 cert) {
         // write key info to cert property
         var keyInfo = new Wincrypt.CRYPT_KEY_PROV_INFO {
-                                                           pwszProvName = PrivateKeyInfo.ProviderName,
-                                                           dwProvType = PrivateKeyInfo.ProviderType,
-                                                           pwszContainerName = PrivateKeyInfo.KeyContainerName,
-                                                           dwKeySpec = PrivateKeyInfo.KeySpec
-                                                       };
+            pwszProvName = PrivateKeyInfo.ProviderName,
+            dwProvType = PrivateKeyInfo.ProviderType,
+            pwszContainerName = PrivateKeyInfo.KeyContainerName,
+            dwKeySpec = PrivateKeyInfo.KeySpec
+        };
         if (PrivateKeyInfo.MachineContext) {
             keyInfo.dwFlags = nCrypt2.NCRYPT_MACHINE_KEY_FLAG;
         }
@@ -212,7 +212,7 @@ public class X509CertificateBuilder {
     /// <returns>A signed certificate.</returns>
     public X509Certificate2 Build(X509Certificate2 signer = null) {
         preGenerate(signer);
-        var cert = build(signer);
+        X509Certificate2 cert = build(signer);
         postGenerate(cert);
         return cert;
     }
