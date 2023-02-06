@@ -304,7 +304,6 @@
     <Compile Include="CertificateTemplates\KeyArchivalOptions.cs" />
     <Compile Include="CertificateTemplates\PrivateKeyFlags.cs" />
     <Compile Include="Cryptography\Oid2.cs" />
-    <Compile Include="Cryptography\X509Certificates\X509IssuerAlternativeNamesExtension.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CAVersionExtension.cs" />
     <Compile Include="Win32\CryptUI.cs" />
     <Compile Include="Enrollment\Autoenrollment.cs" />
