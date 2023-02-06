@@ -113,7 +113,6 @@
     <Compile Include="Cryptography\TspResponse.cs" />
     <Compile Include="Cryptography\TspRfc3161Request.cs" />
     <Compile Include="Cryptography\TspStatusInfo.cs" />
-    <Compile Include="Cryptography\X509AttributeOid.cs" />
     <Compile Include="Cryptography\X509Certificates\KeyProviderInfo.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CertificateTrustList.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CRL2Collection.cs" />
@@ -276,7 +275,6 @@
     <Compile Include="Utils\CLRExtensions\X500DistinguishedNameExtensions.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CRLNumberExtension.cs" />
     <Compile Include="Cryptography\X509Certificates\X509FreshestCRLExtension.cs" />
-    <Compile Include="Enrollment\ClientIdEnum.cs" />
     <Compile Include="Security\AccessControl\CertSrvSecurityDescriptor.cs" />
     <Compile Include="Security\AccessControl\CertSrvAuditRule.cs" />
     <Compile Include="Security\AccessControl\CertSrvRights.cs" />
@@ -316,7 +314,6 @@
     <Compile Include="CertificateTemplates\PrivateKeyFlags.cs" />
     <Compile Include="Cryptography\Oid2.cs" />
     <Compile Include="Cryptography\Pkcs\ContentInfo2.cs" />
-    <Compile Include="Cryptography\Pkcs\PKCS7SignedMessage.cs" />
     <Compile Include="Cryptography\Pkcs\PkcsSignerInfo.cs" />
     <Compile Include="Cryptography\Pkcs\PkcsSubjectIdentifier.cs" />
     <Compile Include="Cryptography\Pkcs\X509IssuerSerial.cs" />
@@ -379,9 +376,7 @@
     <Compile Include="Cryptography\X509Certificates\X509CNGKeyUsages.cs" />
     <Compile Include="Cryptography\X509Certificates\X509KeySpecFlags.cs" />
     <Compile Include="Cryptography\X509CertificateRequests\X509CertificateRequestType.cs" />
-    <Compile Include="Cryptography\X509AttributeCollection.cs" />
     <Compile Include="Cryptography\X509CertificateRequests\X509CertificateRequest.cs" />
-    <Compile Include="Cryptography\X509Attribute.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CRLReferenceExtension.cs" />
     <Compile Include="Cryptography\X509Certificates\X509ServiceLocatorExtension.cs" />
     <Compile Include="Cryptography\X509Certificates\X509NonceExtension.cs" />

@@ -1,7 +1,7 @@
 ﻿using System;
 
-namespace SysadminsLV.PKI.Cryptography {
-    public class X509AttributeOid {
+namespace SysadminsLV.PKI.Cryptography.Pkcs {
+    public class Pkcs9AttributeOid {
         public const String ContentType             = "1.2.840.113549.1.9.3";
         public const String MessageDigest           = "1.2.840.113549.1.9.4";
         public const String RenewalCertificate      = "1.3.6.1.4.1.311.13.1";

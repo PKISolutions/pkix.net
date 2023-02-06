@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Security.Cryptography.Pkcs;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.PKI.CLRExtensions;
+using SysadminsLV.PKI.Cryptography.Pkcs;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
 using SysadminsLV.PKI.Tools.MessageOperations;
 using SysadminsLV.PKI.Utils.CLRExtensions;
@@ -14,7 +16,7 @@ namespace SysadminsLV.PKI.Cryptography.X509CertificateRequests {
     /// Represents a managed PKCS #10 request.
     /// </summary>
     public class X509CertificateRequestPkcs10 {
-        protected readonly X509AttributeCollection _attributes = new();
+        protected readonly Pkcs9AttributeObjectCollection _attributes = new();
         protected readonly X509ExtensionCollection _extensions = new();
 
         /// <summary>
@@ -76,10 +78,10 @@ namespace SysadminsLV.PKI.Cryptography.X509CertificateRequests {
             }
         }
         /// <summary>
-        /// Gets <see cref="X509AttributeCollection"/> object that contains a collection of attributes
+        /// Gets <see cref="Pkcs9AttributeObjectCollection"/> object that contains a collection of attributes
         /// associated with the certificate request.
         /// </summary>
-        public X509AttributeCollection Attributes => new(_attributes);
+        public Pkcs9AttributeObjectCollection Attributes => new(_attributes);
         /// <summary>
         /// Gets the algorithm used to create the signature of a certificate request.
         /// </summary>
@@ -135,7 +137,7 @@ namespace SysadminsLV.PKI.Cryptography.X509CertificateRequests {
             asn.MoveNext();
             if (asn.PayloadLength == 0) { return; }
             do {
-                X509Attribute attribute = X509Attribute.Decode(asn.GetTagRawData());
+                Pkcs9AttributeObject attribute = Pkcs9AttributeObjectFactory.CreateFromAsn1(asn.GetTagRawData());
                 if (attribute.Oid.Value == X509ExtensionOid.CertificateExtensions) {
                     //Extensions
                     var extensions = new X509ExtensionCollection();
@@ -181,10 +183,10 @@ Signature matches Public Key: {SignatureIsValid}
 
             sb.AppendLine("");
             for (Int32 index = 0; index < _attributes.Count; index++) {
-                X509Attribute attribute = _attributes[index];
+                Pkcs9AttributeObject attribute = _attributes[index];
                 sb.AppendLine(
                     $"  Attribute[{index}], Length={attribute.RawData.Length} ({attribute.RawData.Length:x2}):");
-                sb.AppendLine($"    {attribute.Format(true).Replace("\r\n", "\r\n    ")}");
+                sb.AppendLine($"    {attribute.FormatEx(true).Replace("\r\n", "\r\n    ")}");
             }
             return sb.ToString();
         }

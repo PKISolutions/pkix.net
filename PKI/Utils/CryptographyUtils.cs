@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
+using System.Security.Cryptography.Pkcs;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using PKI.Structs;
@@ -83,11 +84,11 @@ public static class CryptographyUtils {
         }
     }
     /// <summary>
-    /// Converts a default instance of <see cref="X509Attribute"/> class to a specific atrribute implementation object. 
+    /// Converts a default instance of <see cref="Pkcs9AttributeObject"/> class to a specific attribute implementation object. 
     /// </summary>
-    /// <param name="attribute">Default instance of <see cref="X509Attribute"/> class.</param>
+    /// <param name="attribute">Default instance of <see cref="Pkcs9AttributeObject"/> class.</param>
     /// <returns>Explicit attribute implementation if defined, otherwise, the same object is returned.</returns>
-    public static X509Attribute ConvertAttribute(X509Attribute attribute) {
+    public static Pkcs9AttributeObject ConvertAttribute(Pkcs9AttributeObject attribute) {
         // reserved for future use
         switch (attribute.Oid.Value) {
             default:

@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography.Pkcs;
 using System.Security.Permissions;
 using System.Text;
 using PKI.ManagedAPI;
 using PKI.Structs;
 using PKI.Utils;
 using SysadminsLV.Asn1Parser;
+using SysadminsLV.PKI.Cryptography.Pkcs;
 using SysadminsLV.PKI.Win32;
 
 namespace System.Security.Cryptography.X509Certificates {
@@ -133,7 +135,7 @@ namespace System.Security.Cryptography.X509Certificates {
                 IntPtr rgCTLEntry = CTLInfo.rgCTLEntry;
                 for (var index = 0; index < CTLInfo.cCTLEntry; index++) {
                     var SB = new StringBuilder();
-                    var attributes = new X509AttributeCollection();
+                    var attributes = new Pkcs9AttributeObjectCollection();
 
                     var CTLEntry = (Wincrypt.CTL_ENTRY)Marshal.PtrToStructure(rgCTLEntry, typeof(Wincrypt.CTL_ENTRY));
                     Byte[] bytes = new Byte[CTLEntry.SubjectIdentifier.cbData];
@@ -148,7 +150,7 @@ namespace System.Security.Cryptography.X509Certificates {
                             var blob = (Wincrypt.CRYPTOAPI_BLOB)Marshal.PtrToStructure(attrib.rgValue, typeof(Wincrypt.CRYPTOAPI_BLOB));
                             bytes = new Byte[blob.cbData];
                             Marshal.Copy(blob.pbData, bytes, 0, bytes.Length);
-                            attributes.Add(new X509Attribute(pszOid, bytes));
+                            attributes.Add(new Pkcs9AttributeObject(pszOid, bytes));
                             rgAttribute = (IntPtr)((UInt64)rgAttribute + (UInt32)Marshal.SizeOf(typeof(Wincrypt.CRYPT_ATTRIBUTE)));
                         }
                     }

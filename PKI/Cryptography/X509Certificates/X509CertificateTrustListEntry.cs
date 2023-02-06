@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using System.Security.Cryptography.Pkcs;
 using System.Security.Cryptography.X509Certificates;
 using SysadminsLV.Asn1Parser;
+using SysadminsLV.PKI.Cryptography.Pkcs;
 
 namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
@@ -11,7 +13,7 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 /// certificate in the trust list.
 /// </summary>
 public class X509CertificateTrustListEntry {
-    readonly List<X509Attribute> _attributes = new();
+    readonly Pkcs9AttributeObjectCollection _attributes = new();
 
     /// <summary>
     /// Initializes a new instance of <strong>X509CertificateTrustListEntry</strong> class using an existing instance of X.509 certificate and hashing
@@ -67,7 +69,7 @@ public class X509CertificateTrustListEntry {
     /// Gets a collection of attributes associated with the current certificate.
     /// </summary>
     /// <remarks>Use <see cref="AddAttribute"/> method to modify attribute collection.</remarks>
-    public X509AttributeCollection Attributes => new(_attributes);
+    public Pkcs9AttributeObjectCollection Attributes => new(_attributes);
     /// <summary>
     /// Gets an instance of <see cref="X509Certificate2"/> object which is associated with the current trust list entry. This member may return
     /// <strong>null</strong> when certificate data is not available.
@@ -83,7 +85,7 @@ public class X509CertificateTrustListEntry {
             Byte[] attrBytes = asn.GetTagRawData();
             // in CTL attributes are encoded as SET, but we need SEQUENCE, so change first byte to SEQUENCE (48)
             attrBytes[0] = 48;
-            var attributes = new X509AttributeCollection();
+            var attributes = new Pkcs9AttributeObjectCollection();
             // decode attributes into collection
             attributes.Decode(attrBytes);
             // and then add decoded attributes to internal list.
@@ -100,7 +102,7 @@ public class X509CertificateTrustListEntry {
     /// If current list of attributes already contains attribute with same OID as in <strong>attribute</strong> parameter,
     /// existing attribute is overwritten with new one. Two or more attributes of same type are not allowed.
     /// </remarks>
-    public void AddAttribute(X509Attribute attribute) {
+    public void AddAttribute(Pkcs9AttributeObject attribute) {
         if (attribute == null) {
             throw new ArgumentNullException(nameof(attribute));
         }

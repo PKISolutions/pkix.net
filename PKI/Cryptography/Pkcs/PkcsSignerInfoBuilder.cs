@@ -16,8 +16,8 @@ public sealed class PkcsSignerInfoBuilder {
     const String CONTENT_TYPE = "1.2.840.113549.1.9.3";
     const String MESSAGE_DIGEST = "1.2.840.113549.1.9.4";
 
-    readonly X509AttributeCollection _authAttributes = new();
-    readonly X509AttributeCollection _unauthAttributes = new();
+    readonly Pkcs9AttributeObjectCollection _authAttributes = new();
+    readonly Pkcs9AttributeObjectCollection _unauthAttributes = new();
     AlgorithmIdentifier hashAlgId, pubKeyAlgId;
     PkcsSubjectIdentifier signerCert;
     Byte[] hashValue;
@@ -61,18 +61,18 @@ public sealed class PkcsSignerInfoBuilder {
     /// </summary>
     public Oid ContentType { get; set; }
     /// <summary>
-    ///		Gets the <see cref="X509AttributeCollection"/> collection of signed attributes that is associated with
+    ///		Gets the <see cref="Pkcs9AttributeObjectCollection"/> collection of signed attributes that is associated with
     ///		the signer information. Signed attributes are signed along with the rest of the message content.
     /// </summary>
-    public X509AttributeCollection AuthenticatedAttributes => new(_authAttributes);
+    public Pkcs9AttributeObjectCollection AuthenticatedAttributes => new(_authAttributes);
     /// <summary>
-    ///		Gets the <see cref="X509AttributeCollection"/> collection of unsigned attributes that is associated with
+    ///		Gets the <see cref="Pkcs9AttributeObjectCollection"/> collection of unsigned attributes that is associated with
     ///		the <see cref="PkcsSignerInfo"/> content. Unsigned attributes can be modified without invalidating the
     ///		signature.
     /// </summary>
-    public X509AttributeCollection UnauthenticatedAttributes => new(_unauthAttributes);
+    public Pkcs9AttributeObjectCollection UnauthenticatedAttributes => new(_unauthAttributes);
 
-    static void addUniqueAttribute(IList<X509Attribute> referenceList, X509Attribute attribute) {
+    static void addUniqueAttribute(IList<Pkcs9AttributeObject> referenceList, Pkcs9AttributeObject attribute) {
         // if there is already same attribute (with same OID), remove old attribute and add new attribute
         // to avoid duplicates.
         for (Int32 index = 0; index < referenceList.Count; index++) {
@@ -88,7 +88,7 @@ public sealed class PkcsSignerInfoBuilder {
         Version = signerInfo.Version;
         SubjectIdentifier = signerInfo.Issuer.Type;
         signerCert = signerInfo.Issuer;
-        X509Attribute attribute = signerInfo.AuthenticatedAttributes.FirstOrDefault(x => x.Oid.Value == CONTENT_TYPE);
+        Pkcs9AttributeObject attribute = signerInfo.AuthenticatedAttributes.FirstOrDefault(x => x.Oid.Value == CONTENT_TYPE);
         if (attribute != null) {
             ContentType = new Asn1ObjectIdentifier(attribute.RawData).Value;
         }
@@ -104,7 +104,7 @@ public sealed class PkcsSignerInfoBuilder {
     }
     void addContentInfoAttribute() {
         if (AuthenticatedAttributes[CONTENT_TYPE] == null) {
-            AddAuthenticatedAttribute(new X509Attribute(new Oid(CONTENT_TYPE), new Asn1ObjectIdentifier(ContentType).RawData));
+            AddAuthenticatedAttribute(new Pkcs9AttributeObject(new Oid(CONTENT_TYPE), new Asn1ObjectIdentifier(ContentType).RawData));
         }
     }
     void addMessageDigestAttribute(Byte[] content) {
@@ -114,12 +114,12 @@ public sealed class PkcsSignerInfoBuilder {
                 throw new ArgumentException("Specified hash algorithm is not valid hashing algorithm");
             }
             var attrValue = Asn1Utils.Encode(hasher.ComputeHash(content), (Byte)Asn1Type.OCTET_STRING);
-            AddAuthenticatedAttribute(new X509Attribute(new Oid(MESSAGE_DIGEST), attrValue));
+            AddAuthenticatedAttribute(new Pkcs9AttributeObject(new Oid(MESSAGE_DIGEST), attrValue));
         }
     }
     void signContent(MessageSigner messageSigner, Byte[] content) {
-        hashAlgId = new AlgorithmIdentifier(messageSigner.HashingAlgorithm.ToOid(), new Byte[0]);
-        pubKeyAlgId = new AlgorithmIdentifier(messageSigner.PublicKeyAlgorithm, new Byte[0]);
+        hashAlgId = new AlgorithmIdentifier(messageSigner.HashingAlgorithm.ToOid(), Array.Empty<Byte>());
+        pubKeyAlgId = new AlgorithmIdentifier(messageSigner.PublicKeyAlgorithm, Array.Empty<Byte>());
         prepareSigning(content);
         SignedContentBlob signedBlob;
         if (_authAttributes.Any()) {
@@ -148,7 +148,7 @@ public sealed class PkcsSignerInfoBuilder {
     /// If same attribute (with same object identifier) is already presented in collection, it will be overwritten with attribute in the
     /// <strong>attribute</strong> parameter.
     /// </remarks>
-    public void AddAuthenticatedAttribute(X509Attribute attribute) {
+    public void AddAuthenticatedAttribute(Pkcs9AttributeObject attribute) {
         if (attribute == null) {
             throw new ArgumentNullException(nameof(attribute));
         }
@@ -166,7 +166,7 @@ public sealed class PkcsSignerInfoBuilder {
     /// If same attribute (with same object identifier) is already presented in collection, it will be overwritten with attribute in the
     /// <strong>attribute</strong> parameter.
     /// </remarks>
-    public void AddUnauthenticatedAttribute(X509Attribute attribute) {
+    public void AddUnauthenticatedAttribute(Pkcs9AttributeObject attribute) {
         if (attribute == null) {
             throw new ArgumentNullException(nameof(attribute));
         }
@@ -188,7 +188,7 @@ public sealed class PkcsSignerInfoBuilder {
             throw new InvalidOperationException();
         }
         // version
-        var builder = new Asn1Builder().AddInteger(Version);
+        Asn1Builder builder = new Asn1Builder().AddInteger(Version);
         // signerIdentifier
         builder.AddDerData(signerCert.Encode());
         // digestAlgorithm

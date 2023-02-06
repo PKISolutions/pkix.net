@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Security.Cryptography.Pkcs;
 using System.Security.Cryptography.X509Certificates;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.PKI.Tools.MessageOperations;
@@ -201,7 +202,7 @@ namespace SysadminsLV.PKI.Cryptography.Pkcs {
                 throw new ArgumentException("The time-stamp response is not successful.");
             }
 
-            X509Attribute attribute;
+            Pkcs9AttributeObject attribute;
             DefaultSignedPkcs7 tspCms = timestamp.GetSignedCms();
             switch (timestamp.ResponseType.Value) {
                 case PKCS_7_DATA:
@@ -213,16 +214,16 @@ namespace SysadminsLV.PKI.Cryptography.Pkcs {
                     }
                     // for Authenticode timestamp, we add SignerInfo from timestamp CMS
                     var asn = new Asn1Reader(tspCms.SignerInfos.Encode());
-                    attribute = new X509Attribute(new Oid(COUNTER_SIGN), asn.GetPayload());
+                    attribute = new Pkcs9AttributeObject(new Oid(COUNTER_SIGN), asn.GetPayload());
                     break;
                 case TST_TOKEN_INFO:
-                    attribute = new X509Attribute(new Oid(RFC_COUNTER_SIGN), tspCms.RawData);
+                    attribute = new Pkcs9AttributeObject(new Oid(RFC_COUNTER_SIGN), tspCms.RawData);
                     break;
                 default: throw new NotSupportedException("Time-Stamp response contains invalid content type.");
             }
             
             var signerInfoBuilder = new PkcsSignerInfoBuilder(SignerInfos[signerInfoIndex]);
-            X509Attribute attr = signerInfoBuilder.UnauthenticatedAttributes[COUNTER_SIGN];
+            Pkcs9AttributeObject attr = signerInfoBuilder.UnauthenticatedAttributes[COUNTER_SIGN];
             if (attr != null) {
                 signerInfoBuilder.UnauthenticatedAttributes.Remove(attr);
             }

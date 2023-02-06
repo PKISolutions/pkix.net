@@ -192,7 +192,7 @@ public abstract class SignedPkcs7<T> where T : class {
         return hasher?.ComputeHash(asn.GetPayload());
     }
     Byte[] getHashValue(PkcsSignerInfo signerInfo) {
-        X509Attribute attr = signerInfo.AuthenticatedAttributes[MESSAGE_DIGEST];
+        Pkcs9AttributeObject attr = signerInfo.AuthenticatedAttributes[MESSAGE_DIGEST];
         if (attr == null) {
             return null;
         }

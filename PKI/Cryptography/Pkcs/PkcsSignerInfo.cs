@@ -33,8 +33,8 @@ public sealed class PkcsSignerInfo {
 
     */
 
-    readonly X509AttributeCollection _authAttributes = new();
-    readonly X509AttributeCollection _unauthAttributes = new();
+    readonly Pkcs9AttributeObjectCollection _authAttributes = new();
+    readonly Pkcs9AttributeObjectCollection _unauthAttributes = new();
     readonly List<Byte> _rawData = new();
 
     ///  <summary>
@@ -104,16 +104,16 @@ public sealed class PkcsSignerInfo {
     /// </summary>
     public Byte[] EncryptedHash { get; private set; }
     /// <summary>
-    ///		Gets the <see cref="X509AttributeCollection"/> collection of signed attributes that is associated with
+    ///		Gets the <see cref="Pkcs9AttributeObjectCollection"/> collection of signed attributes that is associated with
     ///		the signer information. Signed attributes are signed along with the rest of the message content.
     /// </summary>
-    public X509AttributeCollection AuthenticatedAttributes => new(_authAttributes);
+    public Pkcs9AttributeObjectCollection AuthenticatedAttributes => new(_authAttributes);
     /// <summary>
-    ///		Gets the <see cref="X509AttributeCollection"/> collection of unsigned attributes that is associated with
+    ///		Gets the <see cref="Pkcs9AttributeObjectCollection"/> collection of unsigned attributes that is associated with
     ///		the <see cref="PkcsSignerInfo"/> content. Unsigned attributes can be modified without invalidating the
     ///		signature.
     /// </summary>
-    public X509AttributeCollection UnauthenticatedAttributes => new(_unauthAttributes);
+    public Pkcs9AttributeObjectCollection UnauthenticatedAttributes => new(_unauthAttributes);
     /// <summary>
     /// Gets the ASN-encoded raw data associated with the current object.
     /// </summary>

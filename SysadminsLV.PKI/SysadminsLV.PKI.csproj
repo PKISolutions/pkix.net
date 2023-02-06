@@ -9,4 +9,10 @@
     <PackageReference Include="SysadminsLV.Asn1Parser" Version="1.2.7.62" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="System.Security">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Security.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
