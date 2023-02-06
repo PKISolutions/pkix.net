@@ -268,7 +268,6 @@
     <Compile Include="Utils\CLRExtensions\X509Certificate2Extensions.cs" />
     <Compile Include="Utils\ErrorSeverity.cs" />
     <Compile Include="Utils\CLRExtensions\X500DistinguishedNameExtensions.cs" />
-    <Compile Include="Cryptography\X509Certificates\X509CRLNumberExtension.cs" />
     <Compile Include="Cryptography\X509Certificates\X509FreshestCRLExtension.cs" />
     <Compile Include="Security\AccessControl\CertSrvSecurityDescriptor.cs" />
     <Compile Include="Security\AccessControl\CertSrvAuditRule.cs" />
