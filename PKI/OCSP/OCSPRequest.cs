@@ -267,7 +267,7 @@ public class OCSPRequest {
             if (aiaExtension == null) {
                 continue;
             }
-            X509AuthorityInformationAccessExtension aia = new X509AuthorityInformationAccessExtension(aiaExtension.RawData, false);
+            X509AuthorityInformationAccessExtension aia = new X509AuthorityInformationAccessExtension(new AsnEncodedData(aiaExtension.RawData), false);
             if (aia.OnlineCertificateStatusProtocol == null || aia.OnlineCertificateStatusProtocol.Length == 0) {
                 continue;
             }

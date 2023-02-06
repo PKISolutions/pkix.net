@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using SysadminsLV.Asn1Parser;
-using SysadminsLV.PKI.Cryptography.X509Certificates;
 
-namespace System.Security.Cryptography.X509Certificates;
+namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
 /// <summary>
 /// Defines Authority Information Access extension (AIA). This extension is used by certificate chaining engine to build
@@ -12,10 +14,10 @@ namespace System.Security.Cryptography.X509Certificates;
 /// Online Certificate Status Protocol (OCSP).
 /// </summary>
 public sealed class X509AuthorityInformationAccessExtension : X509Extension {
-    readonly Oid _oid = new(X509ExtensionOid.AuthorityInformationAccess);
+    static readonly Oid _oid = new(X509ExtensionOid.AuthorityInformationAccess);
         
     internal X509AuthorityInformationAccessExtension(Byte[] rawData, Boolean critical)
-        : base(X509ExtensionOid.AuthorityInformationAccess, rawData, critical) {
+        : base(_oid, rawData, critical) {
         if (rawData == null) { throw new ArgumentNullException(nameof(rawData)); }
         m_decode(rawData);
     }
