@@ -324,7 +324,6 @@
     <Compile Include="Cryptography\Pkcs\PkcsSubjectIdentifier.cs" />
     <Compile Include="Cryptography\Pkcs\X509IssuerSerial.cs" />
     <Compile Include="Cryptography\X509Certificates\X509IssuerAlternativeNamesExtension.cs" />
-    <Compile Include="Cryptography\X509Certificates\X509ArchiveCutoffExtension.cs" />
     <Compile Include="Cryptography\X509Certificates\X509AuthorityInformationAccessExtension.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CAVersionExtension.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CertificatePoliciesExtension.cs" />
