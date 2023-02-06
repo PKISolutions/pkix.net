@@ -117,7 +117,7 @@ public sealed class PkcsSignerInfoBuilder {
         }
     }
     void signContent(ICryptSigner messageSigner, Byte[] content) {
-        hashAlgId = new AlgorithmIdentifier(messageSigner.HashingAlgorithm.ToOid(), Array.Empty<Byte>());
+        hashAlgId = new AlgorithmIdentifier(messageSigner.HashingAlgorithm, Array.Empty<Byte>());
         pubKeyAlgId = new AlgorithmIdentifier(messageSigner.PublicKeyAlgorithm, Array.Empty<Byte>());
         prepareSigning(content);
         SignedContentBlob signedBlob;

@@ -108,7 +108,7 @@ public class X509CertificateTrustListBuilder {
     /// </returns>
     public X509CertificateTrustList Sign(ICryptSigner signer, X509Certificate2Collection chain) {
         var cmsBuilder = new SignedCmsBuilder(oid, encodeCTL());
-        cmsBuilder.DigestAlgorithms.Add(new AlgorithmIdentifier(signer.HashingAlgorithm.ToOid(), new Byte[0]));
+        cmsBuilder.DigestAlgorithms.Add(new AlgorithmIdentifier(signer.HashingAlgorithm, Array.Empty<Byte>()));
         foreach (X509CertificateTrustListEntry entry in Entries.Where(x => x.Certificate != null)) {
             cmsBuilder.Certificates.Add(entry.Certificate);
         }

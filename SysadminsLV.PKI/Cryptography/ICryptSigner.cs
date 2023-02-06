@@ -19,7 +19,7 @@ public interface ICryptSigner {
     /// Gets or sets the hashing algorithm that is used to calculate the hash during signing or signature verification
     /// processes.
     /// </summary>
-    IOid HashingAlgorithm { get; set; }
+    Oid HashingAlgorithm { get; set; }
     /// <summary>
     /// Gets resulting signature algorithm identifier.
     /// </summary>

@@ -33,14 +33,14 @@ public class MessageSigner : ICryptSigner, IDisposable {
     SafeNCryptKeyHandle phPubKey = new();
     KeyType keyType;
     AsymmetricAlgorithm legacyKey;
-    IOid hashAlgorithm;
+    Oid hashAlgorithm;
     readonly IKeyStorageInfo _keyInfo;
 
     MessageSigner() { }
-    MessageSigner(Oid2 hashAlg, PublicKey pubKey) {
+    MessageSigner(IOid hashAlg, PublicKey pubKey) {
         PublicKeyAlgorithm = pubKey.Oid;
         acquirePublicKey(pubKey);
-        initializeHashAlgorithm(hashAlg);
+        initializeHashAlgorithm(hashAlg.ToOid());
     }
     internal MessageSigner(X509PrivateKeyBuilder keyBuilder, Oid2 hashAlgorithm)
         : this(hashAlgorithm, keyBuilder.GetPublicKey()) {
@@ -116,14 +116,9 @@ public class MessageSigner : ICryptSigner, IDisposable {
     /// Gets or sets the hashing algorithm that is used to calculate the hash during signing or signature verification
     /// processes.
     /// </summary>
-    public IOid HashingAlgorithm {
+    public Oid HashingAlgorithm {
         get => hashAlgorithm;
-        set {
-            if (value == null || value.OidGroup != OidGroup.HashAlgorithm && value.OidGroup != OidGroup.SignatureAlgorithm) {
-                return;
-            }
-            initializeHashAlgorithm(value);
-        }
+        set => initializeHashAlgorithm(value);
     }
     /// <summary>
     /// Gets resulting signature algorithm identifier.
@@ -150,12 +145,9 @@ public class MessageSigner : ICryptSigner, IDisposable {
             return hasher.ComputeHash(message);
         }
     }
-    void initializeHashAlgorithm(IOid hashAlg) {
-        if (hashAlg.OidGroup == OidGroup.SignatureAlgorithm) {
-            mapSignatureAlgorithmToHashAlgorithm(hashAlg.Value, null);
-        } else {
-            hashAlgorithm = hashAlg;
-        }
+    void initializeHashAlgorithm(Oid hashAlg) {
+        hashAlgorithm = Oid.FromOidValue(hashAlg.Value, OidGroup.HashAlgorithm);
+        
         switch (PublicKeyAlgorithm.Value) {
             case AlgorithmOid.RSA:
                 switch (hashAlgorithm.Value) {
@@ -178,7 +170,7 @@ public class MessageSigner : ICryptSigner, IDisposable {
                 break;
             case AlgorithmOid.DSA:
                 // force SHA1 for DSA keys
-                hashAlgorithm = new Oid2(AlgorithmOid.SHA1, false);
+                hashAlgorithm = new Oid(AlgorithmOid.SHA1);
                 break;
         }
     }
@@ -203,47 +195,47 @@ public class MessageSigner : ICryptSigner, IDisposable {
             // md5
             case AlgorithmOid.MD5:
                 nullSigned = true;
-                hashAlgorithm = new Oid2(signatureOid, false);
+                hashAlgorithm = new Oid(signatureOid);
                 break;
             case AlgorithmOid.MD5_RSA:
-                hashAlgorithm = new Oid2(AlgorithmOid.MD5, false);
+                hashAlgorithm = new Oid(AlgorithmOid.MD5);
                 break;
             // sha1
             case AlgorithmOid.SHA1:
                 nullSigned = true;
-                hashAlgorithm = new Oid2(signatureOid, false);
+                hashAlgorithm = new Oid(signatureOid);
                 break;
             case AlgorithmOid.SHA1_ECDSA:
             case AlgorithmOid.SHA1_RSA:
             case AlgorithmOid.SHA1_DSA:
-                hashAlgorithm = new Oid2(AlgorithmOid.SHA1, false);
+                hashAlgorithm = new Oid(AlgorithmOid.SHA1);
                 break;
             // sha256
             case AlgorithmOid.SHA256:
                 nullSigned = true;
-                hashAlgorithm = new Oid2(signatureOid, false);
+                hashAlgorithm = new Oid(signatureOid);
                 break;
             case AlgorithmOid.SHA256_ECDSA:
             case AlgorithmOid.SHA256_RSA:
-                hashAlgorithm = new Oid2(AlgorithmOid.SHA256, false);
+                hashAlgorithm = new Oid(AlgorithmOid.SHA256);
                 break;
             // sha384
             case AlgorithmOid.SHA384:
                 nullSigned = true;
-                hashAlgorithm = new Oid2(signatureOid, false);
+                hashAlgorithm = new Oid(signatureOid);
                 break;
             case AlgorithmOid.SHA384_ECDSA:
             case AlgorithmOid.SHA384_RSA:
-                hashAlgorithm = new Oid2(AlgorithmOid.SHA384, false);
+                hashAlgorithm = new Oid(AlgorithmOid.SHA384);
                 break;
             // sha512
             case AlgorithmOid.SHA512:
                 nullSigned = true;
-                hashAlgorithm = new Oid2(signatureOid, false);
+                hashAlgorithm = new Oid(signatureOid);
                 break;
             case AlgorithmOid.SHA512_ECDSA:
             case AlgorithmOid.SHA512_RSA:
-                hashAlgorithm = new Oid2(AlgorithmOid.SHA512, false);
+                hashAlgorithm = new Oid(AlgorithmOid.SHA512);
                 break;
             case AlgorithmOid.ECDSA_SPECIFIED:
                 decodeEcdsaSpecified(asn);
@@ -263,14 +255,14 @@ public class MessageSigner : ICryptSigner, IDisposable {
         mapSignatureAlgorithmToHashAlgorithm(oid.Value, asn);
     }
     void decodeEcdsaSpecified(Asn1Reader asn) {
-        hashAlgorithm = new Oid2(new AlgorithmIdentifier(asn.GetTagRawData()).AlgorithmId, false);
+        hashAlgorithm = Oid.FromOidValue(new AlgorithmIdentifier(asn.GetTagRawData()).AlgorithmId.Value, OidGroup.HashAlgorithm);
     }
     void decodeRsaPss(Asn1Reader asn) {
         PaddingScheme = RSASignaturePadding.Pss;
         asn.MoveNext();
         hashAlgorithm = asn.Tag == 0xa0
-            ? new Oid2(new AlgorithmIdentifier(asn.GetPayload()).AlgorithmId, false)
-            : new Oid2(AlgorithmOid.SHA1, false);
+            ? Oid.FromOidValue(new AlgorithmIdentifier(asn.GetPayload()).AlgorithmId.Value, OidGroup.HashAlgorithm)
+            : Oid.FromOidValue(AlgorithmOid.SHA1, OidGroup.HashAlgorithm);
         // feed asn reader to salt identifier
         while (asn.MoveNextSibling() && asn.Tag != 0xa2) { }
         PssSaltByteCount = asn.Tag == 0xa2
@@ -722,7 +714,7 @@ public class MessageSigner : ICryptSigner, IDisposable {
                     algId = new Oid(AlgorithmOid.ECDSA_SPECIFIED); // only here we override algorithm OID
                     parameters
                         .AddRange(
-                            new AlgorithmIdentifier(HashingAlgorithm.ToOid(), Asn1Utils.EncodeNull()).RawData
+                            new AlgorithmIdentifier(HashingAlgorithm, Asn1Utils.EncodeNull()).RawData
                         );
                 }
                 break;
@@ -735,7 +727,7 @@ public class MessageSigner : ICryptSigner, IDisposable {
                 //     trailerField       [3] TrailerField     DEFAULT trailerFieldBC
                 // }
                 if (PaddingScheme == RSASignaturePadding.Pss) {
-                    Byte[] hash = new AlgorithmIdentifier(HashingAlgorithm.ToOid(), null).RawData;
+                    Byte[] hash = new AlgorithmIdentifier(HashingAlgorithm, null).RawData;
                     parameters.AddRange(Asn1Utils.Encode(hash, 0xa0));
                     // mask generation function: mgf1
                     Byte[] mgf = new AlgorithmIdentifier(new Oid("1.2.840.113549.1.1.8"), hash).RawData;
