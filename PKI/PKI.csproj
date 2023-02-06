@@ -250,7 +250,6 @@
     <Compile Include="Cryptography\X509Certificates\X509CertificateContextPropertyCollection.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CertificatePropertyType.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CrlBuilder.cs" />
-    <Compile Include="Cryptography\X509Certificates\X509CrlType.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CrossCertificateDistributionPointsExtension.cs" />
     <Compile Include="Cryptography\X509Certificates\X509EnrollmentPropertyInfo.cs" />
     <Compile Include="Cryptography\X509Certificates\X509NameConstraintsExtension.cs" />
