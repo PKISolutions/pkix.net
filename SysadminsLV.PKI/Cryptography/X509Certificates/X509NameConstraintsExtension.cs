@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using SysadminsLV.Asn1Parser;
 
-namespace SysadminsLV.PKI.Cryptography.X509Certificates; 
+namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
 /// <summary>
 /// The name constraints extension, which MUST be used only in a CA certificate, indicates a name space

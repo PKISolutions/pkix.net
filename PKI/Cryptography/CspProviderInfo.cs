@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using Interop.CERTENROLLLib;
 using PKI.Utils;
+using SysadminsLV.PKI.Cryptography.X509Certificates;
 
 namespace SysadminsLV.PKI.Cryptography {
     /// <summary>
