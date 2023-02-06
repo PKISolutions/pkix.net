@@ -3,7 +3,7 @@
 namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
 /// <summary>
-/// Represents a collection of <see cref="SysadminsLV.PKI.Cryptography.X509Certificates.OidMapping"/> objects.
+/// Represents a collection of <see cref="OidMapping"/> objects.
 /// </summary>
 public class OidMappingCollection : BasicCollection<OidMapping> {
     /// <inheritdoc />

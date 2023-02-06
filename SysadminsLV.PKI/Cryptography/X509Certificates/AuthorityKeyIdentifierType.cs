@@ -4,7 +4,7 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
 /// <summary>
 /// Contains enumeration of components included in the Authority Key Identifier (AKI) certificate extension.
-/// <para>This enumeration has a <see cref="System.FlagsAttribute"/> attribute that allows a bitwise combination of
+/// <para>This enumeration has a <see cref="FlagsAttribute"/> attribute that allows a bitwise combination of
 /// its member values.</para>
 /// </summary>
 [Flags]

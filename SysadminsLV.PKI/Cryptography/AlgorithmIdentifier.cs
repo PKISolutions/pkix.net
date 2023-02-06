@@ -45,7 +45,7 @@ public class AlgorithmIdentifier {
     ///  
     /// 		This parameter can be <strong>NULL</strong>.
     ///  </param>
-    ///  <exception cref="System.ArgumentNullException">
+    ///  <exception cref="ArgumentNullException">
     ///     <strong>oid</strong> parameter is null.
     /// </exception>
     /// <remarks>

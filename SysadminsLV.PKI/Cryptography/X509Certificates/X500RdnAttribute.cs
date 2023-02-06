@@ -37,7 +37,7 @@ public sealed class X500RdnAttribute : AsnEncodedData {
     /// Initializes a new instance of the <strong>X500RdnAttribute</strong> class from encoded byte array.
     /// </summary>
     /// <param name="rawData">ASN.1-encoded byte array.</param>
-    /// <exception cref="System.ArgumentNullException"><strong>rawData</strong> parameter is null.</exception>
+    /// <exception cref="ArgumentNullException"><strong>rawData</strong> parameter is null.</exception>
     public X500RdnAttribute(Byte[] rawData) {
         if (rawData == null) { throw new ArgumentNullException(nameof(rawData)); }
         m_decode(rawData);
@@ -85,7 +85,7 @@ public sealed class X500RdnAttribute : AsnEncodedData {
         encodingTag = tag;
     }
 
-    /// <inheritdoc cref="System.Security.Cryptography.AsnEncodedData.Format(Boolean)"/>
+    /// <inheritdoc cref="AsnEncodedData.Format(Boolean)"/>
     public override String Format(Boolean multiLine) {
         if (RawData == null || RawData.Length == 0) {
             return base.Format(multiLine);

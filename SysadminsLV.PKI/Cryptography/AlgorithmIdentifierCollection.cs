@@ -6,17 +6,17 @@ using SysadminsLV.Asn1Parser;
 namespace SysadminsLV.PKI.Cryptography;
 
 /// <summary>
-/// Represents a collection of <see cref="SysadminsLV.PKI.Cryptography.AlgorithmIdentifier"/> objects.
+/// Represents a collection of <see cref="AlgorithmIdentifier"/> objects.
 /// </summary>
 public class AlgorithmIdentifierCollection : BasicCollection<AlgorithmIdentifier> {
     /// <summary>
-    /// Initializes a new instance of the <see cref="AlgorithmIdentifierCollection"/> class without any <see cref="SysadminsLV.PKI.Cryptography.AlgorithmIdentifier"/> information.
+    /// Initializes a new instance of the <see cref="AlgorithmIdentifierCollection"/> class without any <see cref="AlgorithmIdentifier"/> information.
     /// </summary>
     public AlgorithmIdentifierCollection() { }
     /// <summary>
-    /// Initializes a new instance of the <see cref="AlgorithmIdentifierCollection"/> class from an array of <see cref="SysadminsLV.PKI.Cryptography.AlgorithmIdentifier"/> objects.
+    /// Initializes a new instance of the <see cref="AlgorithmIdentifierCollection"/> class from an array of <see cref="AlgorithmIdentifier"/> objects.
     /// </summary>
-    /// <param name="algIdentifiers">An array of <see cref="SysadminsLV.PKI.Cryptography.AlgorithmIdentifier"/> objects.</param>
+    /// <param name="algIdentifiers">An array of <see cref="AlgorithmIdentifier"/> objects.</param>
     public AlgorithmIdentifierCollection(IEnumerable<AlgorithmIdentifier> algIdentifiers) : base(algIdentifiers) { }
 
     /// <summary>
@@ -37,7 +37,7 @@ public class AlgorithmIdentifierCollection : BasicCollection<AlgorithmIdentifier
     /// Decodes ASN.1-encoded algorithm identifier collection.
     /// </summary>
     /// <param name="rawData">ASN.1-encoded byte array that represents algorithm identifier collection.</param>
-    /// <exception cref="System.ArgumentNullException">
+    /// <exception cref="ArgumentNullException">
     /// <strong>rawData</strong> parameter is null.
     /// </exception>
     public void Decode(Byte[] rawData) {

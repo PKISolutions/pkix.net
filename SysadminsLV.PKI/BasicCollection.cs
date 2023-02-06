@@ -26,7 +26,7 @@ public abstract class BasicCollection<T> : IList<T> {
     /// from the specified collection and has sufficient capacity to accommodate the number of elements copied.
     /// </summary>
     /// <param name="collection">The collection whose elements are copied to the new list.</param>
-    /// <exception cref="System.ArgumentNullException"><strong>collection</strong> is null.</exception>
+    /// <exception cref="ArgumentNullException"><strong>collection</strong> is null.</exception>
     protected BasicCollection(IEnumerable<T> collection) {
         InternalList = new List<T>(collection);
     }
@@ -56,8 +56,8 @@ public abstract class BasicCollection<T> : IList<T> {
     public virtual void Add(T item) {
         InternalList.Add(item);
     }
-    /// <inheritdoc cref="System.Collections.Generic.List{T}"/>
-    /// <exception cref="System.AccessViolationException">A collection is read-only.</exception>
+    /// <inheritdoc cref="List{T}"/>
+    /// <exception cref="AccessViolationException">A collection is read-only.</exception>
     public virtual void AddRange(IEnumerable<T> collection) {
         InternalList.AddRange(collection);
     }
@@ -74,7 +74,7 @@ public abstract class BasicCollection<T> : IList<T> {
         InternalList.CopyTo(array, arrayIndex);
     }
     /// <inheritdoc />
-    /// <exception cref="System.AccessViolationException">A collection is read-only.</exception>
+    /// <exception cref="AccessViolationException">A collection is read-only.</exception>
     public virtual Boolean Remove(T item) {
         return InternalList.Remove(item);
     }
@@ -83,12 +83,12 @@ public abstract class BasicCollection<T> : IList<T> {
         return InternalList.IndexOf(item);
     }
     /// <inheritdoc />
-    /// <exception cref="System.AccessViolationException">A collection is read-only.</exception>
+    /// <exception cref="AccessViolationException">A collection is read-only.</exception>
     public virtual void Insert(Int32 index, T item) {
         InternalList.Insert(index, item);
     }
     /// <inheritdoc />
-    /// <exception cref="System.AccessViolationException">A collection is read-only.</exception>
+    /// <exception cref="AccessViolationException">A collection is read-only.</exception>
     public virtual void RemoveAt(Int32 index) {
         InternalList.RemoveAt(index);
     }

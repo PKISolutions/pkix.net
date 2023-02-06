@@ -12,7 +12,7 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 /// implementation of <strong>Enhanced Key Usage</strong> extension.
 /// </summary>
 public sealed class X509ApplicationPoliciesExtension : X509Extension {
-    readonly Oid _oid = new(X509ExtensionOid.ApplicationPolicies);
+    static readonly Oid _oid = new(X509ExtensionOid.ApplicationPolicies);
     readonly List<Oid> _policies = new();
 
     internal X509ApplicationPoliciesExtension(Byte[] rawData, Boolean critical)
