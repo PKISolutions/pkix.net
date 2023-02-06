@@ -180,8 +180,8 @@ public class X509CertificateBuilder {
             ? new MessageSigner(PrivateKeyInfo, HashingAlgorithm)
             : new MessageSigner(signer, HashingAlgorithm);
         signerInfo.PaddingScheme = AlternateSignatureFormat
-            ? SignaturePadding.PSS
-            : SignaturePadding.PKCS1;
+            ? RSASignaturePadding.Pss
+            : RSASignaturePadding.Pkcs1;
         // initialize from v3 version
         var rawData = new List<Byte>(_versionBytes);
         // serial number

@@ -5,7 +5,6 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.Pkcs;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
-using SysadminsLV.PKI.Tools.MessageOperations;
 
 namespace SysadminsLV.PKI.Cryptography.Pkcs;
 
@@ -117,7 +116,7 @@ public sealed class PkcsSignerInfoBuilder {
             AddAuthenticatedAttribute(new Pkcs9AttributeObject(new Oid(MESSAGE_DIGEST), attrValue));
         }
     }
-    void signContent(MessageSigner messageSigner, Byte[] content) {
+    void signContent(ICryptSigner messageSigner, Byte[] content) {
         hashAlgId = new AlgorithmIdentifier(messageSigner.HashingAlgorithm.ToOid(), Array.Empty<Byte>());
         pubKeyAlgId = new AlgorithmIdentifier(messageSigner.PublicKeyAlgorithm, Array.Empty<Byte>());
         prepareSigning(content);
@@ -229,14 +228,14 @@ public sealed class PkcsSignerInfoBuilder {
     /// Signer certificate is configured to use PSS padding for signature which is not supported.
     /// </exception>
     /// <returns>Signed signer info that can be added to signed CMS message.</returns>
-    public PkcsSignerInfo Sign(MessageSigner messageSigner, Byte[] content) {
+    public PkcsSignerInfo Sign(ICryptSigner messageSigner, Byte[] content) {
         if (messageSigner == null) {
             throw new ArgumentNullException(nameof(messageSigner));
         }
         if (_authAttributes.Any() && content == null) {
             throw new ArgumentException("'content' parameter cannot be null if no authenticated attributes present.");
         }
-        if (messageSigner.PaddingScheme == SignaturePadding.PSS) {
+        if (messageSigner.PaddingScheme == RSASignaturePadding.Pss) {
             throw new CryptographicException("PSS padding scheme is not supported.");
         }
         signContent(messageSigner, content);

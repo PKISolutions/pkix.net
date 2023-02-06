@@ -7,7 +7,6 @@ using System.Security.Cryptography.X509Certificates;
 using PKI.Utils;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
-using SysadminsLV.PKI.Tools.MessageOperations;
 using SysadminsLV.PKI.Utils.CLRExtensions;
 
 namespace SysadminsLV.PKI.Cryptography.X509Certificates {
@@ -194,7 +193,7 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates {
         /// </summary>
         /// <param name="signerInfo">Certificate which is used to sign CRL.</param>
         /// <returns>An instance of generated signed CRL object.</returns>
-        public X509CRL2 BuildAndSign(MessageSigner signerInfo) {
+        public X509CRL2 BuildAndSign(ICryptSigner signerInfo) {
             if (signerInfo == null) { throw new ArgumentNullException(nameof(signerInfo)); }
 
             // create dummy blob, sign/hash it to get proper encoded signature algorithm identifier.

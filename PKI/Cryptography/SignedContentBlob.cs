@@ -102,7 +102,7 @@ public class SignedContentBlob {
     /// Signs <see cref="ToBeSignedData"/> data by using client-provided message signer.
     /// </summary>
     /// <param name="signerInfo">Configured message signer object which is used to sign the data.</param>
-    public void Sign(MessageSigner signerInfo) {
+    public void Sign(ICryptSigner signerInfo) {
         var signature = signerInfo.SignData(ToBeSignedData).ToList();
         if (signerInfo.PublicKeyAlgorithm.Value == AlgorithmOid.RSA) {
             signature.Insert(0, 0);
