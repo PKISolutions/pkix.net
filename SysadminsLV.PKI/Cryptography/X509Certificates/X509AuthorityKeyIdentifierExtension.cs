@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using SysadminsLV.Asn1Parser;
-using SysadminsLV.PKI.Cryptography.X509Certificates;
 
-namespace System.Security.Cryptography.X509Certificates;
+namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
 /// <summary>
 /// Represents Authority Key Identifier extension. The authority key identifier extension provides a means of
@@ -18,7 +20,7 @@ public sealed class X509AuthorityKeyIdentifierExtension : X509Extension {
     /// </summary>
     /// <param name="aki">An ASN.1-encoded Authority Key Identifier extension value.</param>
     /// <param name="critical"><strong>True</strong> if the extension is critical; otherwise, <strong>False</strong>.</param>
-    /// <exception cref="ArgumentNullException">
+    /// <exception cref="System.ArgumentNullException">
     /// <strong>aki</strong> parameter is null;
     /// </exception>
     public X509AuthorityKeyIdentifierExtension(AsnEncodedData aki, Boolean critical)
@@ -34,7 +36,7 @@ public sealed class X509AuthorityKeyIdentifierExtension : X509Extension {
     /// </summary>
     /// <param name="keyIdentifier">Must be a hex string that represents hash value.</param>
     /// <param name="critical"><strong>True</strong> if the extension is critical; otherwise, <strong>False</strong>.</param>
-    /// <exception cref="ArgumentNullException">
+    /// <exception cref="System.ArgumentNullException">
     /// <strong>keyIdentifier</strong> value is null or empty.
     /// </exception>
     public X509AuthorityKeyIdentifierExtension(String keyIdentifier, Boolean critical) {
@@ -54,7 +56,7 @@ public sealed class X509AuthorityKeyIdentifierExtension : X509Extension {
     /// then default <strong>KeyIdentifier</strong> component will be included.
     /// </param>
     /// <param name="critical"><strong>True</strong> if the extension is critical; otherwise, <strong>False</strong>.</param>
-    /// <exception cref="ArgumentNullException">
+    /// <exception cref="System.ArgumentNullException">
     /// <strong>issuer</strong> parameter is null.
     /// </exception>
     /// <remarks>

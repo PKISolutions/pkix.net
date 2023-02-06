@@ -50,7 +50,7 @@ namespace SysadminsLV.PKI.Utils.CLRExtensions {
         ///     <item><see cref="X509CRLDistributionPointsExtension"/></item>
         ///     <item><see cref="X509CertificatePoliciesExtension"/></item>
         ///     <item><see cref="X509CertificatePolicyMappingsExtension"/></item>
-        ///     <item><see cref="X509AuthorityKeyIdentifierExtension"/></item>
+        ///     <item><see cref="SysadminsLV.PKI.Cryptography.X509Certificates.X509AuthorityKeyIdentifierExtension"/></item>
         ///     <item><see cref="X509CertificatePolicyConstraintsExtension"/></item>
         ///     <item><see cref="X509EnhancedKeyUsageExtension"/></item>
         ///     <item><see cref="X509FreshestCRLExtension"/></item>
