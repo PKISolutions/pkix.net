@@ -257,7 +257,6 @@
     <Compile Include="Cryptography\X509Certificates\X509EnrollmentPropertyInfo.cs" />
     <Compile Include="Cryptography\X509Certificates\X509NameConstraintsExtension.cs" />
     <Compile Include="Cryptography\X509Certificates\X509NextCRLPublishExtension.cs" />
-    <Compile Include="Cryptography\X509Certificates\X509RevocationReasons.cs" />
     <Compile Include="Cryptography\SignedContentBlob.cs" />
     <Compile Include="Cryptography\CspProviderAlgorithmInfo.cs" />
     <Compile Include="Cryptography\CspProviderAlgorithmInfoCollection.cs" />

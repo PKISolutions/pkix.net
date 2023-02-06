@@ -10,10 +10,9 @@ namespace System.Security.Cryptography.X509Certificates {
     /// locations. 
     /// </summary>
     public sealed class X509CRLDistributionPointsExtension : X509Extension {
-        readonly Oid _oid = new(X509ExtensionOid.CRLDistributionPoints);
+        static readonly Oid _oid = new(X509ExtensionOid.CRLDistributionPoints);
 
-        internal X509CRLDistributionPointsExtension(Byte[] rawData, Boolean critical)
-            : base(X509ExtensionOid.CRLDistributionPoints, rawData, critical) {
+        internal X509CRLDistributionPointsExtension(Byte[] rawData, Boolean critical) : base(_oid, rawData, critical) {
             if (rawData == null) { throw new ArgumentNullException(nameof(rawData)); }
             m_decode(rawData);
         }
@@ -54,15 +53,15 @@ namespace System.Security.Cryptography.X509Certificates {
         void m_initialize(IEnumerable<String> urls) {
             Oid = _oid;
             Critical = false;
-            List<Byte> rawData = new List<Byte>();
+            var rawData = new List<Byte>();
             Uri[] uris = urls.Select(url => new Uri(url)).ToArray();
-            List<X509DistributionPoint> cdps = new List<X509DistributionPoint>(1);
+            var cdpList = new List<X509DistributionPoint>(1);
             var cdp = new X509DistributionPoint(uris);
-            cdps.Add(cdp);
-            rawData.AddRange(Asn1Utils.Encode(cdps[0].RawData, 160));
+            cdpList.Add(cdp);
+            rawData.AddRange(Asn1Utils.Encode(cdpList[0].RawData, 160));
             RawData = Asn1Utils.Encode(rawData.ToArray(), 48);
             RawData = Asn1Utils.Encode(RawData, 48);
-            CRLDistributionPoints = cdps.ToArray();
+            CRLDistributionPoints = cdpList.ToArray();
         }
         void m_decode (Byte[] rawData) {
             List<X509DistributionPoint> urls = new List<X509DistributionPoint>();
