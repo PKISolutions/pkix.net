@@ -1,6 +1,7 @@
 ﻿using System.Security.Permissions;
 using Microsoft.Win32.SafeHandles;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
+using SysadminsLV.PKI.Utils.CLRExtensions;
 using SysadminsLV.PKI.Win32;
 
 namespace System.Security.Cryptography.X509Certificates {
@@ -16,7 +17,7 @@ namespace System.Security.Cryptography.X509Certificates {
     /// </para>
     /// <para>
     /// A SafeCTLHandleContext for an X509CTL can be obtained by calling the <see
-    /// cref="X509CTL.GetSafeContext" /> extension method.
+    /// cref="X509CertificateTrustListExtensions.GetSafeContext" /> extension method.
     /// </para>
     /// </summary>
     /// <permission cref="SecurityPermission">

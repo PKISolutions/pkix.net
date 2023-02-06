@@ -316,7 +316,6 @@
     <Compile Include="Cryptography\X509Certificates\X509CRLDistributionPointsExtension.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CTLEntryCollection.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CTLEntry.cs" />
-    <Compile Include="Cryptography\X509Certificates\X509CTL.cs" />
     <Compile Include="Win32\CryptUI.cs" />
     <Compile Include="Enrollment\Autoenrollment.cs" />
     <Compile Include="Enrollment\CertRequestStatus.cs" />
@@ -327,7 +326,6 @@
     <Compile Include="ManagedAPI\CryptFormatting.cs" />
     <Compile Include="ManagedAPI\CryptEncoding.cs" />
     <Compile Include="ManagedAPI\ManagedCrypt32.cs" />
-    <Compile Include="ManagedAPI\ManagedCryptUI.cs" />
     <Compile Include="Win32\NCrypt.cs" />
     <Compile Include="Win32\Netapi32.cs" />
     <Compile Include="OCSP\CertificateStatus.cs" />
