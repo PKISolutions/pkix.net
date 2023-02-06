@@ -312,7 +312,6 @@
     <Compile Include="CertificateTemplates\KeyArchivalOptions.cs" />
     <Compile Include="CertificateTemplates\PrivateKeyFlags.cs" />
     <Compile Include="Cryptography\Oid2.cs" />
-    <Compile Include="Cryptography\Pkcs\ContentInfo2.cs" />
     <Compile Include="Cryptography\Pkcs\PkcsSignerInfo.cs" />
     <Compile Include="Cryptography\Pkcs\PkcsSubjectIdentifier.cs" />
     <Compile Include="Cryptography\Pkcs\X509IssuerSerial.cs" />
