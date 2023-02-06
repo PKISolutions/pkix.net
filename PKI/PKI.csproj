@@ -247,7 +247,6 @@
     <Compile Include="Cryptography\X509Certificates\X509CertificatePropertyType.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CrlBuilder.cs" />
     <Compile Include="Cryptography\X509Certificates\X509EnrollmentPropertyInfo.cs" />
-    <Compile Include="Cryptography\SignedContentBlob.cs" />
     <Compile Include="Cryptography\CspProviderAlgorithmInfo.cs" />
     <Compile Include="Cryptography\CspProviderAlgorithmInfoCollection.cs" />
     <Compile Include="Cryptography\CspProviderInfoCollection.cs" />

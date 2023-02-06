@@ -190,7 +190,7 @@ public sealed class Oid2 : IOid {
             initializeLocal(oid, group);
         }
     }
-    Boolean equals(Oid2 other) {
+    Boolean equals(IOid other) {
         return String.Equals(Value, other.Value)
                && OidGroup == other.OidGroup
                && String.Equals(FriendlyName, other.FriendlyName);
@@ -339,16 +339,15 @@ public sealed class Oid2 : IOid {
     /// Input OID doesn't belong to hash algorithm group or it cannot be translated to a respective
     /// </exception>
     /// <returns>OID in signature group.</returns>
-    public static Oid2 MapHashToSignatureOid(Oid2 hashAlgorithm) {
-        if (hashAlgorithm == null) { throw new ArgumentNullException(nameof(hashAlgorithm)); }
+    public static Oid MapHashToSignatureOid(IOid hashAlgorithm) {
+        if (hashAlgorithm == null) {
+            throw new ArgumentNullException(nameof(hashAlgorithm));
+        }
         if (hashAlgorithm.OidGroup != OidGroup.HashAlgorithm) {
             throw new ArgumentException("Input OID must belong to hashing group.");
         }
-        var newOid = new Oid2(hashAlgorithm.Value, OidGroup.SignatureAlgorithm, false);
-        if (String.IsNullOrEmpty(newOid.Value)) {
-            throw new ArgumentException("Cannot translate hashing algorithm to signature algorithm.");
-        }
-        return newOid;
+        
+        return Oid.FromOidValue(hashAlgorithm.Value, OidGroup.SignatureAlgorithm);
     }
 
     /// <summary>
