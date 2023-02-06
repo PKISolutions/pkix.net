@@ -310,7 +310,6 @@
     <Compile Include="Cryptography\Oid2.cs" />
     <Compile Include="Cryptography\X509Certificates\X509IssuerAlternativeNamesExtension.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CAVersionExtension.cs" />
-    <Compile Include="Cryptography\X509Certificates\X509CRLDistributionPointsExtension.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CTLEntryCollection.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CTLEntry.cs" />
     <Compile Include="Win32\CryptUI.cs" />
