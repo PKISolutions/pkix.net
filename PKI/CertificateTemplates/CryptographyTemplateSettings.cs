@@ -66,7 +66,7 @@ namespace PKI.CertificateTemplates {
         /// <summary>
         /// Gets key usages for CNG keys.
         /// </summary>
-        public X509CNGKeyUsages CNGKeyUsage { get; private set; }
+        public CngKeyUsages CNGKeyUsage { get; private set; }
         /// <summary>
         /// Gets the permissions when a private key is created
         /// </summary>
@@ -90,7 +90,7 @@ namespace PKI.CertificateTemplates {
                         case DsUtils.PropPkiKeySddl: PrivateKeySecuritySDDL = strings[index + 2]; break;
                         case DsUtils.PropPkiAsymAlgo: KeyAlgorithm = new Oid(strings[index + 2]); break;
                         case DsUtils.PropPkiHashAlgo: HashAlgorithm = new Oid(strings[index + 2]); break;
-                        case DsUtils.PropPkiKeyUsageCng: CNGKeyUsage = (X509CNGKeyUsages)Convert.ToInt32(strings[index + 2]); break;
+                        case DsUtils.PropPkiKeyUsageCng: CNGKeyUsage = (CngKeyUsages)Convert.ToInt32(strings[index + 2]); break;
                     }
                 }
             }
@@ -127,16 +127,16 @@ namespace PKI.CertificateTemplates {
                     (KeyUsage & X509KeyUsageFlags.DecipherOnly) > 0 &&
                     (KeyUsage & X509KeyUsageFlags.EncipherOnly) > 0 &&
                     (KeyUsage & X509KeyUsageFlags.KeyEncipherment) > 0
-                ) { CNGKeyUsage |= X509CNGKeyUsages.DecryptOnly; }
+                ) { CNGKeyUsage |= CngKeyUsages.Decryption; }
 
                 if (
                     (KeyUsage & X509KeyUsageFlags.CrlSign) > 0 &&
                     (KeyUsage & X509KeyUsageFlags.DigitalSignature) > 0 &&
                     (KeyUsage & X509KeyUsageFlags.KeyCertSign) > 0
-                ) { CNGKeyUsage |= X509CNGKeyUsages.SignatureOnly; }
+                ) { CNGKeyUsage |= CngKeyUsages.Signing; }
 
                 if ((KeyUsage & X509KeyUsageFlags.KeyAgreement) > 0) {
-                    CNGKeyUsage |= X509CNGKeyUsages.KeyAgreement;
+                    CNGKeyUsage |= CngKeyUsages.KeyAgreement;
                 }
 
                 if (
@@ -148,7 +148,7 @@ namespace PKI.CertificateTemplates {
                     (KeyUsage & X509KeyUsageFlags.DigitalSignature) > 0 ||
                     (KeyUsage & X509KeyUsageFlags.KeyCertSign) > 0) &&
                     (KeyUsage & X509KeyUsageFlags.KeyAgreement) > 0
-                ) { CNGKeyUsage = X509CNGKeyUsages.AllUsages; }
+                ) { CNGKeyUsage = CngKeyUsages.AllUsages; }
             }
         }
         void initializeFromCom(IX509CertificateTemplate template) {
@@ -158,7 +158,7 @@ namespace PKI.CertificateTemplates {
             MinimalKeyLength = Convert.ToInt32((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropMinimumKeySize]);
             KeySpec = (X509KeySpecFlags)Convert.ToInt32((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropKeySpec]);
             try {
-                CNGKeyUsage = (X509CNGKeyUsages)Convert.ToInt32((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropKeyUsage]);
+                CNGKeyUsage = (CngKeyUsages)Convert.ToInt32((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropKeyUsage]);
             } catch { }
             try {
                 ProviderList = (String[])template.Property[EnrollmentTemplateProperty.TemplatePropCryptoProviders];
