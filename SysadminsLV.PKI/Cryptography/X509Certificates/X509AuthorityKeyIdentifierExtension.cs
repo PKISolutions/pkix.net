@@ -20,7 +20,7 @@ public sealed class X509AuthorityKeyIdentifierExtension : X509Extension {
     /// </summary>
     /// <param name="aki">An ASN.1-encoded Authority Key Identifier extension value.</param>
     /// <param name="critical"><strong>True</strong> if the extension is critical; otherwise, <strong>False</strong>.</param>
-    /// <exception cref="System.ArgumentNullException">
+    /// <exception cref="ArgumentNullException">
     /// <strong>aki</strong> parameter is null;
     /// </exception>
     public X509AuthorityKeyIdentifierExtension(AsnEncodedData aki, Boolean critical)
@@ -36,7 +36,7 @@ public sealed class X509AuthorityKeyIdentifierExtension : X509Extension {
     /// </summary>
     /// <param name="keyIdentifier">Must be a hex string that represents hash value.</param>
     /// <param name="critical"><strong>True</strong> if the extension is critical; otherwise, <strong>False</strong>.</param>
-    /// <exception cref="System.ArgumentNullException">
+    /// <exception cref="ArgumentNullException">
     /// <strong>keyIdentifier</strong> value is null or empty.
     /// </exception>
     public X509AuthorityKeyIdentifierExtension(String keyIdentifier, Boolean critical) {
@@ -56,7 +56,7 @@ public sealed class X509AuthorityKeyIdentifierExtension : X509Extension {
     /// then default <strong>KeyIdentifier</strong> component will be included.
     /// </param>
     /// <param name="critical"><strong>True</strong> if the extension is critical; otherwise, <strong>False</strong>.</param>
-    /// <exception cref="System.ArgumentNullException">
+    /// <exception cref="ArgumentNullException">
     /// <strong>issuer</strong> parameter is null.
     /// </exception>
     /// <remarks>

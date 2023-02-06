@@ -9,6 +9,7 @@ namespace System.Security.Cryptography.X509Certificates {
     /// </summary>
     public class X509CertificatePolicy {
         readonly List<Byte> _rawData = new();
+        readonly X509PolicyQualifierCollection _qualifiers = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="X509CertificatePolicy"/> class from a string that represents a
@@ -17,7 +18,9 @@ namespace System.Security.Cryptography.X509Certificates {
         /// <param name="policyOid">A string that represents certificate policy OID value.</param>
         /// <exception cref="ArgumentNullException"><strong>policyOid</strong> parameter is null or empty string.</exception>
         public X509CertificatePolicy(String policyOid) {
-            if (String.IsNullOrEmpty(policyOid)) { throw new ArgumentNullException(nameof(policyOid)); }
+            if (String.IsNullOrEmpty(policyOid)) {
+                throw new ArgumentNullException(nameof(policyOid));
+            }
             m_initialize(policyOid);
         }
         /// <summary>
@@ -30,8 +33,12 @@ namespace System.Security.Cryptography.X509Certificates {
         /// <strong>policyOid</strong> and/or <strong>qualifiers</strong> parameter is null or empty string.
         /// </exception>
         public X509CertificatePolicy(String policyOid, X509PolicyQualifierCollection qualifiers) {
-            if (String.IsNullOrEmpty(policyOid)) { throw new ArgumentNullException(nameof(policyOid)); }
-            if (qualifiers == null) { throw new ArgumentNullException(nameof(qualifiers)); }
+            if (String.IsNullOrEmpty(policyOid)) {
+                throw new ArgumentNullException(nameof(policyOid));
+            }
+            if (qualifiers == null) {
+                throw new ArgumentNullException(nameof(qualifiers));
+            }
             m_initialize(policyOid, qualifiers);
         }
         /// <summary>
@@ -42,7 +49,9 @@ namespace System.Security.Cryptography.X509Certificates {
         /// <exception cref="InvalidDataException">The data in the <strong>rawData</strong> parameter is not valid
         /// certificate policy.</exception>
         public X509CertificatePolicy(Byte[] rawData) {
-            if (rawData == null) { throw new ArgumentNullException(nameof(rawData)); }
+            if (rawData == null) {
+                throw new ArgumentNullException(nameof(rawData));
+            }
             m_decode(rawData);
         }
 
@@ -53,35 +62,43 @@ namespace System.Security.Cryptography.X509Certificates {
         /// <summary>
         /// Gets an array of optional certificate policy qualifiers.
         /// </summary>
-        public X509PolicyQualifierCollection PolicyQualifiers { get; private set; }
+        public X509PolicyQualifierCollection PolicyQualifiers => new(_qualifiers);
 
         void m_initialize(String policyOid, X509PolicyQualifierCollection qualifiers = null) {
             _rawData.AddRange(Asn1Utils.EncodeObjectIdentifier(new Oid(policyOid)));
             PolicyOid = new Oid(policyOid);
-            PolicyQualifiers = qualifiers ?? new X509PolicyQualifierCollection();
+            if (qualifiers != null) {
+                _qualifiers.AddRange(qualifiers);
+            }
         }
         void m_decode(Byte[] raw) {
-            PolicyQualifiers = new X509PolicyQualifierCollection();
-            Asn1Reader asn = new Asn1Reader(raw);
-            if (asn.Tag != 48) { throw new Asn1InvalidTagException(asn.Offset); }
+            var asn = new Asn1Reader(raw);
+            if (asn.Tag != 48) {
+                throw new Asn1InvalidTagException(asn.Offset);
+            }
             asn.MoveNext();
             PolicyOid = Asn1Utils.DecodeObjectIdentifier(asn.GetTagRawData());
-            if (asn.MoveNext()) { PolicyQualifiers.Decode(asn.GetTagRawData()); }
+            if (asn.MoveNext()) { _qualifiers.Decode(asn.GetTagRawData()); }
         }
         /// <summary>
         /// Adds policy qualifier to a <see cref="PolicyQualifiers"/> collection.
         /// </summary>
         /// <param name="policy">A policy qualifier to add.</param>
         public void Add(X509PolicyQualifier policy) {
-            PolicyQualifiers.Add(policy);
+            _qualifiers.Add(policy);
         }
         /// <summary>
-        /// Removes policy qualifier from a <see cref="PolicyQualifiers"/> collection by using a item index in the collection.
+        /// Removes policy qualifier from a <see cref="PolicyQualifiers"/> collection by using an item index in the collection.
         /// </summary>
         /// <param name="index">A zero-based item index in the collection.</param>
         /// <returns><strong>True</strong> if the policy qualifier is removed, otherwise <strong>False</strong>.</returns>
         public Boolean Remove(Int32 index) {
-            try { PolicyQualifiers.RemoveAt(index); } catch { return false; }
+            try {
+                _qualifiers.RemoveAt(index);
+            } catch {
+                return false;
+            }
+
             return true;
         }
         /// <summary>
@@ -93,9 +110,10 @@ namespace System.Security.Cryptography.X509Certificates {
         /// <returns>ASN.1-encoded byte array.</returns>
         public Byte[] Encode() {
             if (PolicyOid == null) { throw new UninitializedObjectException(); }
-            if (PolicyQualifiers.Count > 0) {
-                _rawData.AddRange(PolicyQualifiers.Encode());
+            if (_qualifiers.Count > 0) {
+                _rawData.AddRange(_qualifiers.Encode());
             }
+
             return Asn1Utils.Encode(_rawData.ToArray(), 48);
         }
     }
