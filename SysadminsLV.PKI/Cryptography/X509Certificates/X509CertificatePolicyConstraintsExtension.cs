@@ -1,11 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.PKI.CLRExtensions;
-using SysadminsLV.PKI.Cryptography.X509Certificates;
 
-namespace System.Security.Cryptography.X509Certificates {
+namespace SysadminsLV.PKI.Cryptography.X509Certificates {
     /// <summary>
     /// Represents the X.509 Certificate Policy Constraints certificate extension. The policy constraints
     /// extension can be used in certificates issued to CAs.The policy constraints extension constrains
@@ -13,16 +15,17 @@ namespace System.Security.Cryptography.X509Certificates {
     /// in a path contain an acceptable policy identifier.
     /// </summary>
     public sealed class X509CertificatePolicyConstraintsExtension : X509Extension {
-        readonly Oid _oid = new(X509ExtensionOid.CertificatePolicyConstraints);
+        static readonly Oid _oid = new(X509ExtensionOid.CertificatePolicyConstraints);
         /// <summary>
         /// Initializes a new instance of the <strong>X509CertificatePolicyConstraintsExtension</strong> class from
         /// an <see cref="AsnEncodedData"/> object.
         /// </summary>
         /// <param name="constraints"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        public X509CertificatePolicyConstraintsExtension(AsnEncodedData constraints)
-            : base(X509ExtensionOid.CertificatePolicyConstraints, constraints.RawData, true){
-            if (constraints == null) { throw new ArgumentNullException(nameof(constraints)); }
+        public X509CertificatePolicyConstraintsExtension(AsnEncodedData constraints) : base(_oid, constraints.RawData, true) {
+            if (constraints == null) {
+                throw new ArgumentNullException(nameof(constraints));
+            }
             m_decode(constraints.RawData);
         }
 
@@ -67,24 +70,24 @@ namespace System.Security.Cryptography.X509Certificates {
         void m_initialize(Int32? explicitPolicy, Int32? inhibitPolicy) {
             Oid = _oid;
             Critical = true;
-            List<Byte> rawData = new List<Byte>();
+            var rawData = new List<Byte>();
             if (explicitPolicy != null) {
-                BigInteger integer = new BigInteger((Int32)explicitPolicy);
+                var integer = new BigInteger((Int32)explicitPolicy);
                 rawData.AddRange(Asn1Utils.Encode(integer.ToLittleEndianByteArray(), 0x80));
                 RequireExplicitPolicy = explicitPolicy;
             }
             if (inhibitPolicy != null) {
-                BigInteger integer = new BigInteger((Int32)inhibitPolicy);
+                var integer = new BigInteger((Int32)inhibitPolicy);
                 rawData.AddRange(Asn1Utils.Encode(integer.ToLittleEndianByteArray(), 0x81));
                 InhibitPolicyMapping = inhibitPolicy;
             }
             RawData = Asn1Utils.Encode(rawData.ToArray(), 48);
         }
         void m_decode(Byte[] rawData) {
-            Asn1Reader asn = new Asn1Reader(rawData);
+            var asn = new Asn1Reader(rawData);
             asn.MoveNext();
             do {
-                var integer = Asn1Utils.Encode(asn.GetPayload(), (Byte)Asn1Type.INTEGER);
+                Byte[] integer = Asn1Utils.Encode(asn.GetPayload(), (Byte)Asn1Type.INTEGER);
                 switch (asn.Tag) {
                     case 0x80: RequireExplicitPolicy = (Int32)Asn1Utils.DecodeInteger(integer); break;
                     case 0x81: InhibitPolicyMapping = (Int32)Asn1Utils.DecodeInteger(integer); break;
