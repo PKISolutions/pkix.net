@@ -116,7 +116,6 @@
     <Compile Include="Cryptography\X509Certificates\X509CertificateTrustList.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CRL2Collection.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CertificateTrustListBuilder.cs" />
-    <Compile Include="Cryptography\X509Certificates\X509NtdsSecurityExtension.cs" />
     <Compile Include="Dcom\AdcsBinaryFormat.cs" />
     <Compile Include="Dcom\AdcsCAPropertyName.cs" />
     <Compile Include="Dcom\AdcsCrlReason.cs" />
@@ -191,7 +190,6 @@
     <Compile Include="Cryptography\IKeyInfo.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CertificateBuilder.cs" />
     <Compile Include="Cryptography\X509PrivateKeyBuilder.cs" />
-    <Compile Include="Cryptography\X509Certificates\X509PublishedCrlLocationsExtension.cs" />
     <Compile Include="Management\ActiveDirectory\DsCDPContainer.cs" />
     <Compile Include="Management\ActiveDirectory\DsCertEnrollContainer.cs" />
     <Compile Include="Management\ActiveDirectory\DsCertTemplateContainer.cs" />
