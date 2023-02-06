@@ -87,7 +87,7 @@ public class X509CertificateTrustList {
     /// </summary>
     public DateTime? NextUpdate { get; private set; }
     /// <summary>
-    /// Gets the algorithm type of the <see cref="X509CTLEntry.Thumbprint">Thumbprint</see> in <see cref="X509CertificateTrustListEntry"/> members of the
+    /// Gets the algorithm type of the <see cref="X509CertificateTrustListEntry.Thumbprint">Thumbprint</see> in <see cref="X509CertificateTrustListEntry"/> members of the
     /// <see cref="Entries"/> member array.
     /// </summary>
     public Oid SubjectAlgorithm { get; private set; }
