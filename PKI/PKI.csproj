@@ -336,7 +336,6 @@
     <Compile Include="Cryptography\X509Certificates\X509PolicyQualifier.cs" />
     <Compile Include="Cryptography\X509Certificates\X509PolicyQualifierCollection.cs" />
     <Compile Include="Cryptography\X509Certificates\X509PolicyQualifierType.cs" />
-    <Compile Include="Cryptography\X509Certificates\X509SubjectAlternativeNamesExtension.cs" />
     <Compile Include="Win32\CryptUI.cs" />
     <Compile Include="Enrollment\Autoenrollment.cs" />
     <Compile Include="Enrollment\CertRequestStatus.cs" />
