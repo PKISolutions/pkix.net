@@ -129,7 +129,7 @@ public class X509CertificateContextProperty {
                 break;
             case X509CertificatePropertyType.RootProgramCertificatePolicies:
                 UnderlyingType = typeof(X509CertificatePoliciesExtension);
-                PropertyValue = new X509CertificatePoliciesExtension(bytes, false);
+                PropertyValue = new X509CertificatePoliciesExtension(new AsnEncodedData(bytes), false);
                 break;
             case X509CertificatePropertyType.OcspResponse:
                 UnderlyingType = typeof(OCSPResponse);

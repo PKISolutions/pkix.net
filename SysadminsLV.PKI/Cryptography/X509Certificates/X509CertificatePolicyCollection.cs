@@ -9,6 +9,11 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 /// Represents a collection of <see cref="X509CertificatePolicy"/> objects.
 /// </summary>
 public class X509CertificatePolicyCollection : BasicCollection<X509CertificatePolicy> {
+    /// <inheritdoc />
+    public X509CertificatePolicyCollection() { }
+    /// <inheritdoc />
+    public X509CertificatePolicyCollection(IEnumerable<X509CertificatePolicy> collection) : base(collection) { }
+
     /// <summary>
     /// Adds an <see cref="X509CertificatePolicy"/> object to the <see cref="X509CertificatePolicyCollection"/> object.
     /// </summary>
