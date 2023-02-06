@@ -327,29 +327,7 @@ public sealed class Oid2 : IOid {
     public Oid ToOid() {
         return new Oid(Value, FriendlyName);
     }
-    /// <summary>
-    /// Converts hashing algorithm OID to appropriate OID from signature group. For example, translates
-    /// <strong>sha1</strong> hashing algorithm to <strong>sha1NoSign</strong> with the same OID value.
-    /// </summary>
-    /// <param name="hashAlgorithm">Hashing algorithm</param>
-    /// <exception cref="ArgumentNullException">
-    /// <strong>hashAlgorithm</strong> parameter is null.
-    /// </exception>
-    /// <exception cref="ArgumentException">
-    /// Input OID doesn't belong to hash algorithm group or it cannot be translated to a respective
-    /// </exception>
-    /// <returns>OID in signature group.</returns>
-    public static Oid MapHashToSignatureOid(IOid hashAlgorithm) {
-        if (hashAlgorithm == null) {
-            throw new ArgumentNullException(nameof(hashAlgorithm));
-        }
-        if (hashAlgorithm.OidGroup != OidGroup.HashAlgorithm) {
-            throw new ArgumentException("Input OID must belong to hashing group.");
-        }
-        
-        return Oid.FromOidValue(hashAlgorithm.Value, OidGroup.SignatureAlgorithm);
-    }
-
+    
     /// <summary>
     /// Gets all registrations for the specified OID value.
     /// </summary>
