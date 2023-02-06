@@ -116,9 +116,7 @@
     <Compile Include="Cryptography\X509Certificates\KeyProviderInfo.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CertificateTrustList.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CRL2Collection.cs" />
-    <Compile Include="Cryptography\X509Certificates\X509CertificateTrustListEntryCollection.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CertificateTrustListBuilder.cs" />
-    <Compile Include="Cryptography\X509Certificates\X509CertificateTrustListEntry.cs" />
     <Compile Include="Cryptography\X509Certificates\X509IssuingDistributionPointsExtension.cs" />
     <Compile Include="Cryptography\X509Certificates\X509NtdsSecurityExtension.cs" />
     <Compile Include="Cryptography\X509Certificates\X509RevocationReasonFlag.cs" />
@@ -238,6 +236,7 @@
     <Compile Include="Security\AccessControl\OcspResponderSecurityDescriptor.cs" />
     <Compile Include="Structs\OleAut.cs" />
     <Compile Include="Utils\CLRExtensions\FileInfoExtensions.cs" />
+    <Compile Include="Utils\CLRExtensions\X509CertificateTrustListExtensions.cs" />
     <Compile Include="Win32\AdvAPI.cs" />
     <Compile Include="Management\CertificateServices\Database\AdcsDbPropertyCollection.cs" />
     <Compile Include="CertificateServices\UrlProtocolSchemes.cs" />

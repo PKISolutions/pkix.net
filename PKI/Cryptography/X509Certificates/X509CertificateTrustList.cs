@@ -3,21 +3,19 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Security.Permissions;
 using System.Text;
 using PKI.ManagedAPI;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
 using SysadminsLV.PKI.Cryptography.Pkcs;
 using SysadminsLV.PKI.Utils.CLRExtensions;
-using SysadminsLV.PKI.Win32;
 
 namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
 /// <summary>
 /// Represents a Microsoft Certificate Trust List (CTL) object.
 /// </summary>
-public class X509CertificateTrustList : IDisposable {
+public class X509CertificateTrustList {
     readonly Oid ctlOid = new("1.3.6.1.4.1.311.10.1");
     readonly List<Oid> _usages = new();
     readonly X509CertificateTrustListEntryCollection _entries = new();
@@ -25,7 +23,6 @@ public class X509CertificateTrustList : IDisposable {
     readonly List<Byte> _rawData = new();
 
     DefaultSignedPkcs7 cms;
-    SafeCTLHandleContext ctx;
     BigInteger? sequenceNumber;
 
     /// <summary>
@@ -254,8 +251,8 @@ public class X509CertificateTrustList : IDisposable {
     /// <remarks>This method adds an RFC3161 Counter Signature.</remarks>
     public void AddTimestamp(String tsaUrl, Oid hashAlgorithm, Int32 signerInfoIndex = 0) {
         var tspReq = new TspRfc3161Request(hashAlgorithm, cms.SignerInfos[signerInfoIndex].EncryptedHash) {
-                         TsaUrl = new Uri(tsaUrl)
-                     };
+            TsaUrl = new Uri(tsaUrl)
+        };
         TspResponse rsp = tspReq.SendRequest();
 
         var builder = new SignedCmsBuilder(cms);
@@ -272,52 +269,4 @@ public class X509CertificateTrustList : IDisposable {
     public BigInteger? GetSequenceNumber() {
         return sequenceNumber;
     }
-    /// <summary>
-    ///     Gets a <see cref="SafeCTLHandleContext" /> for the X509 certificate revocation list. The caller of this
-    ///     method owns the returned safe handle, and should dispose of it when they no longer need it. 
-    ///     This handle can be used independently of the lifetime of the original X509 certificate revocation list.
-    /// </summary>
-    /// <returns>Safe handle to a current CTL instance.</returns>
-    /// <permission cref="SecurityPermission">
-    ///     The immediate caller must have SecurityPermission/UnmanagedCode to use this method
-    /// </permission>
-    public SafeCTLHandleContext GetSafeContext() {
-        if (ctx == null || ctx.IsInvalid || ctx.IsClosed) {
-            ctx = Crypt32.CertCreateCTLContext(65537, RawData, (UInt32)RawData.Length);
-            GC.KeepAlive(this);
-            return ctx;
-        }
-        return ctx;
-    }
-    /// <summary>
-    /// Displays a X.509 Certificate Trust List UI dialog.
-    /// </summary>
-    public void ShowUI() {
-        Boolean mustRelease = false;
-        if (ctx == null || ctx.IsInvalid || ctx.IsClosed) {
-            mustRelease = true;
-            GetSafeContext();
-        }
-        CryptUI.CryptUIDlgViewContext(3, ctx.DangerousGetHandle(), IntPtr.Zero, "Certificate Trust List", 0, 0);
-        if (mustRelease) {
-            Dispose();
-        }
-    }
-
-    #region IDisposable
-    void dispose(Boolean disposing) {
-        if (disposing) {
-            ctx?.Dispose();
-        }
-    }
-    /// <inheritdoc cref="IDisposable.Dispose"/>
-    public void Dispose() {
-        dispose(true);
-        GC.SuppressFinalize(this);
-    }
-    /// <inheritdoc />
-    ~X509CertificateTrustList() {
-        dispose(false);
-    }
-    #endregion
 }
