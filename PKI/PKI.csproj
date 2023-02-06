@@ -116,7 +116,6 @@
     <Compile Include="Cryptography\X509Certificates\X509CertificateTrustList.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CRL2Collection.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CertificateTrustListBuilder.cs" />
-    <Compile Include="Cryptography\X509Certificates\X509IssuingDistributionPointsExtension.cs" />
     <Compile Include="Cryptography\X509Certificates\X509NtdsSecurityExtension.cs" />
     <Compile Include="Dcom\AdcsBinaryFormat.cs" />
     <Compile Include="Dcom\AdcsCAPropertyName.cs" />
