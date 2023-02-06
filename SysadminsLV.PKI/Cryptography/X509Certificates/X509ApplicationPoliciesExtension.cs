@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using SysadminsLV.Asn1Parser;
-using SysadminsLV.PKI.Cryptography.X509Certificates;
 
-namespace System.Security.Cryptography.X509Certificates;
+namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
 /// <summary>
 /// Represents a Microsoft's proprietary <strong>Application Policies</strong> extension which is another
@@ -11,7 +13,7 @@ namespace System.Security.Cryptography.X509Certificates;
 /// </summary>
 public sealed class X509ApplicationPoliciesExtension : X509Extension {
     readonly Oid _oid = new(X509ExtensionOid.ApplicationPolicies);
-    readonly List<Oid> _oids = new();
+    readonly List<Oid> _policies = new();
 
     internal X509ApplicationPoliciesExtension(Byte[] rawData, Boolean critical)
         : base(X509ExtensionOid.ApplicationPolicies, rawData, critical) {
@@ -39,7 +41,10 @@ public sealed class X509ApplicationPoliciesExtension : X509Extension {
     /// <param name="critical"><strong>True</strong> if the extension is critical; otherwise, <strong>False</strong>.</param>
     /// <exception cref="ArgumentNullException"><strong>applicationPolicies</strong> parameter is null.</exception>
     public X509ApplicationPoliciesExtension(OidCollection applicationPolicies, Boolean critical) {
-        if (applicationPolicies == null || applicationPolicies.Count == 0) { throw new ArgumentNullException(nameof(applicationPolicies)); }
+        if (applicationPolicies == null || applicationPolicies.Count == 0) {
+            throw new ArgumentNullException(nameof(applicationPolicies));
+        }
+        
         m_initialize(applicationPolicies, critical);
     }
 
@@ -48,30 +53,34 @@ public sealed class X509ApplicationPoliciesExtension : X509Extension {
     /// </summary>
     public OidCollection ApplicationPolicies {
         get {
-            OidCollection aoids = new OidCollection();
-            foreach (Oid OID in _oids) {
-                aoids.Add(OID);
+            var retValue = new OidCollection();
+            foreach (Oid OID in _policies) {
+                retValue.Add(OID);
             }
-            return aoids;
+            return retValue;
         }
     }
 
     void m_initialize(OidCollection applicationPolicies, Boolean critical) {
         Oid = _oid;
         Critical = critical;
-        List<Byte> rawData = new List<Byte>();
-        foreach (Oid aoid in applicationPolicies.Cast<Oid>().Where(aoid => !String.IsNullOrEmpty(aoid.Value))) {
-            _oids.Add(aoid);
-            rawData.AddRange(Asn1Utils.Encode(Asn1Utils.EncodeObjectIdentifier(aoid), 48));
+        var rawData = new List<Byte>();
+        foreach (Oid policy in applicationPolicies
+                     .Cast<Oid>().Where(x => !String.IsNullOrEmpty(x.Value))) {
+            _policies.Add(policy);
+            rawData.AddRange(Asn1Utils.Encode(Asn1Utils.EncodeObjectIdentifier(policy), 48));
         }
+
         RawData = Asn1Utils.Encode(rawData.ToArray(), 48);
     }
     void m_decode(Byte[] rawData) {
-        Asn1Reader asn = new Asn1Reader(rawData);
-        if (asn.Tag != 48) { throw new Asn1InvalidTagException(asn.Offset); }
+        var asn = new Asn1Reader(rawData);
+        if (asn.Tag != 48) {
+            throw new Asn1InvalidTagException(asn.Offset);
+        }
         asn.MoveNext();
         do {
-            _oids.Add(Asn1Utils.DecodeObjectIdentifier(asn.GetPayload()));
+            _policies.Add(Asn1Utils.DecodeObjectIdentifier(asn.GetPayload()));
         } while (asn.MoveNextSibling());
     }
 }

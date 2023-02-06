@@ -11,6 +11,7 @@ using PKI.Structs;
 using PKI.Utils;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.PKI.Cryptography;
+using SysadminsLV.PKI.Cryptography.X509Certificates;
 using SysadminsLV.PKI.Win32;
 
 namespace SysadminsLV.PKI.Utils.CLRExtensions {
