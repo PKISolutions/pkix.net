@@ -4,8 +4,8 @@ using System.Security.Cryptography.X509Certificates;
 namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
 /// <summary>
-/// Represents certificate revocation flags. This enumeration is used by <see cref="X509DistributionPoint"/> and
-/// <see cref="X509IssuingDistributionPointsExtension"/> types.
+/// Represents certificate revocation flags. This enumeration is used by <see cref="System.Security.Cryptography.X509Certificates.X509DistributionPoint"/> and
+/// <see cref="SysadminsLV.PKI.Cryptography.X509Certificates.X509IssuingDistributionPointsExtension"/> types.
 /// <para>This enumeration has a <see cref="FlagsAttribute"/> attribute that allows a bitwise combination of its member values.</para>
 /// </summary>
 [Flags]
@@ -30,6 +30,6 @@ public enum X509RevocationReasonFlag {
     KeyCompromise       = 0x40,
     /// <inheritdoc cref="X509RevocationReasons.Unspecified"/>
     Unspecified         = 0x80,
-    /// <inheritdoc cref="X509RevocationReasons.Unspecified"/>
+    /// <inheritdoc cref="X509RevocationReasons.AACompromise"/>
     AACompromise        = 0x8000
 }
