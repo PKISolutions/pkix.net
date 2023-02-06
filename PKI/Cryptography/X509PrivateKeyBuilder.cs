@@ -2,8 +2,6 @@
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Interop.CERTENROLLLib;
-using PKI.Cryptography;
-using PKI.Structs;
 using PKI.Utils;
 using SysadminsLV.Asn1Parser.Universal;
 

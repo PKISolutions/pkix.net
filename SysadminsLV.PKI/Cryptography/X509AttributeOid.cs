@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PKI.Cryptography {
+namespace SysadminsLV.PKI.Cryptography {
     public class X509AttributeOid {
         public const String ContentType             = "1.2.840.113549.1.9.3";
         public const String MessageDigest           = "1.2.840.113549.1.9.4";

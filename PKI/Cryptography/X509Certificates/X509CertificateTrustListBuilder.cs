@@ -5,8 +5,6 @@ using System.Numerics;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using PKI.Cryptography;
-using PKI.Structs;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.PKI.Cryptography.Pkcs;
 using SysadminsLV.PKI.Tools.MessageOperations;
