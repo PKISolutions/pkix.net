@@ -9,13 +9,13 @@ public sealed class X509IssuingDistributionPointsExtension : X509Extension {
 
     /// <summary>
     /// Initializes a new instance of the <see cref="X509IssuingDistributionPointsExtension"/> class using an
-    /// <see cref="System.Security.Cryptography.AsnEncodedData"/> object and a value that identifies whether the extension is critical.
+    /// <see cref="AsnEncodedData"/> object and a value that identifies whether the extension is critical.
     /// </summary>
     /// <param name="issuingDistributionPoints">The encoded data to use to create the extension.</param>
     /// <param name="critical">
     ///		<strong>True</strong> if the extension is critical; otherwise, <strong>False</strong>.
     /// </param>
-    /// <exception cref="System.ArgumentException">
+    /// <exception cref="ArgumentException">
     ///		The data in the <strong>distributionPoints</strong> parameter is not valid extension value.
     /// </exception>
     public X509IssuingDistributionPointsExtension(AsnEncodedData issuingDistributionPoints, Boolean critical)
@@ -27,11 +27,11 @@ public sealed class X509IssuingDistributionPointsExtension : X509Extension {
     /// Initializes a new instance of the <see cref="X509IssuingDistributionPointsExtension"/> class using an
     /// distribution point and partitioned CRL configuration.
     /// </summary>
-    /// <param name="distributionPoint">Specifies an instance of <see cref="SysadminsLV.PKI.Cryptography.X509Certificates.X509DistributionPoint"/> that contains CRL location.</param>
+    /// <param name="distributionPoint">Specifies an instance of <see cref="X509DistributionPoint"/> that contains CRL location.</param>
     /// <param name="indirect">Specifies whether the CRL is indirect CRL.</param>
     /// <param name="reasons">Specifies whether the CRL is partitioned by a subset of revocation reasons.</param>
     /// <param name="scope">Specifies the scope for CRL.</param>
-    /// <exception cref="System.ArgumentNullException"><strong>distributionPoint</strong> parameter is NULL.</exception>
+    /// <exception cref="ArgumentNullException"><strong>distributionPoint</strong> parameter is NULL.</exception>
     public X509IssuingDistributionPointsExtension(
         X509DistributionPoint distributionPoint,
         Boolean indirect = false,

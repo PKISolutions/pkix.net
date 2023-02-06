@@ -39,7 +39,7 @@ public sealed class X509CRLReferenceExtension : X509Extension {
         this (value.RawData, critical) { }
     /// <summary>
     /// Initializes a new instance of the <strong>X509CRLReferenceExtension</strong> class using a
-    /// CRL reference URL, CRL reference number and <see cref="System.Security.Cryptography.X509Certificates.X509CRL2.ThisUpdate">ThisUpdate</see>
+    /// CRL reference URL, CRL reference number and <see cref="X509Certificates.X509CRL2.ThisUpdate">ThisUpdate</see>
     /// value of the referenced CRL that identifies extension settings.
     /// </summary>
     /// <param name="url">A CRL reference URL.</param>

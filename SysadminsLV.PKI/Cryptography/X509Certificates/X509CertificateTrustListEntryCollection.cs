@@ -7,7 +7,7 @@ using SysadminsLV.Asn1Parser;
 namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
 /// <summary>
-/// Represents a collection of <see cref="SysadminsLV.PKI.Cryptography.X509Certificates.X509CertificateTrustListEntry"/> objects.
+/// Represents a collection of <see cref="X509CertificateTrustListEntry"/> objects.
 /// </summary>
 public class X509CertificateTrustListEntryCollection : BasicCollection<X509CertificateTrustListEntry> {
     /// <inheritdoc />
@@ -54,7 +54,7 @@ public class X509CertificateTrustListEntryCollection : BasicCollection<X509Certi
     /// Decodes ASN.1-encoded certificate trust list collection.
     /// </summary>
     /// <param name="rawData">ASN.1-encoded byte array that represents certificate trust list collection.</param>
-    /// <exception cref="System.ArgumentNullException">
+    /// <exception cref="ArgumentNullException">
     /// <strong>rawData</strong> parameter is null.
     /// </exception>
     public void Decode(Byte[] rawData) {

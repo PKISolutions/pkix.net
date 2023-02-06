@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace SysadminsLV.PKI.Cryptography.X509Certificates; 
+namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
 /// <summary>
 /// An X509KeySpecFlags enumeration value that specifies the supported key operations.
-/// <para>This enumeration has a <see cref="System.FlagsAttribute"/> attribute that allows a bitwise combination of its member values.</para>
+/// <para>This enumeration has a <see cref="FlagsAttribute"/> attribute that allows a bitwise combination of its member values.</para>
 /// </summary>
 [Flags]
 public enum X509KeySpecFlags {

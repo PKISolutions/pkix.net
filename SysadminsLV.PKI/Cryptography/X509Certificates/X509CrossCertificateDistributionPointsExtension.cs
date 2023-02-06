@@ -27,16 +27,16 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 public sealed class X509CrossCertificateDistributionPointsExtension : X509Extension {
     static readonly Oid _oid = new(X509ExtensionOid.CrossCDP);
     readonly X509AlternativeNameCollection _distPoints = new();
-        
+
     /// <summary>
     /// Initializes a new instance of the <see cref="X509CrossCertificateDistributionPointsExtension"/> class
-    /// using an <see cref="System.Security.Cryptography.AsnEncodedData"/> object and a value that identifies whether the extension is critical.
+    /// using an <see cref="AsnEncodedData"/> object and a value that identifies whether the extension is critical.
     /// </summary>
     /// <param name="crossCertPoints">The encoded data to use to create the extension.</param>
     /// <param name="critical">
     ///		<strong>True</strong> if the extension is critical; otherwise, <strong>False</strong>.
     /// </param>
-    /// <exception cref="System.ArgumentException">
+    /// <exception cref="ArgumentException">
     ///		The data in the <strong>distributionPoints</strong> parameter is not valid extension value.
     /// </exception>
     public X509CrossCertificateDistributionPointsExtension(AsnEncodedData crossCertPoints, Boolean critical) : base(_oid, crossCertPoints.RawData, critical) {
@@ -57,7 +57,7 @@ public sealed class X509CrossCertificateDistributionPointsExtension : X509Extens
     /// <param name="critical">
     ///     <strong>True</strong> if the extension is critical; otherwise, <strong>False</strong>.
     /// </param>
-    /// <exception cref="System.ArgumentNullException"><strong>urls</strong>> parameter is null.</exception>
+    /// <exception cref="ArgumentNullException"><strong>urls</strong>> parameter is null.</exception>
     public X509CrossCertificateDistributionPointsExtension(String[] urls, Int32? syncDeltaTime, Boolean critical) {
         if (urls == null) {
             throw new ArgumentNullException(nameof(urls));
