@@ -2,6 +2,7 @@
 using System.IO;
 using PKI.Exceptions;
 using SysadminsLV.Asn1Parser;
+using SysadminsLV.PKI.Cryptography.X509Certificates;
 
 namespace System.Security.Cryptography.X509Certificates {
     /// <summary>
