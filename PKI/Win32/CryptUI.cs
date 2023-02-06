@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography.X509Certificates;
 
 namespace SysadminsLV.PKI.Win32 {
     static class CryptUI {
@@ -8,7 +7,7 @@ namespace SysadminsLV.PKI.Win32 {
         [DllImport("Cryptui.dll", SetLastError = true)]
         public static extern Boolean CryptUIDlgViewContext(
             UInt32 dwContextType,
-            SafeCTLHandleContext pvContext,
+            SafeHandle pvContext,
             IntPtr hwnd,
             [MarshalAs(UnmanagedType.LPWStr)]
             String pwszTitle,

@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+using SysadminsLV.Asn1Parser;
 
-namespace SysadminsLV.PKI.Cryptography.X509Certificates; 
+namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
 /// <summary>
 /// Represents a collection of <see cref="SysadminsLV.PKI.Cryptography.X509Certificates.X509CertificateTrustListEntry"/> objects.

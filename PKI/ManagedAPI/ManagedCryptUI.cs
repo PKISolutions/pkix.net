@@ -6,7 +6,7 @@ namespace PKI.ManagedAPI {
     /// Contains safe implementations of unmanaged functions.
     /// </summary>
     [Obsolete]
-    public class ManagedCryptUI {
+    class ManagedCryptUI {
         /// <summary>
         /// Displays a X.509 Certificate Revocation List UI dialog.
         /// </summary>

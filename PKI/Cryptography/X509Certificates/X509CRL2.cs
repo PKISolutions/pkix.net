@@ -533,7 +533,7 @@ namespace System.Security.Cryptography.X509Certificates {
                 mustRelease = true;
                 GetSafeContext();
             }
-            CryptUI.CryptUIDlgViewContext(2, Handle.DangerousGetHandle(), IntPtr.Zero, "Certificate Revocation List", 0, 0);
+            CryptUI.CryptUIDlgViewContext(2, Handle, IntPtr.Zero, "Certificate Revocation List", 0, 0);
             if (mustRelease) {
                 Dispose();
             }

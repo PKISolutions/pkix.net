@@ -8,7 +8,7 @@ using SysadminsLV.PKI.Cryptography.X509Certificates;
 namespace SysadminsLV.PKI.Cryptography.Pkcs {
     /// <summary>
     /// The <strong>SubjectIdentifier2</strong> class defines the type of the identifier of a subject, such as
-    /// a <see cref="PkcsSignerInfo"/>. The subject can be identified by the certificate issuer and serial number
+    /// a <see cref="SysadminsLV.PKI.Cryptography.Pkcs.PkcsSignerInfo"/>. The subject can be identified by the certificate issuer and serial number
     /// or the subject key.
     /// </summary>
     /// <remarks>This class is a replacement for for a .NET native <see cref="SubjectIdentifier"/> class.</remarks>
@@ -17,12 +17,12 @@ namespace SysadminsLV.PKI.Cryptography.Pkcs {
 
         /// <summary>
         /// Initializes a new instance of <strong>PkcsSubjectIdentifier</strong> class using signer certificate and type how this certificate
-        /// is referenced in signer information of <see cref="PkcsSignerInfo"/> object.
+        /// is referenced in signer information of <see cref="SysadminsLV.PKI.Cryptography.Pkcs.PkcsSignerInfo"/> object.
         /// </summary>
         /// <param name="certificate">
         /// A certificate used to sign data.
         /// </param>
-        /// <param name="subjectType">A type how presented certificate will be referenced in <see cref="PkcsSignerInfo"/>.</param>
+        /// <param name="subjectType">A type how presented certificate will be referenced in <see cref="SysadminsLV.PKI.Cryptography.Pkcs.PkcsSignerInfo"/>.</param>
         /// <exception cref="ArgumentNullException">
         /// <strong>certificate</strong> parameter is null.
         /// </exception>

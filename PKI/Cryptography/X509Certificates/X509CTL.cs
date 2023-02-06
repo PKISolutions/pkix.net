@@ -18,7 +18,7 @@ namespace System.Security.Cryptography.X509Certificates {
     /// Represents a X.509 Certificate Trust List (CTL).
     /// </summary>
     [Obsolete("X509CTL is replaced with X509CertificateTrustList class.")]
-    public class X509CTL : IDisposable {
+    class X509CTL : IDisposable {
         Wincrypt.CTL_INFO CTLInfo;
         readonly List<X509Extension> _listExtensions = new();
 
@@ -295,7 +295,7 @@ namespace System.Security.Cryptography.X509Certificates {
                 mustRelease = true;
                 GetSafeContext();
             }
-            CryptUI.CryptUIDlgViewContext(3, Handle.DangerousGetHandle(), IntPtr.Zero, "Certificate Trust List", 0, 0);
+            CryptUI.CryptUIDlgViewContext(3, Handle, IntPtr.Zero, "Certificate Trust List", 0, 0);
             if (mustRelease) {
                 Dispose();
             }

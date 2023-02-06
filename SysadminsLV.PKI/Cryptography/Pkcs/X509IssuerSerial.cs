@@ -18,9 +18,8 @@ namespace SysadminsLV.PKI.Cryptography.Pkcs {
         ///		<strong>issuer</strong> and/or <strong>serialNumber</strong> parameters are null or empty.
         /// </exception>
         public X509IssuerSerial(X500DistinguishedName issuer, String serialNumber) {
-            if (String.IsNullOrEmpty(serialNumber)) { throw new ArgumentNullException(nameof(serialNumber)); }
             IssuerName = issuer ?? throw new ArgumentNullException(nameof(issuer));
-            SerialNumber = serialNumber;
+            SerialNumber = serialNumber ?? throw new ArgumentNullException(nameof(serialNumber));
             encode();
         }
         /// <summary>
@@ -32,7 +31,9 @@ namespace SysadminsLV.PKI.Cryptography.Pkcs {
         /// <strong>rawData</strong> parameter is null.
         /// </exception>
         public X509IssuerSerial(Byte[] rawData) {
-            if (rawData == null) { throw new ArgumentNullException(nameof(rawData)); }
+            if (rawData == null) {
+                throw new ArgumentNullException(nameof(rawData));
+            }
             decode(rawData);
         }
 
@@ -43,7 +44,7 @@ namespace SysadminsLV.PKI.Cryptography.Pkcs {
         /// <summary>
         /// Gets an X.509 certificate issuer's distinguished name in a string format.
         /// </summary>
-        public String Issuer => IssuerName?.Name;
+        public String Issuer => IssuerName.Name;
 
         /// <summary>
         /// Gets or sets an X.509 certificate issuer's serial number.

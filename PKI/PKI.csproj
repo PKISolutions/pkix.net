@@ -104,7 +104,6 @@
     <Compile Include="Cryptography\CspAlgorithmOperation.cs" />
     <Compile Include="Cryptography\CspAlgorithmType.cs" />
     <Compile Include="Cryptography\Pkcs\PkcsSignerInfoBuilder.cs" />
-    <Compile Include="Cryptography\Pkcs\PkcsSignerInfoCollection.cs" />
     <Compile Include="Cryptography\Pkcs\SignedCmsBuilder.cs" />
     <Compile Include="Cryptography\CspProviderType.cs" />
     <Compile Include="Cryptography\TspAuthenticodeRequest.cs" />
@@ -312,9 +311,6 @@
     <Compile Include="CertificateTemplates\KeyArchivalOptions.cs" />
     <Compile Include="CertificateTemplates\PrivateKeyFlags.cs" />
     <Compile Include="Cryptography\Oid2.cs" />
-    <Compile Include="Cryptography\Pkcs\PkcsSignerInfo.cs" />
-    <Compile Include="Cryptography\Pkcs\PkcsSubjectIdentifier.cs" />
-    <Compile Include="Cryptography\Pkcs\X509IssuerSerial.cs" />
     <Compile Include="Cryptography\X509Certificates\X509IssuerAlternativeNamesExtension.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CAVersionExtension.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CRLDistributionPointsExtension.cs" />

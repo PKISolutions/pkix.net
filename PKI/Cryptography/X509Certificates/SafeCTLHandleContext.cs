@@ -1,13 +1,13 @@
 ﻿using System.Security.Permissions;
 using Microsoft.Win32.SafeHandles;
+using SysadminsLV.PKI.Cryptography.X509Certificates;
 using SysadminsLV.PKI.Win32;
 
 namespace System.Security.Cryptography.X509Certificates {
     /// <summary>
     /// <para>
-    /// SafeCTLHandleContext provides a SafeHandle class for an <see cref="X509CTL"/> context
-    /// as stored in its <see cref="X509CTL.Handle" />
-    /// property.  This can be used instead of the raw IntPtr to avoid races with the garbage
+    /// SafeCTLHandleContext provides a SafeHandle class for an <see cref="X509CertificateTrustList"/> context.
+    /// This can be used instead of the raw IntPtr to avoid races with the garbage
     /// collector, ensuring that the X509Certificate object is not cleaned up from underneath you
     /// while you are still using the handle pointer.
     /// </para>
@@ -26,7 +26,7 @@ namespace System.Security.Cryptography.X509Certificates {
     public sealed class SafeCTLHandleContext : SafeHandleZeroOrMinusOneIsInvalid {
         SafeCTLHandleContext() : base(true) { }
         /// <summary>
-        /// Releases unamanged handle held by a Certificate Trust List object.
+        /// Releases unmanaged handle held by a Certificate Trust List object.
         /// </summary>
         /// <returns><strong>True</strong> if the handle is released successfully, otherwise, <strong>False</strong>.</returns>
         protected override Boolean ReleaseHandle() {
