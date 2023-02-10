@@ -2,14 +2,12 @@
 using System.Linq;
 using System.Numerics;
 using System.Text;
-using PKI.Exceptions;
-using PKI.ManagedAPI;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
+using SysadminsLV.PKI;
 using SysadminsLV.PKI.CLRExtensions;
 using SysadminsLV.PKI.Cryptography;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
-using SysadminsLV.PKI.Tools.MessageOperations;
 using SysadminsLV.PKI.Utils.CLRExtensions;
 
 namespace System.Security.Cryptography.X509Certificates;
@@ -29,7 +27,7 @@ public class X509CRL2 {
     /// </summary>
     /// <param name="path">The path to a CRL file.</param>
     public X509CRL2(String path) {
-        _rawData = Crypt32Managed.CryptFileToBinary(path);
+        _rawData = CryptBinaryConverter.CryptFileToBinary(path);
         m_decode();
     }
     /// <summary>
@@ -128,16 +126,6 @@ public class X509CRL2 {
     /// Gets the raw data of a certificate revocation list.
     /// </summary>
     public Byte[] RawData => _rawData.ToArray();
-    /// <summary>
-    /// Gets a handle to a Microsoft Cryptographic API CRL context described by an unmanaged
-    /// <strong>CRL_CONTEXT</strong> structure.
-    /// </summary>
-    /// <remarks>
-    ///	This member is zero by default. In order, to retrieve unmanaged handle a <see cref="GetSafeContext"/>
-    /// method must be called. When this handle is no longer necessary, it must be freed by calling
-    /// <see cref="Dispose(Boolean)"/> method.
-    /// </remarks>
-    public SafeCRLHandleContext Handle { get; private set; } = new();
     /// <summary>
     /// Gets a thumbprint of the current CRL object. Default thumbprint algorithm is SHA256.
     /// </summary>
@@ -429,8 +417,8 @@ public class X509CRL2 {
     /// 		<strong>True</strong> if the specified certificate is signed this CRL. Otherwise <strong>False</strong>.
     ///  </returns>
     public Boolean VerifySignature(X509Certificate2 issuer, Boolean strict = false) {
-        var signedInfo = new SignedContentBlob(_rawData, ContentBlobType.SignedBlob);
-        return MessageSigner.VerifyData(signedInfo, issuer.PublicKey);
+        var signedBlob = new SignedContentBlob(_rawData, ContentBlobType.SignedBlob);
+        return issuer.PublicKey.VerifySignature(signedBlob);
     }
     /// <summary>
     /// Verifies whether the specified certificate is in the current revocation list.
@@ -439,7 +427,7 @@ public class X509CRL2 {
     /// <exception cref="ArgumentNullException">
     ///     <strong>cert</strong> parameter is null.
     /// </exception>
-    /// <exception cref="UninitializedObjectException">
+    /// <exception cref="PKI.Exceptions.UninitializedObjectException">
     ///     An object is not initialized.
     /// </exception>
     /// <returns>

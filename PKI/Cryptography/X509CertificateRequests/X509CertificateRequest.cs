@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using PKI.ManagedAPI;
 using PKI.Structs;
+using SysadminsLV.PKI;
 using SysadminsLV.PKI.Cryptography.Pkcs;
 using SysadminsLV.PKI.Cryptography.X509CertificateRequests;
 using SysadminsLV.PKI.Utils.CLRExtensions;
@@ -41,7 +41,7 @@ namespace System.Security.Cryptography.X509CertificateRequests {
         public X509CertificateRequestCmc ExternalData { get; private set; }
 
         void getBinaryData(String path) {
-            RawData = Crypt32Managed.CryptFileToBinary(path);
+            RawData = CryptBinaryConverter.CryptFileToBinary(path);
         }
         void m_initialize() {
             // at this point RawData is not null
@@ -114,7 +114,7 @@ namespace System.Security.Cryptography.X509CertificateRequests {
         /// <param name="path">Specifies the path to a file.</param>
         /// <returns>The type of the certificate request in the file.</returns>
         public static X509CertificateRequestType GetRequestFormat(String path) {
-            return getRequestFormat(Crypt32Managed.CryptFileToBinary(path));
+            return getRequestFormat(CryptBinaryConverter.CryptFileToBinary(path));
         }
         /// <summary>
         /// Gets the certificate request format. This method allows to determine whether the

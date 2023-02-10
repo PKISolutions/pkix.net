@@ -380,18 +380,21 @@ class CryptSigner : ICryptSigner, IDisposable {
     /// when signing key pair exist outside of X.509 certificate object.
     /// </remarks>
     public static Boolean VerifyData(SignedContentBlob blob, PublicKey publicKey) {
-        if (blob == null) { throw new ArgumentNullException(nameof(blob)); }
-        if (publicKey == null) { throw new ArgumentNullException(nameof(publicKey)); }
+        if (blob == null) {
+            throw new ArgumentNullException(nameof(blob));
+        }
+        if (publicKey == null) {
+            throw new ArgumentNullException(nameof(publicKey));
+        }
 
         if (blob.BlobType != ContentBlobType.SignedBlob) {
             throw new InvalidOperationException("The blob is not signed.");
         }
 
-        using (var signerInfo = new CryptSigner()) {
-            signerInfo.acquirePublicKey(publicKey.Oid);
-            signerInfo.getConfiguration(blob.SignatureAlgorithm.RawData);
-            return signerInfo.VerifyData(blob.ToBeSignedData, blob.GetRawSignature());
-        }
+        using var signerInfo = new CryptSigner();
+        signerInfo.acquirePublicKey(publicKey.Oid);
+        signerInfo.getConfiguration(blob.SignatureAlgorithm.RawData);
+        return signerInfo.VerifyData(blob.ToBeSignedData, blob.GetRawSignature());
     }
 
     /// <summary>

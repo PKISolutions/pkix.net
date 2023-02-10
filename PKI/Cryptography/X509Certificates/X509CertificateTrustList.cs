@@ -4,7 +4,6 @@ using System.Numerics;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using PKI.ManagedAPI;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
 using SysadminsLV.PKI.Cryptography.Pkcs;
@@ -36,7 +35,7 @@ public class X509CertificateTrustList {
         if (String.IsNullOrEmpty(path)) {
             throw new ArgumentNullException(nameof(path));
         }
-        decode(Crypt32Managed.CryptFileToBinary(path));
+        decode(CryptBinaryConverter.CryptFileToBinary(path));
     }
 
     /// <summary>

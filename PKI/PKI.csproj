@@ -253,7 +253,6 @@
     <Compile Include="Cryptography\CspProviderInfoCollection.cs" />
     <Compile Include="Cryptography\CspProviderInfo.cs" />
     <Compile Include="Structs\CertConfigConstants.cs" />
-    <Compile Include="Utils\CLRExtensions\PublicKeyExtensions.cs" />
     <Compile Include="Tools\MessageOperations\MessageSigner.cs" />
     <Compile Include="Utils\ServiceOperationResult.cs" />
     <Compile Include="Utils\IServiceOperationResult.cs" />
@@ -349,7 +348,6 @@
     <Compile Include="Cryptography\X509CertificateRequests\X509CertificateRequest.cs" />
     <Compile Include="Cryptography\X509Certificates\SafeCTLHandleContext.cs" />
     <Compile Include="Cryptography\X509Certificates\SafeCRLHandleContext.cs" />
-    <Compile Include="Cryptography\X509Certificates\X509CRL2.cs" />
     <Compile Include="Win32\CertAdm.cs" />
     <Compile Include="Win32\Kernel32.cs" />
     <Compile Include="Win32\Cryptnet.cs" />
