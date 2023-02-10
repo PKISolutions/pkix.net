@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using PKI.Exceptions;
-using PKI.Utils;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
 using SysadminsLV.PKI.Utils.CLRExtensions;
@@ -13,12 +12,12 @@ namespace PKI.OCSP {
     /// This class represents a single OCSP request entry which include information about the certificate to verify
     /// and optional extensions.
     /// </summary>
-    /// <remarks>Currently only <strong>Service Locator</strong> extension is supported.</remarks>
+    /// <remarks>Currently, only <strong>Service Locator</strong> extension is supported.</remarks>
     public class OCSPSingleRequest {
-        readonly List<X509Extension> _listExtensions = new();
+        readonly X509ExtensionCollection _extensions = new();
 
         /// <summary>
-        /// Intitializes a new instance of <strong>OCSPSingleRequest</strong> class from a certificate to include
+        /// Initializes a new instance of <strong>OCSPSingleRequest</strong> class from a certificate to include
         /// in the request and value that indicates whether to include <see cref="X509ServiceLocatorExtension"/>
         /// extension.
         /// </summary>
@@ -36,7 +35,7 @@ namespace PKI.OCSP {
             m_initialize(null, cert, serviceLocator);
         }
         /// <summary>
-        /// Intitializes a new instance of <strong>OCSPSingleRequest</strong> class from a certificate to include
+        /// Initializes a new instance of <strong>OCSPSingleRequest</strong> class from a certificate to include
         /// in the request, certificate issuer and a value that indicates whether to include
         /// <see cref="X509ServiceLocatorExtension"/> extension.
         /// </summary>
@@ -71,13 +70,7 @@ namespace PKI.OCSP {
         /// <remarks>
         /// Currently only <strong>Service Locator</strong> extension is supported.
         /// </remarks>
-        public X509ExtensionCollection Extensions {
-            get {
-                X509ExtensionCollection retValue = new X509ExtensionCollection();
-                foreach (X509Extension item in _listExtensions) { retValue.Add(item); }
-                return retValue;
-            }
-        }
+        public X509ExtensionCollection Extensions => _extensions.Duplicate();
         /// <summary>
         /// Gets the name of the certificate in the question.
         /// </summary>
@@ -103,7 +96,7 @@ namespace PKI.OCSP {
                 }
             }
             sext = new List<Byte>(Asn1Utils.Encode(sext.ToArray(), 48));
-            _listExtensions.Add(new X509Extension(oid, sext.ToArray(), false).ConvertExtension());
+            _extensions.Add(new X509Extension(oid, sext.ToArray(), false).ConvertExtension());
         }
         /// <summary>
         /// Encodes OCSPSingleRequest object to a ASN.1-encoded byte aray.

@@ -21,7 +21,7 @@ namespace PKI.OCSP;
 /// Represents an OCSP Request object. This object is used to create and submit a request to an OCSP Responder.
 /// </summary>
 public class OCSPRequest {
-    readonly List<X509Extension> _listExtensions = new();
+    readonly X509ExtensionCollection _extensions = new();
     readonly X509Certificate2Collection _signerChain = new();
     Oid2[] responseAlgIDs = { new("sha1RSA", false) };
     Oid signatureAlgID = new("sha1RSA");
@@ -118,14 +118,7 @@ public class OCSPRequest {
     /// <summary>
     /// Gets optional OCSP Request extensions. This may include <strong>Nonce</strong> and/or <strong>Service Locator</strong> extensions.
     /// </summary>
-    public X509ExtensionCollection Extensions {
-        get {
-            if (_listExtensions.Count == 0) { return null; }
-            X509ExtensionCollection retValue = new X509ExtensionCollection();
-            foreach (X509Extension item in _listExtensions) { retValue.Add(item); }
-            return retValue;
-        }
-    }
+    public X509ExtensionCollection Extensions => _extensions.Duplicate();
     /// <summary>
     /// Gets or sets the URL of the OCSP responder service. URL can be retrieved from certificate's AIA
     /// extension.
@@ -182,10 +175,10 @@ public class OCSPRequest {
         }
         tbsRequest.AddRange(RequestList.Encode());
         if (Nonce) {
-            _listExtensions.Add(new X509NonceExtension());
+            _extensions.Add(new X509NonceExtension());
             Byte[] extensionsBytes = Asn1Utils.Encode(Extensions.Encode(), 162);
             tbsRequest.AddRange(extensionsBytes);
-            NonceValue = _listExtensions[_listExtensions.Count - 1].Format(false).Trim();
+            NonceValue = _extensions[_extensions.Count - 1].Format(false).Trim();
         }
         return Asn1Utils.Encode(tbsRequest.ToArray(), 48).ToList();
     }

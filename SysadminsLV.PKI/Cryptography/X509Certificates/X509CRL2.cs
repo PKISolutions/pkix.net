@@ -103,16 +103,7 @@ public class X509CRL2 {
     /// Common extensions include information regarding key identifiers (X509AuthorityKeyIdentifierExtension),
     /// CRL sequence numbers, additional revocation information (Delta CRL Locations), and other uses.</p>
     /// </remarks>
-    public X509ExtensionCollection Extensions {
-        get {
-            var retValue = new X509ExtensionCollection();
-            foreach (X509Extension extension in _extensions) {
-                retValue.Add(extension);
-            }
-
-            return retValue;
-        }
-    }
+    public X509ExtensionCollection Extensions => _extensions.Duplicate();
     /// <summary>
     /// Gets a collection of <see cref="X509CRLEntry">X509CRLEntry</see> objects.
     /// </summary>

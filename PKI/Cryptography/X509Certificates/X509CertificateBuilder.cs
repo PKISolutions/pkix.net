@@ -31,7 +31,7 @@ public class X509CertificateBuilder {
                   X509ExtensionOid.AuthorityKeyIdentifier
               }
     );
-    readonly List<X509Extension> _extensions = new();
+    readonly X509ExtensionCollection _extensions = new();
     X509ExtensionCollection finalExtensions;
     Byte[] serialNumber;
 
@@ -127,10 +127,7 @@ public class X509CertificateBuilder {
             }
             _extensions.Add(extension.ConvertExtension());
         }
-        finalExtensions = new X509ExtensionCollection();
-        foreach (var extension in _extensions) {
-            finalExtensions.Add(extension);
-        }
+        finalExtensions = _extensions.Duplicate();
     }
     void preGenerate(X509Certificate2 signer) {
         PrivateKeyInfo.Create();

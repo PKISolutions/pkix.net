@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using PKI.Utils;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
 using SysadminsLV.PKI.Cryptography;
@@ -31,7 +29,7 @@ namespace PKI.OCSP;
 /// </summary>
 public class OCSPResponse {
     readonly WebClient _wc;
-    readonly List<X509Extension> _listExtensions = new();
+    readonly X509ExtensionCollection _extensions = new();
     Asn1Reader asn;
 
     internal OCSPResponse(Byte[] rawData, OCSPRequest req, WebClient web) {
@@ -95,14 +93,7 @@ public class OCSPResponse {
     /// <summary>
     /// Gets optional OCSP response extensions. This may contain Nonce extension.
     /// </summary>
-    public X509ExtensionCollection ResponseExtensions {
-        get {
-            if (_listExtensions.Count == 0) { return null; }
-            var retValue = new X509ExtensionCollection();
-            foreach (X509Extension item in _listExtensions) { retValue.Add(item); }
-            return retValue;
-        }
-    }
+    public X509ExtensionCollection ResponseExtensions => _extensions.Duplicate();
     /// <summary>
     /// Gets response HTTP headers.
     /// </summary>
@@ -255,10 +246,10 @@ public class OCSPResponse {
                 var extensions = new X509ExtensionCollection();
                 extensions.Decode(tbsResponseData.GetPayload());
                 foreach (X509Extension item in extensions) {
-                    _listExtensions.Add(item.ConvertExtension());
-                    if (_listExtensions[_listExtensions.Count - 1].Oid.Value == X509ExtensionOid.OcspNonce) {
+                    _extensions.Add(item.ConvertExtension());
+                    if (_extensions[_extensions.Count - 1].Oid.Value == X509ExtensionOid.OcspNonce) {
                         NonceReceived = true;
-                        NonceValue = _listExtensions[_listExtensions.Count - 1].Format(false);
+                        NonceValue = _extensions[_extensions.Count - 1].Format(false);
                     }
                 }
             } else { throw new Exception("Unexpected tag at responseExtensions. Expected 161."); }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Numerics;
@@ -16,7 +15,7 @@ namespace SysadminsLV.PKI.Cryptography;
 /// </summary>
 public class TspRfc3161Request : TspRequest {
     const String RFC_3161_TIMESTAMP_REQUEST = "1.2.840.113549.1.9.16.1.4";
-    readonly IList<X509Extension> _extensions = new List<X509Extension>();
+    readonly X509ExtensionCollection _extensions = new();
     Byte[] nonce;
 
     /// <summary>
@@ -90,15 +89,7 @@ public class TspRfc3161Request : TspRequest {
     /// <summary>
     /// Gets a collection of optional extensions associated with the current TSP request.
     /// </summary>
-    public X509ExtensionCollection Extensions {
-        get {
-            var retValue = new X509ExtensionCollection();
-            foreach (X509Extension extension in _extensions) {
-                retValue.Add(extension);
-            }
-            return retValue;
-        }
-    }
+    public X509ExtensionCollection Extensions => _extensions.Duplicate();
 
     void initialize(Oid hashAlgorithm, Byte[] data) {
         RequestMessage = new TspMessageImprint(hashAlgorithm, data);
@@ -148,7 +139,7 @@ public class TspRfc3161Request : TspRequest {
         if (RequestCertificates) {
             builder.AddBoolean(RequestCertificates);
         }
-        if (_extensions.Any()) {
+        if (_extensions.Count > 0) {
             builder.AddExplicit(0, Extensions.Encode(), false);
         }
 
@@ -170,7 +161,7 @@ public class TspRfc3161Request : TspRequest {
         if (extension == null) {
             throw new ArgumentNullException(nameof(extension));
         }
-        if (_extensions.Any(x => x.Oid.Value == extension.Oid.Value)) {
+        if (_extensions.Cast<X509Extension>().Any(x => x.Oid.Value == extension.Oid.Value)) {
             return false;
         }
         _extensions.Add(extension);

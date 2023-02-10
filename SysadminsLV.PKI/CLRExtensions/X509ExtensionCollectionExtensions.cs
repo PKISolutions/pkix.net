@@ -5,7 +5,7 @@ using System.Text;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.PKI.CLRExtensions;
 
-namespace SysadminsLV.PKI.Utils.CLRExtensions; 
+namespace SysadminsLV.PKI.Utils.CLRExtensions;
 
 /// <summary>
 /// Contains extension methods for <see cref="X509ExtensionCollection"/> class.
@@ -97,6 +97,28 @@ public static class X509ExtensionCollectionExtensions {
         foreach (X509Extension e in itemsToAdd) {
             extensions.Add(e);
         }
+    }
+    /// <summary>
+    /// Gets a duplicate instance of <see cref="X509ExtensionCollection"/> collection.
+    /// </summary>
+    /// <param name="extensions">Source collection.</param>
+    /// <returns>
+    ///     A copy of source collection. Source and destination collections will hold same references to collection elements.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    ///     <strong>extensions</strong> parameter is null.
+    /// </exception>
+    public static X509ExtensionCollection Duplicate(this X509ExtensionCollection extensions) {
+        if (extensions == null) {
+            throw new ArgumentNullException(nameof(extensions));
+        }
+        
+        var retValue = new X509ExtensionCollection();
+        foreach (X509Extension extension in extensions) {
+            retValue.Add(extension);
+        }
+
+        return retValue;
     }
     /// <summary>
     /// Gets formatted text dump of the current extension collection.
