@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Security.Principal;
 using System.Text;
+using System.Text.RegularExpressions;
 using SysadminsLV.Asn1Parser;
 
 namespace SysadminsLV.PKI.Cryptography.X509Certificates;
@@ -13,6 +13,7 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 /// </summary>
 public sealed class X509NtdsSecurityExtension : X509Extension {
     static readonly Oid _oid = new(X509ExtensionOid.NtdsSecurityExtension, "NTDS Security");
+    static readonly Regex _regex = new(@"^S-\d-[0-59](?:\d+-){1,14}\d+$", RegexOptions.Compiled | RegexOptions.Singleline);
 
     /// <summary>
     ///     Initializes a new instance of the <strong>X509NtdsSecurityExtension</strong> class from
@@ -24,18 +25,24 @@ public sealed class X509NtdsSecurityExtension : X509Extension {
     /// <param name="critical">
     ///     <strong>True</strong> if the extension is critical; otherwise, <strong>False</strong>.
     /// </param>
+    /// <exception cref="FormatException">
+    ///     <strong>sid</strong> parameter does not represent valid SID string (in SDDL format).
+    /// </exception>
     /// <exception cref="ArgumentException">
     ///     <strong>sid</strong> parameter represents empty security identifier.
     /// </exception>
     /// <exception cref="ArgumentNullException">
     ///     <string>sid</string> parameter is null.
     /// </exception>
-    public X509NtdsSecurityExtension(SecurityIdentifier sid, Boolean critical) {
+    public X509NtdsSecurityExtension(String sid, Boolean critical) {
         if (sid == null) {
             throw new ArgumentNullException(nameof(sid));
         }
-        if (String.IsNullOrEmpty(sid.Value)) {
+        if (String.IsNullOrEmpty(sid)) {
             throw new ArgumentException("The security identifier (SID) value cannot be empty.");
+        }
+        if (!_regex.IsMatch(sid)) {
+            throw new FormatException("The security identifier (SID) does not represent valid SID string.");
         }
         initialize(sid);
         Oid = _oid;
@@ -53,14 +60,14 @@ public sealed class X509NtdsSecurityExtension : X509Extension {
     /// </summary>
     public String SecurityIdentifier { get; private set; }
 
-    void initialize(IdentityReference sid) {
-        SecurityIdentifier = sid.Value;
+    void initialize(String sid) {
+        SecurityIdentifier = sid;
         Byte[] sidBytes = Encoding.ASCII.GetBytes(SecurityIdentifier);
         RawData = Asn1Builder.Create()
             .AddExplicit(0, x => {
-                                x.AddObjectIdentifier(new Oid("1.3.6.1.4.1.311.25.2.1"));
-                                return x.AddExplicit(0, y => y.AddOctetString(sidBytes));
-                            }).GetEncoded();
+                x.AddObjectIdentifier(new Oid("1.3.6.1.4.1.311.25.2.1"));
+                return x.AddExplicit(0, y => y.AddOctetString(sidBytes));
+            }).GetEncoded();
     }
     void decode(Byte[] rawData) {
         var asn = new Asn1Reader(rawData);
