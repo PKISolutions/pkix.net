@@ -7,6 +7,7 @@ using Interop.CERTENROLLLib;
 using PKI.Utils;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
+using SysadminsLV.PKI.Utils.CLRExtensions;
 using EncodingType = Interop.CERTENROLLLib.EncodingType;
 using X509KeyUsageFlags = System.Security.Cryptography.X509Certificates.X509KeyUsageFlags;
 
@@ -206,7 +207,7 @@ public class CertificateTemplateSettings {
                         ext.ObjectId.Value,
                         Convert.FromBase64String(ext.RawData[EncodingType.XCN_CRYPT_STRING_BASE64]),
                         ext.Critical))
-            .Select(CryptographyUtils.ConvertExtension)
+            .Select(x => x.ConvertExtension())
             .ToList();
         extensionList.ForEach(_extensions.Add);
     }

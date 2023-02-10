@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using PKI.Exceptions;
-using PKI.Utils;
 using SysadminsLV.Asn1Parser;
-using SysadminsLV.PKI.Win32;
+using SysadminsLV.PKI.Utils.CLRExtensions;
 
 namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
@@ -18,6 +14,7 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 /// </summary>
 public sealed class X509ServiceLocatorExtension : X509Extension {
     static readonly Oid _oid = new(X509ExtensionOid.ServiceLocator, "OCSP Service Locator");
+    readonly List<String> _urlList = new();
     Byte[] AIARaw;
 
     /// <summary>
@@ -25,8 +22,9 @@ public sealed class X509ServiceLocatorExtension : X509Extension {
     /// </summary>
     /// <param name="cert">An <see cref="X509Certificate2"/> object from which to construct the extension.</param>
     public X509ServiceLocatorExtension(X509Certificate2 cert) {
-        if (cert == null) { throw new ArgumentNullException(nameof(cert)); }
-        if (cert.Handle.Equals(IntPtr.Zero)) { throw new UninitializedObjectException(); }
+        if (cert == null) {
+            throw new ArgumentNullException(nameof(cert));
+        }
         m_initialize(cert);
     }
 
@@ -44,7 +42,7 @@ public sealed class X509ServiceLocatorExtension : X509Extension {
     /// <summary>
     /// Gets an array of URLs contained in <strong>Authority Information Access</strong> extension.
     /// </summary>
-    public String[] AuthorityInformationAccess { get; private set; }
+    public String[] AuthorityInformationAccess => _urlList.ToArray();
 
     void m_initialize(X509Certificate2 cert) {
         var rawData = new List<Byte>();
@@ -54,7 +52,7 @@ public sealed class X509ServiceLocatorExtension : X509Extension {
             if (ext != null) {
                 AIARaw = ext.RawData;
                 rawData.AddRange(ext.RawData);
-                m_extracturls(cert);
+                extractUrls(cert);
             }
         }
         rawData = new List<Byte>(Asn1Utils.Encode(rawData.ToArray(), 48));
@@ -63,29 +61,13 @@ public sealed class X509ServiceLocatorExtension : X509Extension {
         Oid = _oid;
         RawData = rawData.ToArray();
     }
-    void m_extracturls(X509Certificate2 cert) {
-        var urls = new List<String>();
-        foreach (UInt32 extid in new [] { 1, 13 }) {
-            UInt32 pcbUrlArray = 0;
-            UInt32 pcbUrlInfo = 0;
-            if (Cryptnet.CryptGetObjectUrl(extid, cert.Handle, 2, null, ref pcbUrlArray, IntPtr.Zero, ref pcbUrlInfo, 0)) {
-                Byte[] pUrlArray = new Byte[pcbUrlArray];
-                IntPtr pUrlInfo = Marshal.AllocHGlobal((Int32)pcbUrlInfo);
-                Cryptnet.CryptGetObjectUrl(extid, cert.Handle, 2, pUrlArray, ref pcbUrlArray, pUrlInfo, ref pcbUrlInfo, 0);
-                String URL = CryptographyUtils.EncodeDerString(pUrlArray);
-                String[] delimeter = new String[1];
-                delimeter[0] = "\0";
-                String[] splitArray = URL.Split(delimeter, StringSplitOptions.RemoveEmptyEntries);
-                switch (extid) {
-                    case 1: urls.AddRange(splitArray.Skip(3).Take(splitArray.Length - 1)); break;
-                    //urls.AddRange(GenericArray.GetSubArray(splitArray, 3, splitArray.Length - 1)); break;
-                    case 13: urls.AddRange(splitArray.Skip(3).Take(splitArray.Length - 1)); break;
-                    //urls.AddRange(GenericArray.GetSubArray(splitArray, 3, splitArray.Length - 1)); break;
-                }
-                Marshal.FreeHGlobal(pUrlInfo);
-            }
+    void extractUrls(X509Certificate2 cert) {
+        X509Extension extension = cert.Extensions[X509ExtensionOid.AuthorityInformationAccess];
+        if (extension != null) {
+            var aiaExtension = (X509AuthorityInformationAccessExtension)extension.ConvertExtension();
+            _urlList.AddRange(aiaExtension.CertificationAuthorityIssuer);
+            _urlList.AddRange(aiaExtension.OnlineCertificateStatusProtocol);
         }
-        AuthorityInformationAccess = urls.ToArray();
     }
     void m_decode(Byte[] rawData) {
         //TODO
@@ -97,14 +79,18 @@ public sealed class X509ServiceLocatorExtension : X509Extension {
     /// <param name="multiLine"><strong>True</strong> if the return string should contain carriage returns; otherwise, <strong>False</strong>.</param>
     /// <returns>A formatted string that represents the Abstract Syntax Notation One (ASN.1)-encoded data.</returns>
     public override String Format(Boolean multiLine) {
-        StringBuilder SB = new StringBuilder();
+        var SB = new StringBuilder();
         SB.Append("[0]Certificate issuer: ");
-        if (multiLine) { SB.Append(Environment.NewLine + "     "); }
+        if (multiLine) {
+            SB.Append(Environment.NewLine + "     ");
+        }
         SB.Append(IssuerName);
-        if (multiLine) { SB.Append(Environment.NewLine); }
+        if (multiLine) {
+            SB.AppendLine();
+        }
         if (AIARaw.Length > 1) {
             if (!multiLine) { SB.Append(", "); }
-            X509Extension aia = new X509Extension(new Oid(X509ExtensionOid.AuthorityInformationAccess), AIARaw, false);
+            var aia = new X509Extension(new Oid(X509ExtensionOid.AuthorityInformationAccess), AIARaw, false);
             SB.Append(aia.Format(multiLine));
         }
         return SB.ToString();

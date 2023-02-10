@@ -2,12 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 using System.Security.Cryptography.Pkcs;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using PKI.Structs;
-using SysadminsLV.PKI.Cryptography.X509Certificates;
 
 namespace PKI.Utils;
 
@@ -15,74 +11,7 @@ namespace PKI.Utils;
 /// Contains helper methods for cryptographic objects.
 /// </summary>
 public static class CryptographyUtils {
-    /// <summary>
-    /// Converts default instance of <see cref="X509Extension"/> class to a specific extension implementation object.
-    /// </summary>
-    /// <param name="extension">Default instance of <see cref="X509Extension"/> class.</param>
-    /// <returns>Explicit extension implementation if defined, otherwise, the same object is returned.</returns>
-    public static X509Extension ConvertExtension(this X509Extension extension) {
-        AsnEncodedData asnData = new AsnEncodedData(extension.Oid, extension.RawData);
-        switch (extension.Oid.Value) {
-            case X509ExtensionOid.CAVersion:
-                return new X509CAVersionExtension(asnData, extension.Critical);
-            case X509ExtensionOid.NextCRLPublish:
-                return new X509NextCRLPublishExtension(asnData, extension.Critical);
-            case X509ExtensionOid.CertTemplateInfoV2:
-                return new X509CertificateTemplateExtension(asnData, extension.Critical);
-            case X509ExtensionOid.ApplicationPolicies:
-                return new X509ApplicationPoliciesExtension(asnData, extension.Critical);
-            case X509ExtensionOid.ApplicationPolicyMappings:
-                return new X509ApplicationPolicyMappingsExtension(asnData);
-            case X509ExtensionOid.ApplicationPolicyConstraints:
-                return new X509ApplicationPolicyConstraintsExtension(asnData);
-            case X509ExtensionOid.PublishedCrlLocations:
-                return new X509PublishedCrlLocationsExtension(asnData, extension.Critical);
-            case X509ExtensionOid.NtdsSecurityExtension:
-                return new X509NtdsSecurityExtension(asnData, extension.Critical);
-            case X509ExtensionOid.AuthorityInformationAccess:
-                return new X509AuthorityInformationAccessExtension(asnData, extension.Critical);
-            case X509ExtensionOid.OcspNonce:
-                return new X509NonceExtension(asnData, extension.Critical);
-            case X509ExtensionOid.OcspCRLReference:
-                return new X509CRLReferenceExtension(asnData, extension.Critical);
-            case X509ExtensionOid.ArchiveCutoff:
-                return new X509ArchiveCutoffExtension(asnData, extension.Critical);
-            case X509ExtensionOid.ServiceLocator:
-                return new X509ServiceLocatorExtension(asnData, extension.Critical);
-            case X509ExtensionOid.SubjectKeyIdentifier:
-                return new X509SubjectKeyIdentifierExtension(asnData, extension.Critical);
-            case X509ExtensionOid.KeyUsage:
-                return new X509KeyUsageExtension(asnData, extension.Critical);
-            case X509ExtensionOid.SubjectAlternativeNames:
-                return new X509SubjectAlternativeNamesExtension(asnData, extension.Critical);
-            case X509ExtensionOid.IssuerAlternativeNames:
-                return new X509IssuerAlternativeNamesExtension(asnData, extension.Critical);
-            case X509ExtensionOid.BasicConstraints:
-                return new X509BasicConstraintsExtension(asnData, extension.Critical);
-            case X509ExtensionOid.CRLNumber:
-                return new X509CRLNumberExtension(asnData, extension.Critical);
-            case X509ExtensionOid.IssuingDistributionPoint:
-                return new X509IssuingDistributionPointsExtension(asnData, extension.Critical);
-            case X509ExtensionOid.NameConstraints:
-                return new X509NameConstraintsExtension(asnData);
-            case X509ExtensionOid.CRLDistributionPoints:
-                return new X509CRLDistributionPointsExtension(asnData, extension.Critical);
-            case X509ExtensionOid.CertificatePolicies:
-                return new X509CertificatePoliciesExtension(asnData, extension.Critical);
-            case X509ExtensionOid.CertificatePolicyMappings:
-                return new X509CertificatePolicyMappingsExtension(asnData);
-            case X509ExtensionOid.AuthorityKeyIdentifier:
-                return new X509AuthorityKeyIdentifierExtension(asnData, extension.Critical);
-            case X509ExtensionOid.CertificatePolicyConstraints:
-                return new X509CertificatePolicyConstraintsExtension(asnData);
-            case X509ExtensionOid.EnhancedKeyUsage:
-                return new X509EnhancedKeyUsageExtension(asnData, extension.Critical);
-            case X509ExtensionOid.FreshestCRL:
-                return new X509FreshestCRLExtension(asnData, extension.Critical);
-            default:
-                return extension;
-        }
-    }
+    
     /// <summary>
     /// Converts a default instance of <see cref="Pkcs9AttributeObject"/> class to a specific attribute implementation object. 
     /// </summary>
@@ -181,23 +110,5 @@ public static class CryptographyUtils {
             sb.Append(Convert.ToChar(rawBytes[index + 1] << 8 | rawBytes[index]));
         }
         return sb.ToString();
-    }
-    internal static IEnumerable<X509Extension> DecodeX509ExtensionCollection2(Wincrypt.CERT_EXTENSIONS extstruct) {
-        return decode_extstruct(extstruct).ToArray();
-    }
-
-    static List<X509Extension> decode_extstruct(Wincrypt.CERT_EXTENSIONS extstruct) {
-        List<X509Extension> extensions = new List<X509Extension>();
-        if (extstruct.cExtension > 0) {
-            IntPtr rgExtension = extstruct.rgExtension;
-            for (UInt32 index = 0; index < extstruct.cExtension; index++) {
-                Wincrypt.CERT_EXTENSION ExtEntry = (Wincrypt.CERT_EXTENSION)Marshal.PtrToStructure(rgExtension, typeof(Wincrypt.CERT_EXTENSION));
-                Byte[] rawData = new Byte[ExtEntry.Value.cbData];
-                Marshal.Copy(ExtEntry.Value.pbData, rawData, 0, rawData.Length);
-                extensions.Add(ConvertExtension(new X509Extension(ExtEntry.pszObjId, rawData, ExtEntry.fCritical)));
-                rgExtension = rgExtension + Marshal.SizeOf(typeof(Wincrypt.CERT_EXTENSION));
-            }
-        }
-        return extensions;
     }
 }
