@@ -232,6 +232,7 @@
     <Compile Include="Structs\OleAut.cs" />
     <Compile Include="Utils\CLRExtensions\FileInfoExtensions.cs" />
     <Compile Include="Utils\CLRExtensions\X509CertificateTrustListExtensions.cs" />
+    <Compile Include="Utils\CLRExtensions\X509CRL2Extensions.cs" />
     <Compile Include="Win32\AdvAPI.cs" />
     <Compile Include="Management\CertificateServices\Database\AdcsDbPropertyCollection.cs" />
     <Compile Include="CertificateServices\UrlProtocolSchemes.cs" />
