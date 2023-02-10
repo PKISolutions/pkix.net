@@ -338,7 +338,6 @@
     <Compile Include="Utils\WMI.cs" />
     <Compile Include="Utils\PSErrorSourceEnum.cs" />
     <Compile Include="Utils\Error.cs" />
-    <Compile Include="Utils\Shift.cs" />
     <Compile Include="Utils\MessageSignature.cs" />
     <Compile Include="Utils\GenericArray.cs" />
     <Compile Include="Web\ServerCertificateValidationObject.cs" />
