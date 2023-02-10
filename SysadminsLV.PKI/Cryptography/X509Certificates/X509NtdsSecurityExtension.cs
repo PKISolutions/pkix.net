@@ -87,7 +87,10 @@ public sealed class X509NtdsSecurityExtension : X509Extension {
     public override String Format(Boolean multiLine) {
         var SB = new StringBuilder();
         SB.Append("SID: " + SecurityIdentifier);
-        if (multiLine) { SB.Append(Environment.NewLine); }
+        if (multiLine) {
+            SB.Append(Environment.NewLine);
+        }
+
         return SB.ToString();
     }
 }
