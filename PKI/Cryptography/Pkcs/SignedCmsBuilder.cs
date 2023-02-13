@@ -88,7 +88,8 @@ public sealed class SignedCmsBuilder {
     public PkcsSignerInfoCollection SignerInfos { get; } = new();
 
     Byte[] encodeSignedData() {
-        var builder = new Asn1Builder()
+        Asn1Builder builder = Asn1Builder
+            .Create()
             .AddInteger(Version)
             .AddDerData(DigestAlgorithms.Encode())
             .AddDerData(encodeContentInfo());
@@ -108,7 +109,8 @@ public sealed class SignedCmsBuilder {
         return builder.GetEncoded();
     }
     Byte[] encodeContentInfo() {
-        var builder = new Asn1Builder()
+        Asn1Builder builder = Asn1Builder
+            .Create()
             .AddObjectIdentifier(_contentType);
         if (_content != null) {
             switch (ContentType.Value) {
@@ -138,7 +140,8 @@ public sealed class SignedCmsBuilder {
         }
     }
     Byte[] wrapEnvelope() {
-        return new Asn1Builder()
+        return Asn1Builder
+            .Create()
             .AddObjectIdentifier(new Oid(SIGNED_CMS_TYPE))
             .AddExplicit(0, encodeSignedData(), true)
             .GetEncoded();
@@ -167,8 +170,8 @@ public sealed class SignedCmsBuilder {
             throw new InvalidOperationException("There is no data to sign.");
         }
         var builder = new PkcsSignerInfoBuilder {
-                                                    ContentType = ContentType
-                                                };
+            ContentType = ContentType
+        };
         SignerInfos.Add(builder.Sign(signer, _content));
         var certs = new List<X509Certificate2>(new[] { signer.SignerCertificate });
         if (chain != null) {

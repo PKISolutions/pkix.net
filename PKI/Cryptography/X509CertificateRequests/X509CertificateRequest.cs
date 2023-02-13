@@ -53,8 +53,8 @@ namespace System.Security.Cryptography.X509CertificateRequests {
                 Version = cmc.Content.Version;
                 SubjectName = cmc.Content.SubjectName;
                 PublicKey = cmc.Content.PublicKey;
-                _extensions.AddRange(cmc.Content.Extensions.Cast<X509Extension>());
-                _attributes.AddRange(cmc.Content.Attributes);
+                InternalExtensions.AddRange(cmc.Content.Extensions.Cast<X509Extension>());
+                InternalAttributes.AddRange(cmc.Content.Attributes);
                 SignatureAlgorithm = cmc.Content.SignatureAlgorithm;
                 SignatureIsValid = cmc.Content.SignatureIsValid;
                 ExternalData = cmc;
