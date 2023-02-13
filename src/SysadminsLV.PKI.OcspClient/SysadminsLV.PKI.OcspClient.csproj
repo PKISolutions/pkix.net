@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="SysadminsLV.Asn1Parser" Version="1.2.7.62" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\SysadminsLV.PKI\SysadminsLV.PKI.csproj" />
   </ItemGroup>
 
