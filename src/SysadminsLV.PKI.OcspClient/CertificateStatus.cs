@@ -1,4 +1,4 @@
-﻿namespace PKI.OCSP;
+﻿namespace SysadminsLV.PKI.OcspClient;
 
 /// <summary>
 ///  Defines the status of a certificate requested in the OCSP Request. The status is defined in RFC2560.
