@@ -104,7 +104,7 @@ public class X509CertificateTrustListBuilder {
     ///     is added to certificate list.
     /// </param>
     /// <returns>
-    ///     An instance of <see cref="X509CertificateTrustList"/> class that represents signed certificate trust list.
+    ///     An instance of <see cref="SysadminsLV.PKI.Cryptography.X509Certificates.X509CertificateTrustList"/> class that represents signed certificate trust list.
     /// </returns>
     public X509CertificateTrustList Sign(ICryptSigner signer, X509Certificate2Collection chain) {
         var cmsBuilder = new SignedCmsBuilder(oid, encodeCTL());

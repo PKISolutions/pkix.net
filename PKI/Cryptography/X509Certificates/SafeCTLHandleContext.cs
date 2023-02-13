@@ -1,13 +1,12 @@
 ﻿using System.Security.Permissions;
 using Microsoft.Win32.SafeHandles;
-using SysadminsLV.PKI.Cryptography.X509Certificates;
 using SysadminsLV.PKI.Utils.CLRExtensions;
 using SysadminsLV.PKI.Win32;
 
 namespace System.Security.Cryptography.X509Certificates {
     /// <summary>
     /// <para>
-    /// SafeCTLHandleContext provides a SafeHandle class for an <see cref="X509CertificateTrustList"/> context.
+    /// SafeCTLHandleContext provides a SafeHandle class for an <see cref="SysadminsLV.PKI.Cryptography.X509Certificates.X509CertificateTrustList"/> context.
     /// This can be used instead of the raw IntPtr to avoid races with the garbage
     /// collector, ensuring that the X509Certificate object is not cleaned up from underneath you
     /// while you are still using the handle pointer.
