@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using CERTADMINLib;
 using PKI.Exceptions;
 using PKI.Utils;
+using SysadminsLV.PKI.Cryptography.X509Certificates;
 using SysadminsLV.PKI.Dcom;
 using SysadminsLV.PKI.Dcom.Implementations;
 using SysadminsLV.PKI.Management.ActiveDirectory;
