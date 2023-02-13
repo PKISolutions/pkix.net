@@ -57,7 +57,7 @@ public sealed class X509CertificateRequestCmc : SignedPkcs7<X509CertificateReque
     /// <see href="https://tools.ietf.org/html/rfc6402">RFC 6402</see>.
     /// </remarks>
     public X509CertificateRequestCmc(Byte[] rawData) : base(rawData) { }
-        
+
     /// <summary>
     /// Decodes embedded payload of the CMC message. Current implementation supports only PKCS#10 certificate
     /// request objects.

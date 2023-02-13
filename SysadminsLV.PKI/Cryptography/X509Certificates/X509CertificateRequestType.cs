@@ -1,4 +1,4 @@
-﻿namespace System.Security.Cryptography.X509CertificateRequests;
+﻿namespace SysadminsLV.PKI.Cryptography.X509CertificateRequests;
 
 /// <summary>
 /// Defines certificate request formats. Currently only PKCS10 and CMC formats are defined.
