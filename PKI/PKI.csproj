@@ -298,7 +298,6 @@
     <Compile Include="OCSP\OCSPResponseComplianceError.cs" />
     <Compile Include="OCSP\OCSPSingleResponseCollection.cs" />
     <Compile Include="OCSP\OCSPSingleResponse.cs" />
-    <Compile Include="OCSP\OCSPResponseType.cs" />
     <Compile Include="OCSP\OCSPResponse.cs" />
     <Compile Include="OCSP\OCSPRequest.cs" />
     <Compile Include="Security\AccessControl\CertSrvAccessRule.cs" />

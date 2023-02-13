@@ -1,4 +1,4 @@
-﻿namespace PKI.OCSP;
+﻿namespace SysadminsLV.PKI.OcspClient;
 
 /// <summary>
 /// Contains possible OCSP response types. Currently only <strong>id_pkix_ocsp_basic</strong> type is supported.
