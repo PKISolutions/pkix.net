@@ -7,7 +7,6 @@ using System.Security.Cryptography.X509Certificates;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
-using SysadminsLV.PKI.Tools.MessageOperations;
 
 namespace SysadminsLV.PKI.Cryptography.Pkcs;
 
@@ -245,7 +244,7 @@ public abstract class SignedPkcs7<T> where T : class {
         }
 
         // if hash check passed, do hash signature validation.
-        var signer = new MessageSigner(signerCert, new Oid2(signerInfo.HashAlgorithm.AlgorithmId, false));
+        var signer = new CryptSigner(signerCert, Oid.FromOidValue(signerInfo.HashAlgorithm.AlgorithmId.Value, OidGroup.HashAlgorithm));
         Byte[] data = signerInfo.AuthenticatedAttributes.Encode();
         data[0] = 0x31;
         if (validOnly) {

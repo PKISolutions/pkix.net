@@ -239,7 +239,6 @@
     <Compile Include="Cryptography\Pkcs\DefaultSignedPkcs7.cs" />
     <Compile Include="Cryptography\X509CertificateRequests\X509CertificateRequestCmc.cs" />
     <Compile Include="Cryptography\X509CertificateRequests\X509CertificateRequestPkcs10.cs" />
-    <Compile Include="Cryptography\Pkcs\SignedPkcs7.cs" />
     <Compile Include="Cryptography\X509Certificates\CertificateStoreObjectAccessStateEnum.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CEPEnrollmentPropertyInfo.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CertificateContextProperty.cs" />
