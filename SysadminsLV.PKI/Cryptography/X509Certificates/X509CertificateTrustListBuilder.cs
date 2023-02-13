@@ -27,7 +27,7 @@ public class X509CertificateTrustListBuilder {
     /// list is copied to builder.
     /// </summary>
     /// <param name="ctl">Existing trust list to use as a base object.</param>
-    /// <exception cref="ArgumentNullException">
+    /// <exception cref="System.ArgumentNullException">
     ///     <strong>ctl</strong> parameter is null.
     /// </exception>
     public X509CertificateTrustListBuilder(X509CertificateTrustList ctl) {
