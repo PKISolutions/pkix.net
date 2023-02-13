@@ -50,8 +50,12 @@ public class CertID {
     /// Either, a <strong>issuer</strong> and/or <strong>leafCert</strong> parameter is null.
     /// </exception>
     public CertID(X509Certificate2 issuer, X509Certificate2 leafCert) {
-        if (issuer == null) { throw new ArgumentNullException(nameof(issuer)); }
-        if (leafCert == null) { throw new ArgumentNullException(nameof(leafCert)); }
+        if (issuer == null) {
+            throw new ArgumentNullException(nameof(issuer));
+        }
+        if (leafCert == null) {
+            throw new ArgumentNullException(nameof(leafCert));
+        }
         _issuerName = issuer.SubjectName;
         issuerPublicKey = issuer.GetPublicKey();
         serialNumber = leafCert.GetSerialNumber().Reverse().ToArray();
