@@ -103,14 +103,7 @@
   <ItemGroup>
     <Compile Include="Cryptography\CspAlgorithmOperation.cs" />
     <Compile Include="Cryptography\CspAlgorithmType.cs" />
-    <Compile Include="Cryptography\Pkcs\SignedCmsBuilder.cs" />
     <Compile Include="Cryptography\CspProviderType.cs" />
-    <Compile Include="Cryptography\TspAuthenticodeRequest.cs" />
-    <Compile Include="Cryptography\TspMessageImprint.cs" />
-    <Compile Include="Cryptography\TspRequest.cs" />
-    <Compile Include="Cryptography\TspResponse.cs" />
-    <Compile Include="Cryptography\TspRfc3161Request.cs" />
-    <Compile Include="Cryptography\TspStatusInfo.cs" />
     <Compile Include="Cryptography\X509Certificates\KeyProviderInfo.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CertificateTrustList.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CertificateTrustListBuilder.cs" />
@@ -235,7 +228,6 @@
     <Compile Include="Management\CertificateServices\Database\AdcsDbPropertyCollection.cs" />
     <Compile Include="CertificateServices\UrlProtocolSchemes.cs" />
     <Compile Include="CertificateTemplates\CertTemplateSubjectType.cs" />
-    <Compile Include="Cryptography\Pkcs\DefaultSignedPkcs7.cs" />
     <Compile Include="Cryptography\X509CertificateRequests\X509CertificateRequestCmc.cs" />
     <Compile Include="Cryptography\X509Certificates\CertificateStoreObjectAccessStateEnum.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CEPEnrollmentPropertyInfo.cs" />
