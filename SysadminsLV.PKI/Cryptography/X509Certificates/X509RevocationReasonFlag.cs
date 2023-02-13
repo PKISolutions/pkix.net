@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Security.Cryptography.X509Certificates;
 
 namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
 /// <summary>
-/// Represents certificate revocation flags. This enumeration is used by <see cref="System.Security.Cryptography.X509Certificates.X509DistributionPoint"/> and
+/// Represents certificate revocation flags. This enumeration is used by <see cref="X509DistributionPoint"/> and
 /// <see cref="X509IssuingDistributionPointsExtension"/> types.
 /// <para>This enumeration has a <see cref="FlagsAttribute"/> attribute that allows a bitwise combination of its member values.</para>
 /// </summary>

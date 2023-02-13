@@ -1,16 +1,16 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
-using SysadminsLV.PKI;
 using SysadminsLV.PKI.CLRExtensions;
-using SysadminsLV.PKI.Cryptography;
-using SysadminsLV.PKI.Cryptography.X509Certificates;
 using SysadminsLV.PKI.Utils.CLRExtensions;
 
-namespace System.Security.Cryptography.X509Certificates;
+namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
 /// <summary>
 /// Provides methods that help you use X.509 certificate revocation lists (CRL).
