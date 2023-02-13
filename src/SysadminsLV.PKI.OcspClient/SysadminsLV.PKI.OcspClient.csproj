@@ -5,4 +5,8 @@
       <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\SysadminsLV.PKI\SysadminsLV.PKI.csproj" />
+  </ItemGroup>
+
 </Project>

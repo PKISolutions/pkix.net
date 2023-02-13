@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.PKI;
+using SysadminsLV.PKI.OcspClient;
 
 namespace PKI.OCSP {
     /// <summary>

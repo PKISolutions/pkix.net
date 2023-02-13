@@ -5,6 +5,7 @@ using System.Security.Cryptography.X509Certificates;
 using PKI.Exceptions;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
+using SysadminsLV.PKI.OcspClient;
 using SysadminsLV.PKI.Utils.CLRExtensions;
 
 namespace PKI.OCSP {
