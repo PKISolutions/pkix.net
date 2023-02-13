@@ -98,7 +98,7 @@ public class X509CertificateRequestPkcs10 {
         var blob = new SignedContentBlob(rawData, ContentBlobType.SignedBlob);
         // at this point we can set signature algorithm and populate RawData
         SignatureAlgorithm = blob.SignatureAlgorithm.AlgorithmId;
-        Asn1Reader asn = new Asn1Reader(blob.ToBeSignedData);
+        var asn = new Asn1Reader(blob.ToBeSignedData);
         getVersion(asn);
         getSubject(asn);
         getPublicKey(asn);
@@ -167,12 +167,12 @@ Signature matches Public Key: {SignatureIsValid}
         return SB.ToString();
     }
     String formatAttributes() {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         if (InternalAttributes.Count == 0) {
             return sb.ToString();
         }
 
-        sb.AppendLine("");
+        sb.AppendLine();
         for (Int32 index = 0; index < InternalAttributes.Count; index++) {
             Pkcs9AttributeObject attribute = InternalAttributes[index];
             sb.AppendLine(
@@ -182,7 +182,7 @@ Signature matches Public Key: {SignatureIsValid}
         return sb.ToString();
     }
     String formatExtensions() {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         if (InternalExtensions.Count == 0) {
             return sb.ToString();
         }
