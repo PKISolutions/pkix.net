@@ -289,12 +289,9 @@
     <Compile Include="Enrollment\Policy\PolicyAuthenticationEnum.cs" />
     <Compile Include="Enrollment\Policy\PolicyServerClient.cs" />
     <Compile Include="Enrollment\Policy\PolicyServerUrlFlagsEnum.cs" />
-    <Compile Include="ManagedAPI\CryptFormatting.cs" />
-    <Compile Include="ManagedAPI\CryptEncoding.cs" />
     <Compile Include="ManagedAPI\ManagedCrypt32.cs" />
     <Compile Include="Win32\NCrypt.cs" />
     <Compile Include="Win32\Netapi32.cs" />
-    <Compile Include="OCSP\CertificateStatus.cs" />
     <Compile Include="OCSP\CertID.cs" />
     <Compile Include="OCSP\OCSPSingleRequestCollection.cs" />
     <Compile Include="OCSP\OCSPSingleRequest.cs" />
@@ -348,6 +345,10 @@
     <None Include="_ExternalReferences\certadm.il" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\src\SysadminsLV.PKI.OcspClient\SysadminsLV.PKI.OcspClient.csproj">
+      <Project>{26937DDC-116A-4270-B034-39D2719E76D3}</Project>
+      <Name>SysadminsLV.PKI.OcspClient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SysadminsLV.PKI\SysadminsLV.PKI.csproj">
       <Project>{0f2d01f9-e1a3-44f9-a4b2-d4ad1921dc94}</Project>
       <Name>SysadminsLV.PKI</Name>

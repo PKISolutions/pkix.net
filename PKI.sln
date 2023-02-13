@@ -12,7 +12,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SysadminsLV.PKI", "SysadminsLV.PKI\SysadminsLV.PKI.csproj", "{0F2D01F9-E1A3-44F9-A4B2-D4AD1921DC94}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SysadminsLV.PKI", "SysadminsLV.PKI\SysadminsLV.PKI.csproj", "{0F2D01F9-E1A3-44F9-A4B2-D4AD1921DC94}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SysadminsLV.PKI.OcspClient", "src\SysadminsLV.PKI.OcspClient\SysadminsLV.PKI.OcspClient.csproj", "{26937DDC-116A-4270-B034-39D2719E76D3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +33,10 @@ Global
 		{0F2D01F9-E1A3-44F9-A4B2-D4AD1921DC94}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F2D01F9-E1A3-44F9-A4B2-D4AD1921DC94}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F2D01F9-E1A3-44F9-A4B2-D4AD1921DC94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26937DDC-116A-4270-B034-39D2719E76D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26937DDC-116A-4270-B034-39D2719E76D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26937DDC-116A-4270-B034-39D2719E76D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26937DDC-116A-4270-B034-39D2719E76D3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

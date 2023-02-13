@@ -12,14 +12,16 @@ namespace PKI.OCSP {
     ///  The class represents an object to identify the certificate to include in OCSP Request. Also this object is returned by the OCSP Responder.
     /// </summary>
     public class CertID {
-        Oid hashAlgorithm = new("1.3.14.3.2.26"); // sha1
+        Oid hashAlgorithm = new(AlgorithmOid.SHA1); // sha1
         readonly X500DistinguishedName _issuerName;
         Byte[] issuerPublicKey, serialNumber;
 
         /// <param name="rawData">A DER-encoded byte array that represents a binary form of <strong>CertID</strong> object.</param>
         /// <exception cref="ArgumentNullException"><strong>rawData</strong> parameter is null reference.</exception>
         public CertID(Byte[] rawData) {
-            if (rawData == null) { throw new ArgumentNullException(nameof(rawData)); }
+            if (rawData == null) {
+                throw new ArgumentNullException(nameof(rawData));
+            }
             initializeFromAsn(rawData);
         }
         /// <param name="cert">An <see cref="X509Certificate2"/> from which the <strong>CertID</strong> object is constructed.</param>
@@ -28,8 +30,12 @@ namespace PKI.OCSP {
         ///		The certificate is not initialized.
         /// </exception>
         public CertID(X509Certificate2 cert) {
-            if (cert == null) { throw new ArgumentNullException(nameof(cert)); }
-            if (cert.Handle.Equals(IntPtr.Zero)) { throw new UninitializedObjectException(); }
+            if (cert == null) {
+                throw new ArgumentNullException(nameof(cert));
+            }
+            if (cert.Handle.Equals(IntPtr.Zero)) {
+                throw new UninitializedObjectException();
+            }
             _issuerName = cert.IssuerName;
             serialNumber = cert.GetSerialNumber().Reverse().ToArray();
             initializeFromCert(cert);
