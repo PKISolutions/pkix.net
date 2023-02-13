@@ -103,7 +103,6 @@
   <ItemGroup>
     <Compile Include="Cryptography\CspAlgorithmOperation.cs" />
     <Compile Include="Cryptography\CspAlgorithmType.cs" />
-    <Compile Include="Cryptography\Pkcs\PkcsSignerInfoBuilder.cs" />
     <Compile Include="Cryptography\Pkcs\SignedCmsBuilder.cs" />
     <Compile Include="Cryptography\CspProviderType.cs" />
     <Compile Include="Cryptography\TspAuthenticodeRequest.cs" />
