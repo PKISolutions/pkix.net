@@ -8,7 +8,6 @@ using System.Text;
 using PKI.Structs;
 using PKI.Utils;
 using SysadminsLV.Asn1Parser;
-using SysadminsLV.PKI.Cryptography;
 using SysadminsLV.PKI.Win32;
 
 namespace System.Security.Cryptography;
@@ -17,7 +16,7 @@ namespace System.Security.Cryptography;
 /// An extended class for <see cref="Oid"/> class. Extended class provides rich functionality by returning additional OID registration information
 /// and OID registration/unregistration capabilities.
 /// </summary>
-public sealed class Oid2 : IOid {
+public sealed class Oid2 {
     static readonly String _baseDsPath = $"CN=OID, CN=Public Key Services, CN=Services,{DsUtils.ConfigContext}";
     readonly String _searchBy;
 
@@ -190,7 +189,7 @@ public sealed class Oid2 : IOid {
             initializeLocal(oid, group);
         }
     }
-    Boolean equals(IOid other) {
+    Boolean equals(Oid2 other) {
         return String.Equals(Value, other.Value)
                && OidGroup == other.OidGroup
                && String.Equals(FriendlyName, other.FriendlyName);

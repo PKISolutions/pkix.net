@@ -36,7 +36,7 @@ public class MessageSigner : ICryptSigner, IDisposable {
     readonly IKeyStorageInfo _keyInfo;
 
     MessageSigner() { }
-    MessageSigner(IOid hashAlg, PublicKey pubKey) {
+    MessageSigner(Oid2 hashAlg, PublicKey pubKey) {
         PublicKeyAlgorithm = pubKey.Oid;
         acquirePublicKey(pubKey);
         initializeHashAlgorithm(hashAlg.ToOid());

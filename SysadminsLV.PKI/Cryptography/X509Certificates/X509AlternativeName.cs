@@ -90,7 +90,7 @@ public class X509AlternativeName {
     /// 		<description>
     /// 			Can be a string that represents a registered in the <strong>IANA</strong> (<i>Internet Assigned
     /// 			Numbers Authority</i>) or <strong>ISO</strong> (<i>International Standards Organization</i>) object
-    /// 			identifier, or an instance of <see cref="Oid"/> object or <see cref="Guid"/> object that contains
+    /// 			identifier, or an <see cref="Oid"/> object or <see cref="Guid"/> object that contains
     /// 			registered object identifier. 
     /// 		</description>
     /// 	</item>
@@ -98,8 +98,7 @@ public class X509AlternativeName {
     /// 		<term>Guid</term>
     /// 		<description>
     /// 			Can be a string that represents a globally unique identifier and should identify a server
-    /// 			to the Active Directory replication system as a domain controller or an instance of the
-    /// 			<see cref="IOid"/> object.
+    /// 			to the Active Directory replication system as a domain controller or an <see cref="Oid"/> object.
     /// 		</description>
     /// 	</item>
     /// 	<item>
@@ -381,17 +380,13 @@ public class X509AlternativeName {
             switch (value) {
                 case String sValue:
                     Value = sValue;
-                    Oid oid = new Oid(sValue);
+                    var oid = new Oid(sValue);
                     asn = new Asn1Reader(Asn1Utils.EncodeObjectIdentifier(oid));
                     Value = oid.Value;
                     break;
                 case Oid oid1:
                     asn = new Asn1Reader(Asn1Utils.EncodeObjectIdentifier(oid1));
                     Value = oid1.Value;
-                    break;
-                case IOid oid2:
-                    asn = new Asn1Reader(Asn1Utils.EncodeObjectIdentifier(oid2.ToOid()));
-                    Value = oid2.Value;
                     break;
                 default: throw new ArgumentException("The input data is not valid registered ID.");
             }
