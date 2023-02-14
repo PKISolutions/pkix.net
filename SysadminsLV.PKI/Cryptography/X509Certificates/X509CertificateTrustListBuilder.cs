@@ -27,7 +27,7 @@ public class X509CertificateTrustListBuilder {
     /// list is copied to builder.
     /// </summary>
     /// <param name="ctl">Existing trust list to use as a base object.</param>
-    /// <exception cref="System.ArgumentNullException">
+    /// <exception cref="ArgumentNullException">
     ///     <strong>ctl</strong> parameter is null.
     /// </exception>
     public X509CertificateTrustListBuilder(X509CertificateTrustList ctl) {
@@ -104,7 +104,7 @@ public class X509CertificateTrustListBuilder {
     ///     is added to certificate list.
     /// </param>
     /// <returns>
-    ///     An instance of <see cref="SysadminsLV.PKI.Cryptography.X509Certificates.X509CertificateTrustList"/> class that represents signed certificate trust list.
+    ///     An instance of <see cref="X509CertificateTrustList"/> class that represents signed certificate trust list.
     /// </returns>
     public X509CertificateTrustList Sign(ICryptSigner signer, X509Certificate2Collection chain) {
         var cmsBuilder = new SignedCmsBuilder(oid, encodeCTL());

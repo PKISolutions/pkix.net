@@ -1,7 +1,7 @@
-﻿namespace SysadminsLV.PKI.Cryptography; 
+﻿namespace SysadminsLV.PKI.Cryptography;
 
 /// <summary>
-/// Contains enumeration to identify data type in <see cref="SysadminsLV.PKI.Cryptography.SignedContentBlob"/> object.
+/// Contains enumeration to identify data type in <see cref="SignedContentBlob"/> object.
 /// </summary>
 public enum ContentBlobType {
     /// <summary>

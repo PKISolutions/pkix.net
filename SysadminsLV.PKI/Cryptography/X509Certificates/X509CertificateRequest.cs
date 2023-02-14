@@ -89,7 +89,7 @@ public class X509CertificateRequest : X509CertificateRequestPkcs10 {
     /// If the certificate request type is <strong>PKCS#7</strong>, this method returns textual
     /// representation only for embedded <strong>PKCS#10</strong> certificate request. For full
     /// PKCS#7 dump use the <see cref="Object.ToString()">ToString</see> method of the
-    /// <see cref="SysadminsLV.PKI.Cryptography.Pkcs.SignedPkcs7{T}"/> class.
+    /// <see cref="Pkcs.SignedPkcs7{T}"/> class.
     /// </remarks>
     public override String ToString() {
         var SB = new StringBuilder();

@@ -28,7 +28,7 @@ public class X509CertificateTrustList {
     /// Initializes a new instance of the <strong>X509CertificateTrustList</strong> class using the path to a CTL file. 
     /// </summary>
     /// <param name="path">The path to a CTL file (*.stl).</param>
-    /// <exception cref="System.ArgumentNullException">
+    /// <exception cref="ArgumentNullException">
     /// <strong>path</strong> parameter is null or empty.
     /// </exception>
     public X509CertificateTrustList(String path) {
@@ -43,7 +43,7 @@ public class X509CertificateTrustList {
     /// an X.509 certificate trust list.
     /// </summary>
     /// <param name="rawData">A byte array containing data from an X.509 CTL.</param>
-    /// <exception cref="System.ArgumentNullException">
+    /// <exception cref="ArgumentNullException">
     /// <strong>rawData</strong> parameter is null.
     /// </exception>
     public X509CertificateTrustList(Byte[] rawData) {
@@ -86,16 +86,16 @@ public class X509CertificateTrustList {
     /// </summary>
     public DateTime? NextUpdate { get; private set; }
     /// <summary>
-    /// Gets the algorithm type of the <see cref="SysadminsLV.PKI.Cryptography.X509Certificates.X509CertificateTrustListEntry.Thumbprint">Thumbprint</see> in <see cref="SysadminsLV.PKI.Cryptography.X509Certificates.X509CertificateTrustListEntry"/> members of the
+    /// Gets the algorithm type of the <see cref="X509CertificateTrustListEntry.Thumbprint">Thumbprint</see> in <see cref="X509CertificateTrustListEntry"/> members of the
     /// <see cref="Entries"/> member array.
     /// </summary>
     public Oid SubjectAlgorithm { get; private set; }
     /// <summary>
-    /// Gets a collection of <see cref="SysadminsLV.PKI.Cryptography.X509Certificates.X509CertificateTrustListEntry"/> elements.
+    /// Gets a collection of <see cref="X509CertificateTrustListEntry"/> elements.
     /// </summary>
     public X509CertificateTrustListEntryCollection Entries => new(_entries);
     /// <summary>
-    /// Gets a collection of <see cref="System.Security.Cryptography.X509Certificates.X509Extension">X509Extension</see> objects.
+    /// Gets a collection of <see cref="X509Extension">X509Extension</see> objects.
     /// </summary>
     /// <remarks><p>Version 1 CTLs do not support extensions and this property is always empty for them.</p>
     /// </remarks>

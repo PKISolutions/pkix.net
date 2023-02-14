@@ -18,11 +18,11 @@ public sealed class X509NextCRLPublishExtension : X509Extension {
 
     /// <summary>
     /// Initializes a new instance of the <strong>X509CRLReferenceExtension</strong> class using an
-    /// <see cref="System.Security.Cryptography.AsnEncodedData"/> object and a value that identifies whether the extension is critical.
+    /// <see cref="AsnEncodedData"/> object and a value that identifies whether the extension is critical.
     /// </summary>
     /// <param name="encodedPublishTime">The encoded data to use to create the extension.</param>
     /// <param name="critical"><strong>True</strong> if the extension is critical; otherwise, <strong>False</strong>.</param>
-    /// <exception cref="System.ArgumentException">
+    /// <exception cref="ArgumentException">
     /// The data in the <strong>value</strong> parameter is not valid extension value.
     /// </exception>
     /// <remarks>This extension SHOULD NOT be marked critical.</remarks>
@@ -38,7 +38,7 @@ public sealed class X509NextCRLPublishExtension : X509Extension {
     }
     /// <summary>
     /// Initializes a new instance of the <strong>X509CRLReferenceExtension</strong> class using an
-    /// <see cref="System.DateTime"/> object and a value that identifies whether the extension is critical.
+    /// <see cref="DateTime"/> object and a value that identifies whether the extension is critical.
     /// </summary>
     /// <param name="publishTime">The encoded data to use to create the extension.</param>
     /// <param name="critical"><strong>True</strong> if the extension is critical; otherwise, <strong>False</strong>.</param>
