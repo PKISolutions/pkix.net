@@ -8,7 +8,6 @@ using System.Text;
 using PKI.Structs;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.PKI.Tools.MessageOperations;
-using SysadminsLV.PKI.Utils.CLRExtensions;
 using SysadminsLV.PKI.Win32;
 
 namespace SysadminsLV.PKI.Cryptography.X509Certificates;
@@ -19,7 +18,7 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 /// </summary>
 /// <remarks>
 /// Although, the certificate is created in-memory, private key material still persists in CSP/KSP. When the
-/// certificate is no longer necessary, call <see cref="X509Certificate2Extensions.DeletePrivateKey">
+/// certificate is no longer necessary, call <see cref="Utils.CLRExtensions.X509Certificate2Extensions.DeletePrivateKey">
 /// X509Certificate2.DeletePrivateKey</see> extension method.
 /// </remarks>
 public class X509CertificateBuilder {
@@ -110,7 +109,7 @@ public class X509CertificateBuilder {
     // generates SKI and optionally AKI
     void generateKeyIdentifiers(X509Certificate2 signer) {
         using (var hasher = SHA1.Create()) {
-            var hash = hasher.ComputeHash(PrivateKeyInfo.GetPublicKey().EncodedKeyValue.RawData);
+            Byte[] hash = hasher.ComputeHash(PrivateKeyInfo.GetPublicKey().EncodedKeyValue.RawData);
             var ext = new X509SubjectKeyIdentifierExtension(hash, false);
             _extensions.Add(ext);
         }
@@ -189,7 +188,7 @@ public class X509CertificateBuilder {
             ? SubjectName.RawData
             : signer.SubjectName.RawData);
         // NotBefore and NotAfter
-        List<Byte> date = Asn1Utils.EncodeDateTime(NotBefore).ToList();
+        var date = Asn1Utils.EncodeDateTime(NotBefore).ToList();
         date.AddRange(Asn1Utils.EncodeDateTime(NotAfter));
         rawData.AddRange(Asn1Utils.Encode(date.ToArray(), 48));
         // subject
