@@ -129,11 +129,6 @@ static class DsUtils {
     }
     public static DirectoryEntries GetChildItems(String ldap) {
         return new DirectoryEntry($"LDAP://{ldap}").Children;
-/*
-            using (var entry = new DirectoryEntry($"LDAP://{ldap}")) {
-                return entry.Children;
-            }
-*/
     }
     public static String BindServerToSite(String computerName) {
         if (String.IsNullOrEmpty(computerName)) { return null; }
@@ -149,11 +144,10 @@ static class DsUtils {
         } catch {
             return null;
         }
-        foreach (String Key in siteTable.Keys) {
-            String[] tokens = Key.Split('/');
+        foreach (String key in siteTable.Keys) {
+            String[] tokens = key.Split('/');
             if (ip.AddressList.Any(address => Networking.InSameSubnet(tokens[0], Convert.ToInt32(tokens[1]), address.ToString()))) {
-                String S = siteTable[Key];
-                return S;
+                return siteTable[key];
             }
         }
         return null;
