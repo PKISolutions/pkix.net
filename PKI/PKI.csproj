@@ -237,7 +237,6 @@
     <Compile Include="Cryptography\CspProviderAlgorithmInfoCollection.cs" />
     <Compile Include="Cryptography\CspProviderInfoCollection.cs" />
     <Compile Include="Cryptography\CspProviderInfo.cs" />
-    <Compile Include="Structs\CertConfigConstants.cs" />
     <Compile Include="Tools\MessageOperations\MessageSigner.cs" />
     <Compile Include="Utils\ServiceOperationResult.cs" />
     <Compile Include="Utils\IServiceOperationResult.cs" />
@@ -344,10 +343,7 @@
       <Name>SysadminsLV.PKI</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Base\" />
-    <Folder Include="OCSP\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
