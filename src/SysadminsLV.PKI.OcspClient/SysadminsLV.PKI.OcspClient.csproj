@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\SysadminsLV.PKI\SysadminsLV.PKI.csproj" />
+    <ProjectReference Include="..\SysadminsLV.PKI\SysadminsLV.PKI.csproj" />
   </ItemGroup>
 
 </Project>
