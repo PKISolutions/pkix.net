@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.DirectoryServices;
 using System.DirectoryServices.ActiveDirectory;
@@ -54,8 +53,8 @@ static class DsUtils {
     const String disallowed = @"!""#%&'()*+,/:;<=>?[\]^`{|}";
     public static String ConfigContext {
         get {
+            using var entry = new DirectoryEntry("LDAP://RootDSE");
             if (Ping()) {
-                using DirectoryEntry entry = new DirectoryEntry("LDAP://RootDSE");
                 return (String)entry.Properties[PropConfigNameContext].Value;
             }
             return null;
@@ -83,14 +82,14 @@ static class DsUtils {
             : String.Empty;
     }
     public static Object GetEntryProperty(String ldapPath, String prop) {
-        using DirectoryEntry entry = new DirectoryEntry($"LDAP://{ldapPath}");
+        using var entry = new DirectoryEntry($"LDAP://{ldapPath}");
         return entry.Properties.Contains(prop)
             ? entry.Properties[prop].Value
             : null;
     }
     public static IDictionary<String, Object> GetEntryProperties(String ldapPath, params String[] properties) {
         var retValue = new Dictionary<String, Object>();
-        using DirectoryEntry entry = new DirectoryEntry($"LDAP://{ldapPath}");
+        using var entry = new DirectoryEntry($"LDAP://{ldapPath}");
         foreach (String prop in properties) {
             retValue.Add(prop, entry.Properties.Contains(prop)
                 ? entry.Properties[prop].Value
@@ -138,14 +137,14 @@ static class DsUtils {
     }
     public static String BindServerToSite(String computerName) {
         if (String.IsNullOrEmpty(computerName)) { return null; }
-        Hashtable siteTable = new Hashtable();
+        var siteTable = new Dictionary<String, String>();
         IPHostEntry ip = Dns.GetHostEntry(computerName);
 
         try {
-            DirectoryEntry subnets = new DirectoryEntry($"LDAP://CN=Subnets,CN=Sites,{ConfigContext}");
+            using var subnets = new DirectoryEntry($"LDAP://CN=Subnets,CN=Sites,{ConfigContext}");
             foreach (DirectoryEntry subnet in subnets.Children) {
-                DirectoryEntry site = new DirectoryEntry("LDAP://" + subnet.Properties[PropSiteObject].Value);
-                siteTable.Add(subnet.Properties[PropCN].Value, site.Properties[PropCN].Value);
+                using var site = new DirectoryEntry("LDAP://" + subnet.Properties[PropSiteObject].Value);
+                siteTable.Add(subnet.Properties[PropCN].Value.ToString(), site.Properties[PropCN].Value.ToString());
             }
         } catch {
             return null;
@@ -153,7 +152,7 @@ static class DsUtils {
         foreach (String Key in siteTable.Keys) {
             String[] tokens = Key.Split('/');
             if (ip.AddressList.Any(address => Networking.InSameSubnet(tokens[0], Convert.ToInt32(tokens[1]), address.ToString()))) {
-                String S = (String) siteTable[Key];
+                String S = siteTable[Key];
                 return S;
             }
         }
