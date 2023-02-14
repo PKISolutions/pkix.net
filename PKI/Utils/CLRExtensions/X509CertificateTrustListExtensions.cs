@@ -6,7 +6,7 @@ using SysadminsLV.PKI.Win32;
 
 namespace SysadminsLV.PKI.Utils.CLRExtensions;
 /// <summary>
-/// Contains extension methods for <see cref="SysadminsLV.PKI.Cryptography.X509Certificates.X509CertificateTrustList"/>
+/// Contains extension methods for <see cref="X509CertificateTrustList"/>
 /// </summary>
 public static class X509CertificateTrustListExtensions {
     /// <summary>

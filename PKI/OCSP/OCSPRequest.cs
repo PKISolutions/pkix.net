@@ -12,6 +12,7 @@ using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
 using SysadminsLV.PKI.Cryptography;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
+using SysadminsLV.PKI.OcspClient;
 using SysadminsLV.PKI.Tools.MessageOperations;
 using SysadminsLV.PKI.Utils.CLRExtensions;
 
