@@ -2,7 +2,7 @@
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.PKI.Cryptography.Pkcs;
 
-namespace SysadminsLV.PKI.Cryptography.X509CertificateRequests;
+namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
 /// <summary>
 /// The <strong>X509CertificateRequestCmc</strong> class represents a CMC (Certificate Management Message over CMS)

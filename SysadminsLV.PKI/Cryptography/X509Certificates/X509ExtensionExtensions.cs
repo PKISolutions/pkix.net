@@ -4,9 +4,8 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
-using SysadminsLV.PKI.Cryptography.X509Certificates;
 
-namespace SysadminsLV.PKI.Utils.CLRExtensions;
+namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
 /// <summary>
 /// Contains extension methods for <see cref="X509Extension"/> class.
@@ -18,7 +17,7 @@ public static class X509ExtensionExtensions {
     /// <param name="extension">Default instance of <see cref="X509Extension"/> class.</param>
     /// <returns>Explicit extension implementation if defined, otherwise, the same object is returned.</returns>
     public static X509Extension ConvertExtension(this X509Extension extension) {
-        AsnEncodedData asnData = new AsnEncodedData(extension.Oid, extension.RawData);
+        var asnData = new AsnEncodedData(extension.Oid, extension.RawData);
         switch (extension.Oid.Value) {
             case X509ExtensionOid.CAVersion:
                 return new X509CAVersionExtension(asnData, extension.Critical);

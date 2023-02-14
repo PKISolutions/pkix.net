@@ -7,7 +7,6 @@ using System.Security.Cryptography.X509Certificates;
 using PKI.Utils;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
-using SysadminsLV.PKI.Utils.CLRExtensions;
 
 namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
@@ -183,10 +182,10 @@ public class X509CrlBuilder {
     /// <returns>An instance of generated CRL object.</returns>
     public X509CRL2 BuildAndHash(X509Certificate2 hasherInfo) {
         var dummyBlob = new SignedContentBlob(new Byte[] { 0 }, ContentBlobType.ToBeSignedBlob);
-        dummyBlob.Hash(new Oid2(HashingAlgorithm, false));
+        dummyBlob.Hash(HashingAlgorithm);
         List<Byte> tbs = buildTbs(dummyBlob.SignatureAlgorithm.RawData, hasherInfo);
         var blob = new SignedContentBlob(tbs.ToArray(), ContentBlobType.ToBeSignedBlob);
-        blob.Hash(new Oid2(HashingAlgorithm, false));
+        blob.Hash(HashingAlgorithm);
         return new X509CRL2(blob.Encode());
     }
     /// <summary>

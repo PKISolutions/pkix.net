@@ -5,8 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Interop.CERTENROLLLib;
 using PKI.Utils;
-using SysadminsLV.PKI.CLRExtensions;
-using SysadminsLV.PKI.Utils.CLRExtensions;
+using SysadminsLV.PKI.Cryptography;
 
 namespace PKI.CertificateTemplates;
 

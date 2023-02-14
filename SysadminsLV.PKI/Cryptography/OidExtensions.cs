@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
-using SysadminsLV.PKI.Cryptography;
 
-namespace SysadminsLV.PKI.CLRExtensions;
+namespace SysadminsLV.PKI.Cryptography;
 
 /// <summary>
 /// Contains extension methods for <see cref="Oid"/> class.
@@ -53,28 +52,16 @@ public static class OidExtensions {
     /// <exception cref="ArgumentNullException">
     /// <strong>hashAlgorithm</strong> parameter is null.
     /// </exception>
-    /// <exception cref="ArgumentException">
+    /// <exception cref="CryptographicException">
     /// Input OID doesn't belong to hash algorithm group or it cannot be translated to a respective
     /// </exception>
     /// <returns>OID in signature group.</returns>
-    public static Oid MapHashToSignatureOid(Oid hashAlgorithm) {
+    public static Oid MapHashToSignatureOid(this Oid hashAlgorithm) {
         if (hashAlgorithm == null) {
             throw new ArgumentNullException(nameof(hashAlgorithm));
         }
-        switch (hashAlgorithm.Value) {
-            case AlgorithmOid.MD5:
-                return new Oid(AlgorithmOid.MD5, "md5NoSign");
-            case AlgorithmOid.SHA1:
-                return new Oid(AlgorithmOid.SHA1, "sha1NoSign");
-            case AlgorithmOid.SHA256:
-                return new Oid(AlgorithmOid.SHA256, "sha256NoSign");
-            case AlgorithmOid.SHA384:
-                return new Oid(AlgorithmOid.SHA384, "sha384NoSign");
-            case AlgorithmOid.SHA512:
-                return new Oid(AlgorithmOid.SHA512, "sha512NoSign");
-            default:
-                throw new ArgumentException("Cannot translate hashing algorithm to signature algorithm.");
-        }
+
+        return Oid.FromOidValue(hashAlgorithm.Value, OidGroup.SignatureAlgorithm);
     }
     /// <summary>
     /// Gets a safe copy of <see cref="Oid"/> instance.

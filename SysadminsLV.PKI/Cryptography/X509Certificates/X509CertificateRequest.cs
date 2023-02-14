@@ -2,9 +2,8 @@
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using SysadminsLV.PKI.Utils.CLRExtensions;
 
-namespace SysadminsLV.PKI.Cryptography.X509CertificateRequests;
+namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
 /// <summary>
 /// This class represents single PKCS#10 certificate request.

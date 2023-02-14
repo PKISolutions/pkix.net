@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using SysadminsLV.Asn1Parser;
-using SysadminsLV.PKI.CLRExtensions;
 
-namespace SysadminsLV.PKI.Utils.CLRExtensions;
+namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
 /// <summary>
 /// Contains extension methods for <see cref="X509ExtensionCollection"/> class.
@@ -50,7 +49,7 @@ public static class X509ExtensionCollectionExtensions {
             throw new ArgumentNullException(nameof(rawData));
         }
 
-        Decode(extensions, new Asn1Reader(rawData));
+        extensions.Decode(new Asn1Reader(rawData));
     }
     /// <summary>
     /// Decodes ASN.1-encoded byte array that represents a collection of <see cref="X509Extension"/> objects.
@@ -112,7 +111,7 @@ public static class X509ExtensionCollectionExtensions {
         if (extensions == null) {
             throw new ArgumentNullException(nameof(extensions));
         }
-        
+
         var retValue = new X509ExtensionCollection();
         foreach (X509Extension extension in extensions) {
             retValue.Add(extension);

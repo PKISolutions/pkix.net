@@ -4,7 +4,6 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using SysadminsLV.Asn1Parser;
-using SysadminsLV.PKI.CLRExtensions;
 
 namespace SysadminsLV.PKI.Cryptography;
 

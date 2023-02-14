@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using SysadminsLV.Asn1Parser;
-using SysadminsLV.PKI.CLRExtensions;
 
 namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 

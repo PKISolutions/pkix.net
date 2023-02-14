@@ -5,12 +5,9 @@ using System.Security.Cryptography.Pkcs;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using SysadminsLV.Asn1Parser;
-using SysadminsLV.PKI.CLRExtensions;
 using SysadminsLV.PKI.Cryptography.Pkcs;
-using SysadminsLV.PKI.Cryptography.X509Certificates;
-using SysadminsLV.PKI.Utils.CLRExtensions;
 
-namespace SysadminsLV.PKI.Cryptography.X509CertificateRequests;
+namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
 /// <summary>
 /// Represents a managed PKCS #10 request.

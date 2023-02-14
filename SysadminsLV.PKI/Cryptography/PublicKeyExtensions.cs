@@ -7,9 +7,8 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
-using SysadminsLV.PKI.Cryptography;
 
-namespace SysadminsLV.PKI.CLRExtensions;
+namespace SysadminsLV.PKI.Cryptography;
 
 /// <summary>
 /// Contains extension methods for <see cref="PublicKey"/> class.
@@ -116,14 +115,14 @@ Public Key: UnusedBits = 0
     }
 
     // all magic numbers are for public keys only.
-    const Int32 RSA_MAGIC        = 0x31415352;
-    const Int32 DSA_V1_MAGIC     = 0x42505344; // 512-1024 bit, legacy
-    const Int32 DSA_V2_MAGIC     = 0x32425044; // up to 3072, CNG, starts with Win8
+    const Int32 RSA_MAGIC = 0x31415352;
+    const Int32 DSA_V1_MAGIC = 0x42505344; // 512-1024 bit, legacy
+    const Int32 DSA_V2_MAGIC = 0x32425044; // up to 3072, CNG, starts with Win8
     const Int32 ECDSA_P256_MAGIC = 0x31534345;
     const Int32 ECDSA_P384_MAGIC = 0x33534345;
     const Int32 ECDSA_P521_MAGIC = 0x35534345;
     public static Byte[] GetCryptBlob(this PublicKey publicKey) {
-        List<Byte> blob = new List<Byte>();
+        var blob = new List<Byte>();
         switch (publicKey.Oid.Value) {
             // RSA
             case AlgorithmOid.RSA:

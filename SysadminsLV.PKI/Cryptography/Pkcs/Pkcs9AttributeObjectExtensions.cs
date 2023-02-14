@@ -5,9 +5,8 @@ using System.Security.Cryptography.Pkcs;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using SysadminsLV.Asn1Parser;
-using SysadminsLV.PKI.Cryptography;
 
-namespace SysadminsLV.PKI.CLRExtensions;
+namespace SysadminsLV.PKI.Cryptography.Pkcs;
 public static class Pkcs9AttributeObjectExtensions {
     /// <summary>
     /// Encodes current object to ASN.1-encoded byte array.
@@ -60,7 +59,7 @@ public static class Pkcs9AttributeObjectExtensions {
                     break;
                 // Renewal certificate
                 case "1.3.6.1.4.1.311.13.1":
-                    X509Certificate2 cert = new X509Certificate2(asn.GetRawData());
+                    var cert = new X509Certificate2(asn.GetRawData());
                     SB.Append("Renewal Certificate (OID=1.3.6.1.4.1.311.13.1): ");
                     if (multiLine) {
                         SB.Append(Environment.NewLine + "    " + cert.ToString().Replace("\r\n", "\r\n    "));

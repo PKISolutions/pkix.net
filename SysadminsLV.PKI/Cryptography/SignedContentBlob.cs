@@ -4,7 +4,6 @@ using System.Linq;
 using System.Security.Cryptography;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
-using SysadminsLV.PKI.CLRExtensions;
 
 namespace SysadminsLV.PKI.Cryptography;
 
@@ -132,10 +131,11 @@ public class SignedContentBlob {
     /// <exception cref="ArgumentNullException">
     /// <strong>hashAlgorithm</strong> parameter is null.
     /// </exception>
-    public void Hash(IOid hashAlgorithm) {
+    public void Hash(Oid hashAlgorithm) {
         if (hashAlgorithm == null) {
             throw new ArgumentNullException(nameof(hashAlgorithm));
         }
+        Oid.FromOidValue(hashAlgorithm.Value, OidGroup.HashAlgorithm);
         Oid transformedOid = hashAlgorithm.MapHashToSignatureOid();
         using var hasher = HashAlgorithm.Create(hashAlgorithm.FriendlyName);
         if (hasher == null) {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using SysadminsLV.Asn1Parser;
 
-namespace SysadminsLV.PKI.Utils.CLRExtensions;
+namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
 /// <summary>
 /// Contains extension methods for <see cref="X509Certificate2Collection"/> class.

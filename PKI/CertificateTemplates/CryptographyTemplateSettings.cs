@@ -6,9 +6,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Interop.CERTENROLLLib;
 using PKI.Utils;
-using SysadminsLV.PKI.CLRExtensions;
+using SysadminsLV.PKI.Cryptography;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
-using SysadminsLV.PKI.Utils.CLRExtensions;
 using X509KeyUsageFlags = System.Security.Cryptography.X509Certificates.X509KeyUsageFlags;
 
 namespace PKI.CertificateTemplates {

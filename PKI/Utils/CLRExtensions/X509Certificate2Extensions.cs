@@ -9,7 +9,6 @@ using Microsoft.Win32.SafeHandles;
 using PKI.Exceptions;
 using PKI.Structs;
 using SysadminsLV.Asn1Parser;
-using SysadminsLV.PKI.CLRExtensions;
 using SysadminsLV.PKI.Cryptography;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
 using SysadminsLV.PKI.Win32;
