@@ -293,7 +293,6 @@
     <Compile Include="Win32\NCrypt.cs" />
     <Compile Include="Win32\Netapi32.cs" />
     <Compile Include="OCSP\OCSPSingleRequestCollection.cs" />
-    <Compile Include="OCSP\OCSPSingleRequest.cs" />
     <Compile Include="OCSP\OCSPResponseComplianceError.cs" />
     <Compile Include="OCSP\OCSPResponse.cs" />
     <Compile Include="OCSP\OCSPRequest.cs" />
