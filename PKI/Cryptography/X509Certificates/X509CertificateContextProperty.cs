@@ -1,9 +1,9 @@
 ﻿using System.Runtime.InteropServices;
 using System.Text;
 using PKI.Exceptions;
-using PKI.OCSP;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
+using SysadminsLV.PKI.OcspClient;
 using SysadminsLV.PKI.Utils.CLRExtensions;
 using static PKI.Structs.Wincrypt;
 

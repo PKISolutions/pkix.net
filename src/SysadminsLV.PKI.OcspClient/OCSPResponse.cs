@@ -8,11 +8,9 @@ using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
 using SysadminsLV.PKI.Cryptography;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
-using SysadminsLV.PKI.OcspClient;
-using SysadminsLV.PKI.Tools.MessageOperations;
 using SysadminsLV.PKI.Utils.CLRExtensions;
 
-namespace PKI.OCSP;
+namespace SysadminsLV.PKI.OcspClient;
 
 #region Oids
 //id-kp-OCSPSigning				OBJECT IDENTIFIER ::= { id-kp 9 }
@@ -39,7 +37,7 @@ public class OCSPResponse {
         _wc = web;
         decodeResponse();
     }
-    internal OCSPResponse(Byte[] rawData) {
+    public OCSPResponse(Byte[] rawData) {
         RawData = rawData;
         decodeResponse();
     }
@@ -101,7 +99,7 @@ public class OCSPResponse {
     public WebHeaderCollection HttpHeaders => _wc?.ResponseHeaders;
 
     /// <summary>
-    /// Indicates whether the signig certificate is valid for requested usage.
+    /// Indicates whether the signing certificate is valid for requested usage.
     /// </summary>
     /// <remarks>This check returns <strong>True</strong> under the following circumstances:
     /// <list type="bullet">
@@ -160,7 +158,6 @@ public class OCSPResponse {
         asn.MoveNext();
         //tbsResponseData
         var tbsResponseData = new Asn1Reader(asn.GetTagRawData());
-        //decodetbsResponse(tbsResponseData);
         //signatureAlgorithm
         asn.MoveNextSibling();
         SignatureAlgorithm = new AlgorithmIdentifier(Asn1Utils.Encode(asn.GetPayload(), 48)).AlgorithmId;
@@ -287,13 +284,12 @@ public class OCSPResponse {
             }
         }
         if (SignerCertificates.Count > 0) {
-            using var signerInfo = new MessageSigner(SignerCertificates[0], new Oid2(signatureAlgorithm, false));
+            using var signerInfo = new CryptSigner(SignerCertificates[0], signatureAlgorithm);
             SignatureIsValid = signerInfo.VerifyData(tbsResponseData.GetRawData(), signature);
         } else {
             findCertInStore();
             if (SignerCertificates.Count > 0) {
-                using var signerInfo =
-                    new MessageSigner(SignerCertificates[0], new Oid2(signatureAlgorithm, false));
+                using var signerInfo = new CryptSigner(SignerCertificates[0], signatureAlgorithm);
                 SignatureIsValid = signerInfo.VerifyData(tbsResponseData.GetRawData(), signature);
             } else {
                 ResponseErrorInformation |= OCSPResponseComplianceError.MissingCert;
@@ -302,14 +298,16 @@ public class OCSPResponse {
         verifyResponses();
     }
     void verifyHeaders() {
-        if (_wc == null) { return; }
+        if (_wc == null) {
+            return;
+        }
         if (_wc.ResponseHeaders.Get("Content-type") != "application/ocsp-response") {
             ResponseErrorInformation |= OCSPResponseComplianceError.InvalidHTTPHeader;
         }
     }
     void verifyResponses() {
         if (Responses
-            .Any(item => item.ThisUpdate > DateTime.Now || (item.NextUpdate != null && item.NextUpdate < DateTime.Now))) {
+            .Any(item => item.ThisUpdate > DateTime.Now || item.NextUpdate != null && item.NextUpdate < DateTime.Now)) {
             ResponseErrorInformation |= OCSPResponseComplianceError.UpdateNotTimeValid;
         }
     }
@@ -317,10 +315,10 @@ public class OCSPResponse {
         X509Certificate2 cert = certs[0];
         SignerCertificateIsValid = true;
         var chain = new X509Chain {
-                                      ChainPolicy = {
-                                                        RevocationMode = X509RevocationMode.NoCheck
-                                                    }
-                                  };
+            ChainPolicy = {
+                RevocationMode = X509RevocationMode.NoCheck
+            }
+        };
         chain.ChainPolicy.ExtraStore.AddRange(certs);
         SignerCertificateIsValid = chain.Build(cert);
         if (!SignerCertificateIsValid) {
@@ -338,21 +336,6 @@ public class OCSPResponse {
                 ResponseErrorInformation |= OCSPResponseComplianceError.MissingOCSPSigningEKU;
                 SignerCertificateIsValid = false;
             }
-        }
-    }
-
-    /// <summary>
-    /// Displays OCSP response signing certificates in a familiar UI. If multiple certificates are available,
-    /// they are displayed as a certificate pick up list.
-    /// </summary>
-    public void DisplaySigningCertificateUI() {
-        if (SignerCertificates.Count == 0) {
-            throw new NullReferenceException("No signing certificates are available");
-        }
-        if (SignerCertificates.Count == 1) {
-            X509Certificate2UI.DisplayCertificate(SignerCertificates[0]);
-        } else if (SignerCertificates.Count > 1) {
-            X509Certificate2UI.SelectFromCollection(SignerCertificates, "Response signing certificates", "", X509SelectionFlag.SingleSelection);
         }
     }
 }

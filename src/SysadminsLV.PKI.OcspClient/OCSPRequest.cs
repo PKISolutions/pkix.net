@@ -1,22 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Web;
-using PKI.Exceptions;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
 using SysadminsLV.PKI.Cryptography;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
-using SysadminsLV.PKI.OcspClient;
-using SysadminsLV.PKI.Tools.MessageOperations;
 using SysadminsLV.PKI.Utils.CLRExtensions;
 
-namespace PKI.OCSP;
+namespace SysadminsLV.PKI.OcspClient;
 
 /// <summary>
 /// Represents an OCSP Request object. This object is used to create and submit a request to an OCSP Responder.
@@ -24,7 +19,7 @@ namespace PKI.OCSP;
 public class OCSPRequest {
     readonly X509ExtensionCollection _extensions = new();
     readonly X509Certificate2Collection _signerChain = new();
-    Oid2[] responseAlgIDs = { new("sha1RSA", false) };
+    Oid[] responseAlgIDs = { new(AlgorithmOid.SHA1_RSA) };
     Oid signatureAlgID = new("sha1RSA");
     Boolean includeFullSigChain;
     ICredentials creds;
@@ -35,8 +30,10 @@ public class OCSPRequest {
     /// <param name="cert">An <see cref="X509Certificate2"/> object to verify against OCSP Responder.</param>
     /// <remarks>This constructor will use OCSP URLs (if any) of the specified certificate.</remarks>
     public OCSPRequest(X509Certificate2 cert) {
-        if (cert == null) { throw new ArgumentNullException(nameof(cert)); }
-        if (cert.Handle.Equals(IntPtr.Zero)) { throw new UninitializedObjectException(); }
+        if (cert == null) {
+            throw new ArgumentNullException(nameof(cert));
+        }
+
         initializeFromCert(cert);
     }
     /// <summary>
@@ -45,9 +42,11 @@ public class OCSPRequest {
     /// </summary>
     /// <param name="certs">Certificate collection to include in request.</param>
     public OCSPRequest(X509Certificate2Collection certs) {
-        if (certs == null || certs.Count <= 0) { throw new ArgumentNullException(nameof(certs)); }
+        if (certs is not { Count: > 0 }) {
+            throw new ArgumentNullException(nameof(certs));
+        }
         if (!verifyCerts(certs)) {
-            throw new Exception("One or more certificate in collection has distinct issuer");
+            throw new CryptographicException("One or more certificate in collection has distinct issuer.");
         }
         initializeFromCerts(certs);
     }
@@ -69,10 +68,16 @@ public class OCSPRequest {
     /// Either, <strong>issuer</strong> and/or <strong>certs</strong> parameter is null.
     /// </exception>
     public OCSPRequest(X509Certificate2Collection certs, X509Certificate2 issuer) {
-        if (issuer == null) { throw new ArgumentNullException(nameof(issuer)); }
-        if (certs == null) { throw new ArgumentNullException(nameof(certs)); }
-        if (issuer.Handle.Equals(IntPtr.Zero)) { throw new ArgumentException("The issuer certificate is invalid"); }
-        if (certs.Count == 0) { throw new ArgumentException("Empty array in 'certs' parameter"); }
+        if (issuer == null) {
+            throw new ArgumentNullException(nameof(issuer));
+        }
+        if (certs == null) {
+            throw new ArgumentNullException(nameof(certs));
+        }
+        if (certs.Count == 0) {
+            throw new ArgumentException("Empty array in 'certs' parameter");
+        }
+
         initializeFromCertsAndIssuer(certs, issuer);
     }
     /// <summary>
@@ -88,8 +93,13 @@ public class OCSPRequest {
     ///		Collection in the <strong>requestList</strong> parameter is an empty sequence.
     /// </exception>
     public OCSPRequest(OCSPSingleRequestCollection requestList) {
-        if (requestList == null) { throw new ArgumentNullException(nameof(requestList)); }
-        if (requestList.Count == 0) { throw new ArgumentException("Request list is empty"); }
+        if (requestList == null) {
+            throw new ArgumentNullException(nameof(requestList));
+        }
+        if (requestList.Count == 0) {
+            throw new ArgumentException("Request list is empty.");
+        }
+
         RequestList = requestList;
     }
 
@@ -112,7 +122,7 @@ public class OCSPRequest {
     /// </summary>
     public String NonceValue { get; private set; }
     /// <summary>
-    /// Gets certificate identification object collection. This object is equavivalent to singleRequest
+    /// Gets certificate identification object collection. This object is equivalent to <em>singleRequest</em>
     /// structure in ASN.1 module.
     /// </summary>
     public OCSPSingleRequestCollection RequestList { get; private set; }
@@ -138,12 +148,14 @@ public class OCSPRequest {
     /// Default algorithm is <strong>sha1RSA</strong>.
     /// </summary>
     /// <remarks>OCSP server may return an error </remarks>
-    public Oid2[] AcceptedSignatureAlgorithms {
+    public Oid[] AcceptedSignatureAlgorithms {
         get => responseAlgIDs;
         set {
-            if (value.Any(oid => oid.OidGroup != OidGroup.SignatureAlgorithm)) {
-                throw new InvalidDataException("One or more object identifiers are invalid.");
+            foreach (Oid oid in value) {
+                // this will throw exception if any OID is not from signature algorithm group.
+                Oid.FromOidValue(oid.Value, OidGroup.SignatureAlgorithm);
             }
+
             responseAlgIDs = value;
         }
     }
@@ -164,14 +176,14 @@ public class OCSPRequest {
     }
     void initializeFromCertsAndIssuer(X509Certificate2Collection certs, X509Certificate2 issuer) {
         RequestList = new OCSPSingleRequestCollection();
-        foreach (var cert in certs) {
+        foreach (X509Certificate2 cert in certs) {
             RequestList.Add(new OCSPSingleRequest(issuer, cert, false));
         }
     }
     List<Byte> buildTbsRequest(X500DistinguishedName requester) {
-        List<Byte> tbsRequest = new List<Byte>();
+        var tbsRequest = new List<Byte>();
         if (requester != null) {
-            X509AlternativeName requesterName = new X509AlternativeName(X509AlternativeNamesEnum.DirectoryName, requester);
+            var requesterName = new X509AlternativeName(X509AlternativeNamesEnum.DirectoryName, requester);
             tbsRequest.AddRange(Asn1Utils.Encode(requesterName.RawData, 0xa1));
         }
         tbsRequest.AddRange(RequestList.Encode());
@@ -187,7 +199,7 @@ public class OCSPRequest {
         List<Byte> tbsRequest = buildTbsRequest(signerCert.SubjectName);
         Byte[] signature;
 
-        using (var signerInfo = new MessageSigner(signerCert, new Oid2(signatureAlgID, false))) {
+        using (var signerInfo = new CryptSigner(signerCert, signatureAlgID)) {
             signature = signerInfo.SignData(tbsRequest.ToArray());
         }
         SignerCertificate = signerCert;
@@ -196,17 +208,17 @@ public class OCSPRequest {
         } else {
             _signerChain.Add(signerCert);
         }
-        AlgorithmIdentifier algId = new AlgorithmIdentifier(signatureAlgID, new Byte[0]);
-        List<Byte> signatureInfo = new List<Byte>(algId.RawData);
+        var algId = new AlgorithmIdentifier(signatureAlgID, Array.Empty<Byte>());
+        var signatureInfo = new List<Byte>(algId.RawData);
         signatureInfo.AddRange(new Asn1BitString(signature, false).RawData);
         signatureInfo.AddRange(Asn1Utils.Encode(_signerChain.Encode(), 0xa0));
         tbsRequest.AddRange(Asn1Utils.Encode(Asn1Utils.Encode(signatureInfo.ToArray(), 48), 0xa0));
         RawData = Asn1Utils.Encode(tbsRequest.ToArray(), 48);
     }
     void buildSignerCertChain() {
-        X509Chain chain = new X509Chain {
-                                            ChainPolicy = { RevocationMode = X509RevocationMode.NoCheck }
-                                        };
+        var chain = new X509Chain {
+            ChainPolicy = { RevocationMode = X509RevocationMode.NoCheck }
+        };
         chain.Build(SignerCertificate);
         for (Int32 index = 0; index < chain.ChainElements.Count; index++) {
             X509Certificate2 cert = chain.ChainElements[index].Certificate;
@@ -221,7 +233,7 @@ public class OCSPRequest {
         if (!target.EndsWith("/")) {
             target += "/";
         }
-        return target + HttpUtility.UrlEncode(Convert.ToBase64String(RawData));
+        return target + WebUtility.UrlEncode(Convert.ToBase64String(RawData));
     }
     void prepareWebClient(WebClient wc) {
         Version ver = Assembly.GetExecutingAssembly().GetName().Version;
@@ -258,15 +270,13 @@ public class OCSPRequest {
     static Uri getOcspUrl(IEnumerable<X509Certificate2> certs) {
         foreach (X509Certificate2 cert in certs.Where(x => !x.Handle.Equals(IntPtr.Zero))) {
             X509Extension aiaExtension = cert.Extensions[X509ExtensionOid.AuthorityInformationAccess];
-            if (aiaExtension == null) {
-                continue;
-            }
-            X509AuthorityInformationAccessExtension aia = new X509AuthorityInformationAccessExtension(new AsnEncodedData(aiaExtension.RawData), false);
-            if (aia.OnlineCertificateStatusProtocol == null || aia.OnlineCertificateStatusProtocol.Length == 0) {
+            var aia = (X509AuthorityInformationAccessExtension)aiaExtension?.ConvertExtension();
+            if (aia?.OnlineCertificateStatusProtocol == null || aia.OnlineCertificateStatusProtocol.Length == 0) {
                 continue;
             }
             return new Uri(aia.OnlineCertificateStatusProtocol[0].Trim());
         }
+
         return null;
     }
     static Boolean verifyCerts(X509Certificate2Collection certs) {
@@ -274,13 +284,14 @@ public class OCSPRequest {
             return false;
         }
 
-        HashSet<String> issuers = new HashSet<String>();
+        var issuers = new HashSet<String>();
         foreach (X509Certificate2 cert in certs) {
             if (cert.Handle.Equals(IntPtr.Zero)) {
                 return false;
             }
             issuers.Add(cert.Issuer.ToLower());
         }
+
         return issuers.Count == 1;
     }
 
@@ -332,7 +343,9 @@ public class OCSPRequest {
     ///  <para>Once the request is signed, no modifications to the request object are allowed.</para>
     ///  </remarks>
     public void SignRequest(X509Certificate2 signerCert, Boolean includeFullChain, Oid signatureAlgorithm) {
-        if (signerCert == null) { throw new ArgumentNullException(nameof(signerCert)); }
+        if (signerCert == null) {
+            throw new ArgumentNullException(nameof(signerCert));
+        }
         if (!signerCert.HasPrivateKey) {
             throw new ArgumentException("The certificate do not contain private key.");
         }
@@ -367,8 +380,8 @@ public class OCSPRequest {
         try {
             return sendGetRequest();
         } catch (WebException e) {
-            var statusCode = ((HttpWebResponse)e.Response).StatusCode;
-            if (statusCode == HttpStatusCode.MethodNotAllowed || statusCode == HttpStatusCode.NotFound) {
+            HttpStatusCode statusCode = ((HttpWebResponse)e.Response).StatusCode;
+            if (statusCode is HttpStatusCode.MethodNotAllowed or HttpStatusCode.NotFound) {
                 return sendPostRequest();
             }
 

@@ -8,7 +8,7 @@ using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
 
 namespace SysadminsLV.PKI.Cryptography;
-class CryptSigner : ICryptSigner, IDisposable {
+public class CryptSigner : ICryptSigner, IDisposable {
     const String DEFAULT_HASH_ALG = AlgorithmOid.SHA256;
     Boolean disposed, isCng, nullSigned;
     AsymmetricAlgorithm phPubKey;

@@ -292,8 +292,6 @@
     <Compile Include="ManagedAPI\ManagedCrypt32.cs" />
     <Compile Include="Win32\NCrypt.cs" />
     <Compile Include="Win32\Netapi32.cs" />
-    <Compile Include="OCSP\OCSPResponse.cs" />
-    <Compile Include="OCSP\OCSPRequest.cs" />
     <Compile Include="Security\AccessControl\CertSrvAccessRule.cs" />
     <Compile Include="Structs\CertAdmConstants.cs" />
     <Compile Include="Structs\Certbcli.cs" />
@@ -348,6 +346,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Base\" />
+    <Folder Include="OCSP\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
