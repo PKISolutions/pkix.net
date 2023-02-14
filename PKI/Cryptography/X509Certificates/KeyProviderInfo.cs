@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Security.Cryptography.X509Certificates;
 using PKI.Structs;
 
 namespace SysadminsLV.PKI.Cryptography.X509Certificates;
