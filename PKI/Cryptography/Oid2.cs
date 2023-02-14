@@ -8,6 +8,7 @@ using System.Text;
 using PKI.Structs;
 using PKI.Utils;
 using SysadminsLV.Asn1Parser;
+using SysadminsLV.PKI.Cryptography;
 using SysadminsLV.PKI.Win32;
 
 namespace System.Security.Cryptography;
@@ -88,22 +89,18 @@ public sealed class Oid2 {
     public Oid2(Oid oid, OidGroup group, Boolean searchInDirectory) : this(oid.Value, group, searchInDirectory) { }
 
 
-    /// <summary>
-    /// Gets the friendly name of the identifier.
-    /// </summary>
-    public String FriendlyName { get; set; }
-    /// <summary>
-    /// Gets the dotted number of the identifier.
-    /// </summary>
-    public String Value { get; set; }
+    /// <inheritdoc cref="Oid.FriendlyName"/>
+    public String FriendlyName { get; private set; }
+    /// <inheritdoc cref="Oid.Value"/>
+    public String Value { get; private set; }
     /// <summary>
     /// Gets the registration path in Active Directory.
     /// </summary>
-    public String DistinguishedName { get; set; }
+    public String DistinguishedName { get; private set; }
     /// <summary>
     /// Gets the group at which the identifier is registered
     /// </summary>
-    public OidGroup OidGroup { get; set; }
+    public OidGroup OidGroup { get; private set; }
 
     void initializeLocal(String oid, OidGroup group) {
         IntPtr ptr, oidPtr;
@@ -326,7 +323,37 @@ public sealed class Oid2 {
     public Oid ToOid() {
         return new Oid(Value, FriendlyName);
     }
-    
+    /// <summary>
+    /// Formats current OID instance to textual representation.
+    /// </summary>
+    /// <param name="fullValue">Indicates whether to format both, OID friendly name and OID value.</param>
+    /// <returns>Formatted OID value.</returns>
+    /// <remarks>
+    /// Depending on OID value and parameters, OID object can be encoded differently.
+    /// <para>If <strong>fullValue</strong> is set to <strong>False</strong> and <see cref="FriendlyName"/>
+    /// is not null, OID friendly name is returned, otherwise returns <see cref="Value"/>.
+    /// </para>
+    /// <para>If <strong>fullValue</strong> is set to <strong>True</strong> and <see cref="FriendlyName"/>
+    /// is not null, method returns both, OID friendly name and value, otherwise returns <see cref="Value"/>.
+    /// </para>
+    /// <example>Examples:</example>
+    /// <code>
+    /// Oid oid = new Oid("1.2.3.4.5");
+    /// oid.Format(false); // Format is extension method here.
+    /// // outputs: 1.2.3.4.5
+    /// oid.Format(true);
+    /// // outputs: 1.2.3.4.5 -- the same as previously, because the OID is unknown.
+    /// oid = new Oid("1.3.14.3.2.26");
+    /// oid.Format(false);
+    /// // outputs: sha1
+    /// oid.Format(true);
+    /// // outputs: sha1 (1.3.14.3.2.26)
+    /// </code>
+    /// </remarks>
+    public String Format(Boolean fullValue) {
+        return ToOid().Format(fullValue);
+    }
+
     /// <summary>
     /// Gets all registrations for the specified OID value.
     /// </summary>
