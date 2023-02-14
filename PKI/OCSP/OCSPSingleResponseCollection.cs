@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
 using SysadminsLV.PKI;
+using SysadminsLV.PKI.OcspClient;
 
 namespace PKI.OCSP {
     /// <summary>
-    /// Represents a collection of <see cref="OCSPSingleResponse"/> objects.
+    /// Represents a collection of <see cref="SysadminsLV.PKI.OcspClient.OCSPSingleResponse"/> objects.
     /// </summary>
     public class OCSPSingleResponseCollection : BasicCollection<OCSPSingleResponse> {
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OCSPSingleResponseCollection"/> class without
-        /// any <see cref="OCSPSingleResponse"/> information.
+        /// any <see cref="SysadminsLV.PKI.OcspClient.OCSPSingleResponse"/> information.
         /// </summary>
         public OCSPSingleResponseCollection() { }
         /// <summary>
