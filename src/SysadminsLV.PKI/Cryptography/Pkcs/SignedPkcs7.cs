@@ -95,7 +95,7 @@ public abstract class SignedPkcs7<T> where T : class {
         ContentType = new Asn1ObjectIdentifier(asn).Value;
         asn.MoveNextAndExpectTags(0xa0); // [0] EXPLICIT ANY DEFINED BY contentType OPTIONAL, 0xa0
         asn.MoveNextAndExpectTags(0x30); // SEQUENCE OF ANY
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.INTEGER); // version
+        asn.MoveNextAndExpectTags(Asn1Type.INTEGER); // version
         Version = (Int32)new Asn1Integer(asn).Value;
         asn.MoveNextSiblingAndExpectTags(0x31);
         decodeDigestAlgorithms(asn);
@@ -144,7 +144,7 @@ public abstract class SignedPkcs7<T> where T : class {
         ContentType = new Asn1ObjectIdentifier(asn.GetTagRawData()).Value;
         if (asn.MoveNextSibling()) {
             // content [0] EXPLICIT ANY DEFINED BY contentType
-            asn.MoveNextAndExpectTags((Byte)Asn1Type.OCTET_STRING, 48); // octet string or sequence
+            asn.MoveNextAndExpectTags((Byte)Asn1Type.OCTET_STRING, 0x30); // octet string or sequence
             payload = asn.GetPayload();
             contentOffset = asn.Offset;
             contentSize = asn.TagLength;

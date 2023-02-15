@@ -72,9 +72,9 @@ public sealed class X509NtdsSecurityExtension : X509Extension {
     void decode(Byte[] rawData) {
         var asn = new Asn1Reader(rawData);
         asn.MoveNextAndExpectTags(0xa0);
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.OBJECT_IDENTIFIER);
+        asn.MoveNextAndExpectTags(Asn1Type.OBJECT_IDENTIFIER);
         asn.MoveNextAndExpectTags(0xa0);
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.OCTET_STRING);
+        asn.MoveNextAndExpectTags(Asn1Type.OCTET_STRING);
 
         SecurityIdentifier = Encoding.ASCII.GetString(asn.GetPayload());
     }

@@ -69,7 +69,7 @@ public sealed class X509CertificateRequestCmc : SignedPkcs7<X509CertificateReque
         asn.MoveNextAndExpectTags(0x30);             // ControlSequence  ::=    SEQUENCE OF TaggedAttribute
         asn.MoveNextSiblingAndExpectTags(0x30); // ReqSequence      ::=    SEQUENCE OF TaggedRequest
         asn.MoveNextAndExpectTags(0xa0);
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.INTEGER);
+        asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
         asn.MoveNextAndExpectTags(0x30);
         // theoretically, it is a sequence, but we pick only first request. Never seen an array of requests
         Content = new X509CertificateRequestPkcs10(asn.GetTagRawData());

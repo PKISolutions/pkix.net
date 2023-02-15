@@ -108,7 +108,7 @@ public class X509CertificateRequestPkcs10 {
         RawData = rawData;
     }
     void getVersion(Asn1Reader asn) {
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.INTEGER);
+        asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
         Version = (Int32)(Asn1Utils.DecodeInteger(asn.GetTagRawData()) + 1);
     }
     void getSubject(Asn1Reader asn) {

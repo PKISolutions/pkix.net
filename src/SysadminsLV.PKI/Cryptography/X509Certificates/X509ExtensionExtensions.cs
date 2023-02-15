@@ -127,13 +127,13 @@ public static class X509ExtensionExtensions {
             throw new Asn1InvalidTagException(asn.Offset);
         }
         Int32 offset = asn.Offset;
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.OBJECT_IDENTIFIER);
+        asn.MoveNextAndExpectTags(Asn1Type.OBJECT_IDENTIFIER);
         Oid oid = new Asn1ObjectIdentifier(asn).Value;
         Boolean critical = false;
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.BOOLEAN, (Byte)Asn1Type.OCTET_STRING);
+        asn.MoveNextAndExpectTags(Asn1Type.BOOLEAN, Asn1Type.OCTET_STRING);
         if (asn.Tag == (Byte)Asn1Type.BOOLEAN) {
             critical = Asn1Utils.DecodeBoolean(asn.GetTagRawData());
-            asn.MoveNextAndExpectTags((Byte)Asn1Type.OCTET_STRING);
+            asn.MoveNextAndExpectTags(Asn1Type.OCTET_STRING);
         }
         // at this point ASN points to OCTET_STRING
 

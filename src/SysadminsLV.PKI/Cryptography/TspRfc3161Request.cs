@@ -95,7 +95,7 @@ public class TspRfc3161Request : TspRequest {
         RequestMessage = new TspMessageImprint(hashAlgorithm, data);
     }
     void decode(Asn1Reader asn) {
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.INTEGER);
+        asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
         Version = (Int32)new Asn1Integer(asn).Value;
         asn.MoveNextAndExpectTags(48);
         RequestMessage = new TspMessageImprint(asn.GetTagRawData());

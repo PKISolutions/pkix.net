@@ -45,7 +45,7 @@ public sealed class DsaPrivateKey : AsymmetricKeyPair {
     void decode(Byte[] rawData) {
         var asn = new Asn1Reader(rawData);
         // version. Must be 0
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.INTEGER);
+        asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
         Int32 offset = asn.Offset;
         // algID or params
         asn.MoveNextAndExpectTags(0x30, (Byte)Asn1Type.INTEGER);
@@ -60,10 +60,10 @@ public sealed class DsaPrivateKey : AsymmetricKeyPair {
         KeyFormat = KeyPkcsFormat.Pkcs1;
         decodeParams(asn);
         // y public exponent
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.INTEGER);
+        asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
         dsaParameters.Y = GetPositiveInteger(asn.GetPayload());
         // x private exponent
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.INTEGER);
+        asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
         dsaParameters.X = GetPositiveInteger(asn.GetPayload());
     }
     void decodePkcs8(Asn1Reader asn) {
@@ -74,13 +74,13 @@ public sealed class DsaPrivateKey : AsymmetricKeyPair {
         asn.MoveNextAndExpectTags(0x30);
         decodeParams(asn);
         // PrivateKey
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.OCTET_STRING);
+        asn.MoveNextAndExpectTags(Asn1Type.OCTET_STRING);
         decodePrivateKey(asn.GetPayload());
         getPublicExponent();
     }
     void decodeAlgID(Asn1Reader asn) {
         // DSA oid
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.OBJECT_IDENTIFIER);
+        asn.MoveNextAndExpectTags(Asn1Type.OBJECT_IDENTIFIER);
         Oid oid = ((Asn1ObjectIdentifier)asn.GetTagObject()).Value;
         if (oid.Value != _oid.Value) {
             throw new ArgumentException(ALG_ERROR);
@@ -88,13 +88,13 @@ public sealed class DsaPrivateKey : AsymmetricKeyPair {
     }
     void decodeParams(Asn1Reader asn) {
         // modulus p
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.INTEGER);
+        asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
         dsaParameters.P = GetPositiveInteger(asn.GetPayload());
         // modulus q
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.INTEGER);
+        asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
         dsaParameters.Q = GetPositiveInteger(asn.GetPayload());
         // base g
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.INTEGER);
+        asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
         dsaParameters.G = GetPositiveInteger(asn.GetPayload());
     }
     void decodePrivateKey(Byte[] rawData) {

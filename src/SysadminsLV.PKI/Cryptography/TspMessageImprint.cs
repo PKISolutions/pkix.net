@@ -70,7 +70,7 @@ public class TspMessageImprint {
     void decode(Asn1Reader asn) {
         asn.MoveNextAndExpectTags(48);
         AlgorithmIdentifier = new AlgorithmIdentifier(asn.GetTagRawData());
-        asn.MoveNextSiblingAndExpectTags((Byte)Asn1Type.OCTET_STRING);
+        asn.MoveNextSiblingAndExpectTags(Asn1Type.OCTET_STRING);
         _msgHash.AddRange(new Asn1OctetString(asn).Value);
     }
 

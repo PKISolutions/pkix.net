@@ -53,30 +53,30 @@ public sealed class RsaPrivateKey : AsymmetricKeyPair {
     void decodePkcs1(Byte[] rawData) {
         var asn = new Asn1Reader(rawData);
         // version. Must be 0
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.INTEGER);
+        asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
         // modulus: Modulus
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.INTEGER);
+        asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
         rsaParameters.Modulus = GetPositiveInteger(asn.GetPayload());
         // publicExponent: Exponent
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.INTEGER);
+        asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
         rsaParameters.Exponent = asn.GetPayload();
         // privateExponent: D
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.INTEGER);
+        asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
         rsaParameters.D = GetPositiveInteger(asn.GetPayload());
         // prime1: P
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.INTEGER);
+        asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
         rsaParameters.P = GetPositiveInteger(asn.GetPayload());
         // prime2: Q
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.INTEGER);
+        asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
         rsaParameters.Q = GetPositiveInteger(asn.GetPayload());
         // exponent1: DP
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.INTEGER);
+        asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
         rsaParameters.DP = GetPositiveInteger(asn.GetPayload());
         // exponent2: DQ
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.INTEGER);
+        asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
         rsaParameters.DQ = GetPositiveInteger(asn.GetPayload());
         // coefficient: InverseQ
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.INTEGER);
+        asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
         rsaParameters.InverseQ = GetPositiveInteger(asn.GetPayload());
         rsaKey = RSA.Create();
         rsaKey.ImportParameters(rsaParameters);

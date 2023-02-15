@@ -53,9 +53,9 @@ public sealed class X500RdnAttribute : AsnEncodedData {
         // E -- IA5String only
     }
     void m_decode(Byte[] rawData) {
-        Asn1Reader asn = new Asn1Reader(rawData);
+        var asn = new Asn1Reader(rawData);
         if (asn.Tag != 48) { throw new Asn1InvalidTagException(asn.Offset); }
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.OBJECT_IDENTIFIER);
+        asn.MoveNextAndExpectTags(Asn1Type.OBJECT_IDENTIFIER);
         Oid = Asn1Utils.DecodeObjectIdentifier(asn.GetTagRawData());
         asn.MoveNext();
         Asn1Type[] types = {

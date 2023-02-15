@@ -106,13 +106,13 @@ public class CertID {
         }
         asn.MoveNext();
         HashingAlgorithm = new AlgorithmIdentifier(Asn1Utils.Encode(asn.GetPayload(), 48)).AlgorithmId;
-        asn.MoveNextSiblingAndExpectTags((Byte)Asn1Type.OCTET_STRING);
+        asn.MoveNextSiblingAndExpectTags(Asn1Type.OCTET_STRING);
         // issuerNameHash
         IssuerNameId = AsnFormatter.BinaryToString(asn.GetPayload()).Trim();
-        asn.MoveNextSiblingAndExpectTags((Byte)Asn1Type.OCTET_STRING);
+        asn.MoveNextSiblingAndExpectTags(Asn1Type.OCTET_STRING);
         // issuerKeyId
         IssuerKeyId = AsnFormatter.BinaryToString(asn.GetPayload()).Trim();
-        asn.MoveNextSiblingAndExpectTags((Byte)Asn1Type.INTEGER);
+        asn.MoveNextSiblingAndExpectTags(Asn1Type.INTEGER);
         // serialnumber
         serialNumber = asn.GetPayload();
         IsReadOnly = true;

@@ -149,15 +149,15 @@ public class TspResponse {
         }
     }
     void decodeTstInfo(Asn1Reader asn) {
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.INTEGER);
+        asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
         Version = (Int32)new Asn1Integer(asn).Value;
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.OBJECT_IDENTIFIER);
+        asn.MoveNextAndExpectTags(Asn1Type.OBJECT_IDENTIFIER);
         PolicyID = new Asn1ObjectIdentifier(asn).Value;
         asn.MoveNextAndExpectTags(48);
         RequestMessage = new TspMessageImprint(asn.GetTagRawData());
-        asn.MoveNextSiblingAndExpectTags((Byte)Asn1Type.INTEGER);
+        asn.MoveNextSiblingAndExpectTags(Asn1Type.INTEGER);
         SerialNumber = new Asn1Integer(asn).Value;
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.GeneralizedTime);
+        asn.MoveNextAndExpectTags(Asn1Type.GeneralizedTime);
         GenerationTimestamp = new Asn1GeneralizedTime(asn).Value;
 
         decodeOptionalFields(asn);

@@ -143,7 +143,7 @@ public class OCSPResponse {
             throw new Asn1InvalidTagException("Response data is not valid ASN.1 encoded data.");
         }
         //response status
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.ENUMERATED);
+        asn.MoveNextAndExpectTags(Asn1Type.ENUMERATED);
         ResponseStatus = (OCSPResponseStatus)asn.GetPayload()[0];
         if (asn.NextOffset == 0) { return; }
         //responseBytesCS
@@ -151,7 +151,7 @@ public class OCSPResponse {
         asn.MoveNext();
         asn.MoveNext();
         decodeResponseType(new Asn1ObjectIdentifier(asn.GetTagRawData()).Value);
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.OCTET_STRING);
+        asn.MoveNextAndExpectTags(Asn1Type.OCTET_STRING);
         //BasicOCSPResponse
         asn.MoveNextAndExpectTags(0x30);
         asn.MoveNext();

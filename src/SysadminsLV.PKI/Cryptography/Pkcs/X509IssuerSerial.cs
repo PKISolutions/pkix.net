@@ -59,7 +59,7 @@ namespace SysadminsLV.PKI.Cryptography.Pkcs {
             var asn = new Asn1Reader(rawData);
             asn.MoveNext();
             IssuerName = new X500DistinguishedName(asn.GetTagRawData());
-            asn.MoveNextSiblingAndExpectTags((Byte)Asn1Type.INTEGER);
+            asn.MoveNextSiblingAndExpectTags(Asn1Type.INTEGER);
             SerialNumber = AsnFormatter.BinaryToString(asn);
             _rawData.AddRange(rawData);
         }

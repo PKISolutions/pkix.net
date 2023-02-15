@@ -69,9 +69,9 @@ public sealed class ECDsaPrivateKey : AsymmetricKeyPair {
     void decodePrivateKey(Byte[] rawData) {
         var asn = new Asn1Reader(rawData);
         // version. Must be 1
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.INTEGER);
+        asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
         // raw private key
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.OCTET_STRING);
+        asn.MoveNextAndExpectTags(Asn1Type.OCTET_STRING);
         ecParameters.D = asn.GetPayload();
         while (asn.MoveNextSibling()) {
             switch (asn.Tag) {
@@ -102,7 +102,7 @@ public sealed class ECDsaPrivateKey : AsymmetricKeyPair {
         ecParameters.Curve.CurveType = ECCurve.ECCurveType.PrimeShortWeierstrass;
         var asn = new Asn1Reader(rawData);
         // version. Must be 1
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.INTEGER);
+        asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
         // fieldID
         asn.MoveNextAndExpectTags(0x30);
         decodeFieldID(asn.GetTagRawData());
@@ -118,20 +118,20 @@ public sealed class ECDsaPrivateKey : AsymmetricKeyPair {
         ecParameters.Curve.G.X = key.Take(key.Length / 2).ToArray();
         ecParameters.Curve.G.Y = key.Skip(key.Length / 2).ToArray();
         // order
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.INTEGER);
+        asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
         ecParameters.Curve.Order = GetPositiveInteger(asn.GetPayload());
         // co-factor
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.INTEGER);
+        asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
         ecParameters.Curve.Cofactor = asn.GetPayload();
     }
     void decodeFieldID(Byte[] rawData) {
         var asn = new Asn1Reader(rawData);
         // fieldID
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.OBJECT_IDENTIFIER);
+        asn.MoveNextAndExpectTags(Asn1Type.OBJECT_IDENTIFIER);
         Oid oid = ((Asn1ObjectIdentifier)asn.GetTagObject()).Value;
         switch (oid.Value) {
             case AlgorithmOid.ECDSA_PRIME1:
-                asn.MoveNextAndExpectTags((Byte)Asn1Type.INTEGER);
+                asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
                 ecParameters.Curve.Prime = GetPositiveInteger(asn.GetPayload());
                 break;
             case AlgorithmOid.ECDSA_CHAR2:
@@ -143,10 +143,10 @@ public sealed class ECDsaPrivateKey : AsymmetricKeyPair {
     void decodeCurve(Byte[] rawData) {
         var asn = new Asn1Reader(rawData);
         // A
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.OCTET_STRING);
+        asn.MoveNextAndExpectTags(Asn1Type.OCTET_STRING);
         ecParameters.Curve.A = asn.GetPayload();
         // B
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.OCTET_STRING);
+        asn.MoveNextAndExpectTags(Asn1Type.OCTET_STRING);
         ecParameters.Curve.B = asn.GetPayload();
         // seed (optional)
         if (asn.MoveNext()) {

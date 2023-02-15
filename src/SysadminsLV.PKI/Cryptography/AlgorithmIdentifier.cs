@@ -79,7 +79,7 @@ public class AlgorithmIdentifier {
         if (asn.Tag != 48) {
             throw new Asn1InvalidTagException(asn.Offset);
         }
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.OBJECT_IDENTIFIER);
+        asn.MoveNextAndExpectTags(Asn1Type.OBJECT_IDENTIFIER);
         algId = Asn1Utils.DecodeObjectIdentifier(asn.GetTagRawData());
         if (asn.MoveNext()) {
             param = asn.GetTagRawData();

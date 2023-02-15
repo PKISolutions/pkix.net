@@ -78,7 +78,7 @@ public class X509CertificateTrustListEntry {
 
     void decode(Byte[] rawData) {
         var asn = new Asn1Reader(rawData);
-        asn.MoveNextAndExpectTags((Byte)Asn1Type.OCTET_STRING);
+        asn.MoveNextAndExpectTags(Asn1Type.OCTET_STRING);
         Thumbprint = AsnFormatter.BinaryToString(asn.GetPayload(), format:EncodingFormat.NOCRLF, forceUpperCase: true);
         // check if there are attributes
         if (asn.MoveNext() && asn.Tag == 49) {
