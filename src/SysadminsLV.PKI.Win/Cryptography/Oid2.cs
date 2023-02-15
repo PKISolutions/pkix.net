@@ -1,17 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Text;
 using PKI.Structs;
 using PKI.Utils;
 using SysadminsLV.Asn1Parser;
-using SysadminsLV.PKI.Cryptography;
 using SysadminsLV.PKI.Win32;
 
-namespace System.Security.Cryptography;
+namespace SysadminsLV.PKI.Cryptography;
 
 /// <summary>
 /// An extended class for <see cref="Oid"/> class. Extended class provides rich functionality by returning additional OID registration information
