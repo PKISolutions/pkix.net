@@ -332,11 +332,11 @@
     <None Include="_ExternalReferences\certadm.il" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\SysadminsLV.PKI.OcspClient\SysadminsLV.PKI.OcspClient.csproj">
+    <ProjectReference Include="..\SysadminsLV.PKI.OcspClient\SysadminsLV.PKI.OcspClient.csproj">
       <Project>{26937ddc-116a-4270-b034-39d2719e76d3}</Project>
       <Name>SysadminsLV.PKI.OcspClient</Name>
     </ProjectReference>
-    <ProjectReference Include="..\src\SysadminsLV.PKI\SysadminsLV.PKI.csproj">
+    <ProjectReference Include="..\SysadminsLV.PKI\SysadminsLV.PKI.csproj">
       <Project>{0f2d01f9-e1a3-44f9-a4b2-d4ad1921dc94}</Project>
       <Name>SysadminsLV.PKI</Name>
     </ProjectReference>
