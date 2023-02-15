@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PKI", "PKI\PKI.csproj", "{5AD7D76A-09A4-4E4F-AFA7-7798E0E9CD89}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SysadminsLV.PKI.Win", "PKI\SysadminsLV.PKI.Win.csproj", "{5AD7D76A-09A4-4E4F-AFA7-7798E0E9CD89}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PKI.Test", "PKI.Test\PKI.Test.csproj", "{359ED8C6-47B5-4321-9B60-62E0F53A5384}"
 EndProject
@@ -14,7 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SysadminsLV.PKI", "src\SysadminsLV.PKI\SysadminsLV.PKI.csproj", "{0F2D01F9-E1A3-44F9-A4B2-D4AD1921DC94}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SysadminsLV.PKI.OcspClient", "src\SysadminsLV.PKI.OcspClient\SysadminsLV.PKI.OcspClient.csproj", "{26937DDC-116A-4270-B034-39D2719E76D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SysadminsLV.PKI.OcspClient", "src\SysadminsLV.PKI.OcspClient\SysadminsLV.PKI.OcspClient.csproj", "{26937DDC-116A-4270-B034-39D2719E76D3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
