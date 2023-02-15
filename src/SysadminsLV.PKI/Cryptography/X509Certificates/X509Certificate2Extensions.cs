@@ -11,6 +11,60 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 /// Contains extension methods for <see cref="X509Certificate2"/> objects.
 /// </summary>
 public static class X509Certificate2Extensions {
+    /// <summary>
+    ///     Converts generic X.509 extension objects to specialized certificate extension objects
+    ///     inherited from <see cref="X509Extension"/> class that provide extension-specific information.
+    /// </summary>
+    /// <param name="cert">Certificate.</param>
+    /// <exception cref="ArgumentNullException">
+    ///     <strong>cert</strong> parameter is null reference.
+    /// </exception>
+    /// <returns>A collection of certificate extensions</returns>
+    /// <remarks>
+    ///     This method can transform the following X.509 certificate extensions:
+    /// <list type="bullet">
+    ///     <item><see cref="X509CAVersionExtension"/></item>
+    ///     <item><see cref="X509NextCRLPublishExtension"/></item>
+    ///     <item><see cref="X509CertificateTemplateExtension"/></item>
+    ///     <item><see cref="X509ApplicationPoliciesExtension"/></item>
+    ///     <item><see cref="X509ApplicationPolicyMappingsExtension"/></item>
+    ///     <item><see cref="X509ApplicationPolicyConstraintsExtension"/></item>
+    ///     <item><see cref="X509PublishedCrlLocationsExtension"/></item>
+    ///     <item><see cref="X509NtdsSecurityExtension"/></item>
+    ///     <item><see cref="X509AuthorityInformationAccessExtension"/></item>
+    ///     <item><see cref="X509NonceExtension"/></item>
+    ///     <item><see cref="X509CRLReferenceExtension"/></item>
+    ///     <item><see cref="X509ArchiveCutoffExtension"/></item>
+    ///     <item><see cref="X509ServiceLocatorExtension"/></item>
+    ///     <item><see cref="X509SubjectKeyIdentifierExtension"/></item>
+    ///     <item><see cref="X509KeyUsageExtension"/></item>
+    ///     <item><see cref="X509SubjectAlternativeNamesExtension"/></item>
+    ///     <item><see cref="X509IssuerAlternativeNamesExtension"/></item>
+    ///     <item><see cref="X509BasicConstraintsExtension"/></item>
+    ///     <item><see cref="X509CRLNumberExtension"/></item>
+    ///     <item><see cref="X509IssuingDistributionPointsExtension"/></item>
+    ///     <item><see cref="X509NameConstraintsExtension"/></item>
+    ///     <item><see cref="X509CRLDistributionPointsExtension"/></item>
+    ///     <item><see cref="X509CertificatePoliciesExtension"/></item>
+    ///     <item><see cref="X509CertificatePolicyMappingsExtension"/></item>
+    ///     <item><see cref="X509AuthorityKeyIdentifierExtension"/></item>
+    ///     <item><see cref="X509CertificatePolicyConstraintsExtension"/></item>
+    ///     <item><see cref="X509EnhancedKeyUsageExtension"/></item>
+    ///     <item><see cref="X509FreshestCRLExtension"/></item>
+    /// </list>
+    /// Non-supported extensions will be returned as an <see cref="X509Extension"/> object.
+    /// </remarks>
+    public static X509ExtensionCollection ResolveExtensions(this X509Certificate2 cert) {
+        if (cert == null) {
+            throw new ArgumentNullException(nameof(cert));
+        }
+
+        var extensions = new X509ExtensionCollection();
+        foreach (X509Extension ext in cert.Extensions) {
+            extensions.Add(ext.ConvertExtension());
+        }
+        return extensions;
+    }
     #region Format
 
     /// <summary>
