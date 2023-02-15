@@ -1,21 +1,22 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using PKI.Exceptions;
 using SysadminsLV.Asn1Parser;
-using SysadminsLV.PKI.Cryptography.X509Certificates;
 using SysadminsLV.PKI.OcspClient;
-using SysadminsLV.PKI.Utils.CLRExtensions;
 using static PKI.Structs.Wincrypt;
 
-namespace System.Security.Cryptography.X509Certificates;
+namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
 /// <summary>
 /// Represents certificate context property object in the certificate store.
 /// </summary>
 /// <remarks>
 /// No public constructors are defined. Objects of this class are created by calling
-/// <see cref="X509Certificate2Extensions.GetCertificateContextProperty"/> or
-/// <see cref="X509Certificate2Extensions.GetCertificateContextProperties"/> extension methods.
+/// <see cref="Utils.CLRExtensions.X509Certificate2Extensions.GetCertificateContextProperty"/> or
+/// <see cref="Utils.CLRExtensions.X509Certificate2Extensions.GetCertificateContextProperties"/> extension methods.
 /// </remarks>
 public class X509CertificateContextProperty {
 

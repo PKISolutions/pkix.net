@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("PSPKI")]
-[assembly: AssemblyDescription(".NET PKI API Extensions")]
+[assembly: AssemblyDescription(".NET Microsoft ADCS managed API")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("PKI Solutions Inc.")]
 [assembly: AssemblyProduct("PowerShell PKI Module")]
-[assembly: AssemblyCopyright("Copyright © 2012-2022, PKI Solutions")]
+[assembly: AssemblyCopyright("Copyright © 2012-2023, PKI Solutions")]
 [assembly: AssemblyTrademark("PKI Solutions")]
 [assembly: AssemblyCulture("")]
 
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("3.7.29.0")]
-[assembly: AssemblyFileVersion("3.7.29.0")]
+[assembly: AssemblyVersion("3.8.29.0")]
+[assembly: AssemblyFileVersion("3.8.29.0")]
