@@ -7,15 +7,17 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">MS-PL</license>
     <projectUrl>https://github.com/PKISolutions/pkix.net</projectUrl>
-    <description>This project is a framework library that provides extended classes to standard .NET Framework BCL and Microsoft Active Directory Certificate Services management managed functionality.</description>
+    <description>This package is a framework library that provides extended cryptography-related classes to standard .NET Framework BCL.</description>
     <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
     <copyright>$copyright$</copyright>
     <tags>X509 PKI PKIX</tags>
     <dependencies>
-      <group targetFramework=".NETFramework4.7.2"/>
+        <group targetFramework=".NETFramework4.7.2"/>
+        <group targetFramework="netstandard2.0"/>
     </dependencies>
   </metadata>
     <files>
-        <file src="..\PKI\bin\Release\*.*" target="lib/net472"/>
+        <file src="..\src\SysadminsLV.PKI\bin\Release\net472\*.*" target="lib/net472"/>
+        <file src="..\src\SysadminsLV.PKI\bin\Release\netstandard2.0\*.*" target="lib/netstandard2.0"/>
     </files>
 </package>
