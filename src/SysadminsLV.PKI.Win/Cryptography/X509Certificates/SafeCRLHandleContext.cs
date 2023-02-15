@@ -1,9 +1,10 @@
-﻿using System.Security.Permissions;
+﻿using System;
+using System.Security.Permissions;
 using Microsoft.Win32.SafeHandles;
 using SysadminsLV.PKI.Utils.CLRExtensions;
 using SysadminsLV.PKI.Win32;
 
-namespace System.Security.Cryptography.X509Certificates;
+namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
 /// <summary>
 /// <para>

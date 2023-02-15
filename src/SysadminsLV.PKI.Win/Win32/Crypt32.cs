@@ -3,10 +3,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Security;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Microsoft.Win32.SafeHandles;
 using PKI.Structs;
+using SysadminsLV.PKI.Cryptography.X509Certificates;
 
 namespace SysadminsLV.PKI.Win32;
 
