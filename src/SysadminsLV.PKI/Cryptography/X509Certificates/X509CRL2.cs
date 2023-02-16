@@ -416,9 +416,6 @@ public class X509CRL2 {
     /// <exception cref="ArgumentNullException">
     ///     <strong>cert</strong> parameter is null.
     /// </exception>
-    /// <exception cref="PKI.Exceptions.UninitializedObjectException">
-    ///     An object is not initialized.
-    /// </exception>
     /// <returns>
     ///     <strong>True</strong> if the specified certificate is presented in the CRL. Otherwise <strong>False</strong>.
     /// </returns>
