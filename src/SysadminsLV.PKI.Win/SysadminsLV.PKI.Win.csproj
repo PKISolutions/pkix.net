@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SysadminsLV.PKI</RootNamespace>
-    <AssemblyName>SysadminsLV.PKI</AssemblyName>
+    <AssemblyName>SysadminsLV.PKI.Win</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
@@ -40,7 +40,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\SysadminsLV.PKI.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\SysadminsLV.PKI.Win.xml</DocumentationFile>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
