@@ -16,6 +16,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SysadminsLV.PKI", "src\Sysa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SysadminsLV.PKI.OcspClient", "src\SysadminsLV.PKI.OcspClient\SysadminsLV.PKI.OcspClient.csproj", "{26937DDC-116A-4270-B034-39D2719E76D3}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{5DC29EBB-4829-4A08-9622-1C788A4487CD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SysadminsLV.PKI.Cryptography.Tests", "tests\SysadminsLV.PKI.Cryptography.Tests\SysadminsLV.PKI.Cryptography.Tests.csproj", "{20682428-575A-413D-8A15-7BC81EA1A5D3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,9 +41,16 @@ Global
 		{26937DDC-116A-4270-B034-39D2719E76D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26937DDC-116A-4270-B034-39D2719E76D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26937DDC-116A-4270-B034-39D2719E76D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20682428-575A-413D-8A15-7BC81EA1A5D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20682428-575A-413D-8A15-7BC81EA1A5D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20682428-575A-413D-8A15-7BC81EA1A5D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20682428-575A-413D-8A15-7BC81EA1A5D3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{20682428-575A-413D-8A15-7BC81EA1A5D3} = {5DC29EBB-4829-4A08-9622-1C788A4487CD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EF346D1C-27DC-44CE-81BA-E03D528ADE83}
