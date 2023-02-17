@@ -287,6 +287,51 @@ namespace SysadminsLV.PKI.Tests.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to MIIEMwIBAzCCA/MGCSqGSIb3DQEHAaCCA+QEggPgMIID3DCCAcUGCSqGSIb3DQEHAaCCAbYEggGyMIIBrjCCAaoGCyqGSIb3DQEMCgECoIHEMIHBMBwGCiqGSIb3DQEMAQMwDgQIAl5dRqsSWSkCAgfQBIGghdezTt5SdTa/O7d5A8ZZcFX/Xqx50yNl0B/R5tFXA9BvK81vZhomGHMgS3hCQrNc0WOxNf+sZ70DR+fXxUcQeNeNm/0/9NW4gXnTKZ4Lfu7808FubEmDPy3YrOrSeHJ0l0cYMThe8WZhLlc3X/P4asxbasNAwyeRMp64/dnOowce/Cmb+MD1Oo0tBM3Turtgk59hoRywmFyfYc1cOyVWUzGB0zATBgkqhkiG9w0BCRUxBgQEAQAAADBdBgkqhkiG9w0BCRQxUB5OAGwAcAAtAGUAZAAzAGMAMwBiAGUAMwAtAGIAMwA5ADYALQA0AGMAMwAwAC0AOAAzAGQANQAtADgAZABjADkAOABh [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string SigningCertCngDsa {
+            get {
+                return ResourceManager.GetString("SigningCertCngDsa", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MIIJ/gIBAzCCCb4GCSqGSIb3DQEHAaCCCa8EggmrMIIJpzCCBgAGCSqGSIb3DQEHAaCCBfEEggXtMIIF6TCCBeUGCyqGSIb3DQEMCgECoIIE/jCCBPowHAYKKoZIhvcNAQwBAzAOBAiG05p0nUfcbgICB9AEggTYh3uQDTwP1We33Cexa2lrK+3IoA9j81qg8Y1MhU7jMLsfA3YEQPI3VWuj1EnL6TVwO6TKhbJ+cLNuL8z2S9RVPfv+CVh2CbMD+4g52qB1TKIqTOX2kFXmYtOJoEZkLJuO84FoYsO2TugPigUlq2aaGnBt0EeOmO82t/oZA4urfCoCRi0Gmad3xSHN38FZn8kCtnfZ0py00+Jw8gNSL1D5lTMKCo3LlFYVqQlbKWVYJtqfewJT/o626dd5khEX7u58jknGL+YdlE+xcp/3Uf6f5nWiHOlaUFbkCdUfzS/LWZS4kBcm1DvCxerENhiEgt+RwZo09FZn9Cg1YzzpygAccO2bLsKxeBnS [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string SigningCertCngRsa {
+            get {
+                return ResourceManager.GetString("SigningCertCngRsa", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MIIKaQIBAzCCCiUGCSqGSIb3DQEHAaCCChYEggoSMIIKDjCCBg8GCSqGSIb3DQEHAaCCBgAEggX8MIIF+DCCBfQGCyqGSIb3DQEMCgECoIIE/jCCBPowHAYKKoZIhvcNAQwBAzAOBAi8X8pk9r2ytAICB9AEggTYN4ep46P3mdcBtHTitRLZZKIQETe01+Slw9oy9O+DCzqWpP7b3SL9MgmxlcxtGtnK3mSb72HBXn05YBghSmtFcze+ybN3wbONEPkfa/qZ9nTSjHHLLHOGAw+9XvSM1Zie3GEaubuVs8l4mjYrv74AVikIzD6BU5wj5dQGCvet+ceVy7DgIuwmEFdpo8Bni/yOWafsxzeDFzRE7E8OGLjRPbDclTwHHR2jIgupx5X1jHXQbntuU/PvTlXsPP0fk9SJQifBbb90KGkN9jc3UGO4ptqDdjohbGO5FFKTFuuWMDA/d29GdtLHHxwjzcEupaogxichPT6UFzQDQ4SkCRfcM+yhuglZ4WGl [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string SigningCertCngRsaPss {
+            get {
+                return ResourceManager.GetString("SigningCertCngRsaPss", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MIIGQgIBAzCCBgIGCSqGSIb3DQEHAaCCBfMEggXvMIIF6zCCAnwGCSqGSIb3DQEHAaCCAm0EggJpMIICZTCCAmEGCyqGSIb3DQEMCgECoIIBdjCCAXIwHAYKKoZIhvcNAQwBAzAOBAhF6hua8En5HAICB9AEggFQIHvsQIqs2I5q+q8qBCWseGuUmLZGBJiEK25/02k0w7P0qaW22NTIoR0fT9qEr/AN1w8vFdemFbhjCbXiRBFnqqsrG9Do+c1sMmEd/NpbSn/Ifh4DTmrm/QtwLGl0WPqid9Itl17W8U/qnjwZuFWGDHWfkf6NF0qhasQTKwbVzZbEq0Z92OEn4V8/xby9KFEClKUNMQSIHqO5XrJ3IvKYYKHzpWFEbjxyWv3zECBEfICSYfXcJ1SAxfFooZPt65QEMnOUnr5Rzc/xF6NnZr/90yop3PJ+zSZgeXuptLLPXbP4dv73V9IxcCm+KHXP7gg+5v6sdq0piJ9ps1XaQJus+mLaP0BbTcVe [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string SigningCertLegacyDsa {
+            get {
+                return ResourceManager.GetString("SigningCertLegacyDsa", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MIIKFAIBAzCCCdQGCSqGSIb3DQEHAaCCCcUEggnBMIIJvTCCBg4GCSqGSIb3DQEHAaCCBf8EggX7MIIF9zCCBfMGCyqGSIb3DQEMCgECoIIE/jCCBPowHAYKKoZIhvcNAQwBAzAOBAixiFbAFTH4AAICB9AEggTYj4MpipimYSIGv4aVqETvazWMOYxQgGXb4z3DzDq+Lc+dbfSAsJv7JV0ffw4i5mHtI2woJ8qRYrjNUGT4MkqWdfHJY8VOKXt2r3Zmu1uRpJhR+JTm99WCrg90o8zBtyjCGJPkllyMhY46Lzbp4ZDYq485vtBTSsNofIE+R0GJ7LpRtoc7CqxYmt0VT2Udi5BLc6t+EaeAKVMjrHxSKH70L9JvG6Xs50CfRLj7gmTS3iDTyE1oTcjbGIGJLFBsJSAV5nUH1mAtX1lSYem7NuH88txK4cfKMTa3g1AgscTk2+CEQ76UhNXCa+bo8gbREoYl85+cJ9yt9NQyBRWHmgaV93oOgWOxfEC/ [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string SigningCertLegacyRsa {
+            get {
+                return ResourceManager.GetString("SigningCertLegacyRsa", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to MHIxCzAJBgNVBAYTAkxWMRUwEwYDVQQKEwxTeXNhZG1pbnMgTFYxHDAaBgNVBAsTE0luZm9ybWF0aW9uIFN5c3RlbXMxLjAsBgNVBAMTJVN5c2FkbWlucyBMViBJbnRlcm5hbCBDbGFzcyAxIFN1YkNBLTE=.
         /// </summary>
         internal static string X500Name {

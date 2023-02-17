@@ -104,7 +104,12 @@ public class CryptSigner : ICryptSigner, IDisposable {
     public Int32 PssSaltByteCount { get; set; }
 
     Oid getHashAlgorithm(Oid hashAlg) {
-        Oid oid = mapSignatureAlgorithmToHashAlgorithm(hashAlg.Value, null);
+        Oid oid;
+        try {
+            oid = Oid.FromOidValue(hashAlg.Value, OidGroup.HashAlgorithm);
+        } catch {
+            oid = mapSignatureAlgorithmToHashAlgorithm(hashAlg.Value, null);
+        }
 
         switch (keyType) {
             case KeyType.Rsa:
@@ -178,6 +183,8 @@ public class CryptSigner : ICryptSigner, IDisposable {
             default:
                 throw new ArgumentException("Invalid signature algorithm");
         }
+
+
     }
     Oid decodeRsaPss(Asn1Reader asn) {
         PaddingScheme = RSASignaturePadding.Pss;
@@ -197,7 +204,7 @@ public class CryptSigner : ICryptSigner, IDisposable {
         asn.MoveNext();
         Oid oid = Asn1Utils.DecodeObjectIdentifier(asn.GetTagRawData());
         asn.MoveNext();
-        mapSignatureAlgorithmToHashAlgorithm(oid.Value, asn);
+        hashAlgorithm = mapSignatureAlgorithmToHashAlgorithm(oid.Value, asn);
     }
 
     Byte[] calculateHash(Byte[] message) {

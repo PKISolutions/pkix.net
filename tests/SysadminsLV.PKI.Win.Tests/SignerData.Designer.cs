@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace PKI.Test {
+namespace SysadminsLV.PKI.Win.Tests {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace PKI.Test {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("PKI.Test.SignerData", typeof(SignerData).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SysadminsLV.PKI.Win.Tests.SignerData", typeof(SignerData).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
