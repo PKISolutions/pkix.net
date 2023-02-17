@@ -10,28 +10,28 @@ using SysadminsLV.Asn1Parser.Universal;
 namespace SysadminsLV.PKI.Cryptography;
 public class CryptSigner : ICryptSigner, IDisposable {
     const String DEFAULT_HASH_ALG = AlgorithmOid.SHA256;
-    Boolean disposed, isCng, nullSigned;
+
+    Boolean nullSigned;
     AsymmetricAlgorithm phPubKey;
     AsymmetricAlgorithm phPrivKey;
-    Oid hashAlgorithm, sigAlgorithm, pubKeyAlg;
+    Oid hashAlgorithm, sigAlgorithm;
     KeyType keyType;
 
     CryptSigner() {
 
     }
 
-    public CryptSigner(AsymmetricKeyPair keyPair, Oid hashingAlgorithm) {
+    public CryptSigner(AsymmetricKeyPair keyPair, Oid hashingAlgorithm = null) {
         if (keyPair == null) {
             throw new ArgumentNullException(nameof(keyPair));
         }
-        if (keyPair.PublicOnly) {
-            phPubKey = keyPair.GetAsymmetricKey();
-        } else {
+
+        hashingAlgorithm ??= new Oid(DEFAULT_HASH_ALG);
+        acquirePublicKey(keyPair);
+        hashAlgorithm = getHashAlgorithm(hashingAlgorithm);
+        if (!keyPair.PublicOnly) {
             phPrivKey = keyPair.GetAsymmetricKey();
-            phPubKey = phPrivKey;
         }
-        initializeHashAlgorithm(hashingAlgorithm);
-        acquirePublicKey(keyPair.Oid);
     }
 
     /// <summary>
@@ -61,18 +61,14 @@ public class CryptSigner : ICryptSigner, IDisposable {
     /// Hash algorithm is ignored for DSA keys and is automatically set to 'SHA1'.
     /// </remarks>
     public CryptSigner(X509Certificate2 certificate, Oid hashingAlgorithm) {
-        if (certificate == null) {
-            throw new ArgumentNullException(nameof(certificate));
-        }
+        SignerCertificate = certificate ?? throw new ArgumentNullException(nameof(certificate));
 
-        //if (keyPair.PublicOnly) {
-        //    phPubKey = keyPair.GetAsymmetricKey();
-        //} else {
-        //    phPrivKey = keyPair.GetAsymmetricKey();
-        //    phPubKey = phPrivKey;
-        //}
-        initializeHashAlgorithm(hashingAlgorithm);
-        //acquirePublicKey(keyPair.Oid);
+        hashingAlgorithm ??= new Oid(DEFAULT_HASH_ALG);
+        acquirePublicKey(certificate.PublicKey.GetAsymmetricKeyPair());
+        hashAlgorithm = getHashAlgorithm(hashingAlgorithm);
+        if (certificate.HasPrivateKey) {
+            acquirePrivateKey();
+        }
     }
 
     /// <summary>
@@ -82,19 +78,19 @@ public class CryptSigner : ICryptSigner, IDisposable {
     /// <summary>
     /// Gets public key algorithm.
     /// </summary>
-    public Oid PublicKeyAlgorithm => new Oid(pubKeyAlg);
+    public Oid PublicKeyAlgorithm { get; private set; }
     /// <summary>
     /// Gets or sets the hashing algorithm that is used to calculate the hash during signing or signature verification
     /// processes.
     /// </summary>
     public Oid HashingAlgorithm {
         get => new(hashAlgorithm);
-        set => initializeHashAlgorithm(value);
+        set => hashAlgorithm = getHashAlgorithm(value);
     }
     /// <summary>
     /// Gets resulting signature algorithm identifier.
     /// </summary>
-    public Oid SignatureAlgorithm => new Oid(sigAlgorithm);
+    public Oid SignatureAlgorithm => new(sigAlgorithm);
     /// <summary>
     /// Gets or sets signature padding scheme for RSA signature creation and validation.
     /// Default is <strong>PKCS1</strong>.
@@ -107,12 +103,12 @@ public class CryptSigner : ICryptSigner, IDisposable {
     /// </summary>
     public Int32 PssSaltByteCount { get; set; }
 
-    void initializeHashAlgorithm(Oid hashAlg) {
-        hashAlgorithm = mapSignatureAlgorithmToHashAlgorithm(hashAlg.Value, null);
+    Oid getHashAlgorithm(Oid hashAlg) {
+        Oid oid = mapSignatureAlgorithmToHashAlgorithm(hashAlg.Value, null);
 
-        switch (pubKeyAlg.Value) {
-            case AlgorithmOid.RSA:
-                switch (hashAlgorithm.Value) {
+        switch (keyType) {
+            case KeyType.Rsa:
+                switch (oid.Value) {
                     case AlgorithmOid.MD5: // md5
                         PssSaltByteCount = 16;
                         break;
@@ -130,11 +126,13 @@ public class CryptSigner : ICryptSigner, IDisposable {
                         break;
                 }
                 break;
-            case AlgorithmOid.DSA:
+            case KeyType.Dsa:
                 // force SHA1 for DSA keys
-                hashAlgorithm = new Oid(AlgorithmOid.SHA1);
+                oid = new Oid(AlgorithmOid.SHA1);
                 break;
         }
+
+        return oid;
     }
     Oid mapSignatureAlgorithmToHashAlgorithm(String signatureOid, Asn1Reader asn) {
         switch (signatureOid) {
@@ -197,23 +195,26 @@ public class CryptSigner : ICryptSigner, IDisposable {
     void getConfiguration(Byte[] algIdBlob) {
         var asn = new Asn1Reader(algIdBlob);
         asn.MoveNext();
-        var oid = Asn1Utils.DecodeObjectIdentifier(asn.GetTagRawData());
+        Oid oid = Asn1Utils.DecodeObjectIdentifier(asn.GetTagRawData());
         asn.MoveNext();
         mapSignatureAlgorithmToHashAlgorithm(oid.Value, asn);
     }
 
     Byte[] calculateHash(Byte[] message) {
-        HashAlgorithm hasher = HashAlgorithm.Create(hashAlgorithm.FriendlyName);
+        using var hasher = HashAlgorithm.Create(hashAlgorithm.FriendlyName);
         if (hasher == null) {
             throw new ArgumentException("Invalid hashing algorithm is specified.");
         }
-        using (hasher) {
-            return hasher.ComputeHash(message);
-        }
+
+        return hasher.ComputeHash(message);
     }
-    void acquirePublicKey(Oid publicKey) {
+    void acquirePublicKey(AsymmetricKeyPair keyPair) {
         // do not load public key again if it is already loaded
-        switch (publicKey.Value) {
+        if (phPubKey != null) {
+            return;
+        }
+
+        switch (keyPair.Oid.Value) {
             case AlgorithmOid.ECC:
                 keyType = KeyType.EcDsa;
                 break;
@@ -224,13 +225,39 @@ public class CryptSigner : ICryptSigner, IDisposable {
                 keyType = KeyType.Dsa;
                 break;
             default:
-                throw new NotSupportedException("Public key algorithm is not supported");
+                throw new NotSupportedException("Public key algorithm is not supported.");
         }
-        pubKeyAlg = new Oid(publicKey);
+        PublicKeyAlgorithm = keyPair.Oid;
+        phPubKey = keyPair.GetAsymmetricKey();
     }
     void acquirePrivateKey() {
+        // do not load public key again if it is already loaded
+        if (phPrivKey != null) {
+            return;
+        }
         if (SignerCertificate != null) {
-
+            Func<AsymmetricAlgorithm> action = null;
+            switch (SignerCertificate.PublicKey.Oid.Value) {
+                case AlgorithmOid.ECC:
+                    keyType = KeyType.EcDsa;
+                    action = SignerCertificate.GetECDsaPrivateKey;
+                    break;
+                case AlgorithmOid.RSA:
+                    keyType = KeyType.Rsa;
+                    action = SignerCertificate.GetRSAPrivateKey;
+                    break;
+                case AlgorithmOid.DSA:
+                    keyType = KeyType.Dsa;
+                    // this one is silly, but .NET Standard 2.0 doesn't have X509Certificate2.GetDSAPrivateKey()
+                    // extension method. Need a workaround.
+                    phPubKey = SignerCertificate.PrivateKey;
+                    break;
+                default:
+                    throw new NotSupportedException("Public key algorithm is not supported.");
+            }
+            if (action != null) {
+                phPrivKey = action.Invoke();
+            }
         }
     }
 
@@ -242,24 +269,27 @@ public class CryptSigner : ICryptSigner, IDisposable {
         return ((DSA)phPrivKey).CreateSignature(hash);
     }
     Byte[] signHashRsa(Byte[] hash) {
-        return ((RSA)phPrivKey).SignHash(hash, new HashAlgorithmName(hashAlgorithm.FriendlyName), PaddingScheme);
+        return ((RSA)phPrivKey).SignHash(hash, new HashAlgorithmName(hashAlgorithm.FriendlyName.ToUpper()), PaddingScheme);
     }
     #endregion
 
     #region signature validation
     Boolean verifyNullSigned(Byte[] hash, Byte[] signature) {
-        if (hash.Length != signature.Length) { return false; }
+        if (hash.Length != signature.Length) {
+            return false;
+        }
+
         // performs exact binary comparison
         return !hash.Where((t, index) => t != signature[index]).Any();
     }
     Boolean verifyHashEcDsa(Byte[] hash, Byte[] signature) {
-        return ((ECDsa)phPrivKey).VerifyHash(hash, signature);
+        return ((ECDsa)phPubKey).VerifyHash(hash, signature);
     }
     Boolean verifyHashRsa(Byte[] hash, Byte[] signature) {
-        return ((RSA)phPrivKey).VerifyHash(hash, signature, new HashAlgorithmName(hashAlgorithm.FriendlyName), PaddingScheme);
+        return ((RSA)phPubKey).VerifyHash(hash, signature, new HashAlgorithmName(hashAlgorithm.FriendlyName.ToUpper()), PaddingScheme);
     }
     Boolean verifyHashDsa(Byte[] hash, Byte[] signature) {
-        return ((DSA)phPrivKey).VerifySignature(hash, signature);
+        return ((DSA)phPubKey).VerifySignature(hash, signature);
     }
     #endregion
 
@@ -277,6 +307,8 @@ public class CryptSigner : ICryptSigner, IDisposable {
                 // DSA doesn't support PSS padding and hashing algorithm other than SHA1
                 sigAlgorithm = new Oid(AlgorithmOid.SHA1_DSA);               // sha1DSA
                 break;
+            default:
+                throw new NotSupportedException("Public key algorithm is not supported.");
         }
     }
 
@@ -291,6 +323,7 @@ public class CryptSigner : ICryptSigner, IDisposable {
         if (message == null) {
             throw new ArgumentNullException(nameof(message));
         }
+
         return SignHash(calculateHash(message));
     }
     /// <summary>
@@ -300,7 +333,9 @@ public class CryptSigner : ICryptSigner, IDisposable {
     /// <exception cref="ArgumentNullException"><strong>hash</strong> parameter is null.</exception>
     /// <returns>Raw signature.</returns>
     public Byte[] SignHash(Byte[] hash) {
-        if (hash == null) { throw new ArgumentNullException(nameof(hash)); }
+        if (hash == null) {
+            throw new ArgumentNullException(nameof(hash));
+        }
         acquirePrivateKey();
         Byte[] signature;
         switch (keyType) {
@@ -352,8 +387,12 @@ public class CryptSigner : ICryptSigner, IDisposable {
     /// <strong>True</strong> if hash matches the one stored in signature, otherwise <strong>False</strong>.
     /// </returns>
     public Boolean VerifyHash(Byte[] hash, Byte[] signature) {
-        if (hash == null) { throw new ArgumentNullException(nameof(hash)); }
-        if (signature == null) { throw new ArgumentNullException(nameof(signature)); }
+        if (hash == null) {
+            throw new ArgumentNullException(nameof(hash));
+        }
+        if (signature == null) {
+            throw new ArgumentNullException(nameof(signature));
+        }
 
         if (nullSigned) {
             return verifyNullSigned(hash, signature);
@@ -366,7 +405,7 @@ public class CryptSigner : ICryptSigner, IDisposable {
             case KeyType.Dsa:
                 return verifyHashDsa(hash, signature);
             default:
-                throw new NotSupportedException("Public key algorithm is not supported");
+                throw new NotSupportedException("Public key algorithm is not supported.");
         }
     }
     /// <summary>
@@ -392,7 +431,7 @@ public class CryptSigner : ICryptSigner, IDisposable {
         }
 
         using var signerInfo = new CryptSigner();
-        signerInfo.acquirePublicKey(publicKey.Oid);
+        signerInfo.acquirePublicKey(publicKey.GetAsymmetricKeyPair());
         signerInfo.getConfiguration(blob.SignatureAlgorithm.RawData);
         return signerInfo.VerifyData(blob.ToBeSignedData, blob.GetRawSignature());
     }
@@ -411,8 +450,8 @@ public class CryptSigner : ICryptSigner, IDisposable {
         }
         Oid algId = sigAlgorithm;
         var parameters = new List<Byte>();
-        switch (pubKeyAlg.Value) {
-            case AlgorithmOid.ECC: // ECDSA
+        switch (keyType) {
+            case KeyType.EcDsa: // ECDSA
                 if (alternate) {
                     // specifiedECDSA
                     algId = new Oid(AlgorithmOid.ECDSA_SPECIFIED); // only here we override algorithm OID
@@ -422,14 +461,14 @@ public class CryptSigner : ICryptSigner, IDisposable {
                         );
                 }
                 break;
-            case AlgorithmOid.RSA: // RSA
-                                   // only RSA supports parameters. For PKCS1 padding: NULL, for PSS padding: 
-                                   // RSASSA-PSS-params ::= SEQUENCE {
-                                   //     hashAlgorithm      [0] HashAlgorithm    DEFAULT sha1,
-                                   //     maskGenAlgorithm   [1] MaskGenAlgorithm DEFAULT mgf1SHA1,
-                                   //     saltLength         [2] INTEGER          DEFAULT 20,
-                                   //     trailerField       [3] TrailerField     DEFAULT trailerFieldBC
-                                   // }
+            case KeyType.Rsa: // RSA
+                              // only RSA supports parameters. For PKCS1 padding: NULL, for PSS padding: 
+                              // RSASSA-PSS-params ::= SEQUENCE {
+                              //     hashAlgorithm      [0] HashAlgorithm    DEFAULT sha1,
+                              //     maskGenAlgorithm   [1] MaskGenAlgorithm DEFAULT mgf1SHA1,
+                              //     saltLength         [2] INTEGER          DEFAULT 20,
+                              //     trailerField       [3] TrailerField     DEFAULT trailerFieldBC
+                              // }
                 if (PaddingScheme == RSASignaturePadding.Pss) {
                     Byte[] hash = new AlgorithmIdentifier(hashAlgorithm, null).RawData;
                     parameters.AddRange(Asn1Utils.Encode(hash, 0xa0));
@@ -451,11 +490,10 @@ public class CryptSigner : ICryptSigner, IDisposable {
     #region IDisposable implementation
     void releaseUnmanagedResources() {
         // dispose key handle
-        phPubKey.Dispose();
+        phPubKey?.Dispose();
         phPrivKey?.Dispose();
         //TODO: Crypt32.CertFreeCertificateContext(SignerCertificate.Handle);
         SignerCertificate = null;
-        disposed = true;
     }
     /// <inheritdoc />
     public void Dispose() {
