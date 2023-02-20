@@ -11,7 +11,7 @@ namespace SysadminsLV.PKI.Cryptography;
 public sealed class DsaPrivateKey : AsymmetricKeyPair {
     const String ALG_ERROR = "Private key is not DSA.";
     static readonly Oid _oid = new(AlgorithmOid.DSA);
-    DSAParameters dsaParameters;
+    DSAParameters dsaParams;
     DSA dsaKey;
 
     public DsaPrivateKey(Byte[] privateKey) : base(_oid, false) {
@@ -20,19 +20,22 @@ public sealed class DsaPrivateKey : AsymmetricKeyPair {
         }
         decode(privateKey);
     }
+    public DsaPrivateKey(DSA dsa) : base(_oid, false) {
+        dsaKey = dsa ?? throw new ArgumentNullException(nameof(dsa));
+    }
 
     public KeyPkcsFormat KeyFormat { get; private set; }
 
     void getPublicExponent() {
         // DSS public exponent (y) is: y = g^x mod p
-        List<Byte> gCopy = dsaParameters.G.ToList();
+        List<Byte> gCopy = dsaParams.G.ToList();
         gCopy.Insert(0, 0);
         gCopy.Reverse();
-        BigInteger g = bigIntegerFromParameter(dsaParameters.G);
-        BigInteger x = bigIntegerFromParameter(dsaParameters.X);
-        BigInteger p = bigIntegerFromParameter(dsaParameters.P);
+        BigInteger g = bigIntegerFromParameter(dsaParams.G);
+        BigInteger x = bigIntegerFromParameter(dsaParams.X);
+        BigInteger p = bigIntegerFromParameter(dsaParams.P);
         BigInteger y = BigInteger.ModPow(g, x, p);
-        dsaParameters.Y = GetPositiveInteger(y.ToByteArray().Reverse().ToArray());
+        dsaParams.Y = GetPositiveInteger(y.ToByteArray().Reverse().ToArray());
     }
     static BigInteger bigIntegerFromParameter(Byte[] parameter) {
         List<Byte> arr = parameter.ToList();
@@ -61,10 +64,10 @@ public sealed class DsaPrivateKey : AsymmetricKeyPair {
         decodeParams(asn);
         // y public exponent
         asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
-        dsaParameters.Y = GetPositiveInteger(asn.GetPayload());
+        dsaParams.Y = GetPositiveInteger(asn.GetPayload());
         // x private exponent
         asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
-        dsaParameters.X = GetPositiveInteger(asn.GetPayload());
+        dsaParams.X = GetPositiveInteger(asn.GetPayload());
     }
     void decodePkcs8(Asn1Reader asn) {
         KeyFormat = KeyPkcsFormat.Pkcs8;
@@ -89,17 +92,17 @@ public sealed class DsaPrivateKey : AsymmetricKeyPair {
     void decodeParams(Asn1Reader asn) {
         // modulus p
         asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
-        dsaParameters.P = GetPositiveInteger(asn.GetPayload());
+        dsaParams.P = GetPositiveInteger(asn.GetPayload());
         // modulus q
         asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
-        dsaParameters.Q = GetPositiveInteger(asn.GetPayload());
+        dsaParams.Q = GetPositiveInteger(asn.GetPayload());
         // base g
         asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
-        dsaParameters.G = GetPositiveInteger(asn.GetPayload());
+        dsaParams.G = GetPositiveInteger(asn.GetPayload());
     }
     void decodePrivateKey(Byte[] rawData) {
         var asn = new Asn1Reader(rawData);
-        dsaParameters.X = GetPositiveInteger(asn.GetPayload());
+        dsaParams.X = GetPositiveInteger(asn.GetPayload());
     }
 
     public override AsymmetricAlgorithm GetAsymmetricKey() {
@@ -107,7 +110,7 @@ public sealed class DsaPrivateKey : AsymmetricKeyPair {
             return dsaKey;
         }
         dsaKey = DSA.Create();
-        dsaKey.ImportParameters(dsaParameters);
+        dsaKey.ImportParameters(dsaParams);
         return dsaKey;
     }
 

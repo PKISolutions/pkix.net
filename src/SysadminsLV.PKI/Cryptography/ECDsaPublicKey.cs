@@ -10,7 +10,7 @@ namespace SysadminsLV.PKI.Cryptography;
 public sealed class ECDsaPublicKey : AsymmetricKeyPair {
     const String ALG_ERROR = "Public key algorithm is not from elliptic curve (ECC) group.";
     static readonly Oid _oid = new(AlgorithmOid.ECC);
-    ECDsa ecdsa;
+    ECDsa ecdsaKey;
 
     public ECDsaPublicKey(PublicKey publicKey) : base(_oid, true) {
         if (publicKey == null) {
@@ -26,6 +26,9 @@ public sealed class ECDsaPublicKey : AsymmetricKeyPair {
             throw new ArgumentNullException(nameof(rawData));
         }
         decodePkcs8Key(rawData);
+    }
+    public ECDsaPublicKey(ECDsa ecDsa) : base(_oid, true) {
+        ecdsaKey = ecDsa ?? throw new ArgumentNullException(nameof(ecDsa));
     }
 
     /// <summary>
@@ -72,8 +75,8 @@ public sealed class ECDsaPublicKey : AsymmetricKeyPair {
     }
 
     public override AsymmetricAlgorithm GetAsymmetricKey() {
-        if (ecdsa != null) {
-            return ecdsa;
+        if (ecdsaKey != null) {
+            return ecdsaKey;
         }
         var ecdsaParams = new ECParameters {
             Q = {
@@ -82,16 +85,16 @@ public sealed class ECDsaPublicKey : AsymmetricKeyPair {
             },
             Curve = ECCurve.CreateFromOid(CurveOid)
         };
-        ecdsa = ECDsa.Create();
-        if (ecdsa == null) {
+        ecdsaKey = ECDsa.Create();
+        if (ecdsaKey == null) {
             throw new PlatformNotSupportedException();
         }
-        ecdsa.ImportParameters(ecdsaParams);
-        return ecdsa;
+        ecdsaKey.ImportParameters(ecdsaParams);
+        return ecdsaKey;
     }
 
     /// <inheritdoc />
     public override void Dispose() {
-        ecdsa?.Dispose();
+        ecdsaKey?.Dispose();
     }
 }

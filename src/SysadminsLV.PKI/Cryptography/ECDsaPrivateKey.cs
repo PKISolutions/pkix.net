@@ -18,6 +18,9 @@ public sealed class ECDsaPrivateKey : AsymmetricKeyPair {
         }
         decodePkcs8(rawData);
     }
+    public ECDsaPrivateKey(ECDsa ecDsa) : base(_oid, false) {
+        ecdsaKey = ecDsa ?? throw new ArgumentNullException(nameof(ecDsa));
+    }
 
     /// <summary>
     /// Gets the named curve object identifier.

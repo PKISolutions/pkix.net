@@ -10,7 +10,7 @@ public sealed class DsaPublicKey : AsymmetricKeyPair {
     const String ALG_ERROR = "Public key algorithm is not DSA.";
     static readonly Oid _oid = new(AlgorithmOid.DSA);
     DSAParameters dsaParams;
-    DSA dsa;
+    DSA dsaKey;
 
     public DsaPublicKey(PublicKey publicKey) : base(_oid, true) {
         if (publicKey == null) {
@@ -35,6 +35,9 @@ public sealed class DsaPublicKey : AsymmetricKeyPair {
             default:
                 throw new ArgumentOutOfRangeException();
         }
+    }
+    public DsaPublicKey(DSA dsa) : base(_oid, true) {
+        dsaKey = dsa ?? throw new ArgumentNullException(nameof(dsa));
     }
 
     void decodeFromPublicKey(PublicKey publicKey) {
@@ -71,11 +74,14 @@ public sealed class DsaPublicKey : AsymmetricKeyPair {
     }
 
     public override AsymmetricAlgorithm GetAsymmetricKey() {
-        dsa = DSA.Create();
-        dsa.ImportParameters(dsaParams);
-        return dsa;
+        if (dsaKey != null) {
+            return dsaKey;
+        }
+        dsaKey = DSA.Create();
+        dsaKey.ImportParameters(dsaParams);
+        return dsaKey;
     }
     public override void Dispose() {
-        dsa?.Dispose();
+        dsaKey?.Dispose();
     }
 }

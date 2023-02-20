@@ -9,7 +9,7 @@ namespace SysadminsLV.PKI.Cryptography;
 public sealed class RsaPublicKey : AsymmetricKeyPair {
     const String ALG_ERROR = "Public key algorithm is RSA.";
     static readonly Oid _oid = new(AlgorithmOid.RSA);
-    RSA rsa;
+    RSA rsaKey;
 
     public RsaPublicKey(PublicKey publicKey) : base(_oid, true) {
         if (publicKey == null) {
@@ -34,6 +34,9 @@ public sealed class RsaPublicKey : AsymmetricKeyPair {
                 break;
             default: throw new ArgumentOutOfRangeException();
         }
+    }
+    public RsaPublicKey(RSA rsa) : base(_oid, true) {
+        rsaKey = rsa ?? throw new ArgumentNullException(nameof(rsa));
     }
 
     public Byte[] Modulus { get; private set; }
@@ -62,20 +65,20 @@ public sealed class RsaPublicKey : AsymmetricKeyPair {
     }
 
     public override AsymmetricAlgorithm GetAsymmetricKey() {
-        if (rsa != null) {
-            return rsa;
+        if (rsaKey != null) {
+            return rsaKey;
         }
         var rsaParams = new RSAParameters {
             Modulus = Modulus,
             Exponent = PublicExponent
         };
-        rsa = RSA.Create();
-        rsa.ImportParameters(rsaParams);
-        return rsa;
+        rsaKey = RSA.Create();
+        rsaKey.ImportParameters(rsaParams);
+        return rsaKey;
     }
 
     /// <inheritdoc />
     public override void Dispose() {
-        rsa?.Dispose();
+        rsaKey?.Dispose();
     }
 }

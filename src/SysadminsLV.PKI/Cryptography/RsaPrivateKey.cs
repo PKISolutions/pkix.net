@@ -17,6 +17,9 @@ public sealed class RsaPrivateKey : AsymmetricKeyPair {
         }
         selectFormat(rawData);
     }
+    public RsaPrivateKey(RSA rsa) : base(_oid, false) {
+        rsaKey = rsa ?? throw new ArgumentNullException(nameof(rsa));
+    }
 
     public KeyPkcsFormat KeyFormat { get; private set; }
 
