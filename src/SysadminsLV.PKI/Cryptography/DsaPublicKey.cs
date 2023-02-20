@@ -41,7 +41,8 @@ public sealed class DsaPublicKey : AsymmetricKeyPair {
     }
 
     void decodeFromPublicKey(PublicKey publicKey) {
-        dsaParams.Y = GetPositiveInteger(publicKey.EncodedKeyValue.RawData);
+        var asn = new Asn1Reader(publicKey.EncodedKeyValue.RawData);
+        dsaParams.Y = GetPositiveInteger(asn.GetPayload());
         decodeParams(publicKey.EncodedParameters.RawData);
     }
     void decodePkcs8Key(Byte[] rawData) {

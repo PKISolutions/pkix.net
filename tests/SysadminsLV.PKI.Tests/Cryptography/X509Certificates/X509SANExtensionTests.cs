@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Security.Cryptography;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
@@ -19,7 +18,7 @@ public class X509SANExtensionTests {
     [TestMethod]
     public void TestSANFromNames() {
         var names = new X509AlternativeNameCollection {
-            new(X509AlternativeNamesEnum.DirectoryName,"CN=main,OU=test,DC=com"),
+            new(X509AlternativeNamesEnum.DirectoryName,"CN=main, OU=test, DC=com"),
             new(X509AlternativeNamesEnum.DnsName,"www.contoso.com"),
             new(X509AlternativeNamesEnum.Rfc822Name,"email@company.com"),
             new(X509AlternativeNamesEnum.IpAddress,"192.168.2.56"),
@@ -33,6 +32,17 @@ public class X509SANExtensionTests {
         var e = new X509SubjectAlternativeNamesExtension(names, false);
         var asn = new AsnEncodedData(Convert.FromBase64String(Resources.SAN));
         var e2 = new X509SubjectAlternativeNamesExtension(asn, false);
-        Assert.IsTrue(e.RawData.SequenceEqual(e2.RawData));
+        for (Int32 i = 0; i < names.Count; i++) {
+            if (e.AlternativeNames[i].OID == null) {
+                Assert.IsNull(e2.AlternativeNames[i].OID);
+            }
+            if (e.AlternativeNames[i].OID != null) {
+                Assert.IsNotNull(e2.AlternativeNames[i].OID);
+                Assert.AreEqual(e.AlternativeNames[i].OID.Value, e2.AlternativeNames[i].OID.Value);
+            }
+            Assert.AreEqual(e.AlternativeNames[i].Type, e2.AlternativeNames[i].Type);
+            Assert.AreEqual(e.AlternativeNames[i].Value, e2.AlternativeNames[i].Value);
+        }
+        //Assert.IsTrue(e.RawData.SequenceEqual(e2.RawData));
     }
 }

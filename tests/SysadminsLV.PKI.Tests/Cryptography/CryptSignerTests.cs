@@ -56,7 +56,6 @@ public class CryptSignerTests {
             signAndVerifyInvalid(signer);
         }
     }
-
     [TestMethod]
     public void TestSignatureCngDsa() {
         using var cert = new X509Certificate2(Convert.FromBase64String(Resources.SigningCertCngDsa), "1");

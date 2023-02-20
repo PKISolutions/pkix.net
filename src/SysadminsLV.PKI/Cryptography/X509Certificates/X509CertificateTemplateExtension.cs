@@ -75,7 +75,7 @@ public sealed class X509CertificateTemplateExtension : X509Extension {
     }
     void m_decode(Byte[] rawData) {
         var asn = new Asn1Reader(rawData);
-        asn.MoveNextSiblingAndExpectTags(Asn1Type.OBJECT_IDENTIFIER);
+        asn.MoveNextAndExpectTags(Asn1Type.OBJECT_IDENTIFIER);
         TemplateOid = new Asn1ObjectIdentifier(asn.GetTagRawData()).Value;
         asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
         MajorVersion = (Int32)new Asn1Integer(asn.GetTagRawData()).Value;
