@@ -3,11 +3,12 @@ using System.Security.Cryptography;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SysadminsLV.PKI.Cryptography;
 
-namespace SysadminsLV.PKI.Tests.Cryptography {
-    [TestClass]
-    public class DsaPrivateKeyTest {
-        #region Fields
-        const String DsaPkcs1 = @"
+namespace SysadminsLV.PKI.Tests.Cryptography;
+
+[TestClass]
+public class DsaPrivateKeyTest {
+    #region Fields
+    const String DsaPkcs1 = @"
 MIIDVQIBAAKCAQEArZ71qR/SHd1oJ38vhqSIUnvn9i6hmeqQThzygocmPgxJ6RaM
 d4UqQD2Jh/0Ei/8DJTWP5vnzCcBKxf32YOB8cgkxGSHj1iUHzHGbTg+xctokOTsA
 l+KKhih24ZC5n/jLuKLosopKpXO/l2mV81iGxxpXVEsvtjpyf4zHpphasiBPL0vM
@@ -27,7 +28,7 @@ OQcyL4i+C4nRycF10PS4tujMGRZRK5sEijPlcT+0QMnu5vjTHr9PpQuko7xa3lHv
 kwnivG9UAUPz/pq3pXKegml12xVgFjQUnpnwa+KTs2AMER730grjGw2hHPij7kat
 miz330N1DAIgPJQpB+/EtR4i5NwTJNKrUVN5om2vyVMs8q9WPNS6KGY=
 ";
-        const String DsaPkcs8 = @"
+    const String DsaPkcs8 = @"
 MIICZAIBADCCAjkGByqGSM44BAEwggIsAoIBAQCtnvWpH9Id3Wgnfy+GpIhSe+f2
 LqGZ6pBOHPKChyY+DEnpFox3hSpAPYmH/QSL/wMlNY/m+fMJwErF/fZg4HxyCTEZ
 IePWJQfMcZtOD7Fy2iQ5OwCX4oqGKHbhkLmf+Mu4ouiyikqlc7+XaZXzWIbHGldU
@@ -42,63 +43,62 @@ qU7K1urIB1id/scvCJGMzBh3RThkkDlUAugXMHwgdiPZbctOuIpfLwGmIVEVxOSu
 c1hYRUiXX4FhBzxVzvrQI7fkW8QQiDHbIf8ONFQFS8GSP9mOY3WwLzWNSmV1xbD2
 GJUgRgQiAiAfgFoZH+9xMu0KeFq8Fvv3rXDrXoBLumpKNzAgxsYDDg==
 ";
-        #endregion
+    #endregion
 
-        Byte[] pkcs1PrivateKeyBin;
-        Byte[] pkcs8PrivateKeyBin;
-        DsaPrivateKey privateKey;
-        DSA dsaPrivateKey;
+    Byte[] pkcs1PrivateKeyBin;
+    Byte[] pkcs8PrivateKeyBin;
+    DsaPrivateKey privateKey;
+    DSA dsaPrivateKey;
 
-        [TestInitialize]
-        public void Initialize() {
-            pkcs1PrivateKeyBin = Convert.FromBase64String(DsaPkcs1);
-            pkcs8PrivateKeyBin = Convert.FromBase64String(DsaPkcs8);
-        }
+    [TestInitialize]
+    public void Initialize() {
+        pkcs1PrivateKeyBin = Convert.FromBase64String(DsaPkcs1);
+        pkcs8PrivateKeyBin = Convert.FromBase64String(DsaPkcs8);
+    }
 
-        [TestMethod]
-        public void TestPkcs1() {
-            // Arrange
-            privateKey = new DsaPrivateKey(pkcs1PrivateKeyBin);
-            // Act
-            Oid oid = privateKey.Oid;
-            // Assert
-            Assert.AreEqual(AlgorithmOid.DSA, oid.Value);
-            Assert.IsFalse(privateKey.PublicOnly);
-        }
-        [TestMethod]
-        public void TestPkcs8() {
-            // Arrange
-            privateKey = new DsaPrivateKey(pkcs8PrivateKeyBin);
-            // Act
-            Oid oid = privateKey.Oid;
-            // Assert
-            Assert.AreEqual(AlgorithmOid.DSA, oid.Value);
-            Assert.IsFalse(privateKey.PublicOnly);
-        }
-        [TestMethod]
-        public void TestPkcs1AsymmetricKey() {
-            // Arrange
-            privateKey = new DsaPrivateKey(pkcs1PrivateKeyBin);
-            // Act
-            dsaPrivateKey = privateKey.GetAsymmetricKey() as DSA;
-            // Assert
-            // Assert
-            Assert.IsInstanceOfType(dsaPrivateKey, typeof(DSA));
-        }
-        [TestMethod]
-        public void TestPkcs8AsymmetricKey() {
-            // Arrange
-            privateKey = new DsaPrivateKey(pkcs8PrivateKeyBin);
-            // Act
-            dsaPrivateKey = privateKey.GetAsymmetricKey() as DSA;
-            // Assert
-            Assert.IsInstanceOfType(dsaPrivateKey, typeof(DSA));
-        }
+    [TestMethod]
+    public void TestPkcs1() {
+        // Arrange
+        privateKey = new DsaPrivateKey(pkcs1PrivateKeyBin);
+        // Act
+        Oid oid = privateKey.Oid;
+        // Assert
+        Assert.AreEqual(AlgorithmOid.DSA, oid.Value);
+        Assert.IsFalse(privateKey.PublicOnly);
+    }
+    [TestMethod]
+    public void TestPkcs8() {
+        // Arrange
+        privateKey = new DsaPrivateKey(pkcs8PrivateKeyBin);
+        // Act
+        Oid oid = privateKey.Oid;
+        // Assert
+        Assert.AreEqual(AlgorithmOid.DSA, oid.Value);
+        Assert.IsFalse(privateKey.PublicOnly);
+    }
+    [TestMethod]
+    public void TestPkcs1AsymmetricKey() {
+        // Arrange
+        privateKey = new DsaPrivateKey(pkcs1PrivateKeyBin);
+        // Act
+        dsaPrivateKey = privateKey.GetAsymmetricKey() as DSA;
+        // Assert
+        // Assert
+        Assert.IsInstanceOfType(dsaPrivateKey, typeof(DSA));
+    }
+    [TestMethod]
+    public void TestPkcs8AsymmetricKey() {
+        // Arrange
+        privateKey = new DsaPrivateKey(pkcs8PrivateKeyBin);
+        // Act
+        dsaPrivateKey = privateKey.GetAsymmetricKey() as DSA;
+        // Assert
+        Assert.IsInstanceOfType(dsaPrivateKey, typeof(DSA));
+    }
 
-        [TestCleanup]
-        public void Cleanup() {
-            privateKey?.Dispose();
-            dsaPrivateKey?.Dispose();
-        }
+    [TestCleanup]
+    public void Cleanup() {
+        privateKey?.Dispose();
+        dsaPrivateKey?.Dispose();
     }
 }
