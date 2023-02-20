@@ -17,7 +17,7 @@
         </dependencies>
     </metadata>
     <files>
-        <file src="..\src\SysadminsLV.PKI.Win\bin\Release\net472\*.*" target="lib/net472"/>
-        <file src="..\src\SysadminsLV.PKI.Win\bin\Release\netstandard2.0\*.*" target="lib/netstandard2.0"/>
+        <file src="..\src\SysadminsLV.PKI.OcspClient\bin\Release\net472\*.*" target="lib/net472"/>
+        <file src="..\src\SysadminsLV.PKI.OcspClient\bin\Release\netstandard2.0\*.*" target="lib/netstandard2.0"/>
     </files>
 </package>
