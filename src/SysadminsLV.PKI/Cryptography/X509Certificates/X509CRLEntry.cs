@@ -131,14 +131,8 @@ public sealed class X509CRLEntry {
     /// </summary>
     public String ReasonMessage => getReasonText(ReasonCode);
 
-    /// <summary>
-    /// Gets the ASN.1-encoded byte array.
-    /// </summary>
-    [Obsolete("Use 'Encode()' method instead.")]
-    public Byte[] RawData { get; private set; }
-
     void encode(String serialNumber, DateTime revocationDate, Int32 reasonCode) {
-        if (reasonCode < 0 || reasonCode > 10) {
+        if (reasonCode is < 0 or > 10) {
             throw new ArgumentException("Revocation reason code is incorrect.");
         }
         if (serialNumber.Length % 2 == 1) {
@@ -147,14 +141,12 @@ public sealed class X509CRLEntry {
         SerialNumber = serialNumber.Replace(" ", null).ToLower();
         RevocationDate = revocationDate;
         ReasonCode = reasonCode;
-        RawData = Encode();
     }
 
     void decode(Asn1Reader asn) {
         if (asn.Tag != 48) {
             throw new Asn1InvalidTagException(asn.Offset);
         }
-        RawData = asn.GetTagRawData();
         Int32 offset = asn.Offset;
         asn.MoveNext();
         SerialNumber = Asn1Utils.DecodeInteger(asn.GetTagRawData(), true);
@@ -168,7 +160,7 @@ public sealed class X509CRLEntry {
                 break;
         }
         if (asn.MoveNextSibling()) {
-            // use high-performant extension decoder instead of generic one.
+            // use high-performance extension decoder instead of generic one.
             // Since CRLs may store a hundreds of thousands entries, this is
             // pretty reasonable to save loops whenever possible.
             readCrlReasonCode(asn);
@@ -221,16 +213,17 @@ public sealed class X509CRLEntry {
     /// </summary>
     /// <returns>Information about revoked certificate</returns>
     public override String ToString() {
-        StringBuilder SB = new StringBuilder();
-        SB.Append("Serial number: " + SerialNumber + " revoked at: " + RevocationDate);
-        return SB.ToString();
+        var sb = new StringBuilder();
+        sb.AppendLine($"Serial number: {SerialNumber}");
+        sb.AppendLine($"    Revoked at: {RevocationDate:yyyy-MMM-dd HH:mm:ss}");
+        
+        return sb.ToString();
     }
     /// <summary>
     /// Encodes revocation entry to a ASN.1-encoded byte array.
     /// </summary>
     /// <returns>ASN.1-encoded byte array</returns>
     public Byte[] Encode() {
-        // TODO:  verify this
         Asn1Builder builder = Asn1Builder.Create()
             .AddInteger(BigInteger.Parse(SerialNumber, NumberStyles.AllowHexSpecifier))
             .AddRfcDateTime(RevocationDate);
