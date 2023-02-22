@@ -103,7 +103,7 @@ public sealed class PkcsSignerInfoBuilder {
     }
     void addContentInfoAttribute() {
         if (AuthenticatedAttributes[CONTENT_TYPE] == null) {
-            AddAuthenticatedAttribute(new Pkcs9AttributeObject(new Oid(CONTENT_TYPE), new Asn1ObjectIdentifier(ContentType).RawData));
+            AddAuthenticatedAttribute(new Pkcs9AttributeObject(new Oid(CONTENT_TYPE), new Asn1ObjectIdentifier(ContentType).GetRawData()));
         }
     }
     void addMessageDigestAttribute(Byte[] content) {
@@ -187,7 +187,7 @@ public sealed class PkcsSignerInfoBuilder {
             throw new InvalidOperationException();
         }
         // version
-        Asn1Builder builder = new Asn1Builder().AddInteger(Version);
+        Asn1Builder builder = Asn1Builder.Create().AddInteger(Version);
         // signerIdentifier
         builder.AddDerData(signerCert.Encode());
         // digestAlgorithm

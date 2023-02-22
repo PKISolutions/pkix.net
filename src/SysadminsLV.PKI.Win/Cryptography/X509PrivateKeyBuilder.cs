@@ -125,7 +125,7 @@ public class X509PrivateKeyBuilder : IKeyStorageInfo, IDisposable {
         try {
             paramBytes = Convert.FromBase64String(pubKey.EncodedParameters);
         } catch {
-            paramBytes = new Asn1Null().RawData;
+            paramBytes = new Asn1Null().GetRawData();
         }
         var param = new AsnEncodedData(algorithm, paramBytes);
         CryptographyUtils.ReleaseCom(pubKey);

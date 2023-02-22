@@ -49,7 +49,7 @@ public class TspAuthenticodeRequest : TspRequest {
     /// </summary>
     /// <returns>ASN.1-encoded byte array.</returns>
     public override Byte[] Encode() {
-        var builder = new Asn1Builder()
+        var builder = Asn1Builder.Create()
             .AddObjectIdentifier(new Oid(SPC_TIME_STAMP_REQUEST_OBJID))
             .AddSequence(x => {
                              return x.AddObjectIdentifier(new Oid(PKCS_7_DATA))

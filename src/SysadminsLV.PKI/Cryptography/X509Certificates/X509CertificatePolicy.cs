@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using SysadminsLV.Asn1Parser;
+using SysadminsLV.Asn1Parser.Universal;
 
 namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
@@ -67,7 +68,7 @@ public class X509CertificatePolicy {
     public X509PolicyQualifierCollection PolicyQualifiers => new(_qualifiers);
 
     void m_initialize(String policyOid, X509PolicyQualifierCollection qualifiers = null) {
-        _rawData.AddRange(Asn1Utils.EncodeObjectIdentifier(new Oid(policyOid)));
+        _rawData.AddRange(new Asn1ObjectIdentifier(new Oid(policyOid)).GetRawData());
         PolicyOid = new Oid(policyOid);
         if (qualifiers != null) {
             _qualifiers.AddRange(qualifiers);
@@ -79,7 +80,7 @@ public class X509CertificatePolicy {
             throw new Asn1InvalidTagException(asn.Offset);
         }
         asn.MoveNext();
-        PolicyOid = Asn1Utils.DecodeObjectIdentifier(asn.GetTagRawData());
+        PolicyOid = ((Asn1ObjectIdentifier)asn.GetTagObject()).Value;
         if (asn.MoveNext()) { _qualifiers.Decode(asn.GetTagRawData()); }
     }
     /// <summary>

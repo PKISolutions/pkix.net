@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using SysadminsLV.Asn1Parser;
+using SysadminsLV.Asn1Parser.Universal;
 using SysadminsLV.PKI.Cryptography;
 
 namespace SysadminsLV.PKI.OcspClient;
@@ -149,8 +150,8 @@ public class CertID {
             initializeFromCertAndIssuer();
         }
         // algorithm identifier
-        var rawData = new List<Byte>(Asn1Utils.EncodeObjectIdentifier(hashAlgorithm));
-        rawData.AddRange(Asn1Utils.EncodeNull());
+        var rawData = new List<Byte>(new Asn1ObjectIdentifier(hashAlgorithm).GetRawData());
+        rawData.AddRange(new Asn1Null().GetRawData());
         rawData = new List<Byte>(Asn1Utils.Encode(rawData.ToArray(), 48));
         // IssuerNameId
         rawData.AddRange(Asn1Utils.Encode(AsnFormatter.StringToBinary(IssuerNameId, EncodingType.HexRaw), 4));

@@ -10,6 +10,7 @@ using System.Text;
 using PKI.Structs;
 using PKI.Utils;
 using SysadminsLV.Asn1Parser;
+using SysadminsLV.Asn1Parser.Universal;
 using SysadminsLV.PKI.Win32;
 
 namespace SysadminsLV.PKI.Cryptography;
@@ -50,7 +51,7 @@ public sealed class Oid2 {
         var flatOid = new Oid(oid);
         try {
             // try to validate if input OID contains OID value instead of friendly name
-            Asn1Utils.EncodeObjectIdentifier(flatOid);
+            new Asn1ObjectIdentifier(flatOid);
             oid = flatOid.Value;
             _searchBy = "ByValue";
         } catch {
@@ -375,7 +376,7 @@ public sealed class Oid2 {
     public static Oid2[] GetAllOids(String value, Boolean searchInDirectory) {
         String oidValue;
         try {
-            Asn1Utils.EncodeObjectIdentifier(new Oid(value));
+            new Asn1ObjectIdentifier(new Oid(value));
             oidValue = value;
         } catch {
             var oid = new Oid(value);
@@ -445,7 +446,7 @@ public sealed class Oid2 {
             throw new ArgumentNullException(nameof(friendlyName));
         }
         try {
-            Asn1Utils.EncodeObjectIdentifier(new Oid(value));
+            new Asn1ObjectIdentifier(new Oid(value));
         } catch {
             throw new InvalidDataException("The value is not valid OID string.");
         }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -68,10 +67,11 @@ public sealed class X509CertificateTemplateExtension : X509Extension {
         TemplateOid = new Oid(oid.Value, oid.FriendlyName);
         MajorVersion = majorVersion;
         MinorVersion = minorVersion;
-        var rawData = new List<Byte>(Asn1Utils.EncodeObjectIdentifier(oid));
-        rawData.AddRange(new Asn1Integer(majorVersion).RawData);
-        rawData.AddRange(new Asn1Integer(minorVersion).RawData);
-        RawData = Asn1Utils.Encode(rawData.ToArray(), 48);
+        RawData = Asn1Builder.Create()
+            .AddObjectIdentifier(oid)
+            .AddInteger(majorVersion)
+            .AddInteger(minorVersion)
+            .GetEncoded();
     }
     void m_decode(Byte[] rawData) {
         var asn = new Asn1Reader(rawData);

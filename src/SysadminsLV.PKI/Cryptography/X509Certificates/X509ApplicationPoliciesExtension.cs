@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using SysadminsLV.Asn1Parser;
+using SysadminsLV.Asn1Parser.Universal;
 
 namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
@@ -61,17 +63,17 @@ public sealed class X509ApplicationPoliciesExtension : X509Extension {
         }
     }
 
-    void m_initialize(OidCollection applicationPolicies, Boolean critical) {
+    void m_initialize(IEnumerable applicationPolicies, Boolean critical) {
         Oid = _oid;
         Critical = critical;
-        var rawData = new List<Byte>();
+        var builder = Asn1Builder.Create();
         foreach (Oid policy in applicationPolicies
                      .Cast<Oid>().Where(x => !String.IsNullOrEmpty(x.Value))) {
             _policies.Add(policy);
-            rawData.AddRange(Asn1Utils.Encode(Asn1Utils.EncodeObjectIdentifier(policy), 48));
+            builder.AddSequence(x => x.AddObjectIdentifier(policy));
         }
 
-        RawData = Asn1Utils.Encode(rawData.ToArray(), 48);
+        RawData = builder.GetEncoded();
     }
     void m_decode(Byte[] rawData) {
         var asn = new Asn1Reader(rawData);
@@ -80,7 +82,7 @@ public sealed class X509ApplicationPoliciesExtension : X509Extension {
         }
         asn.MoveNext();
         do {
-            _policies.Add(Asn1Utils.DecodeObjectIdentifier(asn.GetPayload()));
+            _policies.Add(new Asn1ObjectIdentifier(asn.GetPayload()).Value);
         } while (asn.MoveNextSibling());
     }
 }

@@ -5,6 +5,7 @@ using System.Security.Cryptography.Pkcs;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using SysadminsLV.Asn1Parser;
+using SysadminsLV.Asn1Parser.Universal;
 using SysadminsLV.PKI.Cryptography.Pkcs;
 
 namespace SysadminsLV.PKI.Cryptography.X509Certificates;
@@ -109,7 +110,7 @@ public class X509CertificateRequestPkcs10 {
     }
     void getVersion(Asn1Reader asn) {
         asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
-        Version = (Int32)(Asn1Utils.DecodeInteger(asn.GetTagRawData()) + 1);
+        Version = (Int32)((Asn1Integer)asn.GetTagObject()).Value + 1;
     }
     void getSubject(Asn1Reader asn) {
         asn.MoveNextSiblingAndExpectTags(0x30);

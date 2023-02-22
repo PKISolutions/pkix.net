@@ -168,15 +168,15 @@ public class X509CertificateTrustList {
         ListIdentifier = Encoding.Unicode.GetString(asn.GetPayload()).TrimEnd('\0');
     }
     void decodeSequenceNumber(Asn1Reader asn) {
-        sequenceNumber = new Asn1Integer(asn.GetTagRawData()).Value;
+        sequenceNumber = ((Asn1Integer)asn.GetTagObject()).Value;
         SequenceNumber = AsnFormatter.BinaryToString(asn.GetPayload());
     }
     void decodeValidity(Asn1Reader asn) {
-        ThisUpdate = Asn1Utils.DecodeDateTime(asn.GetTagRawData());
+        ThisUpdate = ((Asn1DateTime)asn.GetTagObject()).Value;
         Int32 offset = asn.Offset;
         asn.MoveNext();
-        if (asn.Tag == (Byte)Asn1Type.UTCTime || asn.Tag == (Byte)Asn1Type.GeneralizedTime) {
-            NextUpdate = Asn1Utils.DecodeDateTime(asn.GetTagRawData());
+        if (asn.Tag is (Byte)Asn1Type.UTCTime or (Byte)Asn1Type.GeneralizedTime) {
+            NextUpdate = ((Asn1DateTime)asn.GetTagObject()).Value;
         } else {
             asn.Seek(offset);
         }

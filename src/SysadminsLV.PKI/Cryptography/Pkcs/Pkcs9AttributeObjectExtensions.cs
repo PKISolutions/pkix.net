@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Security.Cryptography.Pkcs;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using SysadminsLV.Asn1Parser;
+using SysadminsLV.Asn1Parser.Universal;
 
 namespace SysadminsLV.PKI.Cryptography.Pkcs;
 public static class Pkcs9AttributeObjectExtensions {
@@ -14,9 +14,10 @@ public static class Pkcs9AttributeObjectExtensions {
     /// <param name="attribute">An instance of <see cref="Pkcs9AttributeObject"/> to encode.</param>
     /// <returns>ASN.1-encoded byte array.</returns>
     public static Byte[] Encode(this Pkcs9AttributeObject attribute) {
-        var list = new List<Byte>(Asn1Utils.Encode(attribute.RawData, 49));
-        list.InsertRange(0, Asn1Utils.EncodeObjectIdentifier(attribute.Oid));
-        return Asn1Utils.Encode(list.ToArray(), 48);
+        return Asn1Builder.Create()
+            .AddObjectIdentifier(attribute.Oid)
+            .AddSet(attribute.RawData)
+            .GetEncoded();
     }
     /// <summary>
     /// Returns a formatted version of the Abstract Syntax Notation One (ASN.1)-encoded data as a string.
@@ -37,7 +38,7 @@ public static class Pkcs9AttributeObjectExtensions {
             switch (attribute.Oid.Value) {
                 // Content Type
                 case "1.2.840.113549.1.9.3":
-                    Oid value = Asn1Utils.DecodeObjectIdentifier(asn.GetRawData());
+                    Oid value = new Asn1ObjectIdentifier(asn).Value;
                     SB.Append("Content type (OID=1.2.840.113549.1.9.3): ");
                     if (multiLine) {
                         SB.Append(Environment.NewLine + "    " + value.Value);
@@ -52,9 +53,9 @@ public static class Pkcs9AttributeObjectExtensions {
                 case "1.2.840.113549.1.9.4":
                     SB.Append("Message Digest (OID=1.2.840.113549.1.9.4): ");
                     if (multiLine) {
-                        SB.Append(Environment.NewLine + Asn1Utils.DecodeOctetString(asn.GetRawData()));
+                        SB.Append(Environment.NewLine + AsnFormatter.BinaryToString(asn.GetPayload()));
                     } else {
-                        SB.Append(Asn1Utils.DecodeOctetString(asn.GetRawData()));
+                        SB.Append(AsnFormatter.BinaryToString(asn.GetRawData()));
                     }
                     break;
                 // Renewal certificate
@@ -101,7 +102,7 @@ public static class Pkcs9AttributeObjectExtensions {
                     break;
                 //OS version
                 case "1.3.6.1.4.1.311.13.2.3":
-                    SB.Append("OS Version (OID=1.3.6.1.4.1.311.13.2.3): " + Asn1Utils.DecodeIA5String(asn.GetTagRawData()));
+                    SB.Append("OS Version (OID=1.3.6.1.4.1.311.13.2.3): " + new Asn1IA5String(asn).Value);
                     if (multiLine) { SB.Append(Environment.NewLine); }
                     break;
                 // client info
@@ -110,26 +111,26 @@ public static class Pkcs9AttributeObjectExtensions {
                     SB.Append("Client Info (OID=1.3.6.1.4.1.311.21.20): ");
                     if (multiLine) { SB.Append(Environment.NewLine + "    "); }
                     if (asn.Tag == (Int32)Asn1Type.INTEGER) {
-                        Int64 id = Asn1Utils.DecodeInteger(asn.GetTagRawData());
+                        Int64 id = (Int64)new Asn1Integer(asn).Value;
                         SB.Append("Client ID: " + (EnrollmentClientIdType)id + " (" + id + ")");
                         asn.MoveNext();
                     }
                     if (multiLine) { SB.Append(Environment.NewLine + "    "); } else { SB.Append(", "); }
                     if (asn.Tag == (Int32)Asn1Type.UTF8String) {
-                        SB.Append("Computer name: " + Asn1Utils.DecodeUTF8String(asn.GetTagRawData()));
+                        SB.Append("Computer name: " + new Asn1UTF8String(asn).Value);
                         if (multiLine) { SB.Append(Environment.NewLine + "    "); } else { SB.Append(", "); }
                         asn.MoveNext();
-                        SB.Append("User name: " + Asn1Utils.DecodeUTF8String(asn.GetTagRawData()));
+                        SB.Append("User name: " + new Asn1UTF8String(asn).Value);
                         if (multiLine) { SB.Append(Environment.NewLine + "    "); } else { SB.Append(", "); }
                         asn.MoveNext();
-                        SB.Append("Process name: " + Asn1Utils.DecodeUTF8String(asn.GetTagRawData()));
+                        SB.Append("Process name: " + new Asn1UTF8String(asn).Value);
                         if (multiLine) { SB.Append(Environment.NewLine); }
                     }
                     break;
                 // szOID_NT_PRINCIPAL_NAME
                 case "1.3.6.1.4.1.311.20.2.3":
                     if (asn.Tag == (Byte)Asn1Type.UTF8String) {
-                        SB.Append("User Principal Name (OID=1.3.6.1.4.1.311.20.2.3): " + Asn1Utils.DecodeUTF8String(asn.GetTagRawData()));
+                        SB.Append("User Principal Name (OID=1.3.6.1.4.1.311.20.2.3): " + new Asn1UTF8String(asn).Value);
                         if (multiLine) { SB.Append(Environment.NewLine); }
                     }
                     break;
@@ -144,14 +145,14 @@ public static class Pkcs9AttributeObjectExtensions {
                 // CERT_SHA1_HASH_PROP_ID
                 case "1.3.6.1.4.1.311.10.11.3":
                     if (asn.Tag == (Byte)Asn1Type.OCTET_STRING) {
-                        SB.Append("SHA1 hash (OID=1.3.6.1.4.1.311.10.11.3): " + Asn1Utils.DecodeOctetString(asn.GetTagRawData()));
+                        SB.Append("SHA1 hash (OID=1.3.6.1.4.1.311.10.11.3): " + AsnFormatter.BinaryToString(asn.GetTagRawData()));
                         if (multiLine) { SB.Append(Environment.NewLine); }
                     }
                     break;
                 // CERT_MD5_HASH_PROP_ID
                 case "1.3.6.1.4.1.311.10.11.4":
                     if (asn.Tag == (Byte)Asn1Type.OCTET_STRING) {
-                        SB.Append("SHA1 hash (OID=1.3.6.1.4.1.311.10.11.4): " + Asn1Utils.DecodeOctetString(asn.GetTagRawData()));
+                        SB.Append("SHA1 hash (OID=1.3.6.1.4.1.311.10.11.4): " + AsnFormatter.BinaryToString(asn.GetTagRawData()));
                         if (multiLine) { SB.Append(Environment.NewLine); }
                     }
                     break;
@@ -163,12 +164,12 @@ public static class Pkcs9AttributeObjectExtensions {
                         SB.Append("Enhanced Key Usages (OID=1.3.6.1.4.1.311.10.11.9): ");
                         if (multiLine) { SB.Append(Environment.NewLine + "    "); }
                         do {
-                            if (Asn1Utils.DecodeObjectIdentifier(asn.GetTagRawData()).FriendlyName != null) {
-                                SB.Append(Asn1Utils.DecodeObjectIdentifier(asn.GetTagRawData()).Value + " (" + Asn1Utils.DecodeObjectIdentifier(asn.GetTagRawData()).FriendlyName + ") ");
+                            SB.Append(new Asn1ObjectIdentifier(asn.GetTagRawData()).Value.Format(true));
+                            if (multiLine) {
+                                SB.Append(Environment.NewLine + "    ");
                             } else {
-                                SB.Append(Asn1Utils.DecodeObjectIdentifier(asn.GetTagRawData()).Value);
+                                SB.Append(", ");
                             }
-                            if (multiLine) { SB.Append(Environment.NewLine + "    "); } else { SB.Append(", "); }
                         } while (asn.MoveNext());
                     }
                     break;
@@ -182,14 +183,14 @@ public static class Pkcs9AttributeObjectExtensions {
                 // CERT_KEY_IDENTIFIER_PROP_ID
                 case "1.3.6.1.4.1.311.10.11.20":
                     if (asn.Tag == (Byte)Asn1Type.OCTET_STRING) {
-                        SB.Append("Subject Key Identifier (OID=1.3.6.1.4.1.311.10.11.20): " + Asn1Utils.DecodeOctetString(asn.GetTagRawData()));
+                        SB.Append("Subject Key Identifier (OID=1.3.6.1.4.1.311.10.11.20): " + AsnFormatter.BinaryToString(asn.GetTagRawData()));
                         if (multiLine) { SB.Append(Environment.NewLine); }
                     }
                     break;
                 // CERT_SUBJECT_NAME_MD5_HASH_PROP_ID
                 case "1.3.6.1.4.1.311.10.11.29":
                     if (asn.Tag == (Byte)Asn1Type.OCTET_STRING) {
-                        SB.Append("Subject name MD5 hash (OID=1.3.6.1.4.1.311.10.11.29): " + Asn1Utils.DecodeOctetString(asn.GetTagRawData()));
+                        SB.Append("Subject name MD5 hash (OID=1.3.6.1.4.1.311.10.11.29): " + AsnFormatter.BinaryToString(asn.GetTagRawData()));
                         if (multiLine) { SB.Append(Environment.NewLine); }
                     }
                     break;

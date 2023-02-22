@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 using SysadminsLV.Asn1Parser;
+using SysadminsLV.Asn1Parser.Universal;
 
 namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
@@ -60,9 +60,9 @@ public class OidMapping {
     void m_decode(Byte[] asnData) {
         var asn = new Asn1Reader(asnData);
         asn.MoveNext();
-        IssuerDomainOid = Asn1Utils.DecodeObjectIdentifier(asn.GetTagRawData());
+        IssuerDomainOid = ((Asn1ObjectIdentifier)asn.GetTagObject()).Value;
         asn.MoveNext();
-        SubjectDomainOid = Asn1Utils.DecodeObjectIdentifier(asn.GetTagRawData());
+        SubjectDomainOid = ((Asn1ObjectIdentifier)asn.GetTagObject()).Value;
     }
 
     /// <summary>
@@ -70,10 +70,10 @@ public class OidMapping {
     /// </summary>
     /// <returns>ASN.1-encoded byte array.</returns>
     public Byte[] Encode() {
-        var entry = new List<Byte>();
-        entry.AddRange(Asn1Utils.EncodeObjectIdentifier(IssuerDomainOid));
-        entry.AddRange(Asn1Utils.EncodeObjectIdentifier(SubjectDomainOid));
-        return Asn1Utils.Encode(entry.ToArray(), 48);
+        return Asn1Builder.Create()
+            .AddObjectIdentifier(IssuerDomainOid)
+            .AddObjectIdentifier(SubjectDomainOid)
+            .GetEncoded();
     }
     /// <summary>
     /// Gets textual representation of the current object.

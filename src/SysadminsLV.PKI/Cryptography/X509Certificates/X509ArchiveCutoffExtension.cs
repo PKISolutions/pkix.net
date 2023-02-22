@@ -2,9 +2,9 @@
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using SysadminsLV.Asn1Parser;
+using SysadminsLV.Asn1Parser.Universal;
 
-namespace SysadminsLV.PKI.Cryptography.X509Certificates; 
+namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
 /// <summary>
 /// Represents X.509 Archive Cutoff extension which is first defined in <see href="http://tools.ietf.org/html/rfc2560">RFC2560</see>.
@@ -57,10 +57,10 @@ public class X509ArchiveCutoffExtension : X509Extension {
     public DateTime CutoffDate { get; private set; }
 
     void m_initialize(DateTime cutoff) {
-        RawData = Asn1Utils.EncodeGeneralizedTime(cutoff);
+        RawData = new Asn1GeneralizedTime(cutoff).GetRawData();
     }
     void m_decode(Byte[] rawData) {
-        CutoffDate = Asn1Utils.DecodeGeneralizedTime(rawData);
+        CutoffDate = new Asn1GeneralizedTime(rawData).Value;
     }
 
     /// <summary>
@@ -69,10 +69,13 @@ public class X509ArchiveCutoffExtension : X509Extension {
     /// <param name="multiLine"><strong>True</strong> if the return string should contain carriage returns; otherwise, <strong>False</strong>.</param>
     /// <returns>A formatted string that represents the Abstract Syntax Notation One (ASN.1)-encoded data.</returns>
     public override String Format(Boolean multiLine) {
-        var SB = new StringBuilder();
-        SB.Append("Cutoff date: ");
-        if (multiLine) { SB.Append(Environment.NewLine + "     "); }
-        SB.Append(CutoffDate);
-        return SB.ToString();
+        var sb = new StringBuilder();
+        sb.Append("Cutoff date: ");
+        if (multiLine) {
+            sb.Append(Environment.NewLine + "     ");
+        }
+        sb.Append(CutoffDate);
+
+        return sb.ToString();
     }
 }

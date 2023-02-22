@@ -81,7 +81,7 @@ public class TspMessageImprint {
     /// ASN.1-encoded byte array.
     /// </returns>
     public Byte[] Encode() {
-        return new Asn1Builder()
+        return Asn1Builder.Create()
             .AddDerData(AlgorithmIdentifier.RawData)
             .AddOctetString(MessageHash)
             .GetEncoded();

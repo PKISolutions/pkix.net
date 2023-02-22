@@ -6,6 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 using Interop.CERTENROLLLib;
 using PKI.Utils;
 using SysadminsLV.Asn1Parser;
+using SysadminsLV.Asn1Parser.Universal;
 using SysadminsLV.PKI.Cryptography;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
 using EncodingType = Interop.CERTENROLLLib.EncodingType;
@@ -322,7 +323,7 @@ public class CertificateTemplateSettings {
                 case X509ExtensionOid.CertTemplateInfoV2:
                     Boolean isCritical = isExtensionCritical(X509ExtensionOid.CertTemplateInfoV2);
                     if (schemaVersion == 1) {
-                        _extensions.Add(new X509Extension(new Oid(X509ExtensionOid.CertificateTemplate), Asn1Utils.EncodeBMPString((String)_dsEntryProperties[DsUtils.PropCN]), isCritical));
+                        _extensions.Add(new X509Extension(X509ExtensionOid.CertificateTemplate, new Asn1BMPString((String)_dsEntryProperties[DsUtils.PropCN]).GetRawData(), isCritical));
                     } else {
                         Int32 major = (Int32)_dsEntryProperties[DsUtils.PropPkiTemplateMajorVersion];
                         Int32 minor = (Int32)_dsEntryProperties[DsUtils.PropPkiTemplateMinorVersion];
@@ -335,12 +336,11 @@ public class CertificateTemplateSettings {
                     break;
                 case X509ExtensionOid.BasicConstraints:
                     if (
-                        SubjectType == CertTemplateSubjectType.CA ||
-                        SubjectType == CertTemplateSubjectType.CrossCA ||
+                        SubjectType is CertTemplateSubjectType.CA or CertTemplateSubjectType.CrossCA ||
                         (EnrollmentOptions & CertificateTemplateEnrollmentFlags.BasicConstraintsInEndEntityCerts) > 0
                     ) {
                         Boolean isCA;
-                        if (SubjectType == CertTemplateSubjectType.CA || SubjectType == CertTemplateSubjectType.CrossCA) {
+                        if (SubjectType is CertTemplateSubjectType.CA or CertTemplateSubjectType.CrossCA) {
                             isCA = true;
                         } else {
                             isCA = false;

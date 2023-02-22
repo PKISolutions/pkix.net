@@ -195,14 +195,14 @@ public class CryptSigner : ICryptSigner, IDisposable {
         // feed asn reader to salt identifier
         while (asn.MoveNextSibling() && asn.Tag != 0xa2) { }
         PssSaltByteCount = asn.Tag == 0xa2
-            ? (Int32)Asn1Utils.DecodeInteger(asn.GetPayload())
+            ? (Int32)new Asn1Integer(asn.GetPayload()).Value
             : 20;
         return hAlgId;
     }
     void getConfiguration(Byte[] algIdBlob) {
         var asn = new Asn1Reader(algIdBlob);
         asn.MoveNext();
-        Oid oid = Asn1Utils.DecodeObjectIdentifier(asn.GetTagRawData());
+        Oid oid = new Asn1ObjectIdentifier(asn).Value;
         asn.MoveNext();
         hashAlgorithm = mapSignatureAlgorithmToHashAlgorithm(oid.Value, asn);
     }
@@ -464,7 +464,7 @@ public class CryptSigner : ICryptSigner, IDisposable {
                     algId = new Oid(AlgorithmOid.ECDSA_SPECIFIED); // only here we override algorithm OID
                     parameters
                         .AddRange(
-                            new AlgorithmIdentifier(hashAlgorithm, Asn1Utils.EncodeNull()).RawData
+                            new AlgorithmIdentifier(hashAlgorithm, new Asn1Null().GetRawData()).RawData
                         );
                 }
                 break;
@@ -483,11 +483,11 @@ public class CryptSigner : ICryptSigner, IDisposable {
                     Byte[] mgf = new AlgorithmIdentifier(new Oid("1.2.840.113549.1.1.8"), hash).RawData;
                     parameters.AddRange(Asn1Utils.Encode(mgf, 0xa1));
                     // salt
-                    parameters.AddRange(Asn1Utils.Encode(new Asn1Integer(20).RawData, 0xa2));
+                    parameters.AddRange(Asn1Utils.Encode(new Asn1Integer(20).GetRawData(), 0xa2));
                     // general PSS parameters encode
                     parameters = new List<Byte>(Asn1Utils.Encode(parameters.ToArray(), 48));
                 } else {
-                    parameters.AddRange(Asn1Utils.EncodeNull());
+                    parameters.AddRange(new Asn1Null().GetRawData());
                 }
                 break;
         }

@@ -2,6 +2,7 @@
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using SysadminsLV.Asn1Parser;
+using SysadminsLV.Asn1Parser.Universal;
 
 namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
@@ -56,9 +57,9 @@ public sealed class X509NextCRLPublishExtension : X509Extension {
 
     void initializeFromDateTime(DateTime publishTime) {
         NextCRLPublish = publishTime;
-        RawData = Asn1Utils.EncodeDateTime(publishTime.ToUniversalTime());
+        RawData = Asn1DateTime.CreateRfcDateTime(publishTime.ToUniversalTime()).GetRawData();
     }
     void initializeFromRawData(Byte[] rawData) {
-        NextCRLPublish = Asn1Utils.DecodeDateTime(rawData).ToLocalTime();
+        NextCRLPublish = ((Asn1DateTime)new Asn1Reader(rawData).GetTagObject()).Value.ToLocalTime();
     }
 }

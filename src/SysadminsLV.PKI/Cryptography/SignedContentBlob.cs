@@ -144,7 +144,7 @@ public class SignedContentBlob {
         var signature = hasher.ComputeHash(ToBeSignedData).ToList();
         signature.Insert(0, 0);
         Signature = new Asn1BitString(Asn1Utils.Encode(signature.ToArray(), (Byte)Asn1Type.BIT_STRING));
-        SignatureAlgorithm = new AlgorithmIdentifier(transformedOid, Asn1Utils.EncodeNull());
+        SignatureAlgorithm = new AlgorithmIdentifier(transformedOid, new Asn1Null().GetRawData());
         BlobType = ContentBlobType.SignedBlob;
     }
     /// <summary>
@@ -161,7 +161,7 @@ public class SignedContentBlob {
 
         var encodedBlob = new List<Byte>(ToBeSignedData);
         encodedBlob.AddRange(SignatureAlgorithm.RawData);
-        encodedBlob.AddRange(Signature.RawData);
+        encodedBlob.AddRange(Signature.GetRawData());
         
         return Asn1Utils.Encode(encodedBlob.ToArray(), 48);
     }

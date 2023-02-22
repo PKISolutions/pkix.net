@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using SysadminsLV.Asn1Parser;
+using SysadminsLV.Asn1Parser.Universal;
 using SysadminsLV.PKI.Cryptography.Pkcs;
 
 namespace SysadminsLV.PKI.Cryptography.X509Certificates;
@@ -76,22 +76,21 @@ public class X509CertificateTrustListBuilder {
     public DateTime? NextUpdate { get; set; }
 
     Byte[] encodeCTL() {
-        var builder = new Asn1Builder()
-            .AddDerData(new X509EnhancedKeyUsageExtension(SubjectUsages, false).RawData);
-        var rawData = new List<Byte>(new X509EnhancedKeyUsageExtension(SubjectUsages, false).RawData);
+        var builder = Asn1Builder.Create(new X509EnhancedKeyUsageExtension(SubjectUsages, false).RawData);
         if (!String.IsNullOrEmpty(ListIdentifier)) {
             builder.AddOctetString(Encoding.Unicode.GetBytes(ListIdentifier + "\0"));
         }
         if (SequenceNumber != null) {
             builder.AddInteger(SequenceNumber.Value);
         }
-        builder.AddDerData(Asn1Utils.EncodeDateTime(ThisUpdate.ToUniversalTime()));
+        builder.AddDerData(Asn1DateTime.CreateRfcDateTime(ThisUpdate.ToUniversalTime()).GetRawData());
         if (NextUpdate != null) {
-            builder.AddDerData(Asn1Utils.EncodeDateTime(NextUpdate.Value.ToUniversalTime()));
+            builder.AddDerData(Asn1DateTime.CreateRfcDateTime(NextUpdate.Value.ToUniversalTime()).GetRawData());
         }
-        return builder.AddDerData(new AlgorithmIdentifier(HashAlgorithm, Array.Empty<Byte>()).RawData)
+        return builder
+            .AddDerData(new AlgorithmIdentifier(HashAlgorithm, Array.Empty<Byte>()).RawData)
             .AddDerData(Entries.Encode())
-            .GetRawData();
+            .GetEncoded();
     }
 
 

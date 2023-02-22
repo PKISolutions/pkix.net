@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography.X509Certificates;
 using SysadminsLV.Asn1Parser;
+using SysadminsLV.Asn1Parser.Universal;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
 
 namespace SysadminsLV.PKI.OcspClient;
@@ -51,7 +52,7 @@ public class OCSPSingleResponse {
             case 161:
                 CertStatus = CertificateStatus.Revoked;
                 response.MoveNext();
-                DateTime revokedWhen = Asn1Utils.DecodeGeneralizedTime(response.GetTagRawData());
+                DateTime revokedWhen = new Asn1GeneralizedTime(response.GetTagRawData()).Value;
                 response.MoveNext();
                 Int16 reason = 0;
                 if (response.Tag == 160) {
@@ -66,12 +67,12 @@ public class OCSPSingleResponse {
                 response.MoveNextSibling();
                 break;
         }
-        ThisUpdate = Asn1Utils.DecodeGeneralizedTime(response.GetTagRawData());
+        ThisUpdate = new Asn1GeneralizedTime(response.GetTagRawData()).Value;
         while (response.MoveNextSibling()) {
             switch (response.Tag) {
                 case 160:
                     var asn = new Asn1Reader(response.GetPayload());
-                    NextUpdate = Asn1Utils.DecodeGeneralizedTime(asn.GetTagRawData());
+                    NextUpdate = new Asn1GeneralizedTime(asn.GetTagRawData()).Value;
                     break;
                 case 161:
                     Extensions.Decode(response.GetPayload());

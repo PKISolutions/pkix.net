@@ -4,6 +4,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using SysadminsLV.Asn1Parser;
+using SysadminsLV.Asn1Parser.Universal;
 
 namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
@@ -82,29 +83,31 @@ public sealed class X509CRLReferenceExtension : X509Extension {
         ThisUpdate = thisUpdate;
     }
     void m_decode(Byte[] rawData) {
-        try {
-            Asn1Reader asn = new Asn1Reader(rawData);
-            if (asn.Tag == 48) {
-                asn.MoveNext();
-                do {
-                    StringBuilder SB;
-                    switch (asn.Tag) {
-                        case 160:
-                            SB = new StringBuilder();
-                            foreach (Byte item in asn.GetPayload()) { SB.Append(Convert.ToChar(item)); }
-                            URL = new Uri(SB.ToString());
-                            break;
-                        case 161:
-                            SB = new StringBuilder();
-                            foreach (Byte item in asn.GetPayload()) { SB.Append(Convert.ToChar(item) + " "); }
-                            CRLNumber = SB.ToString();
-                            break;
-                        case 162:
-                            ThisUpdate = Asn1Utils.DecodeGeneralizedTime(asn.GetRawData());
-                            break;
-                    }
-                } while (asn.MoveNext());
-            }
-        } catch { throw new ArgumentException("The data is invalid."); }
+        var asn = new Asn1Reader(rawData);
+        if (asn.Tag == 48) {
+            asn.MoveNext();
+            do {
+                StringBuilder sb;
+                switch (asn.Tag) {
+                    case 160:
+                        sb = new StringBuilder();
+                        foreach (Byte item in asn.GetPayload()) {
+                            sb.Append(Convert.ToChar(item));
+                        }
+                        URL = new Uri(sb.ToString());
+                        break;
+                    case 161:
+                        sb = new StringBuilder();
+                        foreach (Byte item in asn.GetPayload()) {
+                            sb.Append(Convert.ToChar(item) + " ");
+                        }
+                        CRLNumber = sb.ToString();
+                        break;
+                    case 162:
+                        ThisUpdate = new Asn1GeneralizedTime(asn.GetPayload()).Value;
+                        break;
+                }
+            } while (asn.MoveNext());
+        }
     }
 }

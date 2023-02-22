@@ -124,7 +124,7 @@ public class TspRfc3161Request : TspRequest {
 
     /// <inheritdoc />
     public override Byte[] Encode() {
-        var builder = new Asn1Builder()
+        Asn1Builder builder = Asn1Builder.Create()
             .AddInteger(Version)
             .AddDerData(RequestMessage.Encode());
         if (PolicyID != null) {

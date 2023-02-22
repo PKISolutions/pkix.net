@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using SysadminsLV.Asn1Parser;
+using SysadminsLV.Asn1Parser.Universal;
 
 namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
@@ -56,7 +57,7 @@ public sealed class X500RdnAttribute : AsnEncodedData {
         var asn = new Asn1Reader(rawData);
         if (asn.Tag != 48) { throw new Asn1InvalidTagException(asn.Offset); }
         asn.MoveNextAndExpectTags(Asn1Type.OBJECT_IDENTIFIER);
-        Oid = Asn1Utils.DecodeObjectIdentifier(asn.GetTagRawData());
+        Oid = ((Asn1ObjectIdentifier)asn.GetTagObject()).Value;
         asn.MoveNext();
         Asn1Type[] types = {
                                Asn1Type.IA5String,
@@ -68,7 +69,7 @@ public sealed class X500RdnAttribute : AsnEncodedData {
                                Asn1Type.TeletexString
                            };
         encodingTag = (Asn1Type)asn.Tag;
-        Value = Asn1Utils.DecodeAnyString(asn.GetTagRawData(), types);
+        Value = Asn1String.DecodeAnyString(asn.GetTagRawData(), types).Value;
         RawData = rawData;
     }
     void validateTag(Oid oid, Asn1Type tag) {

@@ -145,7 +145,7 @@ public class TspResponse {
     void getSigningTime() {
         Pkcs9AttributeObject timeAttr = signedCms.SignerInfos[0].AuthenticatedAttributes[SIGNING_TIME];
         if (timeAttr != null) {
-            GenerationTimestamp = Asn1Utils.DecodeDateTime(timeAttr.RawData);
+            GenerationTimestamp = ((Asn1DateTime)new Asn1Reader(timeAttr.RawData).GetTagObject()).Value;
         }
     }
     void decodeTstInfo(Asn1Reader asn) {

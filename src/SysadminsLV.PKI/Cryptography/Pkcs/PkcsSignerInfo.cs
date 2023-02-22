@@ -5,6 +5,7 @@ using System.Security.Cryptography.Pkcs;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using SysadminsLV.Asn1Parser;
+using SysadminsLV.Asn1Parser.Universal;
 
 namespace SysadminsLV.PKI.Cryptography.Pkcs;
 
@@ -123,7 +124,7 @@ public sealed class PkcsSignerInfo {
     void decode(Byte[] rawData) {
         var asn = new Asn1Reader(rawData);
         asn.MoveNext();
-        Version = (Int32)Asn1Utils.DecodeInteger(asn.GetTagRawData());
+        Version = (Int32)new Asn1Integer(asn).Value;
         asn.MoveNextSibling();
         Issuer = new PkcsSubjectIdentifier(asn.GetTagRawData());
         asn.MoveNextSibling();

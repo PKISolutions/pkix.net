@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using SysadminsLV.Asn1Parser;
+using SysadminsLV.Asn1Parser.Universal;
 using SysadminsLV.PKI.CLRExtensions;
 
 namespace SysadminsLV.PKI.Cryptography.X509Certificates;
@@ -254,11 +255,7 @@ public class X509AlternativeName {
                 break;
             // Other name;
             default:
-                Value = String.Empty;
-                foreach (Byte B in rawBytes) {
-                    Value += $"{B:x2}" + " ";
-                }
-                Value = Value.Trim();
+                Value = AsnFormatter.BinaryToString(rawBytes, EncodingType.Hex, EncodingFormat.NOCRLF);
                 tag = Asn1Type.OCTET_STRING;
                 Type = X509AlternativeNamesEnum.OtherName;
                 break;
@@ -269,7 +266,7 @@ public class X509AlternativeName {
         OID = oid;
         rawData = Asn1Utils.Encode(rawBytes, (Byte)tag);
         rawData = Asn1Utils.Encode(rawData, 160);
-        var tempBytes = new List<Byte>(Asn1Utils.EncodeObjectIdentifier(oid));
+        var tempBytes = new List<Byte>(new Asn1ObjectIdentifier(oid).GetRawData());
         tempBytes.AddRange(rawData);
         rawData = Asn1Utils.Encode(tempBytes.ToArray(), 160);
     }
@@ -376,21 +373,19 @@ public class X509AlternativeName {
         if (value == null) {
             rawData = new Byte[] { 136, 0 };
         } else {
-            Asn1Reader asn;
+            
+            Oid oid;
             switch (value) {
                 case String sValue:
-                    Value = sValue;
-                    var oid = new Oid(sValue);
-                    asn = new Asn1Reader(Asn1Utils.EncodeObjectIdentifier(oid));
-                    Value = oid.Value;
+                    oid = new Oid(sValue);
                     break;
                 case Oid oid1:
-                    asn = new Asn1Reader(Asn1Utils.EncodeObjectIdentifier(oid1));
-                    Value = oid1.Value;
+                    oid = oid1;
                     break;
                 default: throw new ArgumentException("The input data is not valid registered ID.");
             }
-            rawData = Asn1Utils.Encode(asn.GetPayload(), 136);
+            Value = oid.Value;
+            rawData = Asn1Builder.Create().AddObjectIdentifier(oid).GetEncoded(0x88);
         }
     }
     void encodeGuid(Object value) {
@@ -445,7 +440,7 @@ public class X509AlternativeName {
         try {
             var asn = new Asn1Reader(rawData);
             if (!asn.MoveNext()) { throw new ArgumentException("Input data is not valid OtherName."); }
-            var oid = new Oid(Asn1Utils.DecodeObjectIdentifier(asn.GetTagRawData()));
+            var oid = ((Asn1ObjectIdentifier)asn.GetTagObject()).Value;
             asn.MoveNextAndExpectTags(0xa0);
             asn.MoveNext();
             OID = oid;
@@ -550,8 +545,10 @@ public class X509AlternativeName {
         Type = X509AlternativeNamesEnum.RegisteredId;
         try {
             var asn = new Asn1Reader(rawData);
-            if (asn.PayloadLength == 0) { return; }
-            Oid oid = Asn1Utils.DecodeObjectIdentifier(Asn1Utils.Encode(asn.GetPayload(), (Byte)Asn1Type.OBJECT_IDENTIFIER));
+            if (asn.PayloadLength == 0) {
+                return;
+            }
+            Oid oid = new Asn1ObjectIdentifier(Asn1Utils.Encode(asn.GetPayload(), (Byte)Asn1Type.OBJECT_IDENTIFIER)).Value;
             Value = oid.Value;
         } catch { throw new ArgumentException("Input data is not valid registered ID."); }
     }

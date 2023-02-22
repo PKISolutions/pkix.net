@@ -96,12 +96,12 @@ public class X509PolicyQualifier {
             throw new Asn1InvalidTagException(asn.Offset);
         }
         asn.MoveNext();
-        Oid oid = Asn1Utils.DecodeObjectIdentifier(asn.GetTagRawData());
+        Oid oid = ((Asn1ObjectIdentifier)asn.GetTagObject()).Value;
         switch (oid.Value) {
             case "1.3.6.1.5.5.7.2.1":
                 Type = X509PolicyQualifierType.CpsUrl;
                 asn.MoveNext();
-                PolicyUrl = new Uri(Asn1Utils.DecodeIA5String(asn.GetTagRawData()).Replace("\0", null));
+                PolicyUrl = new Uri(((Asn1IA5String)asn.GetTagObject()).Value.Replace("\0", null));
                 break;
             case "1.3.6.1.5.5.7.2.2":
                 Type = X509PolicyQualifierType.UserNotice;
@@ -111,16 +111,16 @@ public class X509PolicyQualifier {
                 if (asn.Tag == 48) {
                     Int32 offset = asn.Offset;
                     asn.MoveNext();
-                    NoticeReference = Asn1Utils.DecodeAnyString(asn.GetTagRawData(), new[] { Asn1Type.IA5String, Asn1Type.VisibleString, Asn1Type.BMPString, Asn1Type.UTF8String });
+                    NoticeReference = Asn1String.DecodeAnyString(asn.GetTagRawData(), new[] { Asn1Type.IA5String, Asn1Type.VisibleString, Asn1Type.BMPString, Asn1Type.UTF8String }).Value;
                     asn.MoveNext();
                     asn.MoveNext();
-                    NoticeNumber = (Int32)Asn1Utils.DecodeInteger(asn.GetTagRawData());
+                    NoticeNumber = (Int32)((Asn1Integer)asn.GetTagObject()).Value;
                     asn.Seek(offset);
                     if (asn.MoveNextSibling()) {
-                        NoticeText = Asn1Utils.DecodeAnyString(asn.GetTagRawData(), new[] { Asn1Type.IA5String, Asn1Type.VisibleString, Asn1Type.BMPString, Asn1Type.UTF8String });
+                        NoticeText = Asn1String.DecodeAnyString(asn.GetTagRawData(), new[] { Asn1Type.IA5String, Asn1Type.VisibleString, Asn1Type.BMPString, Asn1Type.UTF8String }).Value;
                     }
                 } else {
-                    NoticeText = Asn1Utils.DecodeAnyString(asn.GetTagRawData(), new[] { Asn1Type.IA5String, Asn1Type.VisibleString, Asn1Type.BMPString, Asn1Type.UTF8String });
+                    NoticeText = Asn1String.DecodeAnyString(asn.GetTagRawData(), new[] { Asn1Type.IA5String, Asn1Type.VisibleString, Asn1Type.BMPString, Asn1Type.UTF8String }).Value;
                 }
                 break;
             default: m_reset(); return;
@@ -136,9 +136,9 @@ public class X509PolicyQualifier {
 
     static IEnumerable<Byte> EncodeString(String str) {
         try {
-            return new Asn1VisibleString(str).RawData;
+            return new Asn1VisibleString(str).GetRawData();
         } catch {
-            return new Asn1UTF8String(str).RawData;
+            return new Asn1UTF8String(str).GetRawData();
         }
     }
 
@@ -157,12 +157,12 @@ public class X509PolicyQualifier {
                 if (PolicyUrl?.AbsoluteUri == null) {
                     throw new ArgumentException("Policy qualifier URL cannot be null.");
                 }
-                return new Asn1Builder()
+                return Asn1Builder.Create()
                     .AddObjectIdentifier(new Oid("1.3.6.1.5.5.7.2.1"))
                     .AddIA5String(PolicyUrl.AbsoluteUri)
                     .GetEncoded();
             case X509PolicyQualifierType.UserNotice:
-                var refBuilder = new Asn1Builder();
+                var refBuilder = Asn1Builder.Create();
                 if (!String.IsNullOrEmpty(NoticeReference)) {
                     refBuilder.AddDerData(EncodeString(NoticeReference).ToArray())
                         .AddSequence(x => x.AddInteger(NoticeNumber))
@@ -171,7 +171,7 @@ public class X509PolicyQualifier {
                 if (!String.IsNullOrEmpty(NoticeText)) {
                     refBuilder.AddUTF8String(NoticeText);
                 }
-                return new Asn1Builder()
+                return Asn1Builder.Create()
                     .AddObjectIdentifier(new Oid("1.3.6.1.5.5.7.2.2"))
                     .AddSequence(refBuilder.GetEncoded())
                     .GetEncoded();

@@ -15,16 +15,19 @@ namespace SysadminsLV.PKI.Cryptography;
 /// </summary>
 public static class PublicKeyExtensions {
     public static PublicKey FromRawData(Byte[] rawData) {
-        if (rawData == null) { throw new ArgumentNullException(nameof(rawData)); }
+        if (rawData == null) {
+            throw new ArgumentNullException(nameof(rawData));
+        }
         var asn = new Asn1Reader(rawData);
         asn.MoveNext();
         var pubKeyOidIdReader = new Asn1Reader(asn.GetTagRawData());
         pubKeyOidIdReader.MoveNext();
-        Oid pubKeyOid = Asn1Utils.DecodeObjectIdentifier(pubKeyOidIdReader.GetTagRawData());
+        Oid pubKeyOid = ((Asn1ObjectIdentifier)asn.GetTagObject()).Value;
         pubKeyOidIdReader.MoveNext();
         var encodedParams = new AsnEncodedData(pubKeyOid, pubKeyOidIdReader.GetTagRawData());
         asn.MoveNextSibling();
         var encodedKey = new AsnEncodedData(pubKeyOid, new Asn1BitString(asn.GetTagRawData()).Value.ToArray());
+        
         return new PublicKey(pubKeyOid, encodedParams, encodedKey);
     }
     /// <summary>
@@ -56,16 +59,16 @@ public static class PublicKeyExtensions {
     /// <returns>ASN.1 encoded byte array.</returns>
     public static Byte[] Encode(this PublicKey publicKey) {
         var rawData = new List<Byte>();
-        rawData.AddRange(new Asn1ObjectIdentifier(publicKey.Oid.Value).RawData);
+        rawData.AddRange(new Asn1ObjectIdentifier(publicKey.Oid.Value).GetRawData());
         rawData.AddRange(publicKey.EncodedParameters.RawData);
         rawData.InsertRange(0, Asn1Utils.GetLengthBytes(rawData.Count));
         rawData.Insert(0, 48);
-        rawData.AddRange(new Asn1BitString(publicKey.EncodedKeyValue.RawData, false).RawData);
+        rawData.AddRange(new Asn1BitString(publicKey.EncodedKeyValue.RawData, false).GetRawData());
         return Asn1Utils.Encode(rawData.ToArray(), 48);
     }
     public static String Format(this PublicKey publicKey) {
         var sb = new StringBuilder();
-        String keyParamsString = "";
+        String keyParamsString;
         switch (publicKey.Oid.Value) {
             case AlgorithmOid.ECC:
                 keyParamsString = AsnFormatter
@@ -74,7 +77,7 @@ public static class PublicKeyExtensions {
                 keyParamsString += $"\r\n        {new Asn1ObjectIdentifier(publicKey.EncodedParameters.RawData).Value.Format(true)}";
                 break;
             case AlgorithmOid.RSA:
-                keyParamsString = AsnFormatter.BinaryToString(Asn1Utils.EncodeNull(), EncodingType.Hex);
+                keyParamsString = AsnFormatter.BinaryToString(new Asn1Null().GetRawData(), EncodingType.Hex);
                 break;
             default:
                 keyParamsString = AsnFormatter
@@ -300,7 +303,7 @@ Public Key: UnusedBits = 0
         } BBCRYPT_ECCKEY_BLOB, *PBCRYPT_ECCKEY_BLOB; -- public key only
         */
         // headers from bcrypt.h
-        switch (Asn1Utils.DecodeObjectIdentifier(publicKey.EncodedParameters.RawData).Value) {
+        switch (new Asn1ObjectIdentifier(publicKey.EncodedParameters.RawData).Value.Value) {
             // P256
             case AlgorithmOid.ECDSA_P256:
                 blob.AddRange(BitConverter.GetBytes(ECDSA_P256_MAGIC));

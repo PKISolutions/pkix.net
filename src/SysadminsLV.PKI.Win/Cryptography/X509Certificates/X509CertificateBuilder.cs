@@ -7,6 +7,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using PKI.Structs;
 using SysadminsLV.Asn1Parser;
+using SysadminsLV.Asn1Parser.Universal;
 using SysadminsLV.PKI.Tools.MessageOperations;
 using SysadminsLV.PKI.Win32;
 
@@ -188,8 +189,8 @@ public class X509CertificateBuilder {
             ? SubjectName.RawData
             : signer.SubjectName.RawData);
         // NotBefore and NotAfter
-        var date = Asn1Utils.EncodeDateTime(NotBefore).ToList();
-        date.AddRange(Asn1Utils.EncodeDateTime(NotAfter));
+        List<Byte> date = Asn1DateTime.CreateRfcDateTime(NotBefore).GetRawData().ToList();
+        date.AddRange(Asn1DateTime.CreateRfcDateTime(NotAfter).GetRawData());
         rawData.AddRange(Asn1Utils.Encode(date.ToArray(), 48));
         // subject
         rawData.AddRange(SubjectName.RawData);

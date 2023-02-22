@@ -213,7 +213,7 @@ public class OCSPResponse {
                 throw new Exception("Invalid tag at responderID. Expected 161 (byName) or 162 (byKey).");
         }
         //tbsResponseData.MoveNextCurrentLevel();
-        ProducedAt = Asn1Utils.DecodeGeneralizedTime(tbsResponseData.GetTagRawData());
+        ProducedAt = new Asn1GeneralizedTime(tbsResponseData.GetTagRawData()).Value;
         if (DateTime.Now < ProducedAt.AddMinutes(-10)) {
             ResponseErrorInformation |= OCSPResponseComplianceError.ResponseNotTimeValid;
         }

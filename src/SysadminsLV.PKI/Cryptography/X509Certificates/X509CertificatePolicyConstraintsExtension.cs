@@ -5,6 +5,7 @@ using System.Numerics;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using SysadminsLV.Asn1Parser;
+using SysadminsLV.Asn1Parser.Universal;
 using SysadminsLV.PKI.CLRExtensions;
 
 namespace SysadminsLV.PKI.Cryptography.X509Certificates;
@@ -90,9 +91,14 @@ public sealed class X509CertificatePolicyConstraintsExtension : X509Extension {
         do {
             Byte[] integer = Asn1Utils.Encode(asn.GetPayload(), (Byte)Asn1Type.INTEGER);
             switch (asn.Tag) {
-                case 0x80: RequireExplicitPolicy = (Int32)Asn1Utils.DecodeInteger(integer); break;
-                case 0x81: InhibitPolicyMapping = (Int32)Asn1Utils.DecodeInteger(integer); break;
-                default: throw new InvalidDataException("The data is invalid");
+                case 0x80:
+                    RequireExplicitPolicy = (Int32)new Asn1Integer(integer).Value;
+                    break;
+                case 0x81:
+                    InhibitPolicyMapping = (Int32)new Asn1Integer(integer).Value;
+                    break;
+                default:
+                    throw new InvalidDataException("The data is invalid");
             }
         } while (asn.MoveNextSibling());
     }

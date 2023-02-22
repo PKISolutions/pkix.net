@@ -155,9 +155,9 @@ public class X509CrlBuilder {
         // issuer
         rawBytes.AddRange(issuer.SubjectName.RawData);
         // thisUpdate
-        rawBytes.AddRange(Asn1Utils.EncodeDateTime(ThisUpdate));
+        rawBytes.AddRange(Asn1DateTime.CreateRfcDateTime(ThisUpdate).GetRawData());
         // nextUpdate. Not null at this point, because we do not support CRL generation with infinity validity.
-        rawBytes.AddRange(Asn1Utils.EncodeDateTime(NextUpdate.Value));
+        rawBytes.AddRange(Asn1DateTime.CreateRfcDateTime(NextUpdate.Value).GetRawData());
         // revokedCerts
         if (RevokedCertificates.Count > 0) {
             rawBytes.AddRange(RevokedCertificates.Encode());
@@ -165,7 +165,7 @@ public class X509CrlBuilder {
         // extensions
         if (Version == 2) {
             // insert version at the beginning.
-            rawBytes.InsertRange(0, new Asn1Integer(Version - 1).RawData);
+            rawBytes.InsertRange(0, new Asn1Integer(Version - 1).GetRawData());
             generateExtensions(issuer);
             rawBytes.AddRange(Asn1Utils.Encode(Extensions.Encode(), 160));
         }

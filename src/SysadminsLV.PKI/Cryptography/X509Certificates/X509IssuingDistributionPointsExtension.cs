@@ -83,11 +83,11 @@ public sealed class X509IssuingDistributionPointsExtension : X509Extension {
         switch (scope) {
             case IssuingDistributionPointScope.OnlyUserCerts:
                 OnlyUserCerts = true;
-                builder.AddImplicit(1, new Asn1Boolean(true).RawData, false);
+                builder.AddImplicit(1, new Asn1Boolean(true).GetRawData(), false);
                 break;
             case IssuingDistributionPointScope.OnlyCaCerts:
                 OnlyCaCerts = true;
-                builder.AddImplicit(2, new Asn1Boolean(true).RawData, false);
+                builder.AddImplicit(2, new Asn1Boolean(true).GetRawData(), false);
                 break;
         }
         if (reasons != X509RevocationReasonFlag.None) {
@@ -97,11 +97,11 @@ public sealed class X509IssuingDistributionPointsExtension : X509Extension {
         }
         if (indirect) {
             IndirectCRL = true;
-            builder.AddImplicit(4, new Asn1Boolean(true).RawData, false);
+            builder.AddImplicit(4, new Asn1Boolean(true).GetRawData(), false);
         }
         if (scope == IssuingDistributionPointScope.OnlyAttributeCerts) {
             OnlyAttributeCerts = true;
-            builder.AddImplicit(5, new Asn1Boolean(true).RawData, false);
+            builder.AddImplicit(5, new Asn1Boolean(true).GetRawData(), false);
         }
 
         RawData = builder.GetEncoded();
@@ -120,10 +120,10 @@ public sealed class X509IssuingDistributionPointsExtension : X509Extension {
                     DistributionPoint = new X509DistributionPoint(Asn1Utils.Encode(asn.GetTagRawData(), 48));
                     break;
                 case 0xa1:
-                    OnlyUserCerts = Asn1Utils.DecodeBoolean(asn.GetPayload());
+                    OnlyUserCerts = new Asn1Boolean(asn.GetPayload()).Value;
                     break;
                 case 0xa2:
-                    OnlyCaCerts = Asn1Utils.DecodeBoolean(asn.GetPayload());
+                    OnlyCaCerts = new Asn1Boolean(asn.GetPayload()).Value;
                     break;
                 case 0xa3:
                     var val = new Asn1BitString(asn.GetPayload());
@@ -134,10 +134,10 @@ public sealed class X509IssuingDistributionPointsExtension : X509Extension {
                     }
                     break;
                 case 0xa4:
-                    IndirectCRL = Asn1Utils.DecodeBoolean(asn.GetPayload());
+                    IndirectCRL = new Asn1Boolean(asn.GetPayload()).Value;
                     break;
                 case 0xa5:
-                    OnlyAttributeCerts = Asn1Utils.DecodeBoolean(asn.GetPayload());
+                    OnlyAttributeCerts = new Asn1Boolean(asn.GetPayload()).Value;
                     break;
             }
         } while (asn.MoveNextSibling());

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using SysadminsLV.Asn1Parser;
+using SysadminsLV.Asn1Parser.Universal;
 
 namespace SysadminsLV.PKI.Cryptography;
 
@@ -80,7 +81,7 @@ public class AlgorithmIdentifier {
             throw new Asn1InvalidTagException(asn.Offset);
         }
         asn.MoveNextAndExpectTags(Asn1Type.OBJECT_IDENTIFIER);
-        algId = Asn1Utils.DecodeObjectIdentifier(asn.GetTagRawData());
+        algId = new Asn1ObjectIdentifier(asn).Value;
         if (asn.MoveNext()) {
             param = asn.GetTagRawData();
         }
@@ -93,7 +94,7 @@ public class AlgorithmIdentifier {
             : parameters;
 
         algId = oid;
-        var rawBytes = new List<Byte>(Asn1Utils.EncodeObjectIdentifier(oid));
+        var rawBytes = new List<Byte>(new Asn1ObjectIdentifier(oid).GetRawData());
         if (param != null) {
             rawBytes.AddRange(param);
         }

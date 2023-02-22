@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using PKI.Exceptions;
 using PKI.Utils;
-using SysadminsLV.Asn1Parser;
+using SysadminsLV.Asn1Parser.Universal;
 
 namespace PKI.CertificateServices.PolicyModule {
     /// <summary>
@@ -118,7 +118,7 @@ namespace PKI.CertificateServices.PolicyModule {
         /// <exception cref="ArgumentException">The <strong>extensionType</strong> parameter value is not valid, or <strong>oid</strong> parameter is invalid
         /// object identifier.</exception>
         public void Add(String extensionType, Oid oid) {
-            try { Asn1Utils.EncodeObjectIdentifier(oid); }
+            try { new Asn1ObjectIdentifier(oid); }
             catch { throw new ArgumentException("Specified object identifier is not valid or is not resolvable"); }
             if (String.IsNullOrEmpty(extensionType)) {
                 throw new ArgumentNullException(nameof(extensionType));
@@ -167,7 +167,7 @@ namespace PKI.CertificateServices.PolicyModule {
         /// object identifier.</exception>
         public void Remove(String extensionType, Oid oid) {
             if (String.IsNullOrEmpty(Name)) { throw new UninitializedObjectException(); }
-            try { Asn1Utils.EncodeObjectIdentifier(oid); }
+            try { new Asn1ObjectIdentifier(oid); }
             catch { throw new ArgumentException("Specified object identifier is not valid or is not resolvable"); }
             if (String.IsNullOrEmpty(extensionType)) {
                 throw new ArgumentNullException(nameof(extensionType));

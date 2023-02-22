@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using SysadminsLV.Asn1Parser;
@@ -93,13 +92,14 @@ public static class X509ExtensionExtensions {
         if (String.IsNullOrEmpty(extension.Oid.Value)) {
             throw new ArgumentException();
         }
-        var rawData = new List<Byte>(Asn1Utils.EncodeObjectIdentifier(extension.Oid));
+        Asn1Builder builder = Asn1Builder.Create()
+            .AddObjectIdentifier(extension.Oid);
         if (extension.Critical) {
-            rawData.AddRange(Asn1Utils.EncodeBoolean(true));
+            builder.AddBoolean(true);
         }
+        builder.AddOctetString(x => x.AddDerData(extension.RawData));
 
-        rawData.AddRange(Asn1Utils.Encode(extension.RawData, (Byte)Asn1Type.OCTET_STRING));
-        return Asn1Utils.Encode(rawData.ToArray(), 48);
+        return builder.GetEncoded();
     }
     /// <summary>
     /// Decodes ASN.1-encoded byte array to an instance of <see cref="X509Extension"/> class.
@@ -132,7 +132,7 @@ public static class X509ExtensionExtensions {
         Boolean critical = false;
         asn.MoveNextAndExpectTags(Asn1Type.BOOLEAN, Asn1Type.OCTET_STRING);
         if (asn.Tag == (Byte)Asn1Type.BOOLEAN) {
-            critical = Asn1Utils.DecodeBoolean(asn.GetTagRawData());
+            critical = ((Asn1Boolean)asn.GetTagObject()).Value;
             asn.MoveNextAndExpectTags(Asn1Type.OCTET_STRING);
         }
         // at this point ASN points to OCTET_STRING

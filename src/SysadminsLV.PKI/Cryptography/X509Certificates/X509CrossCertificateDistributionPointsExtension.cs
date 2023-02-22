@@ -79,23 +79,25 @@ public sealed class X509CrossCertificateDistributionPointsExtension : X509Extens
         Critical = critical;
         DeltaSyncTimeInSeconds = syncDeltaTime;
 
-        var rawData = new List<Byte>();
+        var builder = Asn1Builder.Create();
         if (DeltaSyncTimeInSeconds != null) {
-            rawData.AddRange(new Asn1Integer(DeltaSyncTimeInSeconds.Value).RawData);
+            builder.AddInteger(DeltaSyncTimeInSeconds.Value);
         }
         Uri[] uris = urls.Select(url => new Uri(url)).ToArray();
         foreach (Uri url in uris) {
             _distPoints.Add(new X509AlternativeName(X509AlternativeNamesEnum.URL, url));
         }
-        rawData.AddRange(Asn1Utils.Encode(CrossCertDistributionPoints.Encode(), 48));
-        RawData = rawData.ToArray();
+        builder.AddSequence(CrossCertDistributionPoints.Encode());
+        RawData = builder.GetEncoded();
     }
     void m_decode(Byte[] rawData) {
         var asn = new Asn1Reader(rawData);
-        if (asn.Tag != 48) { throw new Asn1InvalidTagException(asn.Offset); }
+        if (asn.Tag != 48) {
+            throw new Asn1InvalidTagException(asn.Offset);
+        }
         asn.MoveNext();
         if (asn.Tag == (Byte)Asn1Type.INTEGER) {
-            DeltaSyncTimeInSeconds = (Int32)Asn1Utils.DecodeInteger(asn.GetTagRawData());
+            DeltaSyncTimeInSeconds = (Int32)((Asn1Integer)asn.GetTagObject()).Value;
             asn.MoveNext();
         }
         asn.MoveNext();

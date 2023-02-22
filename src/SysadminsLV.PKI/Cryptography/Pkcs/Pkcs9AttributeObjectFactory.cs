@@ -2,6 +2,7 @@
 using System.Security.Cryptography;
 using System.Security.Cryptography.Pkcs;
 using SysadminsLV.Asn1Parser;
+using SysadminsLV.Asn1Parser.Universal;
 
 namespace SysadminsLV.PKI.Cryptography.Pkcs;
 
@@ -31,7 +32,7 @@ public static class Pkcs9AttributeObjectFactory {
             throw new Asn1InvalidTagException(asn.Offset);
         }
         asn.MoveNext();
-        Oid oid = Asn1Utils.DecodeObjectIdentifier(asn.GetTagRawData());
+        Oid oid = new Asn1ObjectIdentifier(asn).Value;
         asn.MoveNextAndExpectTags(0x31);
 
         return new Pkcs9AttributeObject(oid, asn.GetPayload());

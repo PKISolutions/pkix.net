@@ -209,7 +209,7 @@ public class OCSPRequest {
         }
         var algId = new AlgorithmIdentifier(signatureAlgID, Array.Empty<Byte>());
         var signatureInfo = new List<Byte>(algId.RawData);
-        signatureInfo.AddRange(new Asn1BitString(signature, false).RawData);
+        signatureInfo.AddRange(new Asn1BitString(signature, false).GetRawData());
         signatureInfo.AddRange(Asn1Utils.Encode(_signerChain.Encode(), 0xa0));
         tbsRequest.AddRange(Asn1Utils.Encode(Asn1Utils.Encode(signatureInfo.ToArray(), 48), 0xa0));
         RawData = Asn1Utils.Encode(tbsRequest.ToArray(), 48);

@@ -137,7 +137,7 @@ public class X509CRL2 {
             if (!asn.MoveNext()) { throw new Asn1InvalidTagException(); }
             // version
             if (asn.Tag == (Byte)Asn1Type.INTEGER) {
-                Version = (Int32)Asn1Utils.DecodeInteger(asn.GetTagRawData()) + 1;
+                Version = (Int32)((Asn1Integer)asn.GetTagObject()).Value + 1;
                 asn.MoveNextSibling();
             } else {
                 Version = 1;
@@ -147,39 +147,30 @@ public class X509CRL2 {
             if (h.AlgorithmId.Value != SignatureAlgorithm.Value) {
                 throw new CryptographicException("Algorithm mismatch.");
             }
-            if (!asn.MoveNextSibling()) { throw new Asn1InvalidTagException(); }
+            if (!asn.MoveNextSibling()) {
+                throw new Asn1InvalidTagException();
+            }
             // issuer
             IssuerName = new X500DistinguishedName(asn.GetTagRawData());
             // NextUpdate, RevokedCerts and Extensions are optional. Ref: RFC5280, p.118
-            if (!asn.MoveNextSibling()) { throw new Asn1InvalidTagException(); }
-            switch (asn.Tag) {
-                case (Byte)Asn1Type.UTCTime:
-                    ThisUpdate = new Asn1UtcTime(asn.GetTagRawData()).Value;
-                    break;
-                case (Byte)Asn1Type.GeneralizedTime:
-                    ThisUpdate = Asn1Utils.DecodeGeneralizedTime(asn.GetTagRawData());
-                    break;
-                default:
-                    throw new Asn1InvalidTagException();
+            if (!asn.MoveNextSibling()) {
+                throw new Asn1InvalidTagException();
             }
+
+            ThisUpdate = ((Asn1DateTime)asn.GetTagObject()).Value;
             if (!asn.MoveNextSibling()) { return; }
             switch (asn.Tag) {
                 case (Byte)Asn1Type.UTCTime:
                 case (Byte)Asn1Type.GeneralizedTime:
-                    switch (asn.Tag) {
-                        case (Byte)Asn1Type.UTCTime:
-                            NextUpdate = new Asn1UtcTime(asn.GetTagRawData()).Value;
-                            break;
-                        case (Byte)Asn1Type.GeneralizedTime:
-                            NextUpdate = Asn1Utils.DecodeGeneralizedTime(asn.GetTagRawData());
-                            break;
-                        default:
-                            throw new Asn1InvalidTagException();
+                    NextUpdate = ThisUpdate = ((Asn1DateTime)asn.GetTagObject()).Value;
+                    if (!asn.MoveNextSibling()) {
+                        return;
                     }
-                    if (!asn.MoveNextSibling()) { return; }
                     if (asn.Tag == 48) {
                         _revokedCerts.Decode(asn);
-                        if (!asn.MoveNextSibling()) { return; }
+                        if (!asn.MoveNextSibling()) {
+                            return;
+                        }
                         readExtensions(asn);
                     } else {
                         readExtensions(asn);
@@ -188,7 +179,9 @@ public class X509CRL2 {
                 case 48:
                     if (asn.Tag == 48) {
                         _revokedCerts.Decode(asn);
-                        if (!asn.MoveNextSibling()) { return; }
+                        if (!asn.MoveNextSibling()) {
+                            return;
+                        }
                         readExtensions(asn);
                     } else {
                         readExtensions(asn);
@@ -445,8 +438,10 @@ public class X509CRL2 {
     /// <returns>A <see cref="DateTime"/> object, or <strong>NULL</strong>, if CRL is valid infinitely and no updates are expected.</returns>
     public DateTime? GetNextPublish() {
         if (_extensions == null) { return NextUpdate; }
-        X509Extension e = _extensions[X509ExtensionOid.NextCRLPublish];
-        return e == null ? NextUpdate : Asn1Utils.DecodeDateTime(e.RawData);
+        X509Extension nextCrlPublishExt = _extensions[X509ExtensionOid.NextCRLPublish];
+        return nextCrlPublishExt == null
+            ? NextUpdate
+            : ((Asn1DateTime)new Asn1Reader(nextCrlPublishExt.RawData).GetTagObject()).Value;
     }
     /// <summary>
     /// Indicates whether the current Base CRL has configured to use Delta CRLs too.

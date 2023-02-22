@@ -149,14 +149,14 @@ public sealed class X509CRLEntry {
         }
         Int32 offset = asn.Offset;
         asn.MoveNext();
-        SerialNumber = Asn1Utils.DecodeInteger(asn.GetTagRawData(), true);
+        SerialNumber = new Asn1Integer(asn).GetDisplayValue();
         asn.MoveNextAndExpectTags(Asn1Type.UTCTime, Asn1Type.GeneralizedTime);
         switch (asn.Tag) {
             case (Byte)Asn1Type.UTCTime:
-                RevocationDate = new Asn1UtcTime(asn.GetTagRawData()).Value;
+                RevocationDate = new Asn1UtcTime(asn).Value;
                 break;
             case (Byte)Asn1Type.GeneralizedTime:
-                RevocationDate = Asn1Utils.DecodeGeneralizedTime(asn.GetTagRawData());
+                RevocationDate = new Asn1GeneralizedTime(asn).Value;
                 break;
         }
         if (asn.MoveNextSibling()) {
