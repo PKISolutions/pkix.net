@@ -4,10 +4,10 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("PSPKI")]
+[assembly: AssemblyTitle("SysadminsLV.PKI.Win")]
 [assembly: AssemblyDescription(".NET Microsoft ADCS managed API")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("PKI Solutions Inc.")]
+[assembly: AssemblyCompany("PKI Solutions LLC")]
 [assembly: AssemblyProduct("PowerShell PKI Module")]
 [assembly: AssemblyCopyright("Copyright © 2012-2023, PKI Solutions")]
 [assembly: AssemblyTrademark("PKI Solutions")]

@@ -7,7 +7,7 @@
       <Authors>Vadims Podans</Authors>
       <Company>PKI Solutions LLC</Company>
       <Description>Implements OCSP client to use in .NET</Description>
-      <PackageLicenseExpression>MIT</PackageLicenseExpression>
+      <PackageLicenseExpression>MS-PL</PackageLicenseExpression>
       <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
