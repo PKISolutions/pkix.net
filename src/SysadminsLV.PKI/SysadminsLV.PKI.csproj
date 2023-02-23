@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SysadminsLV.Asn1Parser" Version="1.2.9" />
+    <PackageReference Include="SysadminsLV.Asn1Parser" Version="1.2.11" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.7.0" />
   </ItemGroup>
 </Project>
