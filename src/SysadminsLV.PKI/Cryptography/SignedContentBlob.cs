@@ -159,10 +159,9 @@ public class SignedContentBlob {
             throw new InvalidOperationException("The object is not signed");
         }
 
-        var encodedBlob = new List<Byte>(ToBeSignedData);
-        encodedBlob.AddRange(SignatureAlgorithm.RawData);
-        encodedBlob.AddRange(Signature.GetRawData());
-        
-        return Asn1Utils.Encode(encodedBlob.ToArray(), 48);
+        return Asn1Builder.Create(ToBeSignedData)
+            .AddDerData(SignatureAlgorithm.RawData)
+            .AddDerData(Signature.GetRawData())
+            .GetEncoded();
     }
 }

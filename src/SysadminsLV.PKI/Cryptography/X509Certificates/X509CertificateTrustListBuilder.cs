@@ -90,7 +90,7 @@ public class X509CertificateTrustListBuilder {
         return builder
             .AddDerData(new AlgorithmIdentifier(HashAlgorithm, Array.Empty<Byte>()).RawData)
             .AddDerData(Entries.Encode())
-            .GetEncoded();
+            .GetRawData();
     }
 
 

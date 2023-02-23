@@ -162,7 +162,7 @@ public class X509CRL2 {
             switch (asn.Tag) {
                 case (Byte)Asn1Type.UTCTime:
                 case (Byte)Asn1Type.GeneralizedTime:
-                    NextUpdate = ThisUpdate = ((Asn1DateTime)asn.GetTagObject()).Value;
+                    NextUpdate = ((Asn1DateTime)asn.GetTagObject()).Value;
                     if (!asn.MoveNextSibling()) {
                         return;
                     }

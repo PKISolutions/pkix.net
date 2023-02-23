@@ -22,7 +22,7 @@ public static class PublicKeyExtensions {
         asn.MoveNext();
         var pubKeyOidIdReader = new Asn1Reader(asn.GetTagRawData());
         pubKeyOidIdReader.MoveNext();
-        Oid pubKeyOid = ((Asn1ObjectIdentifier)asn.GetTagObject()).Value;
+        Oid pubKeyOid = ((Asn1ObjectIdentifier)pubKeyOidIdReader.GetTagObject()).Value;
         pubKeyOidIdReader.MoveNext();
         var encodedParams = new AsnEncodedData(pubKeyOid, pubKeyOidIdReader.GetTagRawData());
         asn.MoveNextSibling();

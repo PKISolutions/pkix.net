@@ -453,17 +453,14 @@ public class X509AlternativeName {
                 // GUID
                 case "1.3.6.1.4.1.311.25.1":
                     if (asn.PayloadLength == 0) { return; }
-                    Guid guid = new Guid(asn.GetPayload());
+                    var guid = new Guid(asn.GetPayload());
                     Type = X509AlternativeNamesEnum.Guid;
                     Value = guid.ToString();
                     break;
                 default:
                     Value = String.Empty;
                     Type = X509AlternativeNamesEnum.OtherName;
-                    foreach (Byte B in asn.GetPayload()) {
-                        Value += $"{B:x2}" + " ";
-                    }
-                    Value = Value.Trim();
+                    Value = AsnFormatter.BinaryToString(asn.GetPayload(), EncodingType.Hex, EncodingFormat.NOCRLF);
                     break;
             }
         } catch { throw new ArgumentException("Input data is not valid OtherName."); }
