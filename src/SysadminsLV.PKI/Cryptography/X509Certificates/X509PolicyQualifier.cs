@@ -76,7 +76,7 @@ public class X509PolicyQualifier {
     /// <summary>
     /// Gets notice number in the collection of policy qualifiers. This property is set automatically
     /// when calling <see cref="X509PolicyQualifierCollection.Encode()">Encode</see> method on an
-    /// <see cref="System.Security.Cryptography.X509Certificates.X509PolicyQualifierCollection"/> object.
+    /// <see cref="X509PolicyQualifierCollection"/> object.
     /// </summary>
     public Int32 NoticeNumber { get; internal set; }
 

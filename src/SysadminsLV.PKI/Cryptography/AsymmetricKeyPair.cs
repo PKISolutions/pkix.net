@@ -8,7 +8,12 @@ namespace SysadminsLV.PKI.Cryptography;
 /// formats and conversions.
 /// </summary>
 public abstract class AsymmetricKeyPair : IDisposable {
-
+    /// <summary>
+    /// Initializes a new instance of <see cref="AsymmetricKeyPair"/> from key algorithm identifier and a boolean value
+    /// that indicates whether the key contains only public portion.
+    /// </summary>
+    /// <param name="keyAlgorithm">Asymmetric algorithm identifier.</param>
+    /// <param name="publicOnly"><strong>True</strong> if key is public only, otherwise <strong>False</strong>.</param>
     protected AsymmetricKeyPair(Oid keyAlgorithm, Boolean publicOnly) {
         Oid = keyAlgorithm;
         PublicOnly = publicOnly;
@@ -24,6 +29,11 @@ public abstract class AsymmetricKeyPair : IDisposable {
     /// </summary>
     public Boolean PublicOnly { get; }
 
+    /// <summary>
+    /// Gets a positive integer value without leading zero byte.
+    /// </summary>
+    /// <param name="rawInteger">Two-complement integer in binary form with optional leading zero.</param>
+    /// <returns></returns>
     protected static Byte[] GetPositiveInteger(Byte[] rawInteger) {
         return rawInteger[0] == 0
             ? rawInteger.Skip(1).ToArray()

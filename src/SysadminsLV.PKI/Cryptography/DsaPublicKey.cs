@@ -6,12 +6,25 @@ using SysadminsLV.Asn1Parser.Universal;
 
 namespace SysadminsLV.PKI.Cryptography;
 
+/// <summary>
+/// Represents a DSA public key structure.
+/// </summary>
 public sealed class DsaPublicKey : AsymmetricKeyPair {
     const String ALG_ERROR = "Public key algorithm is not DSA.";
     static readonly Oid _oid = new(AlgorithmOid.DSA);
     DSAParameters dsaParams;
     DSA dsaKey;
 
+    /// <summary>
+    /// Initializes a new instance of <strong>DsaPublicKey</strong> from a public key object.
+    /// </summary>
+    /// <param name="publicKey">A public key that represents DSA public key.</param>
+    /// <exception cref="ArgumentNullException">
+    ///     <strong>publicKey</strong> parameter is null.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    ///     Supplied public key is not DSA key.
+    /// </exception>
     public DsaPublicKey(PublicKey publicKey) : base(_oid, true) {
         if (publicKey == null) {
             throw new ArgumentNullException(nameof(publicKey));
@@ -21,6 +34,18 @@ public sealed class DsaPublicKey : AsymmetricKeyPair {
         }
         decodeFromPublicKey(publicKey);
     }
+    /// <summary>
+    /// Initializes a new instance of <strong>DsaPublicKey</strong> from an ASN.1-encoded byte array
+    /// and key format.
+    /// </summary>
+    /// <param name="rawData">ASN.1-encoded DSA public key.</param>
+    /// <param name="keyFormat">DSA public key format.</param>
+    /// <exception cref="ArgumentNullException">
+    ///     <strong>rawData</strong> parameter is null.
+    /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///     <strong>keyFormat</strong> enumeration is out of range.
+    /// </exception>
     public DsaPublicKey(Byte[] rawData, KeyPkcsFormat keyFormat) : base(_oid, true) {
         if (rawData == null) {
             throw new ArgumentNullException(nameof(rawData));
@@ -33,9 +58,16 @@ public sealed class DsaPublicKey : AsymmetricKeyPair {
                 decodePkcs8Key(rawData);
                 break;
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(keyFormat));
         }
     }
+    /// <summary>
+    /// Initializes a new instance of <strong>DsaPublicKey</strong> from an existing DSA key instance.
+    /// </summary>
+    /// <param name="dsa">DSA key object.</param>
+    /// <exception cref="ArgumentNullException">
+    ///     <strong>dsa</strong> parameter is null.
+    /// </exception>
     public DsaPublicKey(DSA dsa) : base(_oid, true) {
         dsaKey = dsa ?? throw new ArgumentNullException(nameof(dsa));
     }
@@ -74,6 +106,7 @@ public sealed class DsaPublicKey : AsymmetricKeyPair {
         dsaParams.G = GetPositiveInteger(asn.GetPayload());
     }
 
+    /// <inheritdoc />
     public override AsymmetricAlgorithm GetAsymmetricKey() {
         if (dsaKey != null) {
             return dsaKey;
@@ -82,6 +115,7 @@ public sealed class DsaPublicKey : AsymmetricKeyPair {
         dsaKey.ImportParameters(dsaParams);
         return dsaKey;
     }
+    /// <inheritdoc />
     public override void Dispose() {
         dsaKey?.Dispose();
     }

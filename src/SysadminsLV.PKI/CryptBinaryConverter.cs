@@ -6,7 +6,10 @@ using SysadminsLV.Asn1Parser;
 
 namespace SysadminsLV.PKI;
 
-public class CryptBinaryConverter {
+/// <summary>
+/// Contains helper methods to convert encoded strings to their binary representation.
+/// </summary>
+public static class CryptBinaryConverter {
     static String getRawText(String path) {
         using StreamReader sr = new StreamReader(path);
         return sr.ReadToEnd();

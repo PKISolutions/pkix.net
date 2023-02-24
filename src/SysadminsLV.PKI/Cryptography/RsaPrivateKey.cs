@@ -5,22 +5,42 @@ using SysadminsLV.Asn1Parser.Universal;
 
 namespace SysadminsLV.PKI.Cryptography;
 
+/// <summary>
+/// Represents an RSA private key object.
+/// </summary>
 public sealed class RsaPrivateKey : AsymmetricKeyPair {
     const String ALG_ERROR = "Private key algorithm is not RSA.";
     static readonly Oid _oid = new(AlgorithmOid.RSA);
     RSAParameters rsaParameters;
     RSA rsaKey;
 
-    public RsaPrivateKey(Byte[] rawData) : base(_oid, false) {
-        if (rawData == null) {
-            throw new ArgumentNullException(nameof(rawData));
+    /// <summary>
+    /// Initializes a new instance of <strong>RsaPrivateKey</strong> from a PKCS#1 or unencrypted PKCS#8 format.
+    /// </summary>
+    /// <param name="privateKey">Private key in PKCS#1 or PKCS#8 format.</param>
+    /// <exception cref="ArgumentNullException">
+    ///     <strong>privateKey</strong> parameter is null.
+    /// </exception>
+    public RsaPrivateKey(Byte[] privateKey) : base(_oid, false) {
+        if (privateKey == null) {
+            throw new ArgumentNullException(nameof(privateKey));
         }
-        selectFormat(rawData);
+        selectFormat(privateKey);
     }
+    /// <summary>
+    /// Initializes a new instance of <strong>RsaPrivateKey</strong> from an existing RSA key.
+    /// </summary>
+    /// <param name="rsa">RSA key object.</param>
+    /// <exception cref="ArgumentNullException">
+    ///     <strong>rsa</strong> parameter is null.
+    /// </exception>
     public RsaPrivateKey(RSA rsa) : base(_oid, false) {
         rsaKey = rsa ?? throw new ArgumentNullException(nameof(rsa));
     }
 
+    /// <summary>
+    /// Gets the private key format.
+    /// </summary>
     public KeyPkcsFormat KeyFormat { get; private set; }
 
     void selectFormat(Byte[] rawData) {
@@ -85,9 +105,11 @@ public sealed class RsaPrivateKey : AsymmetricKeyPair {
         rsaKey.ImportParameters(rsaParameters);
     }
 
+    /// <inheritdoc />
     public override AsymmetricAlgorithm GetAsymmetricKey() {
         return rsaKey;
     }
+    /// <inheritdoc />
     public override void Dispose() {
         rsaKey?.Dispose();
     }

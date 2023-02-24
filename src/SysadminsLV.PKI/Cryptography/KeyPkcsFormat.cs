@@ -5,6 +5,10 @@
 /// </summary>
 public enum KeyPkcsFormat {
     /// <summary>
+    /// Key format is unknown or not available.
+    /// </summary>
+    Unknown,
+    /// <summary>
     /// Only key data is exported. No key algorithm identifier is exported.
     /// </summary>
     Pkcs1,

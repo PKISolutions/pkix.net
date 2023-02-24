@@ -14,7 +14,13 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 /// Represents a managed PKCS #10 request.
 /// </summary>
 public class X509CertificateRequestPkcs10 {
+    /// <summary>
+    /// Gets a collection of request attributes. Inheritors can modify this collection if needed.
+    /// </summary>
     protected readonly Pkcs9AttributeObjectCollection InternalAttributes = new();
+    /// <summary>
+    /// Gets a collection of request extensions. Inheritors can modify this collection if needed.
+    /// </summary>
     protected readonly X509ExtensionCollection InternalExtensions = new();
 
     /// <summary>
@@ -127,7 +133,7 @@ public class X509CertificateRequestPkcs10 {
         if (asn.PayloadLength == 0) { return; }
         do {
             Pkcs9AttributeObject attribute = Pkcs9AttributeObjectFactory.CreateFromAsn1(asn.GetTagRawData());
-            if (attribute.Oid.Value == X509ExtensionOid.CertificateExtensions) {
+            if (attribute.Oid.Value == Pkcs9AttributeOid.CertificateExtensions) {
                 //Extensions
                 var extensions = new X509ExtensionCollection();
                 extensions.Decode(attribute.RawData);

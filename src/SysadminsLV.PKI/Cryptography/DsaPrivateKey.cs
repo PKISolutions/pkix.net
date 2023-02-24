@@ -8,22 +8,43 @@ using SysadminsLV.Asn1Parser.Universal;
 
 namespace SysadminsLV.PKI.Cryptography;
 
+/// <summary>
+/// Represents a DSA private key structure.
+/// </summary>
 public sealed class DsaPrivateKey : AsymmetricKeyPair {
     const String ALG_ERROR = "Private key is not DSA.";
     static readonly Oid _oid = new(AlgorithmOid.DSA);
     DSAParameters dsaParams;
     DSA dsaKey;
 
+    /// <summary>
+    /// Initializes a new instance of <strong>DsaPrivateKey</strong> from a PKCS#1 or unencrypted PKCS#8 format.
+    /// </summary>
+    /// <param name="privateKey">Private key in PKCS#1 or PKCS#8 format.</param>
+    /// <exception cref="ArgumentNullException">
+    ///     <strong>privateKey</strong> parameter is null.
+    /// </exception>
     public DsaPrivateKey(Byte[] privateKey) : base(_oid, false) {
         if (privateKey == null) {
             throw new ArgumentNullException(nameof(privateKey));
         }
         decode(privateKey);
     }
+
+    /// <summary>
+    /// Initializes a new instance of <strong>DsaPrivateKey</strong> from an existing DSA key.
+    /// </summary>
+    /// <param name="dsa">DSA key object.</param>
+    /// <exception cref="ArgumentNullException">
+    ///     <strong>dsa</strong> parameter is null.
+    /// </exception>
     public DsaPrivateKey(DSA dsa) : base(_oid, false) {
         dsaKey = dsa ?? throw new ArgumentNullException(nameof(dsa));
     }
 
+    /// <summary>
+    /// Gets the private key format.
+    /// </summary>
     public KeyPkcsFormat KeyFormat { get; private set; }
 
     void getPublicExponent() {
@@ -105,6 +126,7 @@ public sealed class DsaPrivateKey : AsymmetricKeyPair {
         dsaParams.X = GetPositiveInteger(asn.GetPayload());
     }
 
+    /// <inheritdoc />
     public override AsymmetricAlgorithm GetAsymmetricKey() {
         if (dsaKey != null) {
             return dsaKey;

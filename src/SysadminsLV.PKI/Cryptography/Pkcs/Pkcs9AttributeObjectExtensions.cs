@@ -7,6 +7,10 @@ using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
 
 namespace SysadminsLV.PKI.Cryptography.Pkcs;
+
+/// <summary>
+/// Contains extension methods for <see cref="Pkcs9AttributeObject"/> class.
+/// </summary>
 public static class Pkcs9AttributeObjectExtensions {
     /// <summary>
     /// Encodes current object to ASN.1-encoded byte array.

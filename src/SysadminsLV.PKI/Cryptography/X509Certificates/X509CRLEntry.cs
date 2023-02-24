@@ -52,6 +52,12 @@ public sealed class X509CRLEntry {
         }
         decode(new Asn1Reader(rawData));
     }
+    /// <summary>
+    /// Initializes a new instance of the <strong>X509CRLEntry</strong> class from a ASN.1 reader that points to a CRL entry.
+    /// </summary>
+    /// <param name="asn">ASN.1 reader.</param>
+    /// <exception cref="ArgumentNullException"><strong>asn</strong> parameter is null.</exception>
+    /// <exception cref="InvalidDataException">The data do not represent a valid CRL entry structure.</exception>
     public X509CRLEntry(Asn1Reader asn) {
         if (asn == null) {
             throw new ArgumentNullException(nameof(asn));

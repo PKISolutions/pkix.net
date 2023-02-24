@@ -6,18 +6,33 @@ using SysadminsLV.Asn1Parser.Universal;
 
 namespace SysadminsLV.PKI.Cryptography;
 
+/// <summary>
+/// Represents a ECDSA private key object.
+/// </summary>
 public sealed class ECDsaPrivateKey : AsymmetricKeyPair {
     const String ALG_ERROR = "Private key algorithm is not from elliptic curve (ECC) group.";
     static readonly Oid _oid = new(AlgorithmOid.ECC);
     ECParameters ecParameters;
     ECDsa ecdsaKey;
 
+    /// <summary>
+    /// Initializes a new instance of <strong>DsaPublicKey</strong> from an ASN.1-encoded byte array.
+    /// </summary>
+    /// <param name="rawData">ASN.1-encoded byte array that represents ECDSA private key.</param>
+    /// <exception cref="ArgumentNullException">
+    ///     <strong>rawData</strong> parameter is null.
+    /// </exception>
     public ECDsaPrivateKey(Byte[] rawData) : base(_oid, false) {
         if (rawData == null) {
             throw new ArgumentNullException(nameof(rawData));
         }
         decodePkcs8(rawData);
     }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="ecDsa"></param>
+    /// <exception cref="ArgumentNullException"></exception>
     public ECDsaPrivateKey(ECDsa ecDsa) : base(_oid, false) {
         ecdsaKey = ecDsa ?? throw new ArgumentNullException(nameof(ecDsa));
     }
@@ -158,9 +173,11 @@ public sealed class ECDsaPrivateKey : AsymmetricKeyPair {
         }
     }
 
+    /// <inheritdoc />
     public override AsymmetricAlgorithm GetAsymmetricKey() {
         return ecdsaKey ??= ECDsa.Create(ecParameters);
     }
+    /// <inheritdoc />
     public override void Dispose() {
         ecdsaKey?.Dispose();
     }

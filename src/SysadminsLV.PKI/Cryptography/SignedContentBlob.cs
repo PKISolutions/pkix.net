@@ -58,6 +58,10 @@ public class SignedContentBlob {
     /// </summary>
     public Asn1BitString Signature { get; set; }
 
+    /// <summary>
+    /// Gets raw signature value without outer ASN.1 container.
+    /// </summary>
+    /// <returns>Raw signature.</returns>
     public Byte[] GetRawSignature() {
         if (SignatureAlgorithm.AlgorithmId.FriendlyName.ToUpper().Contains("DSA")) {
             var asn = new Asn1Reader(Signature.Value);

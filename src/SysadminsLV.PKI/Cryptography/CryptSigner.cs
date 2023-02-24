@@ -8,6 +8,10 @@ using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
 
 namespace SysadminsLV.PKI.Cryptography;
+
+/// <summary>
+/// Represents a cross-platform digital signature generator and validator.
+/// </summary>
 public class CryptSigner : ICryptSigner, IDisposable {
     const String DEFAULT_HASH_ALG = AlgorithmOid.SHA256;
 
@@ -21,6 +25,15 @@ public class CryptSigner : ICryptSigner, IDisposable {
 
     }
 
+    /// <summary>
+    /// Initializes a new instance of <strong>CryptSigner</strong> from an asymmetric key pair and optional
+    /// hashing algorithm.
+    /// </summary>
+    /// <param name="keyPair">An asymmetric key instance.</param>
+    /// <param name="hashingAlgorithm">Optional hashing algorithm. Default is <strong>SHA256</strong>.</param>
+    /// <exception cref="ArgumentNullException">
+    ///     <strong>keyPair</strong> parameter is null.
+    /// </exception>
     public CryptSigner(AsymmetricKeyPair keyPair, Oid hashingAlgorithm = null) {
         if (keyPair == null) {
             throw new ArgumentNullException(nameof(keyPair));

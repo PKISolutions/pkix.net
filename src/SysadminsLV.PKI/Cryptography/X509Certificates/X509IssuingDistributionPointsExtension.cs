@@ -6,6 +6,9 @@ using SysadminsLV.Asn1Parser.Universal;
 
 namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
+/// <summary>
+/// Represents an X.509 Issuing Distribution Points (IDP) CRL extension.
+/// </summary>
 public sealed class X509IssuingDistributionPointsExtension : X509Extension {
     static readonly Oid _oid = new(X509ExtensionOid.IssuingDistributionPoint);
 

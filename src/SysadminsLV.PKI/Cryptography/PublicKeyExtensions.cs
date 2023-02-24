@@ -14,6 +14,17 @@ namespace SysadminsLV.PKI.Cryptography;
 /// Contains extension methods for <see cref="PublicKey"/> class.
 /// </summary>
 public static class PublicKeyExtensions {
+    /// <summary>
+    /// Creates a public key instance from an ASN.1-encoded byte array.
+    /// </summary>
+    /// <param name="rawData">ASN.1-encoded public key.</param>
+    /// <returns>An instance of <see cref="PublicKey"/> class.</returns>
+    /// <exception cref="ArgumentNullException">
+    ///     <strong>rawData</strong> parameter is null.
+    /// </exception>
+    /// <exception cref="Asn1InvalidTagException">
+    ///     <strong>rawData</strong> parameter doesn't represent properly encoded public key.
+    /// </exception>
     public static PublicKey FromRawData(Byte[] rawData) {
         if (rawData == null) {
             throw new ArgumentNullException(nameof(rawData));
@@ -35,7 +46,9 @@ public static class PublicKeyExtensions {
     /// </summary>
     /// <param name="publicKey"></param>
     /// <returns>An instance of <see cref="AsymmetricKeyPair"/>.</returns>
-    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="ArgumentException">
+    ///     Public key algorithm is not supported by the platform.
+    /// </exception>
     public static AsymmetricKeyPair GetAsymmetricKeyPair(this PublicKey publicKey) {
         switch (publicKey.Oid.Value) {
             case AlgorithmOid.DSA:
@@ -48,6 +61,14 @@ public static class PublicKeyExtensions {
                 throw new ArgumentException($"Asymmetric algorithm '{publicKey.Oid.Value}' is not supported.");
         }
     }
+    /// <summary>
+    /// Verifies signature using public key.
+    /// </summary>
+    /// <param name="pubKey">Public key to use in verification.</param>
+    /// <param name="signedBlob">Signed blob that contains signed data, signature and algorithm identifier.</param>
+    /// <returns>
+    ///     <strong>True</strong> if signature matches public key, otherwise <strong>False</strong>.
+    /// </returns>
     public static Boolean VerifySignature(this PublicKey pubKey, SignedContentBlob signedBlob) {
         return CryptSigner.VerifyData(signedBlob, pubKey);
     }
@@ -66,6 +87,13 @@ public static class PublicKeyExtensions {
         rawData.AddRange(new Asn1BitString(publicKey.EncodedKeyValue.RawData, false).GetRawData());
         return Asn1Utils.Encode(rawData.ToArray(), 48);
     }
+
+    /// <summary>
+    /// Gets a textual representation of public key, including key algorithm and key value and parameters
+    /// hex dump.
+    /// </summary>
+    /// <param name="publicKey">Public key to format as text.</param>
+    /// <returns>Formatted public key.</returns>
     public static String Format(this PublicKey publicKey) {
         var sb = new StringBuilder();
         String keyParamsString;
@@ -101,6 +129,14 @@ Public Key: UnusedBits = 0
 ");
         return sb.ToString();
     }
+    /// <summary>
+    /// Gets the public key length in bits.
+    /// </summary>
+    /// <param name="publicKey">An instance of public key.</param>
+    /// <returns>Public key length in bits.</returns>
+    /// <exception cref="ArgumentNullException">
+    ///     <strong>publicKey</strong> parameter is null.
+    /// </exception>
     public static Int32 GetKeyLength(this PublicKey publicKey) {
         if (publicKey == null) {
             throw new ArgumentNullException(nameof(publicKey));
@@ -124,6 +160,22 @@ Public Key: UnusedBits = 0
     const Int32 ECDSA_P256_MAGIC = 0x31534345;
     const Int32 ECDSA_P384_MAGIC = 0x33534345;
     const Int32 ECDSA_P521_MAGIC = 0x35534345;
+    /// <summary>
+    /// Gets Microsoft-compatible public key blob from public key instance.
+    /// </summary>
+    /// <param name="publicKey">Public key instance.</param>
+    /// <returns>
+    ///     A binary representation of Microsoft-specific public key blob, which can be either depending on a public key:
+    ///     <list type="bullet">
+    ///         <item><see href="https://learn.microsoft.com/en-us/windows/win32/api/bcrypt/ns-bcrypt-bcrypt_rsakey_blob">BCRYPT_RSAKEY_BLOB</see></item>
+    ///         <item><see href="https://learn.microsoft.com/en-us/windows/win32/api/bcrypt/ns-bcrypt-bcrypt_dsa_key_blob">BCRYPT_DSA_KEY_BLOB</see></item>
+    ///         <item><see href="https://learn.microsoft.com/en-us/windows/win32/api/bcrypt/ns-bcrypt-bcrypt_dsa_key_blob_v2">BCRYPT_DSA_KEY_BLOB_V2</see></item>
+    ///         <item><see href="https://learn.microsoft.com/en-us/windows/win32/api/bcrypt/ns-bcrypt-bcrypt_ecckey_blob">BCRYPT_ECCKEY_BLOB</see></item>
+    ///     </list>
+    /// </returns>
+    /// <exception cref="ArgumentException">
+    ///     Public key algorithm is not supported on the current platform.
+    /// </exception>
     public static Byte[] GetCryptBlob(this PublicKey publicKey) {
         var blob = new List<Byte>();
         switch (publicKey.Oid.Value) {
@@ -151,7 +203,7 @@ Public Key: UnusedBits = 0
                 readEcdsaHeader(blob, publicKey);
                 break;
             default:
-                throw new InvalidOperationException(new Win32Exception(Win32ErrorCode.InvalidParameterException).Message);
+                throw new ArgumentException(new Win32Exception(Win32ErrorCode.InvalidParameterException).Message);
         }
         return blob.ToArray();
     }
