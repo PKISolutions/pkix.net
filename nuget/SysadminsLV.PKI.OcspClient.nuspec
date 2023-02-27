@@ -6,6 +6,7 @@
         <authors>Vadims Podans</authors>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <license type="expression">MS-PL</license>
+        <repository type="git" url="https://github.com/PKISolutions/pkix.net" />
         <projectUrl>https://github.com/PKISolutions/pkix.net</projectUrl>
         <description>This package provides a managed .NET OCSP client.</description>
         <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
