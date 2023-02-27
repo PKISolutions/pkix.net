@@ -91,11 +91,20 @@
     <Reference Include="SysadminsLV.Asn1Parser, Version=1.2.11.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SysadminsLV.Asn1Parser.1.2.11\lib\net472\SysadminsLV.Asn1Parser.dll</HintPath>
     </Reference>
+    <Reference Include="SysadminsLV.PKI, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SysadminsLV.PKI.OcspClient.4.0.0\lib\net472\SysadminsLV.PKI.dll</HintPath>
+    </Reference>
+    <Reference Include="SysadminsLV.PKI.OcspClient, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SysadminsLV.PKI.OcspClient.4.0.0\lib\net472\SysadminsLV.PKI.OcspClient.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Management" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Security.Cryptography.Pkcs, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SysadminsLV.PKI.OcspClient.4.0.0\lib\net472\System.Security.Cryptography.Pkcs.dll</HintPath>
+    </Reference>
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Web" />
     <Reference Include="System.XML" />
@@ -330,16 +339,6 @@
     </None>
     <None Include="packages.config" />
     <None Include="_ExternalReferences\certadm.il" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SysadminsLV.PKI.OcspClient\SysadminsLV.PKI.OcspClient.csproj">
-      <Project>{26937ddc-116a-4270-b034-39d2719e76d3}</Project>
-      <Name>SysadminsLV.PKI.OcspClient</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SysadminsLV.PKI\SysadminsLV.PKI.csproj">
-      <Project>{0f2d01f9-e1a3-44f9-a4b2-d4ad1921dc94}</Project>
-      <Name>SysadminsLV.PKI</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
