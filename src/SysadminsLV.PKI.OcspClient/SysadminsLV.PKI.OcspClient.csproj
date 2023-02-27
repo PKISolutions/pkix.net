@@ -14,10 +14,6 @@
 
   <ItemGroup>
     <PackageReference Include="SysadminsLV.Asn1Parser" Version="1.2.11" />
+    <PackageReference Include="SysadminsLV.PKI" Version="4.0.0" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\SysadminsLV.PKI\SysadminsLV.PKI.csproj" />
-  </ItemGroup>
-
 </Project>
