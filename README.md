@@ -12,7 +12,10 @@ This project requires the following NuGet packages:
 - [SysadminsLV.Asn1Parser](https://www.nuget.org/packages/SysadminsLV.Asn1Parser)
 
 ## Documentation
-API documentation documentation is here: https://www.pkisolutions.com/apidocs/pkix.net
+- Legacy documentation: https://www.pkisolutions.com/apidocs/pkix.net
+- [SysadminsLV.PKI package docs](https://www.pkisolutions.com/apidocs/SysadminsLV.PKI/html/R_Project_Documentation.htm)
+- SysadminsLV.PKI.OcspClient package docs
+- SysadminsLV.PKI.Win package docs
 
 ## Status
 [![Build Status](https://dev.azure.com/pkisolutions/PKI%20Libraries/_apis/build/status/PKIX.NET-Build?branchName=master)](https://dev.azure.com/pkisolutions/PKI%20Libraries/_build/latest?definitionId=17&branchName=master)
