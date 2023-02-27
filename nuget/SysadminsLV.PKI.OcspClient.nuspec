@@ -10,7 +10,7 @@
         <projectUrl>https://github.com/PKISolutions/pkix.net</projectUrl>
         <description>This package provides a managed .NET OCSP client.</description>
         <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
-        <copyright>$copyright$</copyright>
+        <copyright>Copyright © PKI Solutions LLC 2019-$year$</copyright>
         <tags>X509 PKI PKIX OCSP</tags>
         <dependencies>
             <group targetFramework=".NETFramework4.7.2"/>
