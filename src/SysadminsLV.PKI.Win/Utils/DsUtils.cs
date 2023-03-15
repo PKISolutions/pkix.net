@@ -88,7 +88,7 @@ static class DsUtils {
             : null;
     }
     public static IDictionary<String, Object> GetEntryProperties(String ldapPath, params String[] properties) {
-        var retValue = new Dictionary<String, Object>();
+        var retValue = new Dictionary<String, Object>(StringComparer.OrdinalIgnoreCase);
         using var entry = new DirectoryEntry($"LDAP://{ldapPath}");
         foreach (String prop in properties) {
             retValue.Add(prop, entry.Properties.Contains(prop)
@@ -99,7 +99,7 @@ static class DsUtils {
         return retValue;
     }
     public static String AddEntry(String ldapPath, String name, String schemaClass) {
-        using DirectoryEntry entry = new DirectoryEntry($"LDAP://{ldapPath}");
+        using var entry = new DirectoryEntry($"LDAP://{ldapPath}");
         using DirectoryEntry newEntry = entry.Children.Add(name, schemaClass);
         newEntry.CommitChanges();
         return (String) newEntry.Properties[PropDN].Value;
@@ -111,7 +111,7 @@ static class DsUtils {
         parent.CommitChanges();
     }
     public static void SetEntryProperty(String ldapPath, String prop, Object value) {
-        using DirectoryEntry entry = new DirectoryEntry($"LDAP://{ldapPath}");
+        using var entry = new DirectoryEntry($"LDAP://{ldapPath}");
         entry.Properties[prop].Value = value;
         entry.CommitChanges();
     }
@@ -131,7 +131,9 @@ static class DsUtils {
         return new DirectoryEntry($"LDAP://{ldap}").Children;
     }
     public static String BindServerToSite(String computerName) {
-        if (String.IsNullOrEmpty(computerName)) { return null; }
+        if (String.IsNullOrEmpty(computerName)) {
+            return null;
+        }
         var siteTable = new Dictionary<String, String>();
         IPHostEntry ip = Dns.GetHostEntry(computerName);
 
