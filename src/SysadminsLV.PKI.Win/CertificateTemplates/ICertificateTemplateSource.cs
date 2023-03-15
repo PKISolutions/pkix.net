@@ -20,7 +20,7 @@ interface ICertificateTemplateSource {
     CertificateTemplateEnrollmentFlags EnrollmentFlags { get; }
     Int32 RASignatureCount { get; }
     Oid RAApplicationPolicy { get; }
-    OidCollection RACertificatePolicies { get; }
+    String[] RACertificatePolicies { get; }
     Int32 CryptKeyLength { get; }
     PrivateKeyFlags CryptPrivateKeyFlags { get; }
     X509KeySpecFlags CryptKeySpec { get; }

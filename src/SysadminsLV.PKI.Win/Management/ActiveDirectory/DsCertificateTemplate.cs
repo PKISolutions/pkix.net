@@ -1,22 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Text.RegularExpressions;
 using PKI.CertificateTemplates;
 using PKI.Utils;
 using SysadminsLV.PKI.CertificateTemplates;
-using SysadminsLV.PKI.Cryptography;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
+using SysadminsLV.PKI.Utils.CLRExtensions;
 
 namespace SysadminsLV.PKI.Management.ActiveDirectory;
 class DsCertificateTemplate : ICertificateTemplateSource {
     static readonly String _baseDsPath = $"CN=Certificate Templates, CN=Public Key Services, CN=Services,{DsUtils.ConfigContext}";
     readonly List<Byte> _validityPeriod = new();
     readonly List<Byte> _renewalPeriod = new();
-    readonly OidCollection _raCertPolicies = new();
+    readonly List<String> _raCertPolicies = new();
     readonly List<String> _cryptCspList = new();
     readonly List<String> _supersededTemplates = new();
     readonly List<String> _criticalExtensions = new();
@@ -39,7 +37,7 @@ class DsCertificateTemplate : ICertificateTemplateSource {
     public CertificateTemplateEnrollmentFlags EnrollmentFlags { get; private set; }
     public Int32 RASignatureCount { get; private set; }
     public Oid RAApplicationPolicy { get; private set; }
-    public OidCollection RACertificatePolicies => _raCertPolicies.Duplicate();
+    public String[] RACertificatePolicies => _raCertPolicies.ToArray();
     public Int32 CryptKeyLength { get; private set; }
     public PrivateKeyFlags CryptPrivateKeyFlags { get; private set; }
     public X509KeySpecFlags CryptKeySpec { get; private set; }
@@ -91,34 +89,34 @@ class DsCertificateTemplate : ICertificateTemplateSource {
     }
     void initializeFromDs(String ldapPath) {
         IDictionary<String, Object> props = getDsEntryProperties(ldapPath);
-        Flags = (CertificateTemplateFlags)props[DsUtils.PropFlags];
-        Name = (String)props[DsUtils.PropCN];
-        Oid = (String)props[DsUtils.PropCertTemplateOid];
-        DisplayName = (String)props[DsUtils.PropDisplayName];
-        SchemaVersion = (Int32)props[DsUtils.PropPkiSchemaVersion];
-        MajorVersion = (Int32)props[DsUtils.PropPkiTemplateMajorVersion];
-        MinorVersion = (Int32)props[DsUtils.PropPkiTemplateMinorVersion];
-        _validityPeriod.AddRange((Byte[])props[DsUtils.PropPkiNotAfter]);
-        _renewalPeriod.AddRange((Byte[])props[DsUtils.PropPkiRenewalPeriod]);
-        SubjectNameFlags = (CertificateTemplateNameFlags)props[DsUtils.PropPkiSubjectFlags];
-        EnrollmentFlags = (CertificateTemplateEnrollmentFlags)props[DsUtils.PropPkiEnrollFlags];
+        Flags = props.GetDsScalarValue<CertificateTemplateFlags>(DsUtils.PropFlags);
+        Name = props.GetDsScalarValue<String>(DsUtils.PropCN);
+        Oid = props.GetDsScalarValue<String>(DsUtils.PropCertTemplateOid);
+        DisplayName = props.GetDsScalarValue<String>(DsUtils.PropDisplayName);
+        SchemaVersion = props.GetDsScalarValue<Int32>(DsUtils.PropPkiSchemaVersion);
+        MajorVersion = props.GetDsScalarValue<Int32>(DsUtils.PropPkiTemplateMajorVersion);
+        MinorVersion = props.GetDsScalarValue<Int32>(DsUtils.PropPkiTemplateMinorVersion);
+        _validityPeriod.AddRange(props.GetDsScalarValue<Byte[]>(DsUtils.PropPkiNotAfter));
+        _renewalPeriod.AddRange(props.GetDsScalarValue<Byte[]>(DsUtils.PropPkiRenewalPeriod));
+        SubjectNameFlags = props.GetDsScalarValue<CertificateTemplateNameFlags>(DsUtils.PropPkiSubjectFlags);
+        EnrollmentFlags = props.GetDsScalarValue<CertificateTemplateEnrollmentFlags>(DsUtils.PropPkiEnrollFlags);
         decodeRegistrationAuthority(props);
-        CryptKeyLength = (Int32)props[DsUtils.PropPkiKeySize];
-        CryptPrivateKeyFlags = (PrivateKeyFlags)props[DsUtils.PropPkiPKeyFlags];
-        CryptKeySpec = (X509KeySpecFlags)(Int32)props[DsUtils.PropPkiKeySpec];
-        readCsp(props);
-        readSupersededTemplates(props);
-        readCriticalExtensions(props);
-        readEKU(props);
-        ExtBasicConstraintsPathLength = (Int32)props[DsUtils.PropPkiPathLength];
-        readKeyUsage(props);
+        CryptKeyLength = props.GetDsScalarValue<Int32>(DsUtils.PropPkiKeySize);
+        CryptPrivateKeyFlags = props.GetDsScalarValue<PrivateKeyFlags>(DsUtils.PropPkiPKeyFlags);
+        CryptKeySpec = props.GetDsScalarValue<X509KeySpecFlags>(DsUtils.PropPkiKeySpec);
+        _cryptCspList.AddRange(props.GetDsCollectionValue<String>(DsUtils.PropPkiKeyCsp));
+        _supersededTemplates.AddRange(props.GetDsCollectionValue<String>(DsUtils.PropPkiSupersede));
+        _criticalExtensions.AddRange(props.GetDsCollectionValue<String>(DsUtils.PropPkiCriticalExt));
+        _eku.AddRange(props.GetDsCollectionValue<String>(DsUtils.PropCertTemplateEKU));
+        ExtBasicConstraintsPathLength = props.GetDsScalarValue<Int32>(DsUtils.PropPkiPathLength);
+        ExtKeyUsages = (X509KeyUsageFlags)BitConverter.ToInt16(props.GetDsCollectionValue<Byte>(DsUtils.PropPkiKeyUsage), 0);
     }
 
     void decodeRegistrationAuthority(IDictionary<String, Object> props) {
-        RASignatureCount = (Int32)props[DsUtils.PropPkiRaSignature];
+        RASignatureCount = props.GetDsScalarValue<Int32>(DsUtils.PropPkiRaSignature);
         if (RASignatureCount > 0) {
-            readRaPolicies(props);
-            String raAppPolicies = (String)props[DsUtils.PropPkiRaAppPolicy];
+            _raCertPolicies.AddRange(props.GetDsCollectionValue<String>(DsUtils.PropPkiRaCertPolicy));
+            String raAppPolicies = props.GetDsScalarValue<String>(DsUtils.PropPkiRaAppPolicy);
             if (raAppPolicies == null) {
                 return;
             }
@@ -137,70 +135,6 @@ class DsCertificateTemplate : ICertificateTemplateSource {
             }
         }
     }
-    void readRaPolicies(IDictionary<String, Object> props) {
-        try {
-            Object[] RaObject = (Object[])props[DsUtils.PropPkiRaCertPolicy];
-            if (RaObject != null) {
-                foreach (Object obj in RaObject) {
-                    _raCertPolicies.Add(new Oid(obj.ToString()));
-                }
-            }
-        } catch {
-            String RaString = (String)props[DsUtils.PropPkiRaCertPolicy];
-            _raCertPolicies.Add(new Oid(RaString));
-        }
-    }
-    void readCsp(IDictionary<String, Object> props) {
-        try {
-            Object[] cspObject = (Object[])props[DsUtils.PropPkiKeyCsp];
-            if (cspObject != null) {
-                _cryptCspList.AddRange(cspObject.Select(csp => Regex.Replace(csp.ToString(), "^\\d+,", String.Empty)));
-            }
-        } catch {
-            String cspString = (String)props[DsUtils.PropPkiKeyCsp];
-            _cryptCspList.Add(Regex.Replace(cspString, "^\\d+,", String.Empty));
-        }
-    }
-    void readSupersededTemplates(IDictionary<String, Object> props) {
-        try {
-            Object[] templates = (Object[])props[DsUtils.PropPkiSupersede];
-            if (templates != null) {
-                _supersededTemplates.AddRange(templates.Cast<String>());
-            }
-        } catch {
-            _supersededTemplates.Add((String)props[DsUtils.PropPkiSupersede]);
-        }
-    }
-    void readCriticalExtensions(IDictionary<String, Object> props) {
-        try {
-            Object[] oids = (Object[])props[DsUtils.PropPkiCriticalExt];
-            if (oids == null) { return; }
-            foreach (Object oid in oids) {
-                _criticalExtensions.Add((String)oid);
-            }
-        } catch {
-            _criticalExtensions.Add((String)props[DsUtils.PropPkiCriticalExt]);
-        }
-    }
-    void readEKU(IDictionary<String, Object> props) {
-        try {
-            Object[] EkuObject = (Object[])props[DsUtils.PropCertTemplateEKU];
-            if (EkuObject != null) {
-                foreach (Object item in EkuObject) {
-                    _eku.Add(item.ToString());
-                }
-            }
-        } catch {
-            String EkuString = (String)props[DsUtils.PropCertTemplateEKU];
-            _eku.Add(EkuString);
-        }
-    }
-    void readKeyUsage(IDictionary<String, Object> props) {
-        // need to verify this
-        ExtKeyUsages = props[DsUtils.PropPkiKeyUsage] is Byte[] ku
-            ? (X509KeyUsageFlags)BitConverter.ToInt16(ku, 0)
-            : X509KeyUsageFlags.None;
-    }
 
     public static ICertificateTemplateSource FromCommonName(String cn) {
         return new DsCertificateTemplate(cn);
@@ -209,7 +143,7 @@ class DsCertificateTemplate : ICertificateTemplateSource {
     public static void GetAll() {
         foreach (DirectoryEntry dsEntry in DsUtils.GetChildItems(_baseDsPath)) {
             using (dsEntry) {
-                FromCommonName(dsEntry.Properties["cn"].Value.ToString()));
+                FromCommonName(dsEntry.Properties["cn"].Value.ToString());
             }
         }
     }
