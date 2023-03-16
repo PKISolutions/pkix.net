@@ -10,6 +10,7 @@ using SysadminsLV.Asn1Parser.Universal;
 using SysadminsLV.PKI.Cryptography;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
 using SysadminsLV.PKI.Management.ActiveDirectory;
+using SysadminsLV.PKI.Utils.CLRExtensions;
 using EncodingType = Interop.CERTENROLLLib.EncodingType;
 using X509KeyUsageFlags = System.Security.Cryptography.X509Certificates.X509KeyUsageFlags;
 
@@ -193,11 +194,11 @@ public class CertificateTemplateSettings {
         readExtensions();
     }
     void initializeFromCOM(IX509CertificateTemplate template) {
-        GeneralFlags = (CertificateTemplateFlags)Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropGeneralFlags]);
-        EnrollmentOptions = (CertificateTemplateEnrollmentFlags)Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropEnrollmentFlags]);
-        subjectFlags = Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropSubjectNameFlags]);
-        ValidityPeriod = readValidity(null, Convert.ToInt64(template.Property[EnrollmentTemplateProperty.TemplatePropValidityPeriod]));
-        RenewalPeriod = readValidity(null, Convert.ToInt64(template.Property[EnrollmentTemplateProperty.TemplatePropRenewalPeriod]));
+        GeneralFlags = template.GetEnum<CertificateTemplateFlags>(EnrollmentTemplateProperty.TemplatePropGeneralFlags);
+        EnrollmentOptions = template.GetEnum<CertificateTemplateEnrollmentFlags>(EnrollmentTemplateProperty.TemplatePropEnrollmentFlags);
+        subjectFlags = template.GetInt32(EnrollmentTemplateProperty.TemplatePropSubjectNameFlags);
+        ValidityPeriod = readValidity(null, template.GetInt64(EnrollmentTemplateProperty.TemplatePropValidityPeriod));
+        RenewalPeriod = readValidity(null, template.GetInt64(EnrollmentTemplateProperty.TemplatePropRenewalPeriod));
         try {
             SupersededTemplates = (String[])template.Property[EnrollmentTemplateProperty.TemplatePropSupersede];
         } catch {

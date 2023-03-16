@@ -232,6 +232,7 @@
     <Compile Include="Security\AccessControl\OcspResponderRights.cs" />
     <Compile Include="Security\AccessControl\OcspResponderSecurityDescriptor.cs" />
     <Compile Include="Structs\OleAut.cs" />
+    <Compile Include="Utils\CLRExtensions\CX509CertificateTemplateExtensions.cs" />
     <Compile Include="Utils\CLRExtensions\FileInfoExtensions.cs" />
     <Compile Include="Utils\CLRExtensions\PropertyCollectionExtensions.cs" />
     <Compile Include="Utils\CLRExtensions\X509CertificateTrustListExtensions.cs" />
