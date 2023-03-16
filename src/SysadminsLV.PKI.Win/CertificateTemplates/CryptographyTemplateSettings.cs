@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using Interop.CERTENROLLLib;
 using PKI.Utils;
 using SysadminsLV.PKI.Cryptography;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
+using SysadminsLV.PKI.Management.ActiveDirectory;
 using X509KeyUsageFlags = System.Security.Cryptography.X509Certificates.X509KeyUsageFlags;
 
 namespace PKI.CertificateTemplates {
@@ -17,12 +17,12 @@ namespace PKI.CertificateTemplates {
     /// </summary>
     public class CryptographyTemplateSettings {
         Int32 schemaVersion;
-        readonly IDictionary<String, Object> _entry;
+        readonly DsPropertyCollection _entry;
 
         internal CryptographyTemplateSettings(IX509CertificateTemplate template) {
             initializeFromCom(template);
         }
-        internal CryptographyTemplateSettings(IDictionary<String, Object> Entry) {
+        internal CryptographyTemplateSettings(DsPropertyCollection Entry) {
             _entry = Entry;
             initializeFromDs();
         }

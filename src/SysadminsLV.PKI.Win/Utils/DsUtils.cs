@@ -5,6 +5,7 @@ using System.DirectoryServices.ActiveDirectory;
 using System.Linq;
 using System.Net;
 using System.Text;
+using SysadminsLV.PKI.Management.ActiveDirectory;
 
 namespace PKI.Utils;
 
@@ -87,8 +88,8 @@ static class DsUtils {
             ? entry.Properties[prop].Value
             : null;
     }
-    public static IDictionary<String, Object> GetEntryProperties(String ldapPath, params String[] properties) {
-        var retValue = new Dictionary<String, Object>(StringComparer.OrdinalIgnoreCase);
+    public static DsPropertyCollection GetEntryProperties(String ldapPath, params String[] properties) {
+        var retValue = new DsPropertyCollection();
         using var entry = new DirectoryEntry($"LDAP://{ldapPath}");
         foreach (String prop in properties) {
             retValue.Add(prop, entry.Properties.Contains(prop)

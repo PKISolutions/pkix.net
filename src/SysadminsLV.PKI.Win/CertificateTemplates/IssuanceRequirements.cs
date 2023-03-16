@@ -6,6 +6,7 @@ using System.Text;
 using Interop.CERTENROLLLib;
 using PKI.Utils;
 using SysadminsLV.PKI.Cryptography;
+using SysadminsLV.PKI.Management.ActiveDirectory;
 
 namespace PKI.CertificateTemplates;
 
@@ -15,13 +16,13 @@ namespace PKI.CertificateTemplates;
 /// </summary>
 public class IssuanceRequirements {
     readonly List<Oid> _certPolicies = new();
-    readonly IDictionary<String, Object> _entry;
+    readonly DsPropertyCollection _entry;
     Int32 enrollmentFlags;
 
     internal IssuanceRequirements(IX509CertificateTemplate template) {
         initializeCom(template);
     }
-    internal IssuanceRequirements(IDictionary<String, Object> Entry) {
+    internal IssuanceRequirements(DsPropertyCollection Entry) {
         _entry = Entry;
         initializeDs();
     }

@@ -156,6 +156,7 @@
     <Compile Include="Management\ActiveDirectory\DsCertEnrollServer.cs" />
     <Compile Include="Management\ActiveDirectory\DsCertificateTemplate.cs" />
     <Compile Include="Management\ActiveDirectory\DsEnrollServerFlag.cs" />
+    <Compile Include="Management\ActiveDirectory\DsPropertyCollection.cs" />
     <Compile Include="Management\CertificateServices\CertSrvAiaUrlCollection.cs" />
     <Compile Include="Management\CertificateServices\CertSrvAiaUrlEntry.cs" />
     <Compile Include="Management\CertificateServices\CertSrvAiaPublishFlags.cs" />
@@ -231,8 +232,8 @@
     <Compile Include="Security\AccessControl\OcspResponderRights.cs" />
     <Compile Include="Security\AccessControl\OcspResponderSecurityDescriptor.cs" />
     <Compile Include="Structs\OleAut.cs" />
-    <Compile Include="Utils\CLRExtensions\DictionaryExtensions.cs" />
     <Compile Include="Utils\CLRExtensions\FileInfoExtensions.cs" />
+    <Compile Include="Utils\CLRExtensions\PropertyCollectionExtensions.cs" />
     <Compile Include="Utils\CLRExtensions\X509CertificateTrustListExtensions.cs" />
     <Compile Include="Utils\CLRExtensions\X509CRL2Extensions.cs" />
     <Compile Include="Win32\AdvAPI.cs" />

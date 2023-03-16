@@ -11,6 +11,7 @@ using PKI.Structs;
 using PKI.Utils;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
+using SysadminsLV.PKI.Management.ActiveDirectory;
 using SysadminsLV.PKI.Win32;
 
 namespace SysadminsLV.PKI.Cryptography;
@@ -139,16 +140,16 @@ public sealed class Oid2 {
         String cn = computeOidHash(oidValue);
         String ldapPath = $"CN={cn},{_baseDsPath}";
         try {
-            IDictionary<String, Object> oidInDs = DsUtils.GetEntryProperties(
+            DsPropertyCollection oidInDs = DsUtils.GetEntryProperties(
                 ldapPath,
                 DsUtils.PropFlags,
                 DsUtils.PropDN,
                 DsUtils.PropDisplayName,
                 DsUtils.PropCpsOid);
             found = true;
-            DistinguishedName = (String)oidInDs[DsUtils.PropDN];
-            flags = (Int32)oidInDs[DsUtils.PropFlags];
-            FriendlyName = (String)oidInDs[DsUtils.PropDisplayName];
+            DistinguishedName = oidInDs.GetDsScalarValue<String>(DsUtils.PropDN);
+            flags = oidInDs.GetDsScalarValue<Int32>(DsUtils.PropFlags);
+            FriendlyName = oidInDs.GetDsScalarValue<String>(DsUtils.PropDisplayName);
             switch (flags) {
                 case 1:
                     if (group != OidGroup.All && group != OidGroup.Template) {

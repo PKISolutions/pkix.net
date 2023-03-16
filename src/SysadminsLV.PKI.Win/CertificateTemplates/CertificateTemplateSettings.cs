@@ -9,6 +9,7 @@ using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
 using SysadminsLV.PKI.Cryptography;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
+using SysadminsLV.PKI.Management.ActiveDirectory;
 using EncodingType = Interop.CERTENROLLLib.EncodingType;
 using X509KeyUsageFlags = System.Security.Cryptography.X509Certificates.X509KeyUsageFlags;
 
@@ -18,7 +19,7 @@ namespace PKI.CertificateTemplates;
 /// This class represents certificate template extended settings.
 /// </summary>
 public class CertificateTemplateSettings {
-    readonly IDictionary<String, Object> _dsEntryProperties;
+    readonly DsPropertyCollection _dsEntryProperties;
     readonly List<X509Extension> _extensions = new();
     readonly List<Oid> _ekuList = new();
     readonly List<Oid> _criticalExtensions = new();
@@ -31,7 +32,7 @@ public class CertificateTemplateSettings {
         RegistrationAuthority = new IssuanceRequirements(template);
         KeyArchivalSettings = new KeyArchivalOptions(template);
     }
-    internal CertificateTemplateSettings(IDictionary<String, Object> dsEntryProperties) {
+    internal CertificateTemplateSettings(DsPropertyCollection dsEntryProperties) {
         _dsEntryProperties = dsEntryProperties;
         Cryptography = new CryptographyTemplateSettings(_dsEntryProperties);
         RegistrationAuthority = new IssuanceRequirements(_dsEntryProperties);

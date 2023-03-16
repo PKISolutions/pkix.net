@@ -6,6 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Interop.CERTENROLLLib;
 using PKI.Utils;
+using SysadminsLV.PKI.Management.ActiveDirectory;
 using SysadminsLV.PKI.Security.AccessControl;
 
 namespace PKI.CertificateTemplates;
@@ -156,7 +157,7 @@ public class CertificateTemplate {
         initializeFromDs(cn);
     }
     void initializeFromDs(String ldapPath) {
-        IDictionary<String, Object> props = DsUtils.GetEntryProperties(
+        DsPropertyCollection props = DsUtils.GetEntryProperties(
             ldapPath,
             DsUtils.PropCN,
             DsUtils.PropDN,

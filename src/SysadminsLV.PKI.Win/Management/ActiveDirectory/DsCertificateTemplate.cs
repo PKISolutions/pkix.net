@@ -8,7 +8,6 @@ using PKI.CertificateTemplates;
 using PKI.Utils;
 using SysadminsLV.PKI.CertificateTemplates;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
-using SysadminsLV.PKI.Utils.CLRExtensions;
 
 namespace SysadminsLV.PKI.Management.ActiveDirectory;
 public class DsCertificateTemplate : ICertificateTemplateSource {
@@ -49,7 +48,7 @@ public class DsCertificateTemplate : ICertificateTemplateSource {
     public Int32 ExtBasicConstraintsPathLength { get; private set; }
     public X509KeyUsageFlags ExtKeyUsages { get; private set; }
 
-    static IDictionary<String, Object> getDsEntryProperties(String ldapPath) {
+    static DsPropertyCollection getDsEntryProperties(String ldapPath) {
         return DsUtils.GetEntryProperties(
             ldapPath,
             DsUtils.PropCN,
@@ -89,7 +88,7 @@ public class DsCertificateTemplate : ICertificateTemplateSource {
         );
     }
     void initializeFromDs(String ldapPath) {
-        IDictionary<String, Object> props = getDsEntryProperties(ldapPath);
+        DsPropertyCollection props = getDsEntryProperties(ldapPath);
         Flags = props.GetDsScalarValue<CertificateTemplateFlags>(DsUtils.PropFlags);
         Name = props.GetDsScalarValue<String>(DsUtils.PropCN);
         Oid = props.GetDsScalarValue<String>(DsUtils.PropCertTemplateOid);
@@ -114,7 +113,7 @@ public class DsCertificateTemplate : ICertificateTemplateSource {
         ExtKeyUsages = (X509KeyUsageFlags)Convert.ToInt16(String.Join("", keyUsagesBytes.Select(x => $"{x:x2}").ToArray()), 16);
     }
 
-    void decodeRegistrationAuthority(IDictionary<String, Object> props) {
+    void decodeRegistrationAuthority(DsPropertyCollection props) {
         RASignatureCount = props.GetDsScalarValue<Int32>(DsUtils.PropPkiRaSignature);
         if (RASignatureCount > 0) {
             _raCertPolicies.AddRange(props.GetDsCollectionValue<String>(DsUtils.PropPkiRaCertPolicy));

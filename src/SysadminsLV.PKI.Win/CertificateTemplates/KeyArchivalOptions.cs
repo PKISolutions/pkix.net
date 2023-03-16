@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using Interop.CERTENROLLLib;
 using PKI.Utils;
+using SysadminsLV.PKI.Management.ActiveDirectory;
 
 namespace PKI.CertificateTemplates;
 
@@ -11,9 +11,9 @@ namespace PKI.CertificateTemplates;
 /// Represents certificate template key archival settings.
 /// </summary>
 public class KeyArchivalOptions {
-    readonly IDictionary<String, Object> _entry;
+    readonly DsPropertyCollection _entry;
 
-    internal KeyArchivalOptions(IDictionary<String, Object> Entry) {
+    internal KeyArchivalOptions(DsPropertyCollection Entry) {
         _entry = Entry;
         initializeFromDs();
     }
