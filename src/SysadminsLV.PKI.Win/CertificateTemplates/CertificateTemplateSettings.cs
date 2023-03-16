@@ -199,11 +199,7 @@ public class CertificateTemplateSettings {
         subjectFlags = template.GetInt32(EnrollmentTemplateProperty.TemplatePropSubjectNameFlags);
         ValidityPeriod = readValidity(null, template.GetInt64(EnrollmentTemplateProperty.TemplatePropValidityPeriod));
         RenewalPeriod = readValidity(null, template.GetInt64(EnrollmentTemplateProperty.TemplatePropRenewalPeriod));
-        try {
-            SupersededTemplates = (String[])template.Property[EnrollmentTemplateProperty.TemplatePropSupersede];
-        } catch {
-            SupersededTemplates = Array.Empty<String>();
-        }
+        SupersededTemplates = template.GetCollectionValue<String>(EnrollmentTemplateProperty.TemplatePropSupersede);
         var extensionList = ((IX509Extensions)template.Property[EnrollmentTemplateProperty.TemplatePropExtensions])
             .Cast<IX509Extension>()
             .Select(ext => new X509Extension(
