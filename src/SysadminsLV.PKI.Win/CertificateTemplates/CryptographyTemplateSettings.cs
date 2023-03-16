@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using Interop.CERTENROLLLib;
@@ -121,33 +122,36 @@ namespace PKI.CertificateTemplates {
                 }
             }
             if (schemaVersion > 2) {
-                if (
-                    (KeyUsage & X509KeyUsageFlags.DataEncipherment) > 0 &&
-                    (KeyUsage & X509KeyUsageFlags.DecipherOnly) > 0 &&
-                    (KeyUsage & X509KeyUsageFlags.EncipherOnly) > 0 &&
-                    (KeyUsage & X509KeyUsageFlags.KeyEncipherment) > 0
-                ) { CNGKeyUsage |= CngKeyUsages.Decryption; }
+                X509KeyUsageFlags decryptionFlags =
+                    X509KeyUsageFlags.DataEncipherment
+                    | X509KeyUsageFlags.DecipherOnly
+                    | X509KeyUsageFlags.EncipherOnly
+                    | X509KeyUsageFlags.KeyEncipherment;
 
-                if (
-                    (KeyUsage & X509KeyUsageFlags.CrlSign) > 0 &&
-                    (KeyUsage & X509KeyUsageFlags.DigitalSignature) > 0 &&
-                    (KeyUsage & X509KeyUsageFlags.KeyCertSign) > 0
-                ) { CNGKeyUsage |= CngKeyUsages.Signing; }
+                if ((KeyUsage & decryptionFlags) == decryptionFlags) {
+                    CNGKeyUsage |= CngKeyUsages.Decryption;
+                }
 
-                if ((KeyUsage & X509KeyUsageFlags.KeyAgreement) > 0) {
+                X509KeyUsageFlags signingFlags =
+                    X509KeyUsageFlags.CrlSign
+                    | X509KeyUsageFlags.DigitalSignature
+                    | X509KeyUsageFlags.KeyCertSign;
+                if ((KeyUsage & signingFlags) == signingFlags) {
+                    CNGKeyUsage |= CngKeyUsages.Signing;
+                }
+
+                X509KeyUsageFlags agreementFlags = X509KeyUsageFlags.KeyAgreement;
+                if ((KeyUsage & agreementFlags) == agreementFlags) {
                     CNGKeyUsage |= CngKeyUsages.KeyAgreement;
                 }
 
-                if (
-                    ((KeyUsage & X509KeyUsageFlags.DataEncipherment) > 0 ||
-                    (KeyUsage & X509KeyUsageFlags.DecipherOnly) > 0 ||
-                    (KeyUsage & X509KeyUsageFlags.EncipherOnly) > 0 ||
-                    (KeyUsage & X509KeyUsageFlags.KeyEncipherment) > 0) &&
-                    ((KeyUsage & X509KeyUsageFlags.CrlSign) > 0 ||
-                    (KeyUsage & X509KeyUsageFlags.DigitalSignature) > 0 ||
-                    (KeyUsage & X509KeyUsageFlags.KeyCertSign) > 0) &&
-                    (KeyUsage & X509KeyUsageFlags.KeyAgreement) > 0
-                ) { CNGKeyUsage = CngKeyUsages.AllUsages; }
+                // all CNG usages enabled if at least one usage in every category is enabled.
+                if ((KeyUsage & decryptionFlags) > 0
+                    && (KeyUsage & signingFlags) > 0
+                    && (KeyUsage & agreementFlags) > 0)
+                {
+                    CNGKeyUsage = CngKeyUsages.AllUsages;
+                }
             }
         }
         void initializeFromCom(IX509CertificateTemplate template) {
