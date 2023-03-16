@@ -6,7 +6,7 @@ using SysadminsLV.PKI.Cryptography.X509Certificates;
 
 namespace SysadminsLV.PKI.CertificateTemplates;
 
-interface ICertificateTemplateSource {
+public interface ICertificateTemplateSource {
     String Name { get; }
     String DisplayName { get; }
     String Oid { get; }

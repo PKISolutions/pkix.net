@@ -52,6 +52,7 @@
     <Compile Include="CertificateServices\CertSrvAiaUrlTest.cs" />
     <Compile Include="CertificateServices\CertSrvCdpUrlTest.cs" />
     <Compile Include="CertificateServices\CertSrvCrypto.cs" />
+    <Compile Include="CertificateTemplates\CertTmplTests.cs" />
     <Compile Include="MessageSignerTests.cs" />
     <Compile Include="Cryptography\Oid2Tests.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CertBuilderTests.cs" />

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using PKI.CertificateTemplates;
@@ -10,7 +11,7 @@ using SysadminsLV.PKI.Cryptography.X509Certificates;
 using SysadminsLV.PKI.Utils.CLRExtensions;
 
 namespace SysadminsLV.PKI.Management.ActiveDirectory;
-class DsCertificateTemplate : ICertificateTemplateSource {
+public class DsCertificateTemplate : ICertificateTemplateSource {
     static readonly String _baseDsPath = $"CN=Certificate Templates, CN=Public Key Services, CN=Services,{DsUtils.ConfigContext}";
     readonly List<Byte> _validityPeriod = new();
     readonly List<Byte> _renewalPeriod = new();
@@ -109,7 +110,8 @@ class DsCertificateTemplate : ICertificateTemplateSource {
         _criticalExtensions.AddRange(props.GetDsCollectionValue<String>(DsUtils.PropPkiCriticalExt));
         _eku.AddRange(props.GetDsCollectionValue<String>(DsUtils.PropCertTemplateEKU));
         ExtBasicConstraintsPathLength = props.GetDsScalarValue<Int32>(DsUtils.PropPkiPathLength);
-        ExtKeyUsages = (X509KeyUsageFlags)BitConverter.ToInt16(props.GetDsCollectionValue<Byte>(DsUtils.PropPkiKeyUsage), 0);
+        Byte[] keyUsagesBytes = props.GetDsCollectionValue<Byte>(DsUtils.PropPkiKeyUsage);
+        ExtKeyUsages = (X509KeyUsageFlags)Convert.ToInt16(String.Join("", keyUsagesBytes.Select(x => $"{x:x2}").ToArray()), 16);
     }
 
     void decodeRegistrationAuthority(IDictionary<String, Object> props) {
@@ -140,10 +142,10 @@ class DsCertificateTemplate : ICertificateTemplateSource {
         return new DsCertificateTemplate(cn);
     }
 
-    public static void GetAll() {
+    public static IEnumerable<ICertificateTemplateSource> GetAll() {
         foreach (DirectoryEntry dsEntry in DsUtils.GetChildItems(_baseDsPath)) {
             using (dsEntry) {
-                FromCommonName(dsEntry.Properties["cn"].Value.ToString());
+                yield return FromCommonName(dsEntry.Properties["cn"].Value.ToString());
             }
         }
     }
