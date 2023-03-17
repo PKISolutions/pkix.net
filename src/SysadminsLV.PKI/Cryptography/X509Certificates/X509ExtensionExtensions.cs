@@ -34,6 +34,8 @@ public static class X509ExtensionExtensions {
                 return new X509PublishedCrlLocationsExtension(asnData, extension.Critical);
             case X509ExtensionOid.NtdsSecurityExtension:
                 return new X509NtdsSecurityExtension(asnData, extension.Critical);
+            case X509ExtensionOid.CTPrecertificatePoison:
+                return new X509CTPreCertificatePoisonExtension(asnData, extension.Critical);
             case X509ExtensionOid.AuthorityInformationAccess:
                 return new X509AuthorityInformationAccessExtension(asnData, extension.Critical);
             case X509ExtensionOid.OcspNonce:

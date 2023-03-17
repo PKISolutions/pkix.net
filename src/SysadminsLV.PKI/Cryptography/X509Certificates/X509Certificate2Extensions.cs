@@ -31,6 +31,7 @@ public static class X509Certificate2Extensions {
     ///     <item><see cref="X509ApplicationPolicyConstraintsExtension"/></item>
     ///     <item><see cref="X509PublishedCrlLocationsExtension"/></item>
     ///     <item><see cref="X509NtdsSecurityExtension"/></item>
+    ///     <item><see cref="X509CTPreCertificatePoisonExtension"/></item>
     ///     <item><see cref="X509AuthorityInformationAccessExtension"/></item>
     ///     <item><see cref="X509NonceExtension"/></item>
     ///     <item><see cref="X509CRLReferenceExtension"/></item>
