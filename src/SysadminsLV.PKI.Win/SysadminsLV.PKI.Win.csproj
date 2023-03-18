@@ -110,7 +110,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CertificateTemplates\ICertificateTemplateSource.cs" />
+    <Compile Include="CertificateTemplates\ICertificateTemplateEntry.cs" />
     <Compile Include="Cryptography\OidCollectionExtensions.cs" />
     <Compile Include="Cryptography\CspAlgorithmOperation.cs" />
     <Compile Include="Cryptography\CspAlgorithmType.cs" />
@@ -152,6 +152,7 @@
     <Compile Include="Dcom\Implementations\CertPropWriterD.cs" />
     <Compile Include="Dcom\Implementations\CertRequestAdminD.cs" />
     <Compile Include="Dcom\Implementations\CertSrvRegManagerD.cs" />
+    <Compile Include="Dcom\Implementations\CertEnrollCertificateTemplate.cs" />
     <Compile Include="Dcom\Implementations\ImportForeignOption.cs" />
     <Compile Include="Management\ActiveDirectory\DsCertEnrollServer.cs" />
     <Compile Include="Management\ActiveDirectory\DsCertificateTemplate.cs" />

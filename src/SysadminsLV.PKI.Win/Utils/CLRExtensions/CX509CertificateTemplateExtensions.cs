@@ -10,16 +10,23 @@ static class CX509CertificateTemplateExtensions {
             return default;
         }
     }
-    public static TEnum GetEnum<TEnum>(this IX509CertificateTemplate template, EnrollmentTemplateProperty propertyName) where TEnum : struct, Enum {
+    public static Int64 GetInt64(this IX509CertificateTemplate template, EnrollmentTemplateProperty propertyName) {
         try {
-            return (TEnum)Enum.Parse(typeof(TEnum), Convert.ToInt32(template.Property[propertyName]).ToString());
+            return Convert.ToInt64(template.Property[propertyName]);
         } catch {
             return default;
         }
     }
-    public static Int64 GetInt64(this IX509CertificateTemplate template, EnrollmentTemplateProperty propertyName) {
+    public static TValue GetScalarValue<TValue>(this IX509CertificateTemplate template, EnrollmentTemplateProperty propertyName) {
         try {
-            return Convert.ToInt64(template.Property[propertyName]);
+            return (TValue)template.Property[propertyName];
+        } catch {
+            return default;
+        }
+    }
+    public static TEnum GetEnum<TEnum>(this IX509CertificateTemplate template, EnrollmentTemplateProperty propertyName) where TEnum : struct, Enum {
+        try {
+            return (TEnum)Enum.Parse(typeof(TEnum), Convert.ToInt32(template.Property[propertyName]).ToString());
         } catch {
             return default;
         }

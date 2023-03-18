@@ -16,6 +16,7 @@ static class DsUtils {
     public const String PropCN						= "cn";
     public const String PropDN						= "distinguishedName";
     public const String PropDisplayName				= "displayName";
+    public const String PropDescription				= "description";
     public const String PropFlags					= "flags";
     public const String PropCpsOid					= "msPKI-OID-CPS";
     public const String PropCertTemplateOid			= "msPKI-Cert-Template-OID";
