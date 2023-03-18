@@ -7,7 +7,7 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 /// </summary>
 public static class X509ExtensionOid {
     public const String CrossCDP                     = "1.3.6.1.4.1.311.10.9.1";
-    public const String CertificateTemplate          = "1.3.6.1.4.1.311.20.2";
+    public const String CertificateTemplateName      = "1.3.6.1.4.1.311.20.2";
     public const String CAVersion                    = "1.3.6.1.4.1.311.21.1";
     public const String PreviousCaHash               = "1.3.6.1.4.1.311.21.2";
     public const String VirtualBaseCRL               = "1.3.6.1.4.1.311.21.3";

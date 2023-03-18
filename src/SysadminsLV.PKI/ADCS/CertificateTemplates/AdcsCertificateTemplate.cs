@@ -1,5 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using SysadminsLV.Asn1Parser.Universal;
+using SysadminsLV.PKI.Cryptography.X509Certificates;
 
 namespace SysadminsLV.PKI.ADCS.CertificateTemplates;
 
@@ -7,9 +12,8 @@ namespace SysadminsLV.PKI.ADCS.CertificateTemplates;
 /// Represents Microsoft AD CS decoded certificate template.
 /// </summary>
 public class AdcsCertificateTemplate {
-    readonly Int32 _majorRevision;
-    readonly Int32 _minorRevision;
-    readonly CertificateTemplateFlags _flags;
+    readonly X509ExtensionCollection _extensions = new();
+    readonly List<String> _supersedeTemplates = new();
 
     public AdcsCertificateTemplate(IAdcsCertificateTemplate template) {
         if (template == null) {
@@ -18,9 +22,10 @@ public class AdcsCertificateTemplate {
 
         Name = template.CommonName;
         DisplayName = template.DisplayName;
-        _majorRevision = template.MajorVersion;
-        _minorRevision = template.MinorVersion;
-        _flags = template.Flags;
+        Version = $"{template.MajorVersion}.{template.MinorVersion}";
+        GeneralFlags = template.Flags;
+        EnrollmentFlags = template.EnrollmentFlags;
+        SubjectName = template.SubjectNameFlags;
         SchemaVersion = template.SchemaVersion;
         OID = new Oid(template.Oid, DisplayName);
         if (template.ExtendedProperties.ContainsKey("LastWriteTime")) {
@@ -29,6 +34,12 @@ public class AdcsCertificateTemplate {
         if (template.ExtendedProperties.ContainsKey("DistinguishedName")) {
             DistinguishedName = template.ExtendedProperties["DistinguishedName"] as String;
         }
+        ValidityPeriod = ValidityPeriod.FromFileTime(template.ValidityPeriod);
+        RenewalPeriod = ValidityPeriod.FromFileTime(template.RenewalPeriod);
+        _supersedeTemplates.AddRange(template.SupersededTemplates);
+        Cryptography = new CryptographyTemplateSettings(template);
+        RegistrationAuthority = new CertificateTemplateRegistrationAuthority(template);
+        buildExtensions(template);
     }
 
     /// <summary>
@@ -40,21 +51,21 @@ public class AdcsCertificateTemplate {
     /// </summary>
     public String DisplayName { get; }
     /// <summary>
-    /// Gets certificate template internal version. The version consist of two values separated by dot: major version and minor version.
-    /// Any template changes causes internal version change.
+    /// Gets certificate template internal version string. The version consist of two values separated by dot:
+    /// major version and minor version. Any template changes causes internal version change.
     /// </summary>
-    /// <remarks>Template internal version is not changed if you modify template ACL only.</remarks>
-    public String Version => $"{_majorRevision}.{_minorRevision}";
+    /// <remarks>Template internal version is not changed if you modify template ACL.</remarks>
+    public String Version { get; }
 
     /// <summary>
     /// Gets certificate template schema version (also known as template version). The value can be either 1, 2, 3 or 4. For template support
     /// by CA version see <see cref="SupportedCA"/> property description.
     /// </summary>
-    public Int32 SchemaVersion { get; private set; }
+    public Int32 SchemaVersion { get; }
     /// <summary>
     /// This flag indicates whether clients can perform autoenrollment for the specified template.
     /// </summary>
-    public Boolean AutoenrollmentAllowed => SchemaVersion > 1 && (_flags & CertificateTemplateFlags.Autoenrollment) > 0;
+    public Boolean AutoenrollmentAllowed => SchemaVersion > 1 && (GeneralFlags & CertificateTemplateFlags.Autoenrollment) > 0;
 
     /// <summary>
     /// Gets certificate template's object identifier. Object identifiers are used to uniquely identify certificate template. While
@@ -66,11 +77,11 @@ public class AdcsCertificateTemplate {
     /// <summary>
     /// Gets the timestamp when certificate template was edited last time. The value can be used for audit purposes.
     /// </summary>
-    public DateTime? LastWriteTime { get; private set; }
+    public DateTime? LastWriteTime { get; }
     /// <summary>
     /// Gets certificate template's full distinguished name (location address) in Active Directory.
     /// </summary>
-    public String DistinguishedName { get; private set; }
+    public String DistinguishedName { get; }
     /// <summary>
     /// Gets the minimum version of the Certification Authority that can use this template to issue certificates. The following table
     /// describes template support by CA version:
@@ -131,4 +142,159 @@ public class AdcsCertificateTemplate {
     /// Gets the minimum supported client that can enroll certificates based on this template.
     /// </summary>
     public String SupportedClient { get; private set; }
+    /// <summary>
+    /// Gets template validity period information.
+    /// </summary>
+    public ValidityPeriod ValidityPeriod { get; }
+    /// <summary>
+    /// Gets template autoenrollment renewal period information.
+    /// </summary>
+    public ValidityPeriod RenewalPeriod { get; }
+    /// <summary>
+    /// Gets or sets certificate's subject type. Can be either: Computer, User, CA or CrossCA.
+    /// </summary>
+    public CertTemplateSubjectType SubjectType {
+        get {
+            if ((GeneralFlags & CertificateTemplateFlags.IsCA) > 0) {
+                return CertTemplateSubjectType.CA;
+            }
+            if ((GeneralFlags & CertificateTemplateFlags.MachineType) > 0) {
+                return CertTemplateSubjectType.Computer;
+            }
+            return (GeneralFlags & CertificateTemplateFlags.IsCrossCA) > 0
+                ? CertTemplateSubjectType.CrossCA
+                : CertTemplateSubjectType.User;
+        }
+    }
+    /// <summary>
+    /// Gets or sets the way how the certificate's subject should be constructed.
+    /// </summary>
+    public CertificateTemplateNameFlags SubjectName { get; }
+    /// <summary>
+    /// Gets the purpose of the certificate template's private key.
+    /// </summary>
+    public CertificateTemplatePurpose Purpose {
+        get {
+            //if (
+            //    Cryptography.KeyUsage == X509KeyUsageFlags.DigitalSignature &&
+            //    Cryptography.KeySpec == X509KeySpecFlags.AT_KEYEXCHANGE &&
+            //    (EnrollmentOptions & CertificateTemplateEnrollmentFlags.RemoveInvalidFromStore) == 0 &&
+            //    (EnrollmentOptions & CertificateTemplateEnrollmentFlags.IncludeSymmetricAlgorithms) == 0 &&
+            //    (pkf & (Int32)PrivateKeyFlags.RequireKeyArchival) == 0 &&
+            //    ((EnrollmentOptions & CertificateTemplateEnrollmentFlags.RequireUserInteraction) != 0 ||
+            //     (pkf & (Int32)PrivateKeyFlags.RequireStrongProtection) != 0)
+            //) { return CertificateTemplatePurpose.SignatureAndSmartCardLogon; }
+            //if (
+            //    ((Int32)Cryptography.KeyUsage & (Int32)X509KeyUsageFlags.DigitalSignature) == 0 &&
+            //    ((Int32)Cryptography.KeyUsage & (Int32)X509KeyUsageFlags.NonRepudiation) == 0 &&
+            //    ((Int32)Cryptography.KeyUsage & (Int32)X509KeyUsageFlags.CrlSign) == 0 &&
+            //    ((Int32)Cryptography.KeyUsage & (Int32)X509KeyUsageFlags.KeyCertSign) == 0 &&
+            //    (EnrollmentOptions & CertificateTemplateEnrollmentFlags.RemoveInvalidFromStore) == 0
+            //) { return CertificateTemplatePurpose.Encryption; }
+            //if (
+            //    ((Int32)Cryptography.KeyUsage & (Int32)X509KeyUsageFlags.CrlSign) == 0 &&
+            //    ((Int32)Cryptography.KeyUsage & (Int32)X509KeyUsageFlags.KeyCertSign) == 0 &&
+            //    ((Int32)Cryptography.KeyUsage & (Int32)X509KeyUsageFlags.KeyAgreement) == 0 &&
+            //    ((Int32)Cryptography.KeyUsage & (Int32)X509KeyUsageFlags.KeyEncipherment) == 0 &&
+            //    ((Int32)Cryptography.KeyUsage & (Int32)X509KeyUsageFlags.DataEncipherment) == 0 &&
+            //    ((Int32)Cryptography.KeyUsage & (Int32)X509KeyUsageFlags.DecipherOnly) == 0 &&
+            //    Cryptography.KeySpec == X509KeySpecFlags.AT_SIGNATURE &&
+            //    (EnrollmentOptions & CertificateTemplateEnrollmentFlags.IncludeSymmetricAlgorithms) == 0 &&
+            //    (pkf & (Int32)PrivateKeyFlags.RequireKeyArchival) == 0
+            //) { return CertificateTemplatePurpose.Signature; }
+            return CertificateTemplatePurpose.EncryptionAndSignature;
+        }
+    }
+    /// <summary>
+    /// Gets certificate template name list that is superseded by the current template.
+    /// </summary>
+    public String[] SupersededTemplates => _supersedeTemplates.ToArray();
+    /// <summary>
+    /// Gets cryptography settings defined in the certificate template.
+    /// </summary>
+    public CryptographyTemplateSettings Cryptography { get; }
+    /// <summary>
+    /// Gets registration authority requirements. These are number of authorized signatures and authorized certificate application and/or issuance
+    /// policy requirements.
+    /// </summary>
+    public CertificateTemplateRegistrationAuthority RegistrationAuthority { get; }
+    /// <summary>
+    /// Gets template general flags.
+    /// </summary>
+    public CertificateTemplateFlags GeneralFlags { get; }
+    /// <summary>
+    /// Gets template enrollment flags.
+    /// </summary>
+    public CertificateTemplateEnrollmentFlags EnrollmentFlags { get; }
+    /// <summary>
+    /// Gets certificate extensions defined within current certificate template.
+    /// </summary>
+    public X509ExtensionCollection Extensions => _extensions.Duplicate();
+
+    #region Certificate extensions
+
+    void buildExtensions(IAdcsCertificateTemplate template) {
+        buildEkuExtension(template);
+        buildBasicConstraintsExtension(template);
+        buildTemplateExtension(template);
+        buildCertPoliciesExtension(template);
+        buildKeyUsagesExtension(template);
+        buildOcspRevNoCheckExtension(template);
+    }
+    void buildEkuExtension(IAdcsCertificateTemplate template) {
+        Boolean fCritical = template.CriticalExtensions.Contains(X509ExtensionOid.EnhancedKeyUsage);
+        var ekuOid = new OidCollection();
+        foreach (String oid in template.ExtEKU) {
+            ekuOid.Add(new Oid(oid));
+        }
+        _extensions.Add(new X509EnhancedKeyUsageExtension(ekuOid, fCritical));
+        fCritical = template.CriticalExtensions.Contains(X509ExtensionOid.ApplicationPolicies);
+        _extensions.Add(new X509ApplicationPoliciesExtension(ekuOid, fCritical));
+    }
+    void buildBasicConstraintsExtension(IAdcsCertificateTemplate template) {
+        if (
+            SubjectType is CertTemplateSubjectType.CA or CertTemplateSubjectType.CrossCA ||
+            (EnrollmentFlags & CertificateTemplateEnrollmentFlags.BasicConstraintsInEndEntityCerts) > 0
+        ) {
+            Boolean fCritical = template.CriticalExtensions.Contains(X509ExtensionOid.BasicConstraints);
+            Boolean isCA = SubjectType is CertTemplateSubjectType.CA or CertTemplateSubjectType.CrossCA;
+            
+            Boolean hasConstraints = isCA && template.ExtBasicConstraintsPathLength != -1;
+            _extensions.Add(new X509BasicConstraintsExtension(isCA, hasConstraints, template.ExtBasicConstraintsPathLength, fCritical));
+        }
+    }
+    void buildTemplateExtension(IAdcsCertificateTemplate template) {
+        Boolean fCritical;
+        if (template.SchemaVersion > 1) {
+            fCritical = template.CriticalExtensions.Contains(X509ExtensionOid.CertTemplateInfoV2);
+            _extensions.Add(new X509CertificateTemplateExtension(OID, template.MajorVersion, template.MinorVersion, fCritical));
+        } else {
+            fCritical = template.CriticalExtensions.Contains(X509ExtensionOid.CertificateTemplateName);
+            _extensions.Add(new X509Extension(X509ExtensionOid.CertificateTemplateName, new Asn1BMPString(Name).GetRawData(), fCritical));
+        }
+    }
+    void buildCertPoliciesExtension(IAdcsCertificateTemplate template) {
+        if (template.CertPolicies.Length == 0) {
+            return;
+        }
+        Boolean fCritical = template.CriticalExtensions.Contains(X509ExtensionOid.CertificatePolicies);
+        var policies = new X509CertificatePolicyCollection();
+        foreach (String oid in template.CertPolicies) {
+            // need to find out how to get CSP URLs.
+            policies.Add(new X509CertificatePolicy(oid));
+        }
+        _extensions.Add(new X509CertificatePoliciesExtension(policies, fCritical));
+    }
+    void buildKeyUsagesExtension(IAdcsCertificateTemplate template) {
+        Boolean fCritical = template.CriticalExtensions.Contains(X509ExtensionOid.KeyUsage);
+        _extensions.Add(new X509KeyUsageExtension(template.ExtKeyUsages, fCritical));
+    }
+    void buildOcspRevNoCheckExtension(IAdcsCertificateTemplate template) {
+        if ((EnrollmentFlags & CertificateTemplateEnrollmentFlags.IncludeOcspRevNoCheck) > 0) {
+            Boolean fCritical = template.CriticalExtensions.Contains(X509ExtensionOid.OcspRevNoCheck);
+            _extensions.Add(new X509Extension(X509ExtensionOid.OcspRevNoCheck, new Byte[] { 5, 0 }, fCritical));
+        }
+    }
+
+    #endregion
 }

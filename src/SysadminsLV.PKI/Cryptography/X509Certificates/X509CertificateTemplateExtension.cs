@@ -45,7 +45,9 @@ public sealed class X509CertificateTemplateExtension : X509Extension {
     /// <param name="oid">An OID of the certificate template.</param>
     /// <param name="majorVersion">A major version of the certificate template.</param>
     /// <param name="minorVersion">A minor version of the certificate template.</param>
-    public X509CertificateTemplateExtension(Oid oid, Int32 majorVersion, Int32 minorVersion) {
+    /// <param name="critical"><strong>True</strong> if the extension is critical; otherwise, <strong>False</strong>.</param>
+    public X509CertificateTemplateExtension(Oid oid, Int32 majorVersion, Int32 minorVersion, Boolean critical) {
+        Critical = critical;
         m_initialize(oid, majorVersion, minorVersion);
     }
 
