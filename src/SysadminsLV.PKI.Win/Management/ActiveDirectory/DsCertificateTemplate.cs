@@ -145,6 +145,7 @@ public class DsCertificateTemplate : ICertificateTemplateEntry {
         _renewalPeriod.AddRange(props.GetDsScalarValue<Byte[]>(DsUtils.PropPkiRenewalPeriod));
         SubjectNameFlags = props.GetDsScalarValue<CertificateTemplateNameFlags>(DsUtils.PropPkiSubjectFlags);
         EnrollmentFlags = props.GetDsScalarValue<CertificateTemplateEnrollmentFlags>(DsUtils.PropPkiEnrollFlags);
+        RASignatureCount = props.GetDsScalarValue<Int32>(DsUtils.PropPkiRaSignature);
         decodeRegistrationAuthority(props);
         CryptSymmetricKeyLength = props.GetDsScalarValue<Int32>(DsUtils.PropPkiSymLength);
         CryptSymmetricAlgorithm = props.GetDsScalarValue<String>(DsUtils.PropPkiSymAlgo);
@@ -162,7 +163,6 @@ public class DsCertificateTemplate : ICertificateTemplateEntry {
     }
 
     void decodeRegistrationAuthority(DsPropertyCollection props) {
-        RASignatureCount = props.GetDsScalarValue<Int32>(DsUtils.PropPkiRaSignature);
         if (RASignatureCount > 0) {
             _raCertPolicies.AddRange(props.GetDsCollectionValue<String>(DsUtils.PropPkiRaCertPolicy));
             String raAppPolicies = props.GetDsScalarValue<String>(DsUtils.PropPkiRaAppPolicy);

@@ -221,9 +221,11 @@
     <Compile Include="Management\CertificateServices\PolicyEnrollAuthenticationType.cs" />
     <Compile Include="Management\CertificateServices\PolicyEnrollEndpointUri.cs" />
     <Compile Include="Management\CertificateServices\PolicyEnrollEndpointUriCollection.cs" />
+    <Compile Include="Management\CertificateServices\RegCertificateTemplate.cs" />
     <Compile Include="Management\CertificateServices\RegConfigEntry.cs" />
     <Compile Include="Management\CertificateServices\RemoteRegManager.cs" />
     <Compile Include="Management\CertificateServices\UrlProtocolScheme.cs" />
+    <Compile Include="Management\RegistryReader.cs" />
     <Compile Include="Security\AccessControl\CertTemplateAccessRule.cs" />
     <Compile Include="Security\AccessControl\CertTemplateAuditRule.cs" />
     <Compile Include="Security\AccessControl\CertTemplateRights.cs" />
