@@ -7,7 +7,7 @@ namespace SysadminsLV.PKI.Win.Tests.CertificateTemplates {
     public class CertTmplTests {
         [TestMethod]
         public void Test() {
-            foreach (ICertificateTemplateEntry t in DsCertificateTemplate.GetAll()) {
+            foreach (IAdcsCertificateTemplate t in DsCertificateTemplate.GetAll()) {
                 // need to figure out how to test this.
             }
         }

@@ -110,7 +110,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CertificateTemplates\ICertificateTemplateEntry.cs" />
+    <Compile Include="CertificateTemplates\IAdcsCertificateTemplate.cs" />
     <Compile Include="Cryptography\OidCollectionExtensions.cs" />
     <Compile Include="Cryptography\CspAlgorithmOperation.cs" />
     <Compile Include="Cryptography\CspAlgorithmType.cs" />

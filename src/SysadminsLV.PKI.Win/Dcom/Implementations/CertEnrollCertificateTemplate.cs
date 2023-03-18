@@ -10,9 +10,9 @@ using X509KeyUsageFlags = System.Security.Cryptography.X509Certificates.X509KeyU
 namespace SysadminsLV.PKI.Dcom.Implementations;
 
 /// <summary>
-/// Represents CertEnroll-based implementation of <see cref="ICertificateTemplateEntry"/>.
+/// Represents CertEnroll-based implementation of <see cref="IAdcsCertificateTemplate"/>.
 /// </summary>
-public class CertEnrollCertificateTemplate : ICertificateTemplateEntry {
+public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
     readonly List<Byte> _validityPeriod = new();
     readonly List<Byte> _renewalPeriod = new();
     readonly List<String> _raAppPolicies = new();
@@ -35,6 +35,7 @@ public class CertEnrollCertificateTemplate : ICertificateTemplateEntry {
             throw new ArgumentNullException(nameof(template));
         }
 
+        ExtendedProperties = new Dictionary<String, Object>(StringComparer.OrdinalIgnoreCase);
         CommonName = template.GetScalarValue<String>(EnrollmentTemplateProperty.TemplatePropCommonName);
         DisplayName = template.GetScalarValue<String>(EnrollmentTemplateProperty.TemplatePropFriendlyName);
         Oid = template.GetScalarValue<String>(EnrollmentTemplateProperty.TemplatePropOID);
@@ -138,4 +139,5 @@ public class CertEnrollCertificateTemplate : ICertificateTemplateEntry {
     public Int32 ExtBasicConstraintsPathLength { get; } = -1;
     /// <inheritdoc />
     public X509KeyUsageFlags ExtKeyUsages { get; }
+    public IDictionary<String, Object> ExtendedProperties { get; }
 }

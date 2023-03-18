@@ -12,9 +12,9 @@ using SysadminsLV.PKI.Cryptography.X509Certificates;
 namespace SysadminsLV.PKI.Management.ActiveDirectory;
 
 /// <summary>
-/// Represents an Active Directory-based implementation of <see cref="ICertificateTemplateEntry"/> interface.
+/// Represents an Active Directory-based implementation of <see cref="IAdcsCertificateTemplate"/> interface.
 /// </summary>
-public class DsCertificateTemplate : ICertificateTemplateEntry {
+public class DsCertificateTemplate : IAdcsCertificateTemplate {
     static readonly String _baseDsPath = $"CN=Certificate Templates, CN=Public Key Services, CN=Services,{DsUtils.ConfigContext}";
     readonly List<Byte> _validityPeriod = new();
     readonly List<Byte> _renewalPeriod = new();
@@ -27,6 +27,7 @@ public class DsCertificateTemplate : ICertificateTemplateEntry {
     readonly List<String> _certPolicies = new();
 
     DsCertificateTemplate(String cn) {
+        ExtendedProperties = new Dictionary<String, Object>(StringComparer.OrdinalIgnoreCase);
         CryptPublicKeyAlgorithm = AlgorithmOid.RSA;
         CryptHashAlgorithm = AlgorithmOid.SHA1;
         initializeFromDs($"CN={cn},{_baseDsPath}");
@@ -90,6 +91,7 @@ public class DsCertificateTemplate : ICertificateTemplateEntry {
     public Int32 ExtBasicConstraintsPathLength { get; private set; }
     /// <inheritdoc />
     public X509KeyUsageFlags ExtKeyUsages { get; private set; }
+    public IDictionary<String, Object> ExtendedProperties { get; }
 
     static DsPropertyCollection getDsEntryProperties(String ldapPath) {
         return DsUtils.GetEntryProperties(
@@ -160,6 +162,8 @@ public class DsCertificateTemplate : ICertificateTemplateEntry {
         ExtBasicConstraintsPathLength = props.GetDsScalarValue<Int32>(DsUtils.PropPkiPathLength);
         Byte[] keyUsagesBytes = props.GetDsCollectionValue<Byte>(DsUtils.PropPkiKeyUsage);
         ExtKeyUsages = (X509KeyUsageFlags)Convert.ToInt16(String.Join("", keyUsagesBytes.Select(x => $"{x:x2}").ToArray()), 16);
+        ExtendedProperties.Add("LastWriteTime", props.GetDsScalarValue<DateTime>(DsUtils.PropWhenChanged));
+        ExtendedProperties.Add("DistinguishedName", props.GetDsScalarValue<DateTime>(DsUtils.PropDN));
     }
 
     void decodeRegistrationAuthority(DsPropertyCollection props) {
@@ -191,11 +195,11 @@ public class DsCertificateTemplate : ICertificateTemplateEntry {
         }
     }
 
-    public static ICertificateTemplateEntry FromCommonName(String cn) {
+    public static IAdcsCertificateTemplate FromCommonName(String cn) {
         return new DsCertificateTemplate(cn);
     }
 
-    public static IEnumerable<ICertificateTemplateEntry> GetAll() {
+    public static IEnumerable<IAdcsCertificateTemplate> GetAll() {
         foreach (DirectoryEntry dsEntry in DsUtils.GetChildItems(_baseDsPath)) {
             using (dsEntry) {
                 yield return FromCommonName(dsEntry.Properties["cn"].Value.ToString());

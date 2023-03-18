@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices.ComTypes;
 using System.Security.Cryptography.X509Certificates;
-using PKI.CertificateTemplates;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
 
-namespace SysadminsLV.PKI.CertificateTemplates;
-
-public interface ICertificateTemplateEntry {
+namespace SysadminsLV.PKI.ADCS.CertificateTemplates;
+/// <summary>
+/// Represents an Active Directory Certificate Services (AD CS) certificate template raw structure.
+/// </summary>
+public interface IAdcsCertificateTemplate {
     /// <summary>
     /// Gets template common name.
     /// </summary>
@@ -70,7 +72,7 @@ public interface ICertificateTemplateEntry {
     /// <summary>
     /// Gets private key flags.
     /// </summary>
-    PrivateKeyFlags CryptPrivateKeyFlags { get; }
+    CertificateTemplatePrivateKeyFlags CryptPrivateKeyFlags { get; }
     /// <summary>
     /// Gets private key's KeySpec.
     /// </summary>
@@ -123,4 +125,8 @@ public interface ICertificateTemplateEntry {
     /// Gets template Key Usages.
     /// </summary>
     X509KeyUsageFlags ExtKeyUsages { get; }
+    /// <summary>
+    /// Gets a collection of custom template properties.
+    /// </summary>
+    IDictionary<String, Object> ExtendedProperties { get; }
 }

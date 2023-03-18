@@ -11,9 +11,9 @@ using SysadminsLV.PKI.Cryptography.X509Certificates;
 namespace SysadminsLV.PKI.Management.CertificateServices;
 
 /// <summary>
-/// Represents local registry cache-based implementation of <see cref="ICertificateTemplateEntry"/> interface.
+/// Represents local registry cache-based implementation of <see cref="IAdcsCertificateTemplate"/> interface.
 /// </summary>
-public class RegCertificateTemplate : ICertificateTemplateEntry {
+public class RegCertificateTemplate : IAdcsCertificateTemplate {
     readonly List<Byte> _validityPeriod = new();
     readonly List<Byte> _renewalPeriod = new();
     readonly List<String> _raAppPolicies = new();
@@ -34,6 +34,8 @@ public class RegCertificateTemplate : ICertificateTemplateEntry {
         if (!regReader.TestSubKeyExists(commonName)) {
             throw new ArgumentException($"Specified template '{commonName}' does not exist in local template cache.");
         }
+
+        ExtendedProperties = new Dictionary<String, Object>(StringComparer.OrdinalIgnoreCase);
         CommonName = commonName;
         DisplayName = regReader.GetStringValue(DsUtils.PropDisplayName);
         Oid = regReader.GetMultiStringValue(DsUtils.PropCertTemplateOid)[0];
@@ -120,6 +122,8 @@ public class RegCertificateTemplate : ICertificateTemplateEntry {
     public Int32 ExtBasicConstraintsPathLength { get; }
     /// <inheritdoc />
     public X509KeyUsageFlags ExtKeyUsages { get; }
+    /// <inheritdoc />
+    public IDictionary<String, Object> ExtendedProperties { get; }
 
     void decodeRegistrationAuthority(RegistryReader regReader) {
         if (RASignatureCount > 0) {
