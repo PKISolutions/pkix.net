@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using Interop.CERTENROLLLib;
 using PKI.CertificateTemplates;
 using SysadminsLV.PKI.CertificateTemplates;
+using SysadminsLV.PKI.Cryptography;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
 using SysadminsLV.PKI.Utils.CLRExtensions;
 using X509KeyUsageFlags = System.Security.Cryptography.X509Certificates.X509KeyUsageFlags;
@@ -21,7 +23,7 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
     readonly List<String> _supersededTemplates = new();
     readonly List<String> _criticalExtensions = new();
     readonly List<String> _eku = new();
-    readonly List<String> _certPolicies = new();
+    readonly List<ICertificateTemplateCertificatePolicy> _certPolicies = new();
 
     /// <summary>
     /// Initializes a new instance of <strong>CertEnrollCertificateTemplate</strong> class from an <see cref="IX509CertificateTemplate"/> COM interface.
@@ -62,7 +64,14 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
         _supersededTemplates.AddRange(template.GetCollectionValue<String>(EnrollmentTemplateProperty.TemplatePropSupersede));
         _eku.AddRange(template.GetCollectionValue<String>(EnrollmentTemplateProperty.TemplatePropEKUs));
         ExtKeyUsages = template.GetEnum<X509KeyUsageFlags>(EnrollmentTemplateProperty.TemplatePropKeyUsage);
-        _certPolicies.AddRange(template.GetCollectionValue<String>(EnrollmentTemplateProperty.TemplatePropCertificatePolicies));
+        foreach (String policyOid in template.GetCollectionValue<String>(EnrollmentTemplateProperty.TemplatePropCertificatePolicies)) {
+            var certPolicy = new CertificateTemplateCertificatePolicy(policyOid);
+            var oid2 = new Oid2(policyOid, OidGroup.Policy, true);
+            try {
+                certPolicy.PolicyLocation = new Uri(oid2.GetCPSLinks()[0]);
+            } catch { }
+            _certPolicies.Add(certPolicy);
+        }
         IX509Extensions extensions = template.GetScalarValue<IX509Extensions>(EnrollmentTemplateProperty.TemplatePropExtensions);
         if (extensions != null) {
             foreach (IX509Extension extension in extensions) {
@@ -134,7 +143,7 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
     /// <inheritdoc />
     public String[] ExtEKU => _eku.ToArray();
     /// <inheritdoc />
-    public String[] CertPolicies => _certPolicies.ToArray();
+    public ICertificateTemplateCertificatePolicy[] ExtCertPolicies => _certPolicies.ToArray();
     /// <inheritdoc />
     public Int32 ExtBasicConstraintsPathLength { get; } = -1;
     /// <inheritdoc />

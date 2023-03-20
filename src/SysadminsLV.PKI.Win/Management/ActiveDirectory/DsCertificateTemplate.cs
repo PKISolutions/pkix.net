@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.DirectoryServices;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using PKI.CertificateTemplates;
 using PKI.Utils;
@@ -24,7 +25,7 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
     readonly List<String> _supersededTemplates = new();
     readonly List<String> _criticalExtensions = new();
     readonly List<String> _eku = new();
-    readonly List<String> _certPolicies = new();
+    readonly List<ICertificateTemplateCertificatePolicy> _certPolicies = new();
 
     DsCertificateTemplate(String cn) {
         ExtendedProperties = new Dictionary<String, Object>(StringComparer.OrdinalIgnoreCase);
@@ -86,7 +87,7 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
     /// <inheritdoc />
     public String[] ExtEKU => _eku.ToArray();
     /// <inheritdoc />
-    public String[] CertPolicies => _certPolicies.ToArray();
+    public ICertificateTemplateCertificatePolicy[] ExtCertPolicies => _certPolicies.ToArray();
     /// <inheritdoc />
     public Int32 ExtBasicConstraintsPathLength { get; private set; }
     /// <inheritdoc />
@@ -158,7 +159,14 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
         _supersededTemplates.AddRange(props.GetDsCollectionValue<String>(DsUtils.PropPkiSupersede));
         _criticalExtensions.AddRange(props.GetDsCollectionValue<String>(DsUtils.PropPkiCriticalExt));
         _eku.AddRange(props.GetDsCollectionValue<String>(DsUtils.PropCertTemplateEKU));
-        _certPolicies.AddRange(props.GetDsCollectionValue<String>(DsUtils.PropPkiCertPolicy));
+        foreach (String policyOid in props.GetDsCollectionValue<String>(DsUtils.PropPkiCertPolicy)) {
+            var certPolicy = new CertificateTemplateCertificatePolicy(policyOid);
+            var oid2 = new Oid2(policyOid, OidGroup.Policy, true);
+            try {
+                certPolicy.PolicyLocation = new Uri(oid2.GetCPSLinks()[0]);
+            } catch { }
+            _certPolicies.Add(certPolicy);
+        }
         ExtBasicConstraintsPathLength = props.GetDsScalarValue<Int32>(DsUtils.PropPkiPathLength);
         Byte[] keyUsagesBytes = props.GetDsCollectionValue<Byte>(DsUtils.PropPkiKeyUsage);
         ExtKeyUsages = (X509KeyUsageFlags)Convert.ToInt16(String.Join("", keyUsagesBytes.Select(x => $"{x:x2}").ToArray()), 16);

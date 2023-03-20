@@ -274,14 +274,17 @@ public class AdcsCertificateTemplate {
         }
     }
     void buildCertPoliciesExtension(IAdcsCertificateTemplate template) {
-        if (template.CertPolicies.Length == 0) {
+        if (template.ExtCertPolicies.Length == 0) {
             return;
         }
         Boolean fCritical = template.CriticalExtensions.Contains(X509ExtensionOid.CertificatePolicies);
         var policies = new X509CertificatePolicyCollection();
-        foreach (String oid in template.CertPolicies) {
-            // need to find out how to get CSP URLs.
-            policies.Add(new X509CertificatePolicy(oid));
+        foreach (ICertificateTemplateCertificatePolicy policyObj in template.ExtCertPolicies) {
+            var policy = new X509CertificatePolicy(policyObj.PolicyID);
+            if (policyObj.PolicyLocation != null) {
+                policy.Add(new X509PolicyQualifier(policyObj.PolicyLocation.AbsoluteUri.TrimEnd()));
+            }
+            policies.Add(policy);
         }
         _extensions.Add(new X509CertificatePoliciesExtension(policies, fCritical));
     }

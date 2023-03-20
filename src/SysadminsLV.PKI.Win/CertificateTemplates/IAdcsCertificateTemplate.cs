@@ -118,7 +118,7 @@ public interface IAdcsCertificateTemplate {
     /// <summary>
     /// Gets template certificate policies.
     /// </summary>
-    String[] CertPolicies { get; }
+    ICertificateTemplateCertificatePolicy[] ExtCertPolicies { get; }
     /// <summary>
     /// Gets Basic Constraints path length restriction. Applicable only for CA templates.
     /// </summary>

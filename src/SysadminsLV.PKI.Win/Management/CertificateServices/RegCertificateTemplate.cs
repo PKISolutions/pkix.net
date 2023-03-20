@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using PKI.CertificateTemplates;
 using PKI.Utils;
@@ -22,7 +23,7 @@ public class RegCertificateTemplate : IAdcsCertificateTemplate {
     readonly List<String> _supersededTemplates = new();
     readonly List<String> _criticalExtensions = new();
     readonly List<String> _eku = new();
-    readonly List<String> _certPolicies = new();
+    readonly List<ICertificateTemplateCertificatePolicy> _certPolicies = new();
 
     /// <summary>
     /// Initializes a new instance of <strong>RegCertificateTemplate</strong> class from template name.
@@ -58,7 +59,14 @@ public class RegCertificateTemplate : IAdcsCertificateTemplate {
         _supersededTemplates.AddRange(regReader.GetMultiStringValue(DsUtils.PropPkiSupersede));
         _criticalExtensions.AddRange(regReader.GetMultiStringValue("CriticalExtensions"));
         _eku.AddRange(regReader.GetMultiStringValue("ExtKeyUsageSyntax"));
-        _certPolicies.AddRange(regReader.GetMultiStringValue(DsUtils.PropPkiCertPolicy));
+        foreach (String policyOid in regReader.GetMultiStringValue(DsUtils.PropPkiCertPolicy)) {
+            var certPolicy = new CertificateTemplateCertificatePolicy(policyOid);
+            var oid2 = new Oid2(policyOid, OidGroup.Policy, true);
+            try {
+                certPolicy.PolicyLocation = new Uri(oid2.GetCPSLinks()[0]);
+            } catch { }
+            _certPolicies.Add(certPolicy);
+        }
         ExtBasicConstraintsPathLength = regReader.GetDWordValue("PathLen");
         Byte[] keyUsagesBytes = regReader.GetBinaryValue("KeyUsage");
         ExtKeyUsages = (X509KeyUsageFlags)Convert.ToInt16(String.Join("", keyUsagesBytes.Select(x => $"{x:x2}").ToArray()), 16);
@@ -117,7 +125,7 @@ public class RegCertificateTemplate : IAdcsCertificateTemplate {
     /// <inheritdoc />
     public String[] ExtEKU => _eku.ToArray();
     /// <inheritdoc />
-    public String[] CertPolicies => _certPolicies.ToArray();
+    public ICertificateTemplateCertificatePolicy[] ExtCertPolicies => _certPolicies.ToArray();
     /// <inheritdoc />
     public Int32 ExtBasicConstraintsPathLength { get; }
     /// <inheritdoc />
