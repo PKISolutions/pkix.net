@@ -13,7 +13,7 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 /// </summary>
 public sealed class X509NtdsSecurityExtension : X509Extension {
     static readonly Oid _oid = new(X509ExtensionOid.NtdsSecurityExtension, "NTDS Security");
-    static readonly Regex _regex = new(@"^S-\d-[0-59](?:\d+-){1,14}\d+$", RegexOptions.Compiled | RegexOptions.Singleline);
+    static readonly Regex _regex = new(@"^S-\d-[0-59]-(?:\d+-){1,14}\d+$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
     /// <summary>
     ///     Initializes a new instance of the <strong>X509NtdsSecurityExtension</strong> class from
