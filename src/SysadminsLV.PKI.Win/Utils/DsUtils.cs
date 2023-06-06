@@ -5,9 +5,10 @@ using System.DirectoryServices.ActiveDirectory;
 using System.Linq;
 using System.Net;
 using System.Text;
+using PKI.Utils;
 using SysadminsLV.PKI.Management.ActiveDirectory;
 
-namespace PKI.Utils;
+namespace SysadminsLV.PKI.Utils;
 
 static class DsUtils {
     public const String PropConfigNameContext		= "ConfigurationNamingContext";

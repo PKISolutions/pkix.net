@@ -5,10 +5,10 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using PKI.CertificateTemplates;
-using PKI.Utils;
 using SysadminsLV.PKI.CertificateTemplates;
 using SysadminsLV.PKI.Cryptography;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
+using SysadminsLV.PKI.Utils;
 
 namespace SysadminsLV.PKI.Management.ActiveDirectory;
 

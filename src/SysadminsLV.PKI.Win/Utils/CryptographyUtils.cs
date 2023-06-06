@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography.Pkcs;
 using System.Text;
 
-namespace PKI.Utils;
+namespace SysadminsLV.PKI.Utils;
 
 /// <summary>
 /// Contains helper methods for cryptographic objects.
@@ -17,7 +17,7 @@ public static class CryptographyUtils {
     /// </summary>
     /// <param name="attribute">Default instance of <see cref="Pkcs9AttributeObject"/> class.</param>
     /// <returns>Explicit attribute implementation if defined, otherwise, the same object is returned.</returns>
-    public static Pkcs9AttributeObject ConvertAttribute(Pkcs9AttributeObject attribute) {
+    public static Pkcs9AttributeObject ConvertAttribute(this Pkcs9AttributeObject attribute) {
         // reserved for future use
         switch (attribute.Oid.Value) {
             default:
@@ -62,6 +62,7 @@ public static class CryptographyUtils {
     /// <remarks>
     /// Windows operating systems starting with Windows7/Windows Server 2008 R2 return <strong>True</strong>.
     /// </remarks>
+    [Obsolete("This method is obsolete.", true)]
     public static Boolean TestCepCompat() {
         if (Environment.OSVersion.Version.Major < 6) { return false; }
         return Environment.OSVersion.Version.Major != 6 || Environment.OSVersion.Version.Minor != 0;
@@ -69,10 +70,10 @@ public static class CryptographyUtils {
     /// <summary>
     /// Releases all references to a Runtime Callable Wrapper (RCW) by setting its reference count to 0.
     /// </summary>
-    /// <param name="ComObject">The RCW to be released.</param>
-    public static void ReleaseCom(params Object[] ComObject) {
-        if (ComObject == null) { return; }
-        foreach (Object rcw in ComObject.Where(x => x != null)) {
+    /// <param name="comObject">The RCW to be released.</param>
+    public static void ReleaseCom(params Object[] comObject) {
+        if (comObject == null) { return; }
+        foreach (Object rcw in comObject.Where(x => x != null)) {
             Marshal.FinalReleaseComObject(rcw);
         }
     }
@@ -96,7 +97,7 @@ public static class CryptographyUtils {
     /// <remarks>This method is necessary for ADCS interoperability.</remarks>
     public static String EncodeDerString(Byte[] rawData) {
         if (rawData == null) { throw new ArgumentNullException(nameof(rawData)); }
-        if (rawData.Length == 0) { throw new ArgumentException("The vlue is empty"); }
+        if (rawData.Length == 0) { throw new ArgumentException("The value is empty"); }
         List<Byte> rawBytes;
         if (rawData.Length % 2 > 0) {
             rawBytes = new List<Byte>(rawData.Length + 1);

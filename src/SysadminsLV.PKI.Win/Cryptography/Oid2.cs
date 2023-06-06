@@ -8,10 +8,10 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using PKI.Structs;
-using PKI.Utils;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
 using SysadminsLV.PKI.Management.ActiveDirectory;
+using SysadminsLV.PKI.Utils;
 using SysadminsLV.PKI.Win32;
 
 namespace SysadminsLV.PKI.Cryptography;

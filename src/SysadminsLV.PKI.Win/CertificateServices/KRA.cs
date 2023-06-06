@@ -7,12 +7,13 @@ using CERTADMINLib;
 using PKI.Exceptions;
 using PKI.Structs;
 using PKI.Utils;
+using SysadminsLV.PKI.Utils;
 
-namespace PKI.CertificateServices {
-	/// <summary>
-	/// Represents a collection of Key Recovery Agent (KRA) certificates assigned to the specified Certification Authority.
-	/// </summary>
-	public class KRA {
+namespace PKI.CertificateServices;
+/// <summary>
+/// Represents a collection of Key Recovery Agent (KRA) certificates assigned to the specified Certification Authority.
+/// </summary>
+public class KRA {
 		String ConfigString;
 		readonly List<X509Certificate2> _certs = new();
 
@@ -139,7 +140,7 @@ namespace PKI.CertificateServices {
 		/// <see cref="Certificate"/> property.
 		/// </summary>
 		/// <param name="restart">
-		/// Indiciates whether to restart certificate services to immediately apply changes. Updated settings has no effect until
+		/// Indicates whether to restart certificate services to immediately apply changes. Updated settings has no effect until
 		/// CA service is restarted.
 		/// </param>
 		///  <exception cref="UnauthorizedAccessException">
@@ -190,4 +191,3 @@ namespace PKI.CertificateServices {
 			return false;
 		}
 	}
-}

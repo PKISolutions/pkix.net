@@ -117,6 +117,9 @@
     <Compile Include="Cryptography\CspAlgorithmType.cs" />
     <Compile Include="Cryptography\CspProviderType.cs" />
     <Compile Include="Cryptography\X509Certificates\KeyProviderInfo.cs" />
+    <Compile Include="Cryptography\X509Certificates\X509Certificate2Extensions.cs" />
+    <Compile Include="Cryptography\X509Certificates\X509CertificateTrustListExtensions.cs" />
+    <Compile Include="Cryptography\X509Certificates\X509CRL2Extensions.cs" />
     <Compile Include="Dcom\AdcsBinaryFormat.cs" />
     <Compile Include="Dcom\AdcsCAPropertyName.cs" />
     <Compile Include="Dcom\AdcsCrlReason.cs" />
@@ -238,9 +241,6 @@
     <Compile Include="Structs\OleAut.cs" />
     <Compile Include="Utils\CLRExtensions\CX509CertificateTemplateExtensions.cs" />
     <Compile Include="Utils\CLRExtensions\FileInfoExtensions.cs" />
-    <Compile Include="Utils\CLRExtensions\PropertyCollectionExtensions.cs" />
-    <Compile Include="Utils\CLRExtensions\X509CertificateTrustListExtensions.cs" />
-    <Compile Include="Utils\CLRExtensions\X509CRL2Extensions.cs" />
     <Compile Include="Win32\AdvAPI.cs" />
     <Compile Include="Management\CertificateServices\Database\AdcsDbPropertyCollection.cs" />
     <Compile Include="CertificateServices\UrlProtocolSchemes.cs" />
@@ -259,7 +259,6 @@
     <Compile Include="Tools\MessageOperations\MessageSigner.cs" />
     <Compile Include="Utils\ServiceOperationResult.cs" />
     <Compile Include="Utils\IServiceOperationResult.cs" />
-    <Compile Include="Utils\CLRExtensions\X509Certificate2Extensions.cs" />
     <Compile Include="Utils\ErrorSeverity.cs" />
     <Compile Include="Security\AccessControl\CertSrvSecurityDescriptor.cs" />
     <Compile Include="Security\AccessControl\CertSrvAuditRule.cs" />

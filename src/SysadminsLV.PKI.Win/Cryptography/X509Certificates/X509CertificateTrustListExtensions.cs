@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Security.Permissions;
-using SysadminsLV.PKI.Cryptography.X509Certificates;
+using PKI.Structs;
 using SysadminsLV.PKI.Win32;
 
-namespace SysadminsLV.PKI.Utils.CLRExtensions;
+namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 /// <summary>
 /// Contains extension methods for <see cref="X509CertificateTrustList"/>
 /// </summary>
@@ -27,6 +27,6 @@ public static class X509CertificateTrustListExtensions {
     /// </summary>
     public static void ShowUI(this X509CertificateTrustList ctl) {
         using SafeCTLHandleContext handle = ctl.GetSafeContext();
-        CryptUI.CryptUIDlgViewContext(3, handle, IntPtr.Zero, "Certificate Trust List", 0, 0);
+        CryptUI.CryptUIDlgViewContext(Wincrypt.CERT_STORE_CTL_CONTEXT, handle, IntPtr.Zero, "Certificate Trust List", 0, 0);
     }
 }

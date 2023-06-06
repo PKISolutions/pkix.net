@@ -6,10 +6,9 @@ using System.Security.Cryptography.X509Certificates;
 using Microsoft.Win32.SafeHandles;
 using PKI.Exceptions;
 using PKI.Structs;
-using SysadminsLV.PKI.Cryptography.X509Certificates;
 using SysadminsLV.PKI.Win32;
 
-namespace SysadminsLV.PKI.Utils.CLRExtensions;
+namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
 /// <summary>
 /// Contains extension methods for <see cref="X509Certificate2"/> class.

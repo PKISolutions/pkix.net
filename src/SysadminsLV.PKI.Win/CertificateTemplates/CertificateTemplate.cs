@@ -8,6 +8,7 @@ using Interop.CERTENROLLLib;
 using PKI.Utils;
 using SysadminsLV.PKI.Management.ActiveDirectory;
 using SysadminsLV.PKI.Security.AccessControl;
+using SysadminsLV.PKI.Utils;
 
 namespace PKI.CertificateTemplates;
 

@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using CERTADMINLib;
 using PKI.CertificateServices;
 using PKI.Structs;
-using PKI.Utils;
+using SysadminsLV.PKI.Utils;
 
 namespace SysadminsLV.PKI.Management.CertificateServices.Database;
 

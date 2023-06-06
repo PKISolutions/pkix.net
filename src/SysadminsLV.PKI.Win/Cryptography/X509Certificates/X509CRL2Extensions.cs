@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Security.Permissions;
-using SysadminsLV.PKI.Cryptography.X509Certificates;
+using PKI.Structs;
 using SysadminsLV.PKI.Win32;
 
-namespace SysadminsLV.PKI.Utils.CLRExtensions;
+namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 public static class X509CRL2Extensions {
     /// <summary>
     ///     Gets a <see cref="SafeCRLHandleContext" /> for the X509 certificate revocation list. The caller of this
@@ -24,6 +24,6 @@ public static class X509CRL2Extensions {
     /// </summary>
     public static void ShowUI(this X509CRL2 crl) {
         using SafeCRLHandleContext handle = crl.GetSafeContext();
-        CryptUI.CryptUIDlgViewContext(3, handle, IntPtr.Zero, "Certificate Trust List", 0, 0);
+        CryptUI.CryptUIDlgViewContext(Wincrypt.CERT_STORE_CRL_CONTEXT, handle, IntPtr.Zero, "Certificate Trust List", 0, 0);
     }
 }

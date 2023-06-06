@@ -4,9 +4,9 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using Interop.CERTENROLLLib;
-using PKI.Utils;
 using SysadminsLV.PKI.Cryptography;
 using SysadminsLV.PKI.Management.ActiveDirectory;
+using SysadminsLV.PKI.Utils;
 
 namespace PKI.CertificateTemplates;
 

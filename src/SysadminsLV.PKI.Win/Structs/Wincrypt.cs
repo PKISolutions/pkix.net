@@ -7,6 +7,11 @@ namespace PKI.Structs;
 
 public static class Wincrypt {
     #region enums
+    // CryptUIDlgViewContext.dwContextType
+    internal const UInt32 CERT_STORE_CERTIFICATE_CONTEXT = 1;
+    internal const UInt32 CERT_STORE_CRL_CONTEXT         = 2;
+    internal const UInt32 CERT_STORE_CTL_CONTEXT         = 3;
+
     // CrypFindOIDInfo find type
     internal const UInt32 CRYPT_OID_INFO_OID_KEY           = 1;
     internal const UInt32 CRYPT_OID_INFO_NAME_KEY          = 2;

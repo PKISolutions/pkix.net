@@ -9,6 +9,7 @@ using PKI.CertificateServices;
 using PKI.Exceptions;
 using PKI.Utils;
 using SysadminsLV.PKI.Security.AccessControl;
+using SysadminsLV.PKI.Utils;
 
 namespace SysadminsLV.PKI.Management.CertificateServices;
 
@@ -337,7 +338,7 @@ public class OcspResponder {
 
         foreach (OcspResponderMemberInfo arrayMember in ArrayMembers) {
             try {
-                var ocsp = Connect(arrayMember.ComputerName);
+                OcspResponder ocsp = Connect(arrayMember.ComputerName);
                 ocsp.writeValue(MSFT_ARRAY_CONTROLLER, ComputerName);
             } catch {}
         }
@@ -575,7 +576,7 @@ public class OcspResponder {
         if (!IsArrayController) {
             throw new UnauthorizedAccessException("This action must be executed on array controller.");
         }
-        var remoteOcspInfo = ArrayMembers.FirstOrDefault(x => x.ComputerName.Equals(computerName, StringComparison.OrdinalIgnoreCase));
+        OcspResponderMemberInfo remoteOcspInfo = ArrayMembers.FirstOrDefault(x => x.ComputerName.Equals(computerName, StringComparison.OrdinalIgnoreCase));
         if (remoteOcspInfo == null) {
             throw new ArgumentException("Specified OCSP server is not part of current array.");
         }
