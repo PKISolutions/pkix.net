@@ -20,7 +20,7 @@ public class CertCrlAdminD : ICertCrlAdminD {
     void publishCRL(AdcsCrlPublishType crlFlags, DateTime? nexUpdate = null) {
         ICertAdmin2 certAdmin = new CCertAdminClass();
         try {
-            certAdmin.PublishCRLs(_configString, nexUpdate ?? DateTime.UtcNow, (Int32)crlFlags);
+            certAdmin.PublishCRLs(_configString, nexUpdate ?? DateTime.MinValue, (Int32)crlFlags);
         } finally {
             CryptographyUtils.ReleaseCom(certAdmin);
         }
