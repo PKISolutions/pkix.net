@@ -7,6 +7,10 @@ using SysadminsLV.PKI.Structs;
 using SysadminsLV.PKI.Utils;
 
 namespace SysadminsLV.PKI.Dcom.Implementations;
+
+/// <summary>
+/// Represents a Windows-specific implementation of <see cref="ICertRequestAdmin"/> interface.
+/// </summary>
 public class CertRequestAdminD : ICertRequestAdmin {
     readonly String _configString;
 
