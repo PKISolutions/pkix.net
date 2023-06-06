@@ -110,9 +110,9 @@ public sealed class CertTemplateSecurityDescriptor : CommonObjectSecurity {
             effectiveRuleRights &= ~CertTemplateRights.Autoenroll;
         }
 
-        var existingRule = rules
+        CertTemplateAccessRule existingRule = rules
             .Cast<CertTemplateAccessRule>()
-            .FirstOrDefault(x => x.IdentityReference.Value == rule.IdentityReference.Value && x.AccessControlType == rule.AccessControlType);
+            .FirstOrDefault(x => x.IdentityReference.Value.Equals(rule.IdentityReference.Value, StringComparison.OrdinalIgnoreCase) && x.AccessControlType == rule.AccessControlType);
         if (existingRule != null) {
             RemoveAccessRule(existingRule);
             var ace = new CertTemplateAccessRule(
@@ -141,9 +141,9 @@ public sealed class CertTemplateSecurityDescriptor : CommonObjectSecurity {
     /// <returns><strong>True</strong> if matching ACE was found and removed, otherwise <strong>False</strong>.</returns>
     public Boolean RemoveAccessRule(IdentityReference identity, AccessControlType accessType) {
         AuthorizationRuleCollection rules = GetAccessRules(true, false, typeof(NTAccount));
-        var existingRule = rules
+        AccessRule existingRule = rules
             .Cast<CertTemplateAccessRule>()
-            .FirstOrDefault(x => x.IdentityReference.Value == identity.Value && x.AccessControlType == accessType);
+            .FirstOrDefault(x => x.IdentityReference.Value.Equals(identity.Value, StringComparison.OrdinalIgnoreCase) && x.AccessControlType == accessType);
         return existingRule != null && RemoveAccessRule(existingRule);
     }
     /// <summary>
