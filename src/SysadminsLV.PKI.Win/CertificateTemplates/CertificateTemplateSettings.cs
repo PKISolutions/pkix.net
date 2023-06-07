@@ -321,14 +321,14 @@ public class CertificateTemplateSettings {
                 case X509ExtensionOid.CertTemplateInfoV2:
                     Boolean isCritical = isExtensionCritical(X509ExtensionOid.CertTemplateInfoV2);
                     if (schemaVersion == 1) {
-                        _extensions.Add(new X509Extension(X509ExtensionOid.CertificateTemplate, new Asn1BMPString((String)_dsEntryProperties[DsUtils.PropCN]).GetRawData(), isCritical));
+                        _extensions.Add(new X509Extension(X509ExtensionOid.CertTemplateInfoV2, new Asn1BMPString((String)_dsEntryProperties[DsUtils.PropCN]).GetRawData(), isCritical));
                     } else {
                         Int32 major = (Int32)_dsEntryProperties[DsUtils.PropPkiTemplateMajorVersion];
                         Int32 minor = (Int32)_dsEntryProperties[DsUtils.PropPkiTemplateMinorVersion];
                         var templateOid = new Oid((String)_dsEntryProperties[DsUtils.PropCertTemplateOid]);
-                        var extension = new X509CertificateTemplateExtension(templateOid, major, minor) {
-                                            Critical = isCritical
-                                        };
+                        var extension = new X509CertificateTemplateExtension(templateOid, major, minor, false) {
+                            Critical = isCritical
+                        };
                         _extensions.Add(extension);
                     }
                     break;
