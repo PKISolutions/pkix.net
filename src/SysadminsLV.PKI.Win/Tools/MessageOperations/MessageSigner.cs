@@ -6,12 +6,12 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.Win32.SafeHandles;
-using PKI.Exceptions;
 using PKI.Structs;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
 using SysadminsLV.PKI.Cryptography;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
+using SysadminsLV.PKI.Exceptions;
 using SysadminsLV.PKI.Utils;
 using SysadminsLV.PKI.Win32;
 

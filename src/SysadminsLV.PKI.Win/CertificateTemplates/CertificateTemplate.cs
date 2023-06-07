@@ -5,7 +5,6 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Interop.CERTENROLLLib;
-using PKI.Utils;
 using SysadminsLV.PKI.Management.ActiveDirectory;
 using SysadminsLV.PKI.Security.AccessControl;
 using SysadminsLV.PKI.Utils;

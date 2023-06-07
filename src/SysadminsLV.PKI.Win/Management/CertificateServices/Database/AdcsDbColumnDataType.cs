@@ -1,23 +1,22 @@
-﻿namespace SysadminsLV.PKI.Management.CertificateServices.Database {
+﻿namespace SysadminsLV.PKI.Management.CertificateServices.Database;
+/// <summary>
+/// Contains possible data types to store the data in Certification Authority's database.
+/// </summary>
+public enum AdcsDbColumnDataType {
     /// <summary>
-    /// Contains possible datatypes to store the data in Certification Authority's database.
+    /// Signed long data.
     /// </summary>
-    public enum AdcsDbColumnDataType {
-        /// <summary>
-        /// Signed long data.
-        /// </summary>
-        Long		= 1,
-        /// <summary>
-        /// Date/time.
-        /// </summary>
-        DateTime	= 2,
-        /// <summary>
-        /// Binary data.
-        /// </summary>
-        Binary		= 3,
-        /// <summary>
-        /// Unicode string data.
-        /// </summary>
-        String		= 4
-    }
+    Long     = 1,
+    /// <summary>
+    /// Date/time.
+    /// </summary>
+    DateTime = 2,
+    /// <summary>
+    /// Binary data.
+    /// </summary>
+    Binary   = 3,
+    /// <summary>
+    /// Unicode string data.
+    /// </summary>
+    String   = 4
 }

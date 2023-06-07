@@ -9,14 +9,14 @@ namespace SysadminsLV.PKI.Security.AccessControl {
     public sealed class OcspResponderAccessRule : AccessRule<OcspResponderRights> {
 
         /// <param name="identity">
-        ///		An IdentityReference object that encapsulates a reference to a user account.
+        ///        An IdentityReference object that encapsulates a reference to a user account.
         /// </param>
         /// <param name="accessMask">
-        ///		One of the <see cref="OcspResponderRights"/> values that specifies the type of operation
-        ///		associated with the access rule.
+        ///        One of the <see cref="OcspResponderRights"/> values that specifies the type of operation
+        ///        associated with the access rule.
         /// </param>
         /// <param name="type">
-        ///		One of the <see cref="AccessControlType"/> values that specifies whether to allow or deny the operation.
+        ///        One of the <see cref="AccessControlType"/> values that specifies whether to allow or deny the operation.
         /// </param>
     public OcspResponderAccessRule(
             IdentityReference identity,

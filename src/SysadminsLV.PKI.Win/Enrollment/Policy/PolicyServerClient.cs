@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using Interop.CERTENROLLLib;
 using PKI.CertificateTemplates;
-using PKI.Exceptions;
+using SysadminsLV.PKI.Exceptions;
 using SysadminsLV.PKI.Utils;
 
 namespace PKI.Enrollment.Policy;
@@ -247,13 +247,13 @@ public class PolicyServerClient {
         }
     }
     ///  <summary>
-    ///		Registers or updates a current object in local registry.
+    ///        Registers or updates a current object in local registry.
     ///  </summary>
     /// <exception cref="UninitializedObjectException">
-    ///		The current object is not properly initialized through any of public constructor.
+    ///        The current object is not properly initialized through any of public constructor.
     /// </exception>
     /// <exception cref="NotSupportedException">
-    /// 	<strong>Authentication</strong> property is set to <strong>None</strong>.
+    ///     <strong>Authentication</strong> property is set to <strong>None</strong>.
     ///  </exception>
     public void Register() {
         if (URL == null) { throw new UninitializedObjectException(); }
@@ -306,10 +306,10 @@ public class PolicyServerClient {
     /// Unregisters (deletes) certificate enrollment policy server endpoint from registry.
     /// </summary>
     /// <exception cref="InvalidOperationException">
-    ///		The current CEP object is not registered.
+    ///        The current CEP object is not registered.
     /// </exception>
     /// <exception cref="UninitializedObjectException">
-    ///		The current object is not properly initialized through any of public constructor.
+    ///        The current object is not properly initialized through any of public constructor.
     /// </exception>
     public void Unregister() {
         if (URL == null) { throw new UninitializedObjectException(); }
@@ -351,24 +351,24 @@ public class PolicyServerClient {
     /// Sets the credential used to contact the certificate enrollment policy (CEP) server
     /// </summary>
     /// <param name="userName">
-    ///		Specifies the user name to authenticate in enrollment policy server.
-    ///		<para>
-    ///			If the authentication type is set to <strong>ClientCertificate</strong>, this parameter must contains
-    ///			authentication certificate's thumbprint.
-    ///		</para>
+    ///        Specifies the user name to authenticate in enrollment policy server.
+    ///        <para>
+    ///            If the authentication type is set to <strong>ClientCertificate</strong>, this parameter must contains
+    ///            authentication certificate's thumbprint.
+    ///        </para>
     /// <para>This parameter must be omitted when <strong>Kerberos</strong> authentication is used.</para>
     /// </param>
     /// <param name="password">
-    ///		Specifies the password to authenticate in enrollment policy server.
-    ///		<para>
-    ///			This parameter must be used only when <strong>UserNameAndPassword</strong> authentication
-    ///			method is used. This parameter must be omitted in all other authentication methods.
-    ///		</para>
+    ///        Specifies the password to authenticate in enrollment policy server.
+    ///        <para>
+    ///            This parameter must be used only when <strong>UserNameAndPassword</strong> authentication
+    ///            method is used. This parameter must be omitted in all other authentication methods.
+    ///        </para>
     /// </param>
     /// <exception cref="ArgumentNullException"><strong>userName</strong> parameter is null reference.</exception>
     /// <remarks>
-    ///		Currently this method do not set or update credentials in the credential vault, only default
-    ///		class constructor combining with <see cref="Register"/> method provides this functionality.
+    ///        Currently this method do not set or update credentials in the credential vault, only default
+    ///        class constructor combining with <see cref="Register"/> method provides this functionality.
     /// </remarks>
     public void SetCredential(String userName, SecureString password) {
         if (String.IsNullOrEmpty(userName)) { throw new ArgumentNullException(nameof(userName)); }

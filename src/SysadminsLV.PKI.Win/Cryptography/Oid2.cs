@@ -399,26 +399,26 @@ public sealed class Oid2 {
     /// <param name="group">Specifies the OID group where specified object identifier should be registered.</param>
     /// <param name="writeInDirectory">Specifies, whether object is registered locally or in Active Directory.</param>
     /// <param name="localeId">
-    ///		Specifies the locale ID. This parameter can be used to provide localized friendly name. This parameter can
-    ///		be used only when <strong>writeInDirectory</strong> is set to <strong>True</strong> in other cases it is
-    ///		silently ignored.
+    ///        Specifies the locale ID. This parameter can be used to provide localized friendly name. This parameter can
+    ///        be used only when <strong>writeInDirectory</strong> is set to <strong>True</strong> in other cases it is
+    ///        silently ignored.
     /// </param>
     /// <param name="cpsUrl">
-    ///		Specifies the URL to a <i>certificate practice statement</i> (<strong>CPS</strong>) location.
+    ///        Specifies the URL to a <i>certificate practice statement</i> (<strong>CPS</strong>) location.
     /// </param>
     /// <exception cref="ArgumentNullException">
-    ///		<strong>value</strong> and/or <strong>friendlyName</strong> is null or empty.
+    ///        <strong>value</strong> and/or <strong>friendlyName</strong> is null or empty.
     /// </exception>
     /// <exception cref="ArgumentException">
-    ///		Specified OID group is not supported. See <strong>Remarks</strong> section for more details.
+    ///        Specified OID group is not supported. See <strong>Remarks</strong> section for more details.
     /// </exception>
     /// <exception cref="InvalidDataException"><strong>value</strong> parameter is not object idnetifier value.</exception>
     /// <exception cref="NotSupportedException">
-    ///		A caller chose OID registration in Active Directory, however, the current computer is not a member of any
-    ///		Active Directory domain.
+    ///        A caller chose OID registration in Active Directory, however, the current computer is not a member of any
+    ///        Active Directory domain.
     /// </exception>
     /// <exception cref="InvalidOperationException">
-    ///		An object identifier is already registered.
+    ///        An object identifier is already registered.
     /// </exception>
     /// <remarks>
     /// <para>
@@ -429,13 +429,13 @@ public sealed class Oid2 {
     /// <i>CN=OID, CN=Public Key Services, CN=Services,CN=Configuration, {Configuration naming context}</i>.
     /// </para>
     /// <para>
-    ///		A newly registered OID is not resolvable by an application immediately. You may need to restart an application
-    ///		to allow new OID lookup.
+    ///        A newly registered OID is not resolvable by an application immediately. You may need to restart an application
+    ///        to allow new OID lookup.
     /// </para>
     /// <para>
-    ///		When <strong>writeInDirectory</strong> is set to <strong>True</strong>, <strong>group</strong> parameter
-    ///		is limited only to one of the following value: <strong>ApplicationPolicy</strong>,<strong>IssuancePolicy</strong>
-    ///		and <strong>CertificateTemplate</strong>. Other OID groups are not allowed to be stored in Active Directory.
+    ///        When <strong>writeInDirectory</strong> is set to <strong>True</strong>, <strong>group</strong> parameter
+    ///        is limited only to one of the following value: <strong>ApplicationPolicy</strong>,<strong>IssuancePolicy</strong>
+    ///        and <strong>CertificateTemplate</strong>. Other OID groups are not allowed to be stored in Active Directory.
     /// </para>
     /// </remarks>
     /// <returns>Registered object identifier.</returns>
@@ -482,14 +482,14 @@ public sealed class Oid2 {
     /// <param name="value">Specifies the object identifier value.</param>
     /// <param name="group">Specifies the OID group from which the OID is removed. </param>
     /// <param name="deleteFromDirectory">
-    ///		Specifies whether to perform registration removal from Active Directory. If Active Directory is unavailable,
-    ///		the method will attempt to unregister OID from a local OID registration database.
+    ///        Specifies whether to perform registration removal from Active Directory. If Active Directory is unavailable,
+    ///        the method will attempt to unregister OID from a local OID registration database.
     /// </param>
     /// <exception cref="ArgumentNullException"><strong>value</strong> parameter is null or empty.</exception>
     /// <returns>
-    ///		<strong>True</strong> if OID or OIDs were unregistered successfully. If specified OID information is not
-    ///		registered, the method returns <strong>False</strong>. An exception is thrown when caller do not have
-    ///		appropriate permissions. See <strong>Remarks</strong> section for additional details.
+    ///        <strong>True</strong> if OID or OIDs were unregistered successfully. If specified OID information is not
+    ///        registered, the method returns <strong>False</strong>. An exception is thrown when caller do not have
+    ///        appropriate permissions. See <strong>Remarks</strong> section for additional details.
     /// </returns>
     /// <remarks>
     /// <strong>Permissions:</strong> a caller must have local administrator permissions in order to remove OID

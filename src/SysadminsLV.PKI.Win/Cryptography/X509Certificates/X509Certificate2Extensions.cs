@@ -4,8 +4,8 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.Win32.SafeHandles;
-using PKI.Exceptions;
 using PKI.Structs;
+using SysadminsLV.PKI.Exceptions;
 using SysadminsLV.PKI.Win32;
 
 namespace SysadminsLV.PKI.Cryptography.X509Certificates;

@@ -9,7 +9,7 @@ namespace SysadminsLV.PKI.Cryptography;
 /// The <strong>CspProviderInfo</strong> class provides access to general information about a cryptographic provider.
 /// </summary>
 /// <remarks>
-///		This class has no public constructors. Instead, use <see cref="CspProviderInfoCollection.GetProviderInfo()"/> method to access this object.
+///     This class has no public constructors. Instead, use <see cref="CspProviderInfoCollection.GetProviderInfo()"/> method to access this object.
 /// </remarks>
 public class CspProviderInfo {
     readonly CspProviderAlgorithmInfoCollection _algorithms = new();

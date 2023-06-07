@@ -3,8 +3,8 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using PKI.Exceptions;
 using SysadminsLV.Asn1Parser;
+using SysadminsLV.PKI.Exceptions;
 using SysadminsLV.PKI.OcspClient;
 using static PKI.Structs.Wincrypt;
 
@@ -15,8 +15,8 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 /// </summary>
 /// <remarks>
 /// No public constructors are defined. Objects of this class are created by calling
-/// <see cref="Utils.CLRExtensions.X509Certificate2Extensions.GetCertificateContextProperty"/> or
-/// <see cref="Utils.CLRExtensions.X509Certificate2Extensions.GetCertificateContextProperties"/> extension methods.
+/// <see cref="X509Certificate2Extensions.GetCertificateContextProperty"/> or
+/// <see cref="X509Certificate2Extensions.GetCertificateContextProperties"/> extension methods.
 /// </remarks>
 public class X509CertificateContextProperty {
 

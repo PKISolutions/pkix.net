@@ -5,52 +5,51 @@ using System.DirectoryServices.ActiveDirectory;
 using System.Linq;
 using System.Net;
 using System.Text;
-using PKI.Utils;
 using SysadminsLV.PKI.Management.ActiveDirectory;
 
 namespace SysadminsLV.PKI.Utils;
 
 static class DsUtils {
-    public const String PropConfigNameContext		= "ConfigurationNamingContext";
-    public const String PropSiteObject				= "siteObject";
-    public const String PropPkiEnrollmentServers	= "msPKI-Enrollment-Servers";
-    public const String PropCN						= "cn";
-    public const String PropDN						= "distinguishedName";
-    public const String PropDisplayName				= "displayName";
-    public const String PropDescription				= "description";
-    public const String PropFlags					= "flags";
-    public const String PropCpsOid					= "msPKI-OID-CPS";
-    public const String PropCertTemplateOid			= "msPKI-Cert-Template-OID";
-    public const String PropLocalizedOid			= "msPKI-OIDLocalizedName";
-    public const String PropPkiTemplateMajorVersion	= "Revision";
-    public const String PropPkiTemplateMinorVersion	= "msPKI-Template-Minor-Revision";
-    public const String PropPkiSchemaVersion		= "msPKI-Template-Schema-Version";
-    public const String PropWhenChanged				= "WhenChanged";
-    public const String PropPkiSubjectFlags			= "msPKI-Certificate-Name-Flag";
-    public const String PropPkiEnrollFlags			= "msPKI-Enrollment-Flag";
-    public const String PropPkiPKeyFlags			= "msPKI-Private-Key-Flag";
-    public const String PropPkiNotAfter				= "pKIExpirationPeriod";
-    public const String PropPkiRenewalPeriod		= "pKIOverlapPeriod";
-    public const String PropPkiPathLength			= "pKIMaxIssuingDepth";
-    public const String PropCertTemplateEKU			= "pKIExtendedKeyUsage";
-    public const String PropPkiCertPolicy			= "msPKI-Certificate-Policy";
-    public const String PropPkiCriticalExt			= "pKICriticalExtensions";
-    public const String PropPkiSupersede			= "msPKI-Supersede-Templates";
-    public const String PropPkiKeyCsp				= "pKIDefaultCSPs";
-    public const String PropPkiKeySize				= "msPKI-Minimal-Key-Size";
-    public const String PropPkiKeySpec				= "pKIDefaultKeySpec";
-    public const String PropPkiKeySddl				= "msPKI-Key-Security-Descriptor";
-    public const String PropPkiRaAppPolicy			= "msPKI-RA-Application-Policies";
-    public const String PropPkiRaCertPolicy			= "msPKI-RA-Policies";
-    public const String PropPkiRaSignature			= "msPKI-RA-Signature";
-    public const String PropPkiAsymAlgo				= "msPKI-Asymmetric-Algorithm";
-    public const String PropPkiSymAlgo				= "msPKI-Symmetric-Algorithm";
-    public const String PropPkiSymLength			= "msPKI-Symmetric-Key-Length";
-    public const String PropPkiHashAlgo				= "msPKI-Hash-Algorithm";
-    public const String PropPkiKeyUsage				= "pKIKeyUsage";
-    public const String PropPkiKeyUsageCng			= "msPKI-Key-Usage";
+    public const String PropConfigNameContext        = "ConfigurationNamingContext";
+    public const String PropSiteObject                = "siteObject";
+    public const String PropPkiEnrollmentServers    = "msPKI-Enrollment-Servers";
+    public const String PropCN                        = "cn";
+    public const String PropDN                        = "distinguishedName";
+    public const String PropDisplayName                = "displayName";
+    public const String PropDescription                = "description";
+    public const String PropFlags                    = "flags";
+    public const String PropCpsOid                    = "msPKI-OID-CPS";
+    public const String PropCertTemplateOid            = "msPKI-Cert-Template-OID";
+    public const String PropLocalizedOid            = "msPKI-OIDLocalizedName";
+    public const String PropPkiTemplateMajorVersion    = "Revision";
+    public const String PropPkiTemplateMinorVersion    = "msPKI-Template-Minor-Revision";
+    public const String PropPkiSchemaVersion        = "msPKI-Template-Schema-Version";
+    public const String PropWhenChanged                = "WhenChanged";
+    public const String PropPkiSubjectFlags            = "msPKI-Certificate-Name-Flag";
+    public const String PropPkiEnrollFlags            = "msPKI-Enrollment-Flag";
+    public const String PropPkiPKeyFlags            = "msPKI-Private-Key-Flag";
+    public const String PropPkiNotAfter                = "pKIExpirationPeriod";
+    public const String PropPkiRenewalPeriod        = "pKIOverlapPeriod";
+    public const String PropPkiPathLength            = "pKIMaxIssuingDepth";
+    public const String PropCertTemplateEKU            = "pKIExtendedKeyUsage";
+    public const String PropPkiCertPolicy            = "msPKI-Certificate-Policy";
+    public const String PropPkiCriticalExt            = "pKICriticalExtensions";
+    public const String PropPkiSupersede            = "msPKI-Supersede-Templates";
+    public const String PropPkiKeyCsp                = "pKIDefaultCSPs";
+    public const String PropPkiKeySize                = "msPKI-Minimal-Key-Size";
+    public const String PropPkiKeySpec                = "pKIDefaultKeySpec";
+    public const String PropPkiKeySddl                = "msPKI-Key-Security-Descriptor";
+    public const String PropPkiRaAppPolicy            = "msPKI-RA-Application-Policies";
+    public const String PropPkiRaCertPolicy            = "msPKI-RA-Policies";
+    public const String PropPkiRaSignature            = "msPKI-RA-Signature";
+    public const String PropPkiAsymAlgo                = "msPKI-Asymmetric-Algorithm";
+    public const String PropPkiSymAlgo                = "msPKI-Symmetric-Algorithm";
+    public const String PropPkiSymLength            = "msPKI-Symmetric-Key-Length";
+    public const String PropPkiHashAlgo                = "msPKI-Hash-Algorithm";
+    public const String PropPkiKeyUsage                = "pKIKeyUsage";
+    public const String PropPkiKeyUsageCng            = "msPKI-Key-Usage";
 
-    public const String SchemaObjectIdentifier	= "msPKI-Enterprise-Oid";
+    public const String SchemaObjectIdentifier    = "msPKI-Enterprise-Oid";
 
 
     const String disallowed = @"!""#%&'()*+,/:;<=>?[\]^`{|}";
@@ -151,7 +150,7 @@ static class DsUtils {
         }
         foreach (String key in siteTable.Keys) {
             String[] tokens = key.Split('/');
-            if (ip.AddressList.Any(address => Networking.InSameSubnet(tokens[0], Convert.ToInt32(tokens[1]), address.ToString()))) {
+            if (ip.AddressList.Any(address => NetUtils.InSameSubnet(tokens[0], Convert.ToInt32(tokens[1]), address.ToString()))) {
                 return siteTable[key];
             }
         }

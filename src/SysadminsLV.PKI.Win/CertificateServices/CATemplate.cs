@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using PKI.CertificateTemplates;
-using PKI.Exceptions;
 using SysadminsLV.PKI.Dcom;
 using SysadminsLV.PKI.Dcom.Implementations;
+using SysadminsLV.PKI.Exceptions;
 using SysadminsLV.PKI.Management.CertificateServices;
 using SysadminsLV.PKI.Utils;
 

@@ -9,7 +9,7 @@ namespace SysadminsLV.PKI.Cryptography;
 /// (archival) algorithms. Similar providers are grouped together in a type.
 /// </summary>
 /// <remarks>
-///		This class has no public constructors. Instead, use <see cref="CspProviderInfoCollection.GetProviderInfo()"/> method to access this object.
+///     This class has no public constructors. Instead, use <see cref="CspProviderInfoCollection.GetProviderInfo()"/> method to access this object.
 /// </remarks>
 public class CspProviderAlgorithmInfo {
     internal CspProviderAlgorithmInfo(ICspAlgorithm alg) {

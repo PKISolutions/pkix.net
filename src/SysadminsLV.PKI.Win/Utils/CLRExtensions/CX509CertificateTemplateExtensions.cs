@@ -2,6 +2,10 @@
 using Interop.CERTENROLLLib;
 
 namespace SysadminsLV.PKI.Utils.CLRExtensions;
+
+/// <summary>
+/// Contains extension methods for <strong>IX509CertificateTemplate</strong> COM interface.
+/// </summary>
 static class CX509CertificateTemplateExtensions {
     public static Int32 GetInt32(this IX509CertificateTemplate template, EnrollmentTemplateProperty propertyName) {
         try {

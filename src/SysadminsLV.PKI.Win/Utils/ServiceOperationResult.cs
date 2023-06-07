@@ -5,7 +5,6 @@ namespace SysadminsLV.PKI.Utils;
 /// Defines general-purpose class to indicate the status of the operation.
 /// </summary>
 public class ServiceOperationResult : IServiceOperationResult {
-
     /// <summary>
     /// Initializes a new instance of <strong>ServiceOperationResult</strong> from Win32 HRESULT status code.
     /// Status message is decoded automatically.

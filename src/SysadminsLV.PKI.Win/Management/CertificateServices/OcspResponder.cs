@@ -6,8 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.ServiceProcess;
 using CERTADMINLib;
 using PKI.CertificateServices;
-using PKI.Exceptions;
-using PKI.Utils;
+using SysadminsLV.PKI.Exceptions;
 using SysadminsLV.PKI.Security.AccessControl;
 using SysadminsLV.PKI.Utils;
 

@@ -259,7 +259,6 @@
     <Compile Include="Tools\MessageOperations\MessageSigner.cs" />
     <Compile Include="Utils\ServiceOperationResult.cs" />
     <Compile Include="Utils\IServiceOperationResult.cs" />
-    <Compile Include="Utils\ErrorSeverity.cs" />
     <Compile Include="Security\AccessControl\CertSrvSecurityDescriptor.cs" />
     <Compile Include="Security\AccessControl\CertSrvAuditRule.cs" />
     <Compile Include="Security\AccessControl\CertSrvRights.cs" />
@@ -268,9 +267,6 @@
     <Compile Include="CertificateServices\AIA.cs" />
     <Compile Include="CertificateServices\CertificateAuthority.cs" />
     <Compile Include="CertificateServices\CESUri.cs" />
-    <Compile Include="CertificateServices\ExitModule\ExitModuleConfig.cs" />
-    <Compile Include="CertificateServices\ExitModule\SMTPTemplate.cs" />
-    <Compile Include="CertificateServices\ExitModule\SubscriptionEventEnum.cs" />
     <Compile Include="CertificateServices\SetupStatusEnum.cs" />
     <Compile Include="CertificateTemplates\CertificateTemplate.cs" />
     <Compile Include="CertificateServices\CATemplate.cs" />
@@ -319,11 +315,11 @@
     <Compile Include="Exceptions\UninitializedObjectException.cs" />
     <Compile Include="Utils\CryptographyUtils.cs" />
     <Compile Include="Utils\EnumFlags.cs" />
-    <Compile Include="Utils\Networking.cs" />
+    <Compile Include="Utils\NetUtils.cs" />
     <Compile Include="Utils\CryptoRegistry.cs" />
     <Compile Include="Tools\MessageOperations\SignaturePadding.cs" />
     <Compile Include="Utils\Wildcard.cs" />
-    <Compile Include="Utils\WMI.cs" />
+    <Compile Include="Utils\WmiHelper.cs" />
     <Compile Include="Utils\PSErrorSourceEnum.cs" />
     <Compile Include="Utils\ErrorHelper.cs" />
     <Compile Include="Utils\GenericArray.cs" />
@@ -333,7 +329,6 @@
     <Compile Include="Cryptography\X509Certificates\SafeCRLHandleContext.cs" />
     <Compile Include="Win32\CertAdm.cs" />
     <Compile Include="Win32\Kernel32.cs" />
-    <Compile Include="Win32\Cryptnet.cs" />
     <Compile Include="Win32\Crypt32.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

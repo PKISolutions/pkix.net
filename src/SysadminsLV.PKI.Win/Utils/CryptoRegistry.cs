@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using CERTADMINLib;
 using Microsoft.Win32;
-using SysadminsLV.PKI.Utils;
 
-namespace PKI.Utils;
+namespace SysadminsLV.PKI.Utils;
 static class CryptoRegistry {
 
 #region Local registry

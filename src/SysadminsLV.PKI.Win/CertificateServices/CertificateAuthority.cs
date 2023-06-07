@@ -7,11 +7,10 @@ using System.Security.Cryptography.X509Certificates;
 using System.ServiceProcess;
 using System.Text.RegularExpressions;
 using CERTADMINLib;
-using PKI.Exceptions;
-using PKI.Utils;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
 using SysadminsLV.PKI.Dcom;
 using SysadminsLV.PKI.Dcom.Implementations;
+using SysadminsLV.PKI.Exceptions;
 using SysadminsLV.PKI.Management.ActiveDirectory;
 using SysadminsLV.PKI.Management.CertificateServices;
 using SysadminsLV.PKI.Management.CertificateServices.Database;
@@ -269,7 +268,7 @@ public class CertificateAuthority {
     }
     void getWmiData() {
         try {
-            foreach (ManagementObject obj in WMI.GetWmi("Select Caption, OSProductSuite from Win32_OperatingSystem", ComputerName)) {
+            foreach (ManagementObject obj in WmiHelper.GetWmi("Select Caption, OSProductSuite from Win32_OperatingSystem", ComputerName)) {
                 OperatingSystem = (String)obj["Caption"];
                 UInt32 osSuite = (UInt32)obj["OSProductSuite"];
                 if ((osSuite & 2) > 0) { Sku = "Enterprise"; }
@@ -569,21 +568,21 @@ public class CertificateAuthority {
         var CertAdmin = new CCertAdmin();
         return (CertSrvClientRole)CertAdmin.GetMyRoles(ConfigString);
     }
-    ///  <summary>
-    ///  This method publishes certificate revocation lists (CRLs) for a certification authority (CA).
-    ///  <para>
-    ///  The PublishCRL method publishes a CRL based on the CA's current certificate, as well as CRLs
-    ///  based on any CA certificates that have been renewed and are not yet expired.
-    ///  </para>
-    ///  </summary>
-    ///  <param name="deltaOnly">
-    /// 	A delta CRL is published, or the most recent delta CRL is republished if <strong>updateFilesOnly</strong>
-    ///  parameter is set. Note that if the CA has not enabled delta CRL publishing, use of this flag will result
-    ///  in an error.</param>
-    ///  <param name="updateFilesOnly">
-    ///  The most recent base or delta CRL, is republished. The CA will not republish a CRL to a CRL distribution point
-    ///   if the CRL at the distribution point is already the most recent CRL.
-    ///  </param>
+    /// <summary>
+    /// This method publishes certificate revocation lists (CRLs) for a certification authority (CA).
+    /// <para>
+    /// The PublishCRL method publishes a CRL based on the CA's current certificate, as well as CRLs
+    /// based on any CA certificates that have been renewed and are not yet expired.
+    /// </para>
+    /// </summary>
+    /// <param name="deltaOnly">
+    /// A delta CRL is published, or the most recent delta CRL is republished if <strong>updateFilesOnly</strong>
+    /// parameter is set. Note that if the CA has not enabled delta CRL publishing, use of this flag will result
+    /// in an error.</param>
+    /// <param name="updateFilesOnly">
+    /// The most recent base or delta CRL, is republished. The CA will not republish a CRL to a CRL distribution point
+    ///  if the CRL at the distribution point is already the most recent CRL.
+    /// </param>
     /// <exception cref="UninitializedObjectException">The object is not properly initialized.</exception>
     /// <exception cref="ServerUnavailableException">CA server is not accessible via RPC/DCOM.</exception>
     public void PublishCRL(Boolean deltaOnly = false, Boolean updateFilesOnly = false) {
