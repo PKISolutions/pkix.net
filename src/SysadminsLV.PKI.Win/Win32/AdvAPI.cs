@@ -7,7 +7,9 @@ namespace SysadminsLV.PKI.Win32;
 /// Contains only unmanaged function p/invoke definitions which are defined in <strong>AdvAPI.dll</strong> library.
 /// </summary>
 static class AdvAPI {
-    [DllImport("advapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    const String DLL_NAME = "advapi32.dll";
+
+    [DllImport(DLL_NAME, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern Boolean CryptAcquireContext(
         ref IntPtr phProv,
         String pszContainer,
@@ -15,7 +17,7 @@ static class AdvAPI {
         UInt32 dwProvType,
         Int64 dwFlags
     );
-    [DllImport("advapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport(DLL_NAME, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern Boolean CryptReleaseContext(
         IntPtr hProv,
         UInt32 dwFlags
@@ -25,7 +27,7 @@ static class AdvAPI {
     /// </summary>
     /// <param name="hKey">No topic.</param>
     /// <returns>No topic.</returns>
-    [DllImport("advapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport(DLL_NAME, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern Boolean CryptDestroyKey(
         IntPtr hKey
     );
