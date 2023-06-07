@@ -180,7 +180,7 @@ public class KRA {
 						CertAdmin.SetCAProperty(ConfigString, CertAdmConstants.CrPropKracertusedcount, 0, CertAdmConstants.ProptypeLong, 0);
 					}
 				} catch (Exception e) {
-					throw Error.ComExceptionHandler(e);
+					throw ErrorHelper.ComExceptionHandler(e);
 				} finally {
 					CryptographyUtils.ReleaseCom(CertAdmin);
 				}

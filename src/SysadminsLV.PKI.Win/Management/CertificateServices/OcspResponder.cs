@@ -235,7 +235,7 @@ public class OcspResponder {
             }
         } catch (COMException ex) {
             // check if exception is ERROR_OBJECT_NOT_FOUND
-            if (ex.ErrorCode == Error.E_OBJECT_NOT_FOUND) {
+            if (ex.ErrorCode == ErrorHelper.E_OBJECT_NOT_FOUND) {
                 return default;
             }
             // otherwise, rethrow
@@ -253,7 +253,7 @@ public class OcspResponder {
             return (T)prop.Value;
         } catch (COMException ex) {
             // check if exception is ERROR_OBJECT_NOT_FOUND
-            if (ex.ErrorCode == Error.E_OBJECT_NOT_FOUND) {
+            if (ex.ErrorCode == ErrorHelper.E_OBJECT_NOT_FOUND) {
                 return default;
             }
             // otherwise, rethrow
@@ -400,7 +400,7 @@ public class OcspResponder {
                 throw new InvalidOperationException("Configuration already exist.");
             }
         } catch (COMException ex) {
-            if (ex.ErrorCode == Error.E_INVALID_STATE) {
+            if (ex.ErrorCode == ErrorHelper.E_INVALID_STATE) {
                 throw new ServerUnavailableException(ComputerName);
             }
         }
@@ -432,7 +432,7 @@ public class OcspResponder {
                 throw new InvalidOperationException("Configuration already exist.");
             }
         } catch (COMException ex) {
-            if (ex.ErrorCode == Error.E_INVALID_STATE) {
+            if (ex.ErrorCode == ErrorHelper.E_INVALID_STATE) {
                 throw new ServerUnavailableException(ComputerName);
             }
         }

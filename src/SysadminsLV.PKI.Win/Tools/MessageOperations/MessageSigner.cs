@@ -8,11 +8,11 @@ using System.Security.Cryptography.X509Certificates;
 using Microsoft.Win32.SafeHandles;
 using PKI.Exceptions;
 using PKI.Structs;
-using PKI.Utils;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
 using SysadminsLV.PKI.Cryptography;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
+using SysadminsLV.PKI.Utils;
 using SysadminsLV.PKI.Win32;
 
 namespace SysadminsLV.PKI.Tools.MessageOperations;
@@ -249,7 +249,7 @@ public class MessageSigner : ICryptSigner, IDisposable {
     void getConfiguration(Byte[] algIdBlob) {
         var asn = new Asn1Reader(algIdBlob);
         asn.MoveNext();
-        var oid = new Asn1ObjectIdentifier(asn).Value;
+        Oid oid = new Asn1ObjectIdentifier(asn).Value;
         asn.MoveNext();
         mapSignatureAlgorithmToHashAlgorithm(oid.Value, asn);
     }
@@ -616,7 +616,7 @@ public class MessageSigner : ICryptSigner, IDisposable {
                 signature = signHashDsa(hash);
                 break;
             default:
-                throw new InvalidOperationException(new Win32Exception(Error.InvalidParameterException).Message);
+                throw new InvalidOperationException(new Win32Exception(ErrorHelper.InvalidParameterException).Message);
         }
         getSignatureAlgorithm();
         return signature;

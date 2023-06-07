@@ -33,7 +33,7 @@ public class CertificateTemplate {
     /// <remarks>Wildcards are not allowed.</remarks>
     CertificateTemplate(String findType, String findValue) {
         if (!DsUtils.Ping()) {
-            throw new Exception(Error.E_DCUNAVAILABLE);
+            throw new Exception(ErrorHelper.E_DCUNAVAILABLE);
         }
         searchByQuery(findType, findValue);
     }
@@ -289,7 +289,7 @@ public class CertificateTemplate {
     /// <returns>An array of certificate templates.</returns>
     public static CertificateTemplate[] EnumTemplates() {
         if (!DsUtils.Ping()) {
-            throw new Exception(Error.E_DCUNAVAILABLE);
+            throw new Exception(ErrorHelper.E_DCUNAVAILABLE);
         }
 
         var retValue = new List<CertificateTemplate>();

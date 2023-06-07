@@ -5,6 +5,7 @@ using System.Security.Principal;
 using PKI.CertificateServices;
 using PKI.Exceptions;
 using PKI.Utils;
+using SysadminsLV.PKI.Utils;
 
 namespace SysadminsLV.PKI.Security.AccessControl;
 /// <summary>
@@ -94,7 +95,7 @@ public sealed class CertSrvSecurityDescriptor : CommonObjectSecurity {
     public override AuditRule AuditRuleFactory(IdentityReference identityReference, Int32 accessMask, Boolean isInherited,
         InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags) {
         //return new CertificationAuthorityAuditRule(identityReference, (CertificationAuthorityRights)accessMask, flags);
-        throw new NotSupportedException(Error.E_AUDITNOTSUPPOERTED);
+        throw new NotSupportedException(ErrorHelper.E_AUDITNOTSUPPOERTED);
     }
     /// <summary>
     ///		Adds the specified access rule to the Discretionary Access Control List (DACL) associated with this

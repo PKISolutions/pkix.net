@@ -5,7 +5,7 @@ using System.Linq;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using PKI.CertificateTemplates;
-using PKI.Utils;
+using SysadminsLV.PKI.Utils;
 
 namespace SysadminsLV.PKI.Security.AccessControl;
 
@@ -91,7 +91,7 @@ public sealed class CertTemplateSecurityDescriptor : CommonObjectSecurity {
     /// 
     public override AuditRule AuditRuleFactory(IdentityReference identityReference, Int32 accessMask, Boolean isInherited,
         InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags) {
-        throw new NotSupportedException(Error.E_AUDITNOTSUPPOERTED);
+        throw new NotSupportedException(ErrorHelper.E_AUDITNOTSUPPOERTED);
     }
     /// <summary>
     ///		Adds the specified access rule to the Discretionary Access Control List (DACL) associated with this

@@ -6,7 +6,6 @@ using System.Security;
 using Interop.CERTENROLLLib;
 using PKI.CertificateTemplates;
 using PKI.Exceptions;
-using PKI.Utils;
 using SysadminsLV.PKI.Utils;
 
 namespace PKI.Enrollment.Policy;
@@ -159,7 +158,7 @@ public class PolicyServerClient {
             FilePath = policy.GetCachePath();
             UserContext = userContext;
         } catch (Exception e) {
-            throw Error.ComExceptionHandler(e);
+            throw ErrorHelper.ComExceptionHandler(e);
         } finally {
             CryptographyUtils.ReleaseCom(policy);
         }
@@ -244,7 +243,7 @@ public class PolicyServerClient {
             get_templates();
             PolicyLoaded = true;
         } catch (Exception e) {
-            throw Error.ComExceptionHandler(e);
+            throw ErrorHelper.ComExceptionHandler(e);
         }
     }
     ///  <summary>
@@ -298,7 +297,7 @@ public class PolicyServerClient {
             }
             registered = true;
         } catch (Exception e) {
-            throw Error.ComExceptionHandler(e);
+            throw ErrorHelper.ComExceptionHandler(e);
         } finally {
             CryptographyUtils.ReleaseCom(urlClass);
         }
@@ -330,7 +329,7 @@ public class PolicyServerClient {
                 ? X509CertificateEnrollmentContext.ContextUser
                 : X509CertificateEnrollmentContext.ContextMachine);
         } catch (Exception e) {
-            throw Error.ComExceptionHandler(e);
+            throw ErrorHelper.ComExceptionHandler(e);
         } finally {
             CryptographyUtils.ReleaseCom(urlClass);
         }

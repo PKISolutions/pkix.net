@@ -5,7 +5,6 @@ using System.Security.AccessControl;
 using System.Security.Principal;
 using CERTADMINLib;
 using PKI.Exceptions;
-using PKI.Utils;
 using SysadminsLV.PKI.Management.CertificateServices;
 using SysadminsLV.PKI.Utils;
 
@@ -86,7 +85,7 @@ public sealed class OcspResponderSecurityDescriptor : CommonObjectSecurity {
     /// <remarks>This member is not implemented.</remarks>
     public override AuditRule AuditRuleFactory(IdentityReference identityReference, Int32 accessMask, Boolean isInherited,
         InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags) {
-        throw new NotSupportedException(Error.E_AUDITNOTSUPPOERTED);
+        throw new NotSupportedException(ErrorHelper.E_AUDITNOTSUPPOERTED);
     }
     /// <summary>
     ///		Adds the specified access rule to the Discretionary Access Control List (DACL) associated with this
@@ -173,7 +172,7 @@ public sealed class OcspResponderSecurityDescriptor : CommonObjectSecurity {
         try {
             ocspAdmin.SetSecurity(ComputerName, GetSecurityDescriptorSddlForm(AccessControlSections.All));
         } catch (COMException cex) {
-            if (cex.ErrorCode == Error.RpcUnavailableException) {
+            if (cex.ErrorCode == ErrorHelper.RpcUnavailableException) {
                 var e = new ServerUnavailableException(ComputerName);
                 e.Data.Add(nameof(e.Source), OfflineSource.DCOM);
                 throw e;

@@ -125,7 +125,7 @@ static class CryptoRegistry {
             CryptographyUtils.ReleaseCom(CertAdmin);
             return retn;
         } catch (Exception e) {
-            throw Error.ComExceptionHandler(e);
+            throw ErrorHelper.ComExceptionHandler(e);
         } finally {
             CryptographyUtils.ReleaseCom(CertAdmin);
         }
@@ -140,7 +140,7 @@ static class CryptoRegistry {
         try {
             CertAdmin.SetConfigEntry(configString, node, entry, value);
         } catch (Exception e) {
-            throw Error.ComExceptionHandler(e);
+            throw ErrorHelper.ComExceptionHandler(e);
         } finally {
             CryptographyUtils.ReleaseCom(CertAdmin);
         }
