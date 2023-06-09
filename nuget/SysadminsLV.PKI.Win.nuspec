@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>SysadminsLV.PKI.Win</id>
+        <version>$version$</version>
+        <authors>Vadims Podans</authors>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <license type="expression">MS-PL</license>
+        <repository type="git" url="https://github.com/PKISolutions/pkix.net" />
+        <projectUrl>https://github.com/PKISolutions/pkix.net</projectUrl>
+        <description>This package is a framework library to Microsoft Active Directory Certificate Services in .NET.</description>
+        <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
+        <copyright>Copyright © PKI Solutions LLC 2019-$year$</copyright>
+        <tags>X509 PKI PKIX ADCS</tags>
+        <dependencies>
+            <group targetFramework=".NETFramework4.7.2"/>
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="..\src\SysadminsLV.PKI.Win\bin\Release\*.*" target="lib/net472"/>
+    </files>
+</package>

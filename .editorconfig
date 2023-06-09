@@ -2,3 +2,6 @@
 
 # IDE0049: Simplify Names
 dotnet_style_predefined_type_for_locals_parameters_members = false
+
+# IDE0049: Simplify Names
+dotnet_style_predefined_type_for_member_access = false
