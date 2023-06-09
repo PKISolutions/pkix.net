@@ -68,24 +68,6 @@ public class CertificateAuthority {
         // read other stuff
         initialize();
     }
-    /// <param name="computerName">
-    /// Specifies the computer name where Certificate Services are installed.
-    /// </param>
-    /// <param name="name">
-    /// Specifies the common name of the Certification Authority that is installed on the
-    /// computer specified in the <strong>computerName</strong> parameter.
-    /// </param>
-    /// <exception cref="ArgumentNullException">Either <strong>computerName</strong> or <strong>name</strong> parameter is null or empty.</exception>
-    /// <exception cref="ServerUnavailableException">The server could not be contacted via both methods: remote registry
-    /// and RPC/DCOM transport.</exception>
-    /// <remarks>
-    /// This constructor allows to connect to a CA server if it can be contacted at least via RPC/DCOM.
-    /// <para>The default behavior is to retrieve registry information via remote registry functions. If the connection is
-    /// unsuccessful, the code falls back to RPC/DCOM connections (by using <strong>ICertAdmin2</strong> COM interface) to
-    /// get registry data.</para>
-    /// </remarks>
-    [Obsolete("Deprecated. Use 'Connect(String)' static method instead.", true)]
-    public CertificateAuthority(String computerName, String name) : this(computerName) { }
 
     /// <summary>
     /// Gets the common name of the Certification Authority in a sanitized form as specified in
@@ -160,21 +142,6 @@ public class CertificateAuthority {
     /// Gets the most recent CA certificate.
     /// </summary>
     public X509Certificate2 Certificate { get; private set; }
-    /// <summary>
-    /// Gets the most recent Base CRL object.
-    /// </summary>
-    [Obsolete("Use 'GetBaseCRL()' method instead.", true)]
-    public X509CRL2 BaseCRL => null;
-    /// <summary>
-    /// Gets the most recent Delta CRL. If CA server is not configured to use Delta CRLs, the property is empty.
-    /// </summary>
-    [Obsolete("Use 'GetDeltaCRL()' method instead.", true)]
-    public X509CRL2 DeltaCRL => null;
-    /// <summary>
-    /// Gets or sets an array of Certification Authority's web services URI.
-    /// </summary>
-    [Obsolete("Use 'EnrollmentEndpoints' property instead.")]
-    public CESUri[] EnrollmentServiceURI { get; set; }
     /// <summary>
     /// Gets a collection of Certification Authority's web services enrollment endpoints.
     /// </summary>
