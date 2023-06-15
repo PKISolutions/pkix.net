@@ -63,3 +63,5 @@ This project requires the following NuGet packages:
 ## API Documentation
 - [SysadminsLV.PKI.Win package docs](https://www.pkisolutions.com/apidocs/SysadminsLV.PKI.Win)
 
+## CI/CD and NuGet Status
+[![Build Status](https://dev.azure.com/pkisolutions/PKI%20Libraries/_apis/build/status%2FSysadminsLV.PKI.Win-Nupkg?branchName=master)](https://dev.azure.com/pkisolutions/PKI%20Libraries/_build/latest?definitionId=28&branchName=master) ![image](https://img.shields.io/nuget/v/SysadminsLV.PKI.Win)
