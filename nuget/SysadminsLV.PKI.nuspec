@@ -13,8 +13,14 @@
     <copyright>Copyright © PKI Solutions 2019-$year$</copyright>
     <tags>X509 PKI PKIX</tags>
     <dependencies>
-        <group targetFramework=".NETFramework4.7.2"/>
-        <group targetFramework="netstandard2.0"/>
+      <group targetFramework=".NETFramework4.7.2">
+        <dependency id="SysadminsLV.Asn1Parser" version="1.2.11" />
+        <dependency id="System.Security.Cryptography.Pkcs" version="4.7.0" />
+      </group>
+      <group targetFramework="netstandard2.0">
+        <dependency id="SysadminsLV.Asn1Parser" version="1.2.11" />
+        <dependency id="System.Security.Cryptography.Pkcs" version="4.7.0" />
+      </group>
     </dependencies>
   </metadata>
     <files>

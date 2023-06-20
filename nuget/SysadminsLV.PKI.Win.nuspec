@@ -13,7 +13,11 @@
         <copyright>Copyright © PKI Solutions LLC 2019-$year$</copyright>
         <tags>X509 PKI PKIX ADCS</tags>
         <dependencies>
-            <group targetFramework=".NETFramework4.7.2"/>
+            <group targetFramework=".NETFramework4.7.2">
+              <dependency id="SysadminsLV.Asn1Parser" version="1.2.11" />
+              <dependency id="SysadminsLV.PKI" version="4.0.2" />
+              <dependency id="SysadminsLV.PKI.OcspClient" version="4.0.2" />
+            </group>
         </dependencies>
     </metadata>
     <files>
