@@ -22,7 +22,9 @@ This project requires the following NuGet packages:
 - [SysadminsLV.PKI package docs](https://www.pkisolutions.com/apidocs/SysadminsLV.PKI)
 
 ## CI/CD and NuGet Status
-[![Build Status](https://dev.azure.com/pkisolutions/PKI%20Libraries/_apis/build/status/SysadminsLV.PKI-Nupkg?branchName=SysadminsLV.PKI-v2)](https://dev.azure.com/pkisolutions/PKI%20Libraries/_build/latest?definitionId=29&branchName=SysadminsLV.PKI-v2) ![image](https://img.shields.io/nuget/v/SysadminsLV.PKI)
+![Build status](https://dev.azure.com/pkisolutions/PKI%20Libraries/_apis/build/status/SysadminsLV.PKI.Win-Nupkg)
+![image](https://vsrm.dev.azure.com/pkisolutions/_apis/public/Release/badge/8c06c171-5a0f-4829-83bc-f52ed00db68c/3/3)
+![image](https://img.shields.io/nuget/v/SysadminsLV.PKI)
 
 # SysadminsLV.PKI.OcspClient package
 
@@ -42,7 +44,9 @@ This project requires the following NuGet packages:
 - [SysadminsLV.PKI.OcspClient package docs](https://www.pkisolutions.com/apidocs/SysadminsLV.PKI.OcspClient)
 
 ## CI/CD and NuGet Status
-[![Build Status](https://dev.azure.com/pkisolutions/PKI%20Libraries/_apis/build/status/SysadminsLV.PKI.OcspClient-Nupkg?branchName=SysadminsLV.PKI-v2)](https://dev.azure.com/pkisolutions/PKI%20Libraries/_build/latest?definitionId=27&branchName=SysadminsLV.PKI-v2) ![image](https://img.shields.io/nuget/v/SysadminsLV.PKI.OcspClient)
+![Build Status](https://dev.azure.com/pkisolutions/PKI%20Libraries/_apis/build/status/SysadminsLV.PKI.OcspClient-Nupkg)
+![image](https://vsrm.dev.azure.com/pkisolutions/_apis/public/Release/badge/8c06c171-5a0f-4829-83bc-f52ed00db68c/4/4)
+![image](https://img.shields.io/nuget/v/SysadminsLV.PKI.OcspClient)
 
 
 # SysadminsLV.PKI.Win package
@@ -64,4 +68,6 @@ This project requires the following NuGet packages:
 - [SysadminsLV.PKI.Win package docs](https://www.pkisolutions.com/apidocs/SysadminsLV.PKI.Win)
 
 ## CI/CD and NuGet Status
-[![Build Status](https://dev.azure.com/pkisolutions/PKI%20Libraries/_apis/build/status%2FSysadminsLV.PKI.Win-Nupkg?branchName=master)](https://dev.azure.com/pkisolutions/PKI%20Libraries/_build/latest?definitionId=28&branchName=master) ![image](https://img.shields.io/nuget/v/SysadminsLV.PKI.Win)
+![Build Status](https://dev.azure.com/pkisolutions/PKI%20Libraries/_apis/build/status/SysadminsLV.PKI.Win-Nupkg)
+![image](https://vsrm.dev.azure.com/pkisolutions/_apis/public/Release/badge/8c06c171-5a0f-4829-83bc-f52ed00db68c/5/5)
+![image](https://img.shields.io/nuget/v/SysadminsLV.PKI.Win)
