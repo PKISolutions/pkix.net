@@ -1,6 +1,7 @@
 ﻿using System;
 
-namespace PKI.Enrollment.Policy;
+namespace SysadminsLV.PKI.ADCS;
+
 /// <summary>
 /// The <strong>PolicyServerFlagsEnum</strong> enumeration contains certificate enrollment policy (CEP) server flags
 /// </summary>

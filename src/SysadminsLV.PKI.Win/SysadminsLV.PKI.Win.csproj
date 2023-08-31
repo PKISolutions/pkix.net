@@ -297,7 +297,6 @@
     <Compile Include="Win32\CryptUI.cs" />
     <Compile Include="Enrollment\Autoenrollment.cs" />
     <Compile Include="Enrollment\CertRequestStatus.cs" />
-    <Compile Include="Enrollment\EnrollmentStatusEnum.cs" />
     <Compile Include="Enrollment\Policy\PolicyAuthenticationEnum.cs" />
     <Compile Include="Enrollment\Policy\PolicyServerClient.cs" />
     <Compile Include="Enrollment\Policy\PolicyServerUrlFlagsEnum.cs" />

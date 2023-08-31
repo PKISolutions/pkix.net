@@ -1,11 +1,9 @@
-﻿using System;
+﻿namespace SysadminsLV.PKI.ADCS;
 
-namespace SysadminsLV.PKI.Management.CertificateServices;
 /// <summary>
 /// Contains enumeration values for possible authentication types for Certificate Enrollment Web Services.
 /// </summary>
-[Obsolete("Use 'AdcsEnrollAuthenticationType' instead.")]
-public enum PolicyEnrollAuthenticationType {
+public enum AdcsEnrollAuthenticationType {
     /// <summary>
     /// Not used.
     /// </summary>

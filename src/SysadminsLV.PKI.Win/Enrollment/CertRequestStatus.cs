@@ -2,7 +2,7 @@
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using PKI.CertificateServices;
-using SysadminsLV.PKI.Exceptions;
+using SysadminsLV.PKI.Dcom;
 
 namespace PKI.Enrollment;
 /// <summary>
@@ -21,9 +21,9 @@ public class CertRequestStatus {
     /// <summary>
     /// Gets the request status.
     /// </summary>
-    public EnrollmentStatusEnum Status { get; set; }
+    public AdcsRequestStatus Status { get; set; }
     /// <summary>
-    /// If enrollment was successfull, the property contains issued certificate.
+    /// If enrollment was successful, the property contains issued certificate.
     /// </summary>
     public X509Certificate2 Certificate { get; set; }
     /// <summary>
@@ -36,7 +36,9 @@ public class CertRequestStatus {
     /// </summary>
     /// <param name="path">Path to a file.</param>
     public void Export(FileInfo path) {
-        if (Certificate.Handle.Equals(IntPtr.Zero)) { throw new UninitializedObjectException(); }
+        if (Certificate.Handle.Equals(IntPtr.Zero)) {
+            throw new InvalidOperationException();
+        }
         File.WriteAllBytes(path.FullName, Certificate.RawData);
     }
 }
