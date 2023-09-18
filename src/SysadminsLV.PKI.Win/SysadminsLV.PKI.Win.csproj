@@ -158,6 +158,7 @@
     <Compile Include="Dcom\Implementations\CertSrvRegManagerD.cs" />
     <Compile Include="Dcom\Implementations\CertEnrollCertificateTemplate.cs" />
     <Compile Include="Dcom\Implementations\ImportForeignOption.cs" />
+    <Compile Include="Enrollment\InstallResponseFlags.cs" />
     <Compile Include="Management\ActiveDirectory\DsCertEnrollServer.cs" />
     <Compile Include="Management\ActiveDirectory\DsCertificateTemplate.cs" />
     <Compile Include="Management\ActiveDirectory\DsEnrollServerFlag.cs" />
