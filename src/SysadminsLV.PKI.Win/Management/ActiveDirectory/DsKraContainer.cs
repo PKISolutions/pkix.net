@@ -94,6 +94,7 @@ public sealed class DsKraContainer : DsPkiCertContainer {
             foreach (DsCertificateEntry entry in DsList[name]) {
                 dsEntry.Properties["userCertificate"].Add(entry.Certificate.RawData);
             }
+            dsEntry.CommitChanges();
         }
         CleanupSave();
     }
