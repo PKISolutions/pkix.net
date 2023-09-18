@@ -110,7 +110,7 @@ public sealed class CertSrvSecurityDescriptor : CommonObjectSecurity {
         AuthorizationRuleCollection rules = GetAccessRules(true, false, typeof(NTAccount));
         CertSrvAccessRule existingRule = rules
             .Cast<CertSrvAccessRule>()
-            .FirstOrDefault(x => x.IdentityReference.Value.Equals(rule.IdentityReference.Value, StringComparison.OrdinalIgnoreCase));
+            .FirstOrDefault(x => x.IdentityReference.Value.Equals(rule.IdentityReference.Value, StringComparison.OrdinalIgnoreCase) && x.AccessControlType == rule.AccessControlType);
         if (existingRule != null) {
             RemoveAccessRule(existingRule);
             var ace = new CertSrvAccessRule(

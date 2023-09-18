@@ -101,7 +101,7 @@ public sealed class OcspResponderSecurityDescriptor : CommonObjectSecurity {
         AuthorizationRuleCollection rules = GetAccessRules(true, false, typeof(NTAccount));
         OcspResponderAccessRule existingRule = rules
             .Cast<OcspResponderAccessRule>()
-            .FirstOrDefault(x => x.IdentityReference.Value.Equals(rule.IdentityReference.Value, StringComparison.OrdinalIgnoreCase));
+            .FirstOrDefault(x => x.IdentityReference.Value.Equals(rule.IdentityReference.Value, StringComparison.OrdinalIgnoreCase) && x.AccessControlType == rule.AccessControlType);
         if (existingRule != null) {
             RemoveAccessRule(existingRule);
             var ace = new OcspResponderAccessRule(
