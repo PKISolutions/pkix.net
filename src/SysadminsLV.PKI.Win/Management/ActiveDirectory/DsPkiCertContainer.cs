@@ -62,7 +62,7 @@ public abstract class DsPkiCertContainer : DsPkiContainer {
         // if subject is empty, calculate SHA1 hash over subject name's raw data (48, 0)
         if (tokens.Count == 0) {
             var sb = new StringBuilder();
-            using (SHA1 hasher = SHA1.Create()) {
+            using (var hasher = SHA1.Create()) {
                 foreach (Byte b in hasher.ComputeHash(name.RawData)) {
                     sb.AppendFormat("{0:x2}", b);
                 }
@@ -103,8 +103,8 @@ public abstract class DsPkiCertContainer : DsPkiContainer {
                     _list.Add(item);
                 }
                 // add to child-specific list.
-                if (DsList.ContainsKey(key)) {
-                    DsList[key].AddRange(items);
+                if (DsList.TryGetValue(key, out List<DsCertificateEntry> certEntryList)) {
+                    certEntryList.AddRange(items);
                 } else {
                     DsList.Add(key, items);
                 }
@@ -146,6 +146,7 @@ public abstract class DsPkiCertContainer : DsPkiContainer {
             BaseEntry.CommitChanges();
             return true;
         }
+
         return false;
     }
     /// <summary>
@@ -167,12 +168,13 @@ public abstract class DsPkiCertContainer : DsPkiContainer {
         // mutually exclusive. entry cannot be added and removed at the same time.
         _toBeAdded.Add(entry.Name);
         _toBeRemoved.Remove(entry.Name);
-        if (DsList.ContainsKey(entry.Name)) {
-            DsList[entry.Name].Add(entry);
+        if (DsList.TryGetValue(entry.Name, out List<DsCertificateEntry> certEntryList)) {
+            certEntryList.Add(entry);
         } else {
             DsList.Add(entry.Name, new List<DsCertificateEntry>());
             DsList[entry.Name].Add(entry);
         }
+
         return IsModified = true;
     }
     /// <summary>
@@ -197,6 +199,7 @@ public abstract class DsPkiCertContainer : DsPkiContainer {
         _toBeAdded.Remove(entry.Name);
         _list.Remove(entry);
         DsList[entry.Name].Remove(entry);
+
         return IsModified = true;
     }
     /// <summary>
@@ -211,7 +214,7 @@ public abstract class DsPkiCertContainer : DsPkiContainer {
     protected virtual String GetContainerName(X509Certificate2 fromCert) {
         X500DistinguishedName fullSubject;
         // get the name to be used as the name in DS. If certificate subject is end entity,
-        // use issuer name (first attribute), if subject is CA, use subject name (first attrbiute).
+        // use issuer name (first attribute), if subject is CA, use subject name (first attribute).
         if (fromCert.Version == 3) {
             // attempt to retrieve Basic Constraints extension
             X509Extension ext = fromCert.Extensions[X509ExtensionOid.BasicConstraints];
@@ -227,9 +230,10 @@ public abstract class DsPkiCertContainer : DsPkiContainer {
                     : fromCert.IssuerName;
             }
         } else {
-            // V1 certificates are threated as end entity, so pick up issuer name.
+            // V1 certificates are treated as end entity, so pick up issuer name.
             fullSubject = fromCert.IssuerName;
         }
+
         return generateContainerName(fullSubject);
     }
 

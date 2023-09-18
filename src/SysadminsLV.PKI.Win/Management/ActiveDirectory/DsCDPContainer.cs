@@ -82,7 +82,7 @@ public class DsCDPContainer : DsPkiContainer {
     }
     static String getHostName(String suggestedHostName, X509CRL2 crl) {
         if (String.IsNullOrWhiteSpace(suggestedHostName)) {
-            X509PublishedCrlLocationsExtension pubCrl = (X509PublishedCrlLocationsExtension)crl.Extensions[X509ExtensionOid.PublishedCrlLocations];
+            var pubCrl = (X509PublishedCrlLocationsExtension)crl.Extensions[X509ExtensionOid.PublishedCrlLocations];
             if (pubCrl == null) {
                 throw new ArgumentException("Cannot find target location.");
             }
@@ -90,13 +90,13 @@ public class DsCDPContainer : DsPkiContainer {
             if (urls.Length == 0) {
                 throw new ArgumentException("Cannot find target location.");
             }
-            var tokens = urls[0].ToUpper().Split(new[] { "CN=" }, StringSplitOptions.RemoveEmptyEntries);
+            String[] tokens = urls[0].ToUpper().Split(new[] { "CN=" }, StringSplitOptions.RemoveEmptyEntries);
             suggestedHostName = tokens[2];
         }
         return suggestedHostName;
     }
     static String getEntryName(X509CRL2 crl) {
-        X509PublishedCrlLocationsExtension pubCrl = (X509PublishedCrlLocationsExtension)crl.Extensions[X509ExtensionOid.PublishedCrlLocations];
+        var pubCrl = (X509PublishedCrlLocationsExtension)crl.Extensions[X509ExtensionOid.PublishedCrlLocations];
         return pubCrl == null
             ? getEntryNameFromIssuer(crl)
             : getEntryNameFromUrl(pubCrl);
@@ -115,7 +115,7 @@ public class DsCDPContainer : DsPkiContainer {
         // if subject is empty, calculate SHA1 hash over subject name's raw data (48, 0)
         if (tokens.Count == 0) {
             var sb = new StringBuilder();
-            using (SHA1 hasher = SHA1.Create()) {
+            using (var hasher = SHA1.Create()) {
                 foreach (Byte b in hasher.ComputeHash(crl.IssuerName.RawData)) {
                     sb.AppendFormat("{0:x2}", b);
                 }
