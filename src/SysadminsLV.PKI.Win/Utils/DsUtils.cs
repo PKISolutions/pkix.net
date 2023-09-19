@@ -234,9 +234,9 @@ static class DsUtils {
     }
     static String getExceedHash(IEnumerable<Char> str) {
         unchecked {
-            UInt16 hash = str.Aggregate((UInt16)0, (h, c) => {
-                UInt16 lowBit = (h & 0x8000) == 0 ? (UInt16)0 : (UInt16)1;
-                return (UInt16)(((h << 1) | lowBit) + c);
+            UInt16 hash = str.Aggregate((UInt16)0, (hash, excessChar) => {
+                UInt16 lowBit = (hash & 0x8000) == 0 ? (UInt16)0 : (UInt16)1;
+                return (UInt16)(((hash << 1) | lowBit) + excessChar);
             });
             return hash.ToString("d5");
         }
