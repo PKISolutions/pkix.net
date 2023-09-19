@@ -233,21 +233,21 @@ public sealed class CertTemplateSecurityDescriptor : CommonObjectSecurity {
     /// </summary>
     /// <returns></returns>
     public ActiveDirectorySecurity ToActiveDirectorySecurity() {
-        using var entry = new DirectoryEntry("LDAP://" + _x500Name);
+        using var entry = new DirectoryEntry("LDAP://" + DsUtils.EscapeLdapPath(_x500Name));
         return toAdSecurity(entry);
     }
     /// <summary>
     /// Writes this object to a securable object's Access Control List.
     /// </summary>
     public void SetObjectSecurity() {
-        using var entry = new DirectoryEntry("LDAP://" + _x500Name);
+        using var entry = new DirectoryEntry("LDAP://" + DsUtils.EscapeLdapPath(_x500Name));
         toAdSecurity(entry);
         entry.CommitChanges();
     }
 
     void fromActiveDirectorySecurity() {
         ActiveDirectorySecurity dsSecurity;
-        using (var entry = new DirectoryEntry("LDAP://" + _x500Name)) {
+        using (var entry = new DirectoryEntry("LDAP://" + DsUtils.EscapeLdapPath(_x500Name))) {
             dsSecurity = entry.ObjectSecurity;
         }
 

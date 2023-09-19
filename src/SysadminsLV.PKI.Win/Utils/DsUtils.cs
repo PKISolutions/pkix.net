@@ -87,14 +87,14 @@ static class DsUtils {
             : String.Empty;
     }
     public static Object GetEntryProperty(String ldapPath, String prop) {
-        using var entry = new DirectoryEntry($"LDAP://{escapeLdapPath(ldapPath)}");
+        using var entry = new DirectoryEntry($"LDAP://{EscapeLdapPath(ldapPath)}");
         return entry.Properties.Contains(prop)
             ? entry.Properties[prop].Value
             : null;
     }
     public static DsPropertyCollection GetEntryProperties(String ldapPath, params String[] properties) {
         var retValue = new DsPropertyCollection();
-        using var entry = new DirectoryEntry($"LDAP://{escapeLdapPath(ldapPath)}");
+        using var entry = new DirectoryEntry($"LDAP://{EscapeLdapPath(ldapPath)}");
         foreach (String prop in properties) {
             retValue.Add(prop, entry.Properties.Contains(prop)
                 ? entry.Properties[prop].Value
@@ -111,8 +111,8 @@ static class DsUtils {
     /// <param name="schemaClass">Child schema class.</param>
     /// <returns>DS path to created child.</returns>
     public static String AddChildEntry(String ldapPath, String name, String schemaClass) {
-        using var entry = new DirectoryEntry($"LDAP://{escapeLdapPath(ldapPath)}");
-        using DirectoryEntry newEntry = entry.Children.Add(EscapeChars(name), schemaClass);
+        using var entry = new DirectoryEntry($"LDAP://{EscapeLdapPath(ldapPath)}");
+        using DirectoryEntry newEntry = entry.Children.Add(EscapeRDN(name), schemaClass);
         newEntry.CommitChanges();
 
         return (String)newEntry.Properties[PropDN].Value;
@@ -122,20 +122,20 @@ static class DsUtils {
     /// </summary>
     /// <param name="ldapPath">Child's DS path to remove.</param>
     public static void RemoveChildEntry(String ldapPath) {
-        using var entryToDelete = new DirectoryEntry($"LDAP://{escapeLdapPath(ldapPath)}");
+        using var entryToDelete = new DirectoryEntry($"LDAP://{EscapeLdapPath(ldapPath)}");
         using DirectoryEntry parent = entryToDelete.Parent;
         parent.Children.Remove(entryToDelete);
         parent.CommitChanges();
     }
     public static void SetEntryProperty(String ldapPath, String prop, Object value) {
-        using var entry = new DirectoryEntry($"LDAP://{escapeLdapPath(ldapPath)}");
+        using var entry = new DirectoryEntry($"LDAP://{EscapeLdapPath(ldapPath)}");
         entry.Properties[prop].Value = value;
         entry.CommitChanges();
     }
     public static String Find(String searchRoot, String propName, String propValue) {
-        using var entry = new DirectoryEntry($"LDAP://{escapeLdapPath(searchRoot)}");
+        using var entry = new DirectoryEntry($"LDAP://{EscapeLdapPath(searchRoot)}");
         using var searcher = new DirectorySearcher(entry);
-        searcher.Filter = $"{propName}={EscapeChars(propValue)}";
+        searcher.Filter = $"{propName}={EscapeRDN(propValue)}";
 
         return (String)searcher.FindOne()?.GetDirectoryEntry().Properties[PropDN].Value;
     }
@@ -146,7 +146,7 @@ static class DsUtils {
         } catch { return false; }
     }
     public static DirectoryEntries GetChildItems(String ldap) {
-        return new DirectoryEntry($"LDAP://{escapeLdapPath(ldap)}").Children;
+        return new DirectoryEntry($"LDAP://{EscapeLdapPath(ldap)}").Children;
     }
     public static String BindServerToSite(String computerName) {
         if (String.IsNullOrEmpty(computerName)) {
@@ -173,7 +173,7 @@ static class DsUtils {
         return null;
     }
 
-    static String escapeLdapPath(String ldapPath) {
+    public static String EscapeLdapPath(String ldapPath) {
         var sb = new StringBuilder();
         X500RdnAttributeCollection rdns = new X500DistinguishedName(ldapPath).GetRdnAttributes();
         for (Int32 index = 1; index < rdns.Count; index++) {
@@ -181,12 +181,12 @@ static class DsUtils {
             sb.AppendFormat(",{0}={1}", old.Oid.FriendlyName, old.Value);
         }
 
-        sb.Insert(0, $"CN={EscapeChars(rdns[0].Value)}");
+        sb.Insert(0, $"CN={EscapeRDN(rdns[0].Value)}");
 
         return sb.ToString();
     }
     // see: http://msdn.microsoft.com/en-us/library/aa746475.aspx
-    public static String EscapeChars(String inputStr) {
+    public static String EscapeRDN(String inputStr) {
         return inputStr
             // replace with backslash and ASCII code (in hex)
             .Replace("*", @"\2a")
