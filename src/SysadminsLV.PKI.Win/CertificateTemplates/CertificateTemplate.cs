@@ -143,18 +143,18 @@ public class CertificateTemplate {
     public CertificateTemplateSettings Settings { get; private set; }
 
     void searchByQuery(String findType, String findValue) {
-        String cn         = findType.ToLower() switch {
-            "name"        => DsUtils.Find(_baseDsPath, DsUtils.PropCN, escapeChars(findValue)),
+        String dn         = findType.ToLower() switch {
+            "name"        => DsUtils.Find(_baseDsPath, DsUtils.PropCN, findValue),
             "displayname" => DsUtils.Find(_baseDsPath, DsUtils.PropDisplayName, findValue),
             "oid"         => DsUtils.Find(_baseDsPath, DsUtils.PropCertTemplateOid, findValue),
             _             => throw new Exception("The value for 'findType' must be either 'Name', 'DisplayName' or 'OID'.")
         };
 
-        if (String.IsNullOrWhiteSpace(cn)) {
+        if (String.IsNullOrWhiteSpace(dn)) {
             throw new ArgumentException("No certificate templates match search criteria.");
         }
-
-        initializeFromDs(cn);
+        
+        initializeFromDs(dn);
     }
     void initializeFromDs(String ldapPath) {
         DsPropertyCollection props = DsUtils.GetEntryProperties(
@@ -268,19 +268,6 @@ public class CertificateTemplate {
         setClientSupport((PrivateKeyFlags)Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropPrivateKeyFlags]));
         setServerSupport((PrivateKeyFlags)Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropPrivateKeyFlags]));
     }
-    static String escapeChars(String inputStr) {
-        return inputStr
-            .Replace(@"\", @"\\")
-            .Replace(",", @"\,")
-            .Replace("/", @"\/")
-            .Replace("#", @"\#")
-            .Replace("+", @"\+")
-            .Replace("<", @"\<")
-            .Replace(">", @"\>")
-            .Replace(";", @"\;")
-            .Replace("\"", "\\\"")
-            .Replace("=", @"\=");
-    }
 
     /// <summary>
     /// Enumerates certificate templates registered in Active Directory.
@@ -350,7 +337,6 @@ public class CertificateTemplate {
     /// </summary>
     /// <returns>Certificate template textual representation.</returns>
     public String Format() {
-        String nl = Environment.NewLine;
         var SB = new StringBuilder();
         SB.AppendLine(@$"
 [General Settings]

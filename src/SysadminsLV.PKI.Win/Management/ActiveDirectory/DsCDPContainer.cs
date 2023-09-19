@@ -129,7 +129,7 @@ public class DsCDPContainer : DsPkiContainer {
         if (caVersion == null || caVersion.CAKeyVersion < 1) {
             return objectName;
         }
-        return DsUtils.GetSanitizedName($"{objectName}({caVersion.CAKeyVersion})");
+        return DsUtils.GetWcceSanitizedName($"{objectName}({caVersion.CAKeyVersion})");
     }
     IDictionary<String, ISet<String>> getUpdateList() {
         var retValue = new Dictionary<String, ISet<String>>();

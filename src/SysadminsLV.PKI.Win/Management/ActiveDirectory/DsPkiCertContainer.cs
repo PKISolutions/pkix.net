@@ -69,7 +69,7 @@ public abstract class DsPkiCertContainer : DsPkiContainer {
             }
             return sb.ToString();
         }
-        return DsUtils.GetSanitizedName(tokens[0].Value);
+        return DsUtils.GetWcceSanitizedName(tokens[0].Value);
     }
 
     /// <summary>

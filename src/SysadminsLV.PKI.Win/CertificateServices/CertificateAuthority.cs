@@ -322,7 +322,7 @@ public class CertificateAuthority {
             case "CommonName":
                 return Name;
             case "CATruncatedName":
-                return DsUtils.GetSanitizedName(Name);
+                return DsUtils.GetWcceSanitizedName(Name);
             case "ConfigurationContainer":
                 _regReader.SetRootNode(true);
                 return _regReader.GetStringEntry("DSConfigDN");
