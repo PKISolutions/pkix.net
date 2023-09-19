@@ -16,6 +16,7 @@ public class AdcsDbRow {
     /// Gets or sets RequestId which corresponds to request ID number in CA database. This property is set to zero
     /// for non-request tables.
     /// </summary>
+    [Obsolete("Use 'RowID' property instead.", true)]
     public Int32 RequestId { get; set; }
     /// <summary>
     /// Gets or sets the configuration string of the CA server to which this object is related.
