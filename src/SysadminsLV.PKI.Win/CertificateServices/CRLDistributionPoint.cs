@@ -47,7 +47,7 @@ public class CRLDistributionPoint {
         }
     }
     /// <summary>
-    /// Indiciates whether the object was modified after it was instantiated.
+    /// Indicates whether the object was modified after it was instantiated.
     /// </summary>
     public Boolean IsModified { get; private set; }
 
@@ -121,7 +121,7 @@ public class CRLDistributionPoint {
         _variableValueMapping.Add("<ConfigurationContainer>", ca.GetConfigEntry("ConfigurationContainer"));
         _variableValueMapping.Add("<CATruncatedName>", ca.GetConfigEntry("CATruncatedName"));
         _variableValueMapping.Add("<CRLNameSuffix>", ca.GetConfigEntry("ServerDNSName"));
-        _variableValueMapping.Add("<DeltaCRLAllowed>", ca.GetConfigEntry("+"));
+        _variableValueMapping.Add("<DeltaCRLAllowed>", "+");
         _variableValueMapping.Add("<CDPObjectClass>", "?certificateRevocationList?base?objectClass=cRLDistributionPoint");
         _variableValueMapping.Add("<CAObjectClass>", "?cACertificate?base?objectClass=certificationAuthority");
     }
@@ -129,7 +129,7 @@ public class CRLDistributionPoint {
     /// <summary>
     /// Updates CRL Distribution Points configuration by writing them to Certification Authority.
     /// </summary>
-    /// <param name="restart">Indiciates whether to restart certificate services to immediately apply changes. Updated settings has no effect until
+    /// <param name="restart">Indicates whether to restart certificate services to immediately apply changes. Updated settings has no effect until
     /// CA service is restarted.
     /// </param>
     /// <remarks>
