@@ -203,7 +203,8 @@ public abstract class SignedPkcs7<T> where T : class {
         if (first.Count != second.Count) {
             return false;
         }
-        return first.Intersect(second).Count() == first.Count;
+
+        return first.SequenceEqual(second);
     }
     Boolean checkSingleHash(PkcsSignerInfo signerInfo) {
         Byte[] hashValue = getHashValue(signerInfo);
