@@ -88,8 +88,8 @@
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="SysadminsLV.Asn1Parser, Version=1.2.11.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SysadminsLV.PKI.OcspClient.4.0.2\lib\net472\SysadminsLV.Asn1Parser.dll</HintPath>
+    <Reference Include="SysadminsLV.Asn1Parser, Version=1.2.12.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SysadminsLV.Asn1Parser.1.2.12\lib\net472\SysadminsLV.Asn1Parser.dll</HintPath>
     </Reference>
     <Reference Include="SysadminsLV.PKI, Version=4.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SysadminsLV.PKI.OcspClient.4.0.2\lib\net472\SysadminsLV.PKI.dll</HintPath>

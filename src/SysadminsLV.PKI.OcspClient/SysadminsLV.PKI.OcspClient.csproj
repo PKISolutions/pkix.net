@@ -9,12 +9,12 @@
       <Description>Implements OCSP client to use in .NET</Description>
       <PackageLicenseExpression>MS-PL</PackageLicenseExpression>
       <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-      <Version>4.0.3</Version>
+      <Version>4.0.4</Version>
       <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SysadminsLV.Asn1Parser" Version="1.2.11" />
+    <PackageReference Include="SysadminsLV.Asn1Parser" Version="1.2.12" />
     <PackageReference Include="SysadminsLV.PKI" Version="4.0.2" />
   </ItemGroup>
 </Project>
