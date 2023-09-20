@@ -56,7 +56,7 @@ public sealed class DsaPrivateKey : AsymmetricKeyPair {
         BigInteger x = bigIntegerFromParameter(dsaParams.X);
         BigInteger p = bigIntegerFromParameter(dsaParams.P);
         BigInteger y = BigInteger.ModPow(g, x, p);
-        dsaParams.Y = GetPositiveInteger(y.ToByteArray().Reverse().ToArray());
+        dsaParams.Y = DecodePositiveInteger(y.ToByteArray().Reverse().ToArray());
     }
     static BigInteger bigIntegerFromParameter(Byte[] parameter) {
         List<Byte> arr = parameter.ToList();
@@ -85,10 +85,10 @@ public sealed class DsaPrivateKey : AsymmetricKeyPair {
         decodeParams(asn);
         // y public exponent
         asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
-        dsaParams.Y = GetPositiveInteger(asn.GetPayload());
+        dsaParams.Y = DecodePositiveInteger(asn.GetPayload());
         // x private exponent
         asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
-        dsaParams.X = GetPositiveInteger(asn.GetPayload());
+        dsaParams.X = DecodePositiveInteger(asn.GetPayload());
     }
     void decodePkcs8(Asn1Reader asn) {
         KeyFormat = KeyPkcsFormat.Pkcs8;
@@ -113,17 +113,17 @@ public sealed class DsaPrivateKey : AsymmetricKeyPair {
     void decodeParams(Asn1Reader asn) {
         // modulus p
         asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
-        dsaParams.P = GetPositiveInteger(asn.GetPayload());
+        dsaParams.P = DecodePositiveInteger(asn.GetPayload());
         // modulus q
         asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
-        dsaParams.Q = GetPositiveInteger(asn.GetPayload());
+        dsaParams.Q = DecodePositiveInteger(asn.GetPayload());
         // base g
         asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
-        dsaParams.G = GetPositiveInteger(asn.GetPayload());
+        dsaParams.G = DecodePositiveInteger(asn.GetPayload());
     }
     void decodePrivateKey(Byte[] rawData) {
         var asn = new Asn1Reader(rawData);
-        dsaParams.X = GetPositiveInteger(asn.GetPayload());
+        dsaParams.X = DecodePositiveInteger(asn.GetPayload());
     }
 
     /// <inheritdoc />

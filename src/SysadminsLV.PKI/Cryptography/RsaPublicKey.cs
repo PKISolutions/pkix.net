@@ -83,7 +83,7 @@ public sealed class RsaPublicKey : AsymmetricKeyPair {
     void decodePkcs1Key(Byte[] rawPublicKey) {
         var asn = new Asn1Reader(rawPublicKey);
         asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
-        Modulus = GetPositiveInteger(asn.GetPayload());
+        Modulus = DecodePositiveInteger(asn.GetPayload());
         asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
         PublicExponent = asn.GetPayload();
     }

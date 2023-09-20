@@ -79,30 +79,69 @@ public sealed class RsaPrivateKey : AsymmetricKeyPair {
         asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
         // modulus: Modulus
         asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
-        rsaParameters.Modulus = GetPositiveInteger(asn.GetPayload());
+        rsaParameters.Modulus = DecodePositiveInteger(asn.GetPayload());
         // publicExponent: Exponent
         asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
         rsaParameters.Exponent = asn.GetPayload();
         // privateExponent: D
         asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
-        rsaParameters.D = GetPositiveInteger(asn.GetPayload());
+        rsaParameters.D = DecodePositiveInteger(asn.GetPayload());
         // prime1: P
         asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
-        rsaParameters.P = GetPositiveInteger(asn.GetPayload());
+        rsaParameters.P = DecodePositiveInteger(asn.GetPayload());
         // prime2: Q
         asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
-        rsaParameters.Q = GetPositiveInteger(asn.GetPayload());
+        rsaParameters.Q = DecodePositiveInteger(asn.GetPayload());
         // exponent1: DP
         asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
-        rsaParameters.DP = GetPositiveInteger(asn.GetPayload());
+        rsaParameters.DP = DecodePositiveInteger(asn.GetPayload());
         // exponent2: DQ
         asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
-        rsaParameters.DQ = GetPositiveInteger(asn.GetPayload());
+        rsaParameters.DQ = DecodePositiveInteger(asn.GetPayload());
         // coefficient: InverseQ
         asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
-        rsaParameters.InverseQ = GetPositiveInteger(asn.GetPayload());
+        rsaParameters.InverseQ = DecodePositiveInteger(asn.GetPayload());
         rsaKey = RSA.Create();
         rsaKey.ImportParameters(rsaParameters);
+    }
+
+    /// <summary>
+    /// Exports RSA private key into 
+    /// </summary>
+    /// <param name="format">Specifies the output format. Can be either, PKCS#1 or PKCS#8.</param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"><strong>format</strong> parameter value is not valid.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><strong>format</strong> parameter value is out of range.</exception>
+    /// <exception cref="CryptographicException">The key is not exportable.</exception>
+    public Byte[] Export(KeyPkcsFormat format) {
+        switch (format) {
+            case KeyPkcsFormat.Unknown:
+                throw new ArgumentException("Specified export format is not valid.");
+            case KeyPkcsFormat.Pkcs1:
+                return exportPkcs1();
+            case KeyPkcsFormat.Pkcs8:
+                return Asn1Builder.Create()
+                    .AddInteger(0)
+                    .AddDerData(new AlgorithmIdentifier(new Oid(AlgorithmOid.RSA), new Asn1Null().GetRawData()).RawData)
+                    .AddOctetString(exportPkcs1())
+                    .GetEncoded();
+            default:
+                throw new ArgumentOutOfRangeException(nameof(format), format, null);
+        }
+    }
+    Byte[] exportPkcs1() {
+        RSAParameters rsaParams = rsaKey.ExportParameters(true);
+        return Asn1Builder.Create()
+            .AddSequence(x => x.AddInteger(0)
+                             .AddDerData(EncodePositiveInteger(rsaParams.Modulus))
+                             .AddDerData(EncodePositiveInteger(rsaParams.Exponent))
+                             .AddDerData(EncodePositiveInteger(rsaParams.D))
+                             .AddDerData(EncodePositiveInteger(rsaParams.P))
+                             .AddDerData(EncodePositiveInteger(rsaParams.Q))
+                             .AddDerData(EncodePositiveInteger(rsaParams.DP))
+                             .AddDerData(EncodePositiveInteger(rsaParams.DQ))
+                             .AddDerData(EncodePositiveInteger(rsaParams.InverseQ)))
+            .GetRawData();
     }
 
     /// <inheritdoc />

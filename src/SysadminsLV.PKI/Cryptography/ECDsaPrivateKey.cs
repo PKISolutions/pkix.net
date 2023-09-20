@@ -137,7 +137,7 @@ public sealed class ECDsaPrivateKey : AsymmetricKeyPair {
         ecParameters.Curve.G.Y = key.Skip(key.Length / 2).ToArray();
         // order
         asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
-        ecParameters.Curve.Order = GetPositiveInteger(asn.GetPayload());
+        ecParameters.Curve.Order = DecodePositiveInteger(asn.GetPayload());
         // co-factor
         asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
         ecParameters.Curve.Cofactor = asn.GetPayload();
@@ -150,7 +150,7 @@ public sealed class ECDsaPrivateKey : AsymmetricKeyPair {
         switch (oid.Value) {
             case AlgorithmOid.ECDSA_PRIME1:
                 asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
-                ecParameters.Curve.Prime = GetPositiveInteger(asn.GetPayload());
+                ecParameters.Curve.Prime = DecodePositiveInteger(asn.GetPayload());
                 break;
             case AlgorithmOid.ECDSA_CHAR2:
                 throw new NotImplementedException("CHARACTERISTIC-TWO field is not implemented.");

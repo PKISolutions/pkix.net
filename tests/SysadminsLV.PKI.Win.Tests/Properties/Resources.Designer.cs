@@ -77,6 +77,65 @@ namespace SysadminsLV.PKI.Win.Tests.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgxrJRX8v8+C134yKM
+        ///hPdrd3MOgvVK19c1K4kvRkRUX4ShRANCAAQr5np+dXEGP4GjJToWsLHUzNfpslVi
+        ///2eaR1fx0USiJpA4R2vsmuugbncPSAtdYSe0VktSyvbQ4hcGpBkO7Az+A.
+        /// </summary>
+        internal static string EcDsaPrivKey {
+            get {
+                return ResourceManager.GetString("EcDsaPrivKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MIIBcjCCARegAwIBAgIQH+VexXudFJVOiThtWlzSMjAKBggqhkjOPQQDAjAQMQ4w
+        ///DAYDVQQDDAVFQ0RTQTAeFw0yMzA5MjAwODU3NDRaFw0yNDA5MjAwOTE3NDRaMBAx
+        ///DjAMBgNVBAMMBUVDRFNBMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEK+Z6fnVx
+        ///Bj+BoyU6FrCx1MzX6bJVYtnmkdX8dFEoiaQOEdr7JrroG53D0gLXWEntFZLUsr20
+        ///OIXBqQZDuwM/gKNTMFEwEwYDVR0lBAwwCgYIKwYBBQUHAwIwGwYJKwYBBAGCNxUK
+        ///BA4wDDAKBggrBgEFBQcDAjAdBgNVHQ4EFgQUFHWdrrkrnHfzbJ0K0NRrIGqN7ekw
+        ///CgYIKoZIzj0EAwIDSQAwRgIhANCHFQWX+xJIFlJFGfzm4xTEoQwalCRM/DzKaatS
+        ///691xAiEA5UFGXtNpatrsi/DaiBJKMC+oFyUW3vtaSjwNq3xT1W [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string EcDsaPubCert {
+            get {
+                return ResourceManager.GetString("EcDsaPubCert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDf87Nzr8yqhPyJ
+        ///Kzhgm2NLq56cQhbVyO7YwfFUTtdKSSHIXLYUTTTfeR3Qb4MPH7bedNif32foZZbm
+        ///1cAA2KRjMxsSSJA27hinMhGrrbFnHS3autMoeEH7m1mEZWen9Gk6T/txEkGdGkoL
+        ///xW6fZcwaPBBN8nF35Xwk1CkVMld7maZQwC2VHzOvZErhCuUZZsBCstfYxPEzfA3/
+        ///2e31jLP3uDlCJoKl0KqKBxuFd56Da/MULa5E4P9Qd6TJL/4XZI/bOg+JKg1SOk+Z
+        ///5dDJPKR32ir3r5ohLirdus2zfnIWR/ynEaDqv4zkp4zymMC8NLEPhTQ0Puu72wB5
+        ///pA/wzntpAgMBAAECggEAbluiF6UO3wyPgWyp6HlKEhTtISU0KX9Nq8TOjnQXhUTK
+        ///f/inxRNStbjyZy88Tyyaqb68rPOjOZMuLGwypHgdccDSW00ku9 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string RsaPrivKey {
+            get {
+                return ResourceManager.GetString("RsaPrivKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MIIDATCCAemgAwIBAgIQFsg4A6ZL+7hNz0MMrSYiJzANBgkqhkiG9w0BAQUFADAS
+        ///MRAwDgYDVQQDEwdkZXZ1c2VyMCAXDTIzMDgzMTA3NTUzMVoYDzIxMjMwODA3MDc1
+        ///NTMxWjASMRAwDgYDVQQDEwdkZXZ1c2VyMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8A
+        ///MIIBCgKCAQEA3/Ozc6/MqoT8iSs4YJtjS6uenEIW1cju2MHxVE7XSkkhyFy2FE00
+        ///33kd0G+DDx+23nTYn99n6GWW5tXAANikYzMbEkiQNu4YpzIRq62xZx0t2rrTKHhB
+        ///+5tZhGVnp/RpOk/7cRJBnRpKC8Vun2XMGjwQTfJxd+V8JNQpFTJXe5mmUMAtlR8z
+        ///r2RK4QrlGWbAQrLX2MTxM3wN/9nt9Yyz97g5QiaCpdCqigcbhXeeg2vzFC2uROD/
+        ///UHekyS/+F2SP2zoPiSoNUjpPmeXQyTykd9oq96+aIS4q3brNs3 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string RsaPubCert {
+            get {
+                return ResourceManager.GetString("RsaPubCert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to MIIEMwIBAzCCA/MGCSqGSIb3DQEHAaCCA+QEggPgMIID3DCCAcUGCSqGSIb3DQEHAaCCAbYEggGyMIIBrjCCAaoGCyqGSIb3DQEMCgECoIHEMIHBMBwGCiqGSIb3DQEMAQMwDgQIAl5dRqsSWSkCAgfQBIGghdezTt5SdTa/O7d5A8ZZcFX/Xqx50yNl0B/R5tFXA9BvK81vZhomGHMgS3hCQrNc0WOxNf+sZ70DR+fXxUcQeNeNm/0/9NW4gXnTKZ4Lfu7808FubEmDPy3YrOrSeHJ0l0cYMThe8WZhLlc3X/P4asxbasNAwyeRMp64/dnOowce/Cmb+MD1Oo0tBM3Turtgk59hoRywmFyfYc1cOyVWUzGB0zATBgkqhkiG9w0BCRUxBgQEAQAAADBdBgkqhkiG9w0BCRQxUB5OAGwAcAAtAGUAZAAzAGMAMwBiAGUAMwAtAGIAMwA5ADYALQA0AGMAMwAwAC0AOAAzAGQANQAtADgAZABjADkAOABh [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string SigningCertCngDsa {

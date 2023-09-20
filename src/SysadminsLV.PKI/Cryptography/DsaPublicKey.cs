@@ -74,7 +74,7 @@ public sealed class DsaPublicKey : AsymmetricKeyPair {
 
     void decodeFromPublicKey(PublicKey publicKey) {
         var asn = new Asn1Reader(publicKey.EncodedKeyValue.RawData);
-        dsaParams.Y = GetPositiveInteger(asn.GetPayload());
+        dsaParams.Y = DecodePositiveInteger(asn.GetPayload());
         decodeParams(publicKey.EncodedParameters.RawData);
     }
     void decodePkcs8Key(Byte[] rawData) {
@@ -91,19 +91,19 @@ public sealed class DsaPublicKey : AsymmetricKeyPair {
         asn.Seek(offset);
         asn.MoveNextSiblingAndExpectTags(Asn1Type.BIT_STRING);
         var bitString = (Asn1BitString)asn.GetTagObject();
-        dsaParams.Y = GetPositiveInteger(bitString.Value);
+        dsaParams.Y = DecodePositiveInteger(bitString.Value);
     }
     void decodeParams(Byte[] paramBytes) {
         var asn = new Asn1Reader(paramBytes);
         // P
         asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
-        dsaParams.P = GetPositiveInteger(asn.GetPayload());
+        dsaParams.P = DecodePositiveInteger(asn.GetPayload());
         // Q
         asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
-        dsaParams.Q = GetPositiveInteger(asn.GetPayload());
+        dsaParams.Q = DecodePositiveInteger(asn.GetPayload());
         // G
         asn.MoveNextAndExpectTags(Asn1Type.INTEGER);
-        dsaParams.G = GetPositiveInteger(asn.GetPayload());
+        dsaParams.G = DecodePositiveInteger(asn.GetPayload());
     }
 
     /// <inheritdoc />
