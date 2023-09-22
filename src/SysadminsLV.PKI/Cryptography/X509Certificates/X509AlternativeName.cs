@@ -440,7 +440,7 @@ public class X509AlternativeName {
         try {
             var asn = new Asn1Reader(rawData);
             if (!asn.MoveNext()) { throw new ArgumentException("Input data is not valid OtherName."); }
-            var oid = ((Asn1ObjectIdentifier)asn.GetTagObject()).Value;
+            Oid oid = ((Asn1ObjectIdentifier)asn.GetTagObject()).Value;
             asn.MoveNextAndExpectTags(0xa0);
             asn.MoveNext();
             OID = oid;
