@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -12,6 +13,7 @@ namespace SysadminsLV.PKI.Win.Tests.Cryptography;
 public class RsaUtils {
     const String Capi1Prov = "Microsoft Enhanced RSA and AES Cryptographic Provider";
     const String Capi2Prov = "Microsoft Software Key Storage Provider";
+    readonly List<IDisposable> _disposables = new();
 
     Byte[] bin;
     RSA? rsa;
@@ -22,8 +24,9 @@ public class RsaUtils {
         var rsaPrivateKey = new RsaPrivateKey(bin);
         rsa = rsaPrivateKey.GetAsymmetricKey() as RSA;
         Assert.IsNotNull(rsa);
+        _disposables.Add(rsa);
 
-        var bin2 = rsaPrivateKey.Export(KeyPkcsFormat.Pkcs8);
+        Byte[] bin2 = rsaPrivateKey.Export(KeyPkcsFormat.Pkcs8);
         Assert.IsTrue(bin.SequenceEqual(bin2));
     }
 
@@ -42,16 +45,17 @@ public class RsaUtils {
         var rsa2 = new RSACryptoServiceProvider(cspParams);
         RSAParameters rsaParams = rsa.ExportParameters(true);
         rsa2.ImportParameters(rsaParams);
-        var newCert = new X509Certificate2(cert.RawData);
+        using var newCert = new X509Certificate2(cert.RawData);
         newCert.PrivateKey = rsa2;
         Assert.IsTrue(newCert.HasPrivateKey);
         Assert.IsNotNull(newCert.PrivateKey);
+        Assert.AreEqual(Capi1Prov, ((RSACryptoServiceProvider)newCert.PrivateKey).CspKeyContainerInfo.ProviderName);
         cert.DeletePrivateKey();
     }
     [TestMethod]
     public void TestRsaCng() {
         using var cert = new X509Certificate2(Convert.FromBase64String(Resources.RsaPubCert));
-        using CngKey cng = CngKey.Import(bin, CngKeyBlobFormat.Pkcs8PrivateBlob, new CngProvider(Capi2Prov));
+        using var cng = CngKey.Import(bin, CngKeyBlobFormat.Pkcs8PrivateBlob, new CngProvider(Capi2Prov));
         cng.SetProperty(new CngProperty("Export Policy", BitConverter.GetBytes(3), CngPropertyOptions.None));
         using RSA rsa2 = new RSACng(cng);
         using X509Certificate2 newCert = cert.CopyWithPrivateKey(rsa2);
@@ -62,6 +66,6 @@ public class RsaUtils {
 
     [TestCleanup]
     public void Cleanup() {
-        rsa?.Dispose();
+        _disposables.ForEach(x => x.Dispose());
     }
 }
