@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SysadminsLV.PKI.Cryptography;
+using SysadminsLV.PKI.Cryptography.X509Certificates;
 using SysadminsLV.PKI.Win.Tests.Properties;
 
 namespace SysadminsLV.PKI.Win.Tests.Cryptography;
@@ -37,13 +38,15 @@ public class RsaUtils {
     [TestMethod]
     public void TestRsaCsp() {
         using var cert = new X509Certificate2(Convert.FromBase64String(Resources.RsaPubCert));
-        using CngKey cng = CngKey.Import(bin, CngKeyBlobFormat.Pkcs8PrivateBlob, new CngProvider(Capi1Prov));
-        cng.SetProperty(new CngProperty("Export Policy", BitConverter.GetBytes(3), CngPropertyOptions.None));
-        using RSA rsa2 = new RSACng(cng);
-        using X509Certificate2 newCert = cert.CopyWithPrivateKey(rsa2);
+        var cspParams = new CspParameters(24, Capi1Prov, "pspki-" + Guid.NewGuid());
+        var rsa2 = new RSACryptoServiceProvider(cspParams);
+        RSAParameters rsaParams = rsa.ExportParameters(true);
+        rsa2.ImportParameters(rsaParams);
+        var newCert = new X509Certificate2(cert.RawData);
+        newCert.PrivateKey = rsa2;
         Assert.IsTrue(newCert.HasPrivateKey);
-        Assert.IsNull(newCert.PrivateKey);
-        cng.Delete();
+        Assert.IsNotNull(newCert.PrivateKey);
+        cert.DeletePrivateKey();
     }
     [TestMethod]
     public void TestRsaCng() {
