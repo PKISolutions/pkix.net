@@ -26,7 +26,7 @@ public class X509CEPEnrollmentPropertyInfo {
     /// <summary>
     /// Gets the Url of the Certificate Enrollment Policy Server.
     /// </summary>
-    public Uri PolicyServerUrl { get; private set; }
+    public String PolicyServerUrl { get; private set; }
     /// <summary>
     /// Gets Certificate Enrollment Policy Server Url flags.
     /// </summary>
@@ -42,7 +42,7 @@ public class X509CEPEnrollmentPropertyInfo {
     /// <summary>
     /// Gets the Enrollment Server Url
     /// </summary>
-    public Uri EnrollmentServerUrl { get; private set; }
+    public String EnrollmentServerUrl { get; private set; }
     /// <summary>
     /// Gets the authentication type used to authenticate at Enrollment Server.
     /// </summary>
@@ -58,8 +58,8 @@ public class X509CEPEnrollmentPropertyInfo {
         EnrollmentServerAuthentication = (PolicyAuthenticationEnum)BitConverter.ToInt32(bytes, 16);
         String str = Encoding.Unicode.GetString(bytes, 20, bytes.Length - 20);
         String[] tokens = str.Split('\0');
-        PolicyServerUrl = new Uri(tokens[0]);
-        EnrollmentServerUrl = new Uri(tokens[2]);
+        PolicyServerUrl = tokens[0];
+        EnrollmentServerUrl = tokens[2];
         PolicyId = tokens[1];
         RequestID = Convert.ToUInt32(tokens[3]);
     }
