@@ -24,49 +24,7 @@ public static class CryptographyUtils {
                 return attribute;
         }
     }
-    /// <summary>
-    /// Tests whether the running operating system supports Cryptography Next Generation (CNG).
-    /// </summary>
-    /// <returns>
-    /// <strong>True</strong> if running operating system supports Cryptography Next Generation (CNG),
-    /// otherwise <strong>False</strong>.
-    /// </returns>
-    /// <remarks>
-    /// Windows operating systems starting with Windows Vista/Windows Server 2008 always return <strong>True</strong>.
-    /// </remarks>
-    [Obsolete("This method is obsolete.", true)]
-    public static Boolean TestCNGCompat() {
-        return Environment.OSVersion.Version.Major >= 6;
-    }
-    /// <summary>
-    /// Tests whether running operating system is compatible with OLE automation.
-    /// </summary>
-    /// <returns>
-    /// <strong>True</strong> if running operating system is compatible with OLE automation,
-    /// otherwise <strong>False</strong>.
-    /// </returns>
-    /// <remarks>
-    /// Windows operating systems starting with Windows 8.1/Windows Server 2012 R2 return <strong>True</strong>.
-    /// </remarks>
-    [Obsolete("This method is obsolete.", true)]
-    public static Boolean TestOleCompat() {
-        if (Environment.OSVersion.Version.Major < 6) { return false; }
-        return Environment.OSVersion.Version.Major != 6 || Environment.OSVersion.Version.Minor >= 3;
-    }
-    /// <summary>
-    /// Tests whether running operating system is compatible with ADCS Web Services.
-    /// </summary>
-    /// <returns>
-    /// <strong>True</strong> if running operating system supports ADCS Web Services, otherwise <strong>False</strong>.
-    /// </returns>
-    /// <remarks>
-    /// Windows operating systems starting with Windows7/Windows Server 2008 R2 return <strong>True</strong>.
-    /// </remarks>
-    [Obsolete("This method is obsolete.", true)]
-    public static Boolean TestCepCompat() {
-        if (Environment.OSVersion.Version.Major < 6) { return false; }
-        return Environment.OSVersion.Version.Major != 6 || Environment.OSVersion.Version.Minor != 0;
-    }
+    
     /// <summary>
     /// Releases all references to a Runtime Callable Wrapper (RCW) by setting its reference count to 0.
     /// </summary>
