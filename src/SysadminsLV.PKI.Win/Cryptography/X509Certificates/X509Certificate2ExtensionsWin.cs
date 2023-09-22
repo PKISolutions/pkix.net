@@ -13,7 +13,7 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 /// <summary>
 /// Contains extension methods for <see cref="X509Certificate2"/> class.
 /// </summary>
-public static class X509Certificate2Extensions {
+public static class X509Certificate2ExtensionsWin {
     /// <summary>
     /// Gets the list of certificate properties associated with the current certificate object.
     /// </summary>

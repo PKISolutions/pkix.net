@@ -10,8 +10,8 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 /// </summary>
 /// <remarks>
 /// No public constructors are defined. Objects of this class are created by calling
-/// <see cref="X509Certificate2Extensions.GetCertificateContextProperty"/> or
-/// <see cref="X509Certificate2Extensions.GetCertificateContextProperties"/> extension methods.
+/// <see cref="X509Certificate2ExtensionsWin.GetCertificateContextProperty"/> or
+/// <see cref="X509Certificate2ExtensionsWin.GetCertificateContextProperties"/> extension methods.
 /// </remarks>
 public class X509EnrollmentPropertyInfo {
 

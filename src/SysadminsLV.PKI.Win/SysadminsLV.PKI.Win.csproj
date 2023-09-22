@@ -117,7 +117,7 @@
     <Compile Include="Cryptography\CspAlgorithmType.cs" />
     <Compile Include="Cryptography\CspProviderType.cs" />
     <Compile Include="Cryptography\X509Certificates\KeyProviderInfo.cs" />
-    <Compile Include="Cryptography\X509Certificates\X509Certificate2Extensions.cs" />
+    <Compile Include="Cryptography\X509Certificates\X509Certificate2ExtensionsWin.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CertificateTrustListExtensions.cs" />
     <Compile Include="Cryptography\X509Certificates\X509CRL2Extensions.cs" />
     <Compile Include="Dcom\AdcsBinaryFormat.cs" />
