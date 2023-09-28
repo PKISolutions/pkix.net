@@ -89,13 +89,13 @@
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="SysadminsLV.Asn1Parser, Version=1.2.12.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SysadminsLV.PKI.4.1.0\lib\net472\SysadminsLV.Asn1Parser.dll</HintPath>
+      <HintPath>..\..\packages\SysadminsLV.PKI.OcspClient.4.1.0\lib\net472\SysadminsLV.Asn1Parser.dll</HintPath>
     </Reference>
     <Reference Include="SysadminsLV.PKI, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SysadminsLV.PKI.4.1.0\lib\net472\SysadminsLV.PKI.dll</HintPath>
+      <HintPath>..\..\packages\SysadminsLV.PKI.OcspClient.4.1.0\lib\net472\SysadminsLV.PKI.dll</HintPath>
     </Reference>
-    <Reference Include="SysadminsLV.PKI.OcspClient, Version=4.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SysadminsLV.PKI.OcspClient.4.0.2\lib\net472\SysadminsLV.PKI.OcspClient.dll</HintPath>
+    <Reference Include="SysadminsLV.PKI.OcspClient, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SysadminsLV.PKI.OcspClient.4.1.0\lib\net472\SysadminsLV.PKI.OcspClient.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.DirectoryServices" />
@@ -103,7 +103,7 @@
     <Reference Include="System.Numerics" />
     <Reference Include="System.Security" />
     <Reference Include="System.Security.Cryptography.Pkcs, Version=7.0.0.3, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SysadminsLV.PKI.4.1.0\lib\net472\System.Security.Cryptography.Pkcs.dll</HintPath>
+      <HintPath>..\..\packages\SysadminsLV.PKI.OcspClient.4.1.0\lib\net472\System.Security.Cryptography.Pkcs.dll</HintPath>
     </Reference>
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Web" />
