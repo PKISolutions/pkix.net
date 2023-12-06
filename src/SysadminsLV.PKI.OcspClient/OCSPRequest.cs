@@ -414,14 +414,6 @@ public class OCSPRequest {
         }
     }
     /// <summary>
-    /// Gets or sets the proxy used by OCSP request.
-    /// </summary>
-    /// <param name="proxy">Proxy settings.</param>
-    [Obsolete("This method is moved to a property.", true)]
-    public void SetProxy(WebProxy proxy) {
-        Proxy = proxy;
-    }
-    /// <summary>
     /// Gets or sets the network credentials that are sent to a OCSP server and used to authenticate the request.
     /// </summary>
     /// <param name="credentials">Credentials to use.</param>
