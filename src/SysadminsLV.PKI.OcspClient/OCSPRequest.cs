@@ -240,7 +240,7 @@ public class OCSPRequest {
         Version ver = Assembly.GetExecutingAssembly().GetName().Version;
         wc.Headers.Add("Content-Type", "application/ocsp-request");
         wc.Headers.Add("Accept", "*/*");
-        wc.Headers.Add("User-Agent", $"PowerShell-PKI-Module/{ver.Major}.{ver.Minor}");
+        wc.Headers.Add("User-Agent", $"SysadminsLV.PKI.OcspClient/{ver.Major}.{ver.Minor}");
         wc.Headers.Add("Cache-Control", "no-cache");
         wc.Headers.Add("Pragma", "no-cache");
     }
