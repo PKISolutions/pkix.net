@@ -11,7 +11,7 @@ public class OCSPClient {
     public void TestRevokedOCSP() {
         var cert = new X509Certificate2(Convert.FromBase64String(Resources.OcspRevoked));
         var req = new OCSPRequest(cert);
-        var resp = req.SendRequest();
+        OCSPResponse? resp = req.SendRequest();
         Assert.AreEqual(OCSPResponseStatus.Successful, resp.ResponseStatus);
         Assert.IsTrue(resp.SignatureIsValid);
         Assert.IsFalse(resp.SignerCertificateIsValid); // partial chain
@@ -24,6 +24,16 @@ public class OCSPClient {
         OCSPResponse? resp = req.SendRequest();
         Assert.AreEqual(OCSPResponseStatus.Successful, resp.ResponseStatus);
         Assert.IsTrue(resp.SignatureIsValid);
+        Assert.IsTrue(resp.SignerCertificateIsValid);
+        Assert.AreEqual(CertificateStatus.Good, resp.Responses[0].CertStatus);
+    }
+    [TestMethod]
+    public void TestEccCert() {
+        using var cert = new X509Certificate2(Convert.FromBase64String(Resources.OcspEcc));
+        var req = new OCSPRequest(cert);
+        OCSPResponse? resp = req.SendRequest();
+        Assert.AreEqual(OCSPResponseStatus.Successful, resp.ResponseStatus);
+        //Assert.IsTrue(resp.SignatureIsValid);
         Assert.IsTrue(resp.SignerCertificateIsValid);
         Assert.AreEqual(CertificateStatus.Good, resp.Responses[0].CertStatus);
     }

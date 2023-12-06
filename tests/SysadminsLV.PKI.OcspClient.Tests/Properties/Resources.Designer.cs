@@ -61,6 +61,22 @@ namespace SysadminsLV.PKI.OcspClient.Tests.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to MIIFjzCCBRWgAwIBAgIQCja5BeLTLROsZ0jvlkPI7DAKBggqhkjOPQQDAzBZMQsw
+        ///CQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMTMwMQYDVQQDEypEaWdp
+        ///Q2VydCBHbG9iYWwgRzMgVExTIEVDQyBTSEEzODQgMjAyMCBDQTEwHhcNMjMxMDAy
+        ///MDAwMDAwWhcNMjQxMTAxMjM1OTU5WjBOMQswCQYDVQQGEwJMVjEOMAwGA1UEBwwF
+        ///UsSrZ2ExGDAWBgNVBAoTD1N5c2FkbWlucyBMViBJSzEVMBMGA1UEAxMMc3lzYWRt
+        ///aW5zLmx2MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEKw4e6lBlzQ39gWXNIEaMbRJr
+        ///UZUKjGK6fOGxo4itjGKTfVGlzF+nU+q4Mq7o+ANhiV2ytFsmT8tq4O+7XQ3DcIXD
+        ///gEbA2YxF4JDi2n8m1jfOVZyhcttS/13Rgl4K26I/o4IDqzCCA6 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string OcspEcc {
+            get {
+                return ResourceManager.GetString("OcspEcc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to MIIE7jCCA9agAwIBAgISESFVaI04B3XaNMXfl0M+0/anMA0GCSqGSIb3DQEBBQUA
         ///MFcxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMS0wKwYD
         ///VQQDEyRHbG9iYWxTaWduIERvbWFpbiBWYWxpZGF0aW9uIENBIC0gRzIwHhcNMTQw
