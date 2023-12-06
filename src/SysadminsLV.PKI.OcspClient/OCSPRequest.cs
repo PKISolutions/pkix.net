@@ -18,6 +18,8 @@ namespace SysadminsLV.PKI.OcspClient;
 public class OCSPRequest {
     readonly X509ExtensionCollection _extensions = new();
     readonly X509Certificate2Collection _signerChain = new();
+    readonly OCSPSingleRequestCollection _requests = new();
+
     Oid[] responseAlgIDs = { new(AlgorithmOid.SHA1_RSA) };
     Oid signatureAlgID = new("sha1RSA");
     Boolean includeFullSigChain;
@@ -99,7 +101,7 @@ public class OCSPRequest {
             throw new ArgumentException("Request list is empty.");
         }
 
-        RequestList = requestList;
+        _requests.AddRange(requestList);
     }
 
     /// <summary>
@@ -124,7 +126,7 @@ public class OCSPRequest {
     /// Gets certificate identification object collection. This object is equivalent to <em>singleRequest</em>
     /// structure in ASN.1 module.
     /// </summary>
-    public OCSPSingleRequestCollection RequestList { get; private set; }
+    public OCSPSingleRequestCollection RequestList => new(_requests);
     /// <summary>
     /// Gets optional OCSP Request extensions. This may include <strong>Nonce</strong> and/or <strong>Service Locator</strong> extensions.
     /// </summary>
@@ -164,20 +166,20 @@ public class OCSPRequest {
     public Byte[] RawData { get; private set; }
 
     void initializeFromCert(X509Certificate2 cert) {
-        RequestList = new OCSPSingleRequestCollection { new(cert, false) };
+        _requests.Add(new OCSPSingleRequest(cert, false));
         URL = getOcspUrl(new[] { cert });
     }
     void initializeFromCerts(X509Certificate2Collection certs) {
-        RequestList = new OCSPSingleRequestCollection();
         foreach (X509Certificate2 cert in certs) {
-            RequestList.Add(new OCSPSingleRequest(cert, false));
+            _requests.Add(new OCSPSingleRequest(cert, false));
         }
+        URL = getOcspUrl(certs.Cast<X509Certificate2>());
     }
     void initializeFromCertsAndIssuer(X509Certificate2Collection certs, X509Certificate2 issuer) {
-        RequestList = new OCSPSingleRequestCollection();
         foreach (X509Certificate2 cert in certs) {
-            RequestList.Add(new OCSPSingleRequest(issuer, cert, false));
+            _requests.Add(new OCSPSingleRequest(issuer, cert, false));
         }
+        URL = getOcspUrl(certs.Cast<X509Certificate2>());
     }
     List<Byte> buildTbsRequest(X500DistinguishedName requester) {
         var tbsRequest = new List<Byte>();
@@ -185,7 +187,7 @@ public class OCSPRequest {
             var requesterName = new X509AlternativeName(X509AlternativeNamesEnum.DirectoryName, requester);
             tbsRequest.AddRange(Asn1Utils.Encode(requesterName.RawData, 0xa1));
         }
-        tbsRequest.AddRange(RequestList.Encode());
+        tbsRequest.AddRange(_requests.Encode());
         if (Nonce) {
             _extensions.Add(new X509NonceExtension());
             Byte[] extensionsBytes = Asn1Utils.Encode(Extensions.Encode(), 162);
