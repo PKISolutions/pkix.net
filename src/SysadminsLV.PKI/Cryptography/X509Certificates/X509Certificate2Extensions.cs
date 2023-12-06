@@ -66,6 +66,7 @@ public static class X509Certificate2Extensions {
         }
         return extensions;
     }
+    
     #region Format
 
     /// <summary>

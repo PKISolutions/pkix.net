@@ -28,6 +28,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Cryptography\X509Certificates\Certificates.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Certificates.resx</DependentUpon>
+    </Compile>
     <Compile Update="Cryptography\X509Certificates\Extensions.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -46,6 +51,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Cryptography\X509Certificates\Certificates.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Certificates.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Update="Cryptography\X509Certificates\Extensions.resx">
       <LastGenOutput>Extensions.Designer.cs</LastGenOutput>
       <Generator>ResXFileCodeGenerator</Generator>

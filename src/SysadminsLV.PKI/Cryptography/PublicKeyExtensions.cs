@@ -38,7 +38,7 @@ public static class PublicKeyExtensions {
         var encodedParams = new AsnEncodedData(pubKeyOid, pubKeyOidIdReader.GetTagRawData());
         asn.MoveNextSibling();
         var encodedKey = new AsnEncodedData(pubKeyOid, new Asn1BitString(asn.GetTagRawData()).Value.ToArray());
-        
+
         return new PublicKey(pubKeyOid, encodedParams, encodedKey);
     }
     /// <summary>
@@ -142,14 +142,11 @@ Public Key: UnusedBits = 0
             throw new ArgumentNullException(nameof(publicKey));
         }
 
-        switch (publicKey.Oid.Value) {
-            case AlgorithmOid.RSA:
-            case AlgorithmOid.DSA:
-            case AlgorithmOid.ECC:
-                return publicKey.Key.KeySize;
-            default:
-                return 0;
-
+        try {
+            using AsymmetricKeyPair keyPair = publicKey.GetAsymmetricKeyPair();
+            return keyPair.GetAsymmetricKey().KeySize;
+        } catch {
+            return 0;
         }
     }
 
