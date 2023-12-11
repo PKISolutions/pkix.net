@@ -20,14 +20,12 @@ public static class FileInfoExtensions {
             return null;
         }
         const Int32 CMSG_ENCODED_MESSAGE = 29;
-        const Int32 dwExpectedContentTypeFlags = Wincrypt.CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED
-                                                 | Wincrypt.CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED_EMBED;
 
         if (!Crypt32.CryptQueryObject(
                 Wincrypt.CERT_QUERY_OBJECT_FILE,
                 fileInfo.FullName,
-                dwExpectedContentTypeFlags,
-                Wincrypt.CERT_QUERY_FORMAT_FLAG_ALL,
+                Wincrypt.CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED_EMBED,
+                Wincrypt.CERT_QUERY_FORMAT_FLAG_BINARY,
                 0,
                 out Int32 _,
                 out Int32 pdwContentType,
@@ -41,16 +39,10 @@ public static class FileInfoExtensions {
             return null;
         }
 
-        var pvData = new Byte[pcbData];
-        Crypt32.CryptMsgGetParam(phMsg, CMSG_ENCODED_MESSAGE, 0, pvData, out pcbData);
+        Byte[] pvData = new Byte[pcbData];
+        Crypt32.CryptMsgGetParam(phMsg, CMSG_ENCODED_MESSAGE, 0, pvData, out _);
         Crypt32.CryptMsgClose(phMsg);
         Crypt32.CertCloseStore(phCertStore, 0);
-        switch (pdwContentType) {
-            case Wincrypt.CERT_QUERY_CONTENT_FLAG_CERT:
-            case Wincrypt.CERT_QUERY_CONTENT_FLAG_SERIALIZED_CERT:
-                Crypt32.CertFreeCertificateContext(ppvContext);
-                break;
-        }
 
         return new DefaultSignedPkcs7(pvData);
     }
