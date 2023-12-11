@@ -91,7 +91,7 @@ public static class Wincrypt {
     internal const Int32 CERT_QUERY_CONTENT_CERT_PAIR          = 13;
     internal const Int32 CERT_QUERY_CONTENT_PFX_AND_LOAD       = 14;
 
-    // dwExpectedConentTypeFlags for CryptQueryObject
+    // dwExpectedContentTypeFlags for CryptQueryObject
     internal const Int32 CERT_QUERY_CONTENT_FLAG_CERT               = 1 << CERT_QUERY_CONTENT_CERT;
     internal const Int32 CERT_QUERY_CONTENT_FLAG_CTL                = 1 << CERT_QUERY_CONTENT_CTL;
     internal const Int32 CERT_QUERY_CONTENT_FLAG_CRL                = 1 << CERT_QUERY_CONTENT_CRL;
