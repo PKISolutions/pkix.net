@@ -194,19 +194,19 @@ public class CertificateTemplate {
             DsUtils.PropPkiKeyUsage,
             DsUtils.PropPkiKeyUsageCng
         );
-        flags = (Int32)props[DsUtils.PropFlags];
-        Name = (String)props[DsUtils.PropCN];
-        DistinguishedName = (String)props[DsUtils.PropDN];
-        DisplayName = (String)props[DsUtils.PropDisplayName];
-        major = (Int32)props[DsUtils.PropPkiTemplateMajorVersion];
-        minor = (Int32)props[DsUtils.PropPkiTemplateMinorVersion];
-        SchemaVersion = (Int32)props[DsUtils.PropPkiSchemaVersion];
-        OID = new Oid((String)props[DsUtils.PropCertTemplateOid]);
-        LastWriteTime = (DateTime)props[DsUtils.PropWhenChanged];
+        flags = props.GetDsScalarValue<Int32>(DsUtils.PropFlags);
+        Name = props.GetDsScalarValue<String>(DsUtils.PropCN);
+        DistinguishedName = props.GetDsScalarValue<String>(DsUtils.PropDN);
+        DisplayName = props.GetDsScalarValue<String>(DsUtils.PropDisplayName);
+        major = props.GetDsScalarValue<Int32>(DsUtils.PropPkiTemplateMajorVersion);
+        minor = props.GetDsScalarValue<Int32>(DsUtils.PropPkiTemplateMinorVersion);
+        SchemaVersion = props.GetDsScalarValue<Int32>(DsUtils.PropPkiSchemaVersion);
+        OID = new Oid(props.GetDsScalarValue<String>(DsUtils.PropCertTemplateOid));
+        LastWriteTime = props.GetDsScalarValue<DateTime>(DsUtils.PropWhenChanged);
         Settings = new CertificateTemplateSettings(props);
 
-        setClientSupport((PrivateKeyFlags)props[DsUtils.PropPkiPKeyFlags]);
-        setServerSupport((PrivateKeyFlags)props[DsUtils.PropPkiPKeyFlags]);
+        setClientSupport(props.GetDsScalarValue<PrivateKeyFlags>(DsUtils.PropPkiPKeyFlags));
+        setServerSupport(props.GetDsScalarValue<PrivateKeyFlags>(DsUtils.PropPkiPKeyFlags));
     }
     void setClientSupport(PrivateKeyFlags pkFlags) {
         const Int32 mask = 0x0F000000;
