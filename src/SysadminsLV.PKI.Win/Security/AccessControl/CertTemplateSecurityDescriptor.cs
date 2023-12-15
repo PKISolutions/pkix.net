@@ -15,13 +15,14 @@ namespace SysadminsLV.PKI.Security.AccessControl;
 public sealed class CertTemplateSecurityDescriptor : CommonObjectSecurity {
     const String GUID_ENROLL     = "0e10c968-78fb-11d2-90d4-00c04f79dc55";
     const String GUID_AUTOENROLL = "a05b8cc2-17bc-4802-a710-e7c15ab866a2";
-    readonly String _x500Name;
+    //readonly String _x500Name;
+    readonly String _x500Path;
     readonly Int32 _schemaVersion;
 
     internal CertTemplateSecurityDescriptor(CertificateTemplate template) : base(false) {
         DisplayName = template.DisplayName;
         _schemaVersion = template.SchemaVersion;
-        _x500Name = DsUtils.EscapeLdapPath(template.DistinguishedName);
+        _x500Path = "LDAP://" + template.DistinguishedName;
         fromActiveDirectorySecurity();
     }
 
@@ -233,21 +234,21 @@ public sealed class CertTemplateSecurityDescriptor : CommonObjectSecurity {
     /// </summary>
     /// <returns></returns>
     public ActiveDirectorySecurity ToActiveDirectorySecurity() {
-        using var entry = new DirectoryEntry("LDAP://" + _x500Name);
+        using var entry = new DirectoryEntry(_x500Path);
         return toAdSecurity(entry);
     }
     /// <summary>
     /// Writes this object to a securable object's Access Control List.
     /// </summary>
     public void SetObjectSecurity() {
-        using var entry = new DirectoryEntry("LDAP://" + _x500Name);
+        using var entry = new DirectoryEntry(_x500Path);
         toAdSecurity(entry);
         entry.CommitChanges();
     }
 
     void fromActiveDirectorySecurity() {
         ActiveDirectorySecurity dsSecurity;
-        using (var entry = new DirectoryEntry("LDAP://" + _x500Name)) {
+        using (var entry = new DirectoryEntry(_x500Path)) {
             dsSecurity = entry.ObjectSecurity;
         }
 

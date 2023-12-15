@@ -31,7 +31,11 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
         ExtendedProperties = new Dictionary<String, Object>(StringComparer.OrdinalIgnoreCase);
         CryptPublicKeyAlgorithm = AlgorithmOid.RSA;
         CryptHashAlgorithm = AlgorithmOid.SHA1;
-        initializeFromDs($"CN={cn},{_baseDsPath}");
+        String ldapPath = DsUtils.Find(_baseDsPath, "cn", cn);
+        if (String.IsNullOrEmpty(ldapPath)) {
+            throw new ArgumentException("No certificate templates match search criteria.");
+        }
+        initializeFromDs(ldapPath);
     }
 
     /// <inheritdoc />
@@ -135,7 +139,7 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
         );
     }
     void initializeFromDs(String ldapPath) {
-        DsPropertyCollection props = getDsEntryProperties(ldapPath);
+        DsPropertyCollection props = getDsEntryProperties(DsUtils.EscapeLdapPath(ldapPath));
         Flags = props.GetDsScalarValue<CertificateTemplateFlags>(DsUtils.PropFlags);
         CommonName = props.GetDsScalarValue<String>(DsUtils.PropCN);
         Oid = props.GetDsScalarValue<String>(DsUtils.PropCertTemplateOid);
@@ -171,7 +175,7 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
         Byte[] keyUsagesBytes = props.GetDsCollectionValue<Byte>(DsUtils.PropPkiKeyUsage);
         ExtKeyUsages = (X509KeyUsageFlags)Convert.ToInt16(String.Join("", keyUsagesBytes.Select(x => $"{x:x2}").ToArray()), 16);
         ExtendedProperties.Add("LastWriteTime", props.GetDsScalarValue<DateTime>(DsUtils.PropWhenChanged));
-        ExtendedProperties.Add("DistinguishedName", props.GetDsScalarValue<DateTime>(DsUtils.PropDN));
+        ExtendedProperties.Add("DistinguishedName", ldapPath.Replace("LDAP://", null));
     }
 
     void decodeRegistrationAuthority(DsPropertyCollection props) {

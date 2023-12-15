@@ -87,14 +87,14 @@ static class DsUtils {
             : String.Empty;
     }
     public static Object GetEntryProperty(String ldapPath, String prop) {
-        using var entry = new DirectoryEntry($"LDAP://{EscapeLdapPath(ldapPath)}");
+        using var entry = new DirectoryEntry(ldapPath);
         return entry.Properties.Contains(prop)
             ? entry.Properties[prop].Value
             : null;
     }
     public static DsPropertyCollection GetEntryProperties(String ldapPath, params String[] properties) {
         var retValue = new DsPropertyCollection();
-        using var entry = new DirectoryEntry($"LDAP://{EscapeLdapPath(ldapPath)}");
+        using var entry = new DirectoryEntry(ldapPath);
         foreach (String prop in properties) {
             retValue.Add(prop, entry.Properties.Contains(prop)
                 ? entry.Properties[prop].Value
@@ -112,7 +112,7 @@ static class DsUtils {
     /// <returns>DS path to created child.</returns>
     public static String AddChildEntry(String ldapPath, String name, String schemaClass) {
         using var entry = new DirectoryEntry($"LDAP://{EscapeLdapPath(ldapPath)}");
-        using DirectoryEntry newEntry = entry.Children.Add(EscapeRDN(name), schemaClass);
+        using DirectoryEntry newEntry = entry.Children.Add(name, schemaClass);
         newEntry.CommitChanges();
 
         return (String)newEntry.Properties[PropDN].Value;
@@ -132,12 +132,21 @@ static class DsUtils {
         entry.Properties[prop].Value = value;
         entry.CommitChanges();
     }
+    /// <summary>
+    /// Returns fully escaped LDAP path of the found object. If multiple objects found in Active Directory,
+    /// the path of the first object is returned.
+    /// </summary>
+    /// <param name="searchRoot">Specifies the search root.</param>
+    /// <param name="propName">Search RDN attribute name or its OID.</param>
+    /// <param name="propValue">Search value.</param>
+    /// <returns>LDAP path with "LDAP://" prefix if the object is found, otherwise NULL.</returns>
     public static String Find(String searchRoot, String propName, String propValue) {
-        using var entry = new DirectoryEntry($"LDAP://{EscapeLdapPath(searchRoot)}");
+        using var entry = new DirectoryEntry($"LDAP://{searchRoot}");
         using var searcher = new DirectorySearcher(entry);
-        searcher.Filter = $"{propName}={EscapeRDN(propValue)}";
+        searcher.Filter = $"{propName}={propValue}";
+        using DirectoryEntry resultEntry = searcher.FindOne()?.GetDirectoryEntry();
 
-        return (String)searcher.FindOne()?.GetDirectoryEntry().Properties[PropDN].Value;
+        return resultEntry?.Path;
     }
     public static Boolean Ping() {
         try {
@@ -190,14 +199,12 @@ static class DsUtils {
         return inputStr
             // replace with backslash and ASCII code (in hex)
             .Replace("*", @"\2a")
-            .Replace("(", @"\28")
-            .Replace(")", @"\29")
             .Replace("\\", @"\5c")
             .Replace("\0", @"\00")
-            .Replace("/", @"\2f")
+            .Replace("/", @"\/")
             // prepend original character with backslash, see: https://datatracker.ietf.org/doc/html/rfc4514#section-2.4
-            .Replace("\"", "\\\"")
-            .Replace("#", @"\#")
+            .Replace("\"", "\\\"") 
+            .Replace("#", @"\#")                               
             .Replace("+", @"\+")
             .Replace(",", @"\,")
             .Replace(";", @"\;")

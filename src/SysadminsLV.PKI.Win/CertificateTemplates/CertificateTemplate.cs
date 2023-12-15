@@ -65,7 +65,7 @@ public class CertificateTemplate {
     /// <summary>
     /// Gets certificate template's object identifier. Object identifiers are used to uniquely identify certificate template. While
     /// certificate template common and display names can be changed, OID remains the same. Once template is deleted from
-    /// Active Directory, associated OID is removed too. Any new template (even if with the same name values) will have differen
+    /// Active Directory, associated OID is removed too. Any new template (even if with the same name values) will have different
     /// OID value.
     /// </summary>
     public Oid OID { get; private set; }
@@ -196,7 +196,7 @@ public class CertificateTemplate {
         );
         flags = props.GetDsScalarValue<Int32>(DsUtils.PropFlags);
         Name = props.GetDsScalarValue<String>(DsUtils.PropCN);
-        DistinguishedName = props.GetDsScalarValue<String>(DsUtils.PropDN);
+        DistinguishedName = ldapPath.Replace("LDAP://", null); // we have to use ldapPath, because it is fully escaped and re-usable. DN is not.
         DisplayName = props.GetDsScalarValue<String>(DsUtils.PropDisplayName);
         major = props.GetDsScalarValue<Int32>(DsUtils.PropPkiTemplateMajorVersion);
         minor = props.GetDsScalarValue<Int32>(DsUtils.PropPkiTemplateMinorVersion);
