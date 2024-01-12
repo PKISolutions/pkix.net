@@ -2,6 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using Interop.CERTENROLLLib;
+using SysadminsLV.PKI.Cryptography;
 using SysadminsLV.PKI.Management.ActiveDirectory;
 using SysadminsLV.PKI.Utils;
 
@@ -13,11 +14,17 @@ namespace PKI.CertificateTemplates;
 public class KeyArchivalOptions {
     readonly DsPropertyCollection _entry;
 
-    internal KeyArchivalOptions(DsPropertyCollection Entry) {
+    KeyArchivalOptions() {
+        // default encryption algorithm to 3DES
+        EncryptionAlgorithm = new Oid(AlgorithmOid.TrippleDES);
+        KeyLength = 168;
+    }
+
+    internal KeyArchivalOptions(DsPropertyCollection Entry) : this() {
         _entry = Entry;
         initializeFromDs();
     }
-    internal KeyArchivalOptions (IX509CertificateTemplate template) {
+    internal KeyArchivalOptions (IX509CertificateTemplate template) : this() {
         initializeFromCom(template);
     }
 
@@ -35,7 +42,7 @@ public class KeyArchivalOptions {
     public Int32 KeyLength { get; private set; }
 
     void initializeFromDs() {
-        if (((Int32)_entry[DsUtils.PropPkiPKeyFlags] & (Int32)PrivateKeyFlags.RequireKeyArchival) > 0) {
+        if (((Int32)_entry[DsUtils.PropPkiPKeyFlags] & (Int32)PrivateKeyFlags.RequireKeyArchival) != 0) {
             KeyArchival = true;
             String ap = (String)_entry[DsUtils.PropPkiRaAppPolicy];
             if (ap != null && ap.Contains("`")) {
