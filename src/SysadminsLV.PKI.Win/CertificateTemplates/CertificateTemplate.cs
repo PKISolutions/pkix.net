@@ -60,7 +60,7 @@ public class CertificateTemplate {
     /// <summary>
     /// This flag indicates whether clients can perform autoenrollment for the specified template.
     /// </summary>
-    public Boolean AutoenrollmentAllowed => SchemaVersion > 1 && (flags & (Int32)CertificateTemplateFlags.Autoenrollment) > 0;
+    public Boolean AutoenrollmentAllowed => SchemaVersion > 1 && (flags & (Int32)CertificateTemplateFlags.Autoenrollment) != 0;
 
     /// <summary>
     /// Gets certificate template's object identifier. Object identifiers are used to uniquely identify certificate template. While
@@ -345,9 +345,9 @@ public class CertificateTemplate {
   Version: {Version}
   Supported CA: {SupportedCA}
   Subject type: {Settings.SubjectType}
-  Publish to DS: {(Settings.EnrollmentOptions & CertificateTemplateEnrollmentFlags.DsPublish) > 0}
-  Check for existing certificate in DS: {(Settings.EnrollmentOptions & CertificateTemplateEnrollmentFlags.AutoenrollmentCheckDsCert) > 0}
-  Reuse key when token is full: {(Settings.EnrollmentOptions & CertificateTemplateEnrollmentFlags.ReuseKeyTokenFull) > 0}
+  Publish to DS: {(Settings.EnrollmentOptions & CertificateTemplateEnrollmentFlags.DsPublish) != 0}
+  Check for existing certificate in DS: {(Settings.EnrollmentOptions & CertificateTemplateEnrollmentFlags.AutoenrollmentCheckDsCert) != 0}
+  Reuse key when token is full: {(Settings.EnrollmentOptions & CertificateTemplateEnrollmentFlags.ReuseKeyTokenFull) != 0}
 [Subject]
   {Settings.SubjectName}
 {Settings.Cryptography}
