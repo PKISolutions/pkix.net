@@ -134,7 +134,7 @@ public class CertificateTemplateSettings {
     /// </summary>
     public X509ExtensionCollection Extensions {
         get {
-            X509ExtensionCollection extensions = new X509ExtensionCollection();
+            var extensions = new X509ExtensionCollection();
             _extensions.ForEach(x => extensions.Add(x));
             return extensions;
         }
@@ -252,7 +252,7 @@ public class CertificateTemplateSettings {
         }
     }
     void readSuperseded() {
-        List<String> temps = new List<String>();
+        var temps = new List<String>();
         try {
             Object[] templates = (Object[])_dsEntryProperties[DsUtils.PropPkiSupersede];
             if (templates != null) {
@@ -288,7 +288,7 @@ public class CertificateTemplateSettings {
                         var policies = new X509CertificatePolicyCollection();
                         foreach (Oid policyOid in _certPolicies) {
                             var oid2 = new Oid2(policyOid.Value, OidGroup.Policy, true);
-                            X509CertificatePolicy policy = new X509CertificatePolicy(policyOid.Value);
+                            var policy = new X509CertificatePolicy(policyOid.Value);
                             try {
                                 policy.Add(new X509PolicyQualifier(oid2.GetCPSLinks()[0]));
                             } catch { }
@@ -317,12 +317,7 @@ public class CertificateTemplateSettings {
                         SubjectType is CertTemplateSubjectType.CA or CertTemplateSubjectType.CrossCA ||
                         (EnrollmentOptions & CertificateTemplateEnrollmentFlags.BasicConstraintsInEndEntityCerts) > 0
                     ) {
-                        Boolean isCA;
-                        if (SubjectType is CertTemplateSubjectType.CA or CertTemplateSubjectType.CrossCA) {
-                            isCA = true;
-                        } else {
-                            isCA = false;
-                        }
+                        Boolean isCA = SubjectType is CertTemplateSubjectType.CA or CertTemplateSubjectType.CrossCA;
                         Boolean hasConstraints = GetPathLengthConstraint() != -1;
                         _extensions.Add(new X509BasicConstraintsExtension(isCA, hasConstraints, GetPathLengthConstraint(), isExtensionCritical(
                             X509ExtensionOid.BasicConstraints)));
