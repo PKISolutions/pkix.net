@@ -34,7 +34,7 @@ public class CertificateAuthority {
     /// <exception cref="ServerUnavailableException">The computer specified in the <strong>computerName</strong>
     /// parameter could not be contacted via remote registry.</exception>
     [Obsolete("Deprecated. Use 'Connect(String)' static method instead.")]
-    public CertificateAuthority(String computerName) {
+    CertificateAuthority(String computerName) {
         if (String.IsNullOrEmpty(computerName)) {
             throw new ArgumentNullException(nameof(computerName));
         }
