@@ -207,10 +207,18 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
         }
     }
 
+    /// <summary>
+    /// Returns an instance of <see cref="IAdcsCertificateTemplate"/> interface from template common name.
+    /// </summary>
+    /// <param name="cn">Template common name.</param>
+    /// <returns>Instance of <see cref="IAdcsCertificateTemplate"/> interface.</returns>
     public static IAdcsCertificateTemplate FromCommonName(String cn) {
         return new DsCertificateTemplate(cn);
     }
-
+    /// <summary>
+    /// Returns a collection of certificate templates as <see cref="IAdcsCertificateTemplate"/> instances.
+    /// </summary>
+    /// <returns>A collection of certificate templates.</returns>
     public static IEnumerable<IAdcsCertificateTemplate> GetAll() {
         foreach (DirectoryEntry dsEntry in DsUtils.GetChildItems(_baseDsPath)) {
             using (dsEntry) {
