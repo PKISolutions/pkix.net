@@ -139,7 +139,7 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
         );
     }
     void initializeFromDs(String ldapPath) {
-        DsPropertyCollection props = getDsEntryProperties(DsUtils.EscapeLdapPath(ldapPath));
+        DsPropertyCollection props = getDsEntryProperties(ldapPath);
         Flags = props.GetDsScalarValue<CertificateTemplateFlags>(DsUtils.PropFlags);
         CommonName = props.GetDsScalarValue<String>(DsUtils.PropCN);
         Oid = props.GetDsScalarValue<String>(DsUtils.PropCertTemplateOid);
