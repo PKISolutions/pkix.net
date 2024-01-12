@@ -209,7 +209,7 @@ public sealed class Oid2 {
     static void registerDS(Oid oid, OidGroup group, CultureInfo localeId, String cpsUrl) {
         String cn = computeOidHash(oid.Value);
         String entryDN =
-            DsUtils.AddChildEntry(
+            DsUtils.AddEntry(
                 _baseDsPath,
                 $"CN={cn}",
                 DsUtils.SchemaObjectIdentifier);
@@ -260,7 +260,7 @@ public sealed class Oid2 {
                 if (flags != 1) { return false; }
                 break;
         }
-        DsUtils.RemoveChildEntry(ldapPath);
+        DsUtils.RemoveEntry(ldapPath);
         return true;
     }
 

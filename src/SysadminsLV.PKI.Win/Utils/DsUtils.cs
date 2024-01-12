@@ -106,12 +106,12 @@ static class DsUtils {
     /// <summary>
     /// Adds child entry to DS container.
     /// </summary>
-    /// <param name="ldapPath">DS path to container object to add child to.</param>
+    /// <param name="parentPath">DS path to container object to add child to.</param>
     /// <param name="name">Child common name.</param>
     /// <param name="schemaClass">Child schema class.</param>
     /// <returns>DS path to created child.</returns>
-    public static String AddChildEntry(String ldapPath, String name, String schemaClass) {
-        using var entry = new DirectoryEntry($"LDAP://{EscapeLdapPath(ldapPath)}");
+    public static String AddEntry(String parentPath, String name, String schemaClass) {
+        using var entry = new DirectoryEntry($"LDAP://{EscapeLdapPath(parentPath)}");
         using DirectoryEntry newEntry = entry.Children.Add(name, schemaClass);
         newEntry.CommitChanges();
 
@@ -121,7 +121,7 @@ static class DsUtils {
     /// Removes child entry from DS container.
     /// </summary>
     /// <param name="ldapPath">Child's DS path to remove.</param>
-    public static void RemoveChildEntry(String ldapPath) {
+    public static void RemoveEntry(String ldapPath) {
         using var entryToDelete = new DirectoryEntry($"LDAP://{EscapeLdapPath(ldapPath)}");
         using DirectoryEntry parent = entryToDelete.Parent;
         parent.Children.Remove(entryToDelete);
