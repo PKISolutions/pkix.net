@@ -211,7 +211,9 @@ public class CertificateTemplateSettings {
     }
 
     static String readValidity(Byte[] rawData) {
-        return SysadminsLV.PKI.ADCS.ValidityPeriod.FromFileTime(rawData).ValidityString;
+        Int64 fileTime = BitConverter.ToInt64(rawData, 0);
+
+        return SysadminsLV.PKI.ADCS.ValidityPeriod.FromFileTime(fileTime).ValidityString;
     }
     static String readValidity(Int64 fileTime) {
         return SysadminsLV.PKI.ADCS.ValidityPeriod.FromFileTime(fileTime).ValidityString;

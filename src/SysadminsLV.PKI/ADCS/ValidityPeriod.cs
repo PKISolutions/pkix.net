@@ -8,7 +8,7 @@ namespace SysadminsLV.PKI.ADCS;
 /// </summary>
 public class ValidityPeriod {
     ValidityPeriod(Int64 fileTime) {
-        Validity = TimeSpan.FromTicks(fileTime);
+        Validity = TimeSpan.FromTicks(fileTime < 0 ? fileTime * -1 : fileTime);
         ValidityString = readValidity(fileTime);
     }
 
@@ -22,7 +22,7 @@ public class ValidityPeriod {
     public String ValidityString { get; }
     
     static String readValidity(Int64 fileTime = 0) {
-        Int64 totalHours = fileTime / 3600;
+        Int64 totalHours = (Int64)(fileTime * -.0000001 / 3600);
         if (totalHours % 8760 == 0 && totalHours / 8760 >= 1) {
             return Convert.ToString(totalHours / 8760) + " years";
         }
