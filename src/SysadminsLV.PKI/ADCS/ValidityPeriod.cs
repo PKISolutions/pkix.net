@@ -8,8 +8,9 @@ namespace SysadminsLV.PKI.ADCS;
 /// </summary>
 public class ValidityPeriod {
     ValidityPeriod(Int64 fileTime) {
-        Validity = TimeSpan.FromTicks(fileTime < 0 ? fileTime * -1 : fileTime);
-        ValidityString = readValidity(fileTime);
+        Int64 negated = fileTime * -1;
+        Validity = TimeSpan.FromTicks(fileTime < 0 ? negated : fileTime);
+        ValidityString = readValidity(fileTime > 0 ? negated : fileTime);
     }
 
     /// <summary>
