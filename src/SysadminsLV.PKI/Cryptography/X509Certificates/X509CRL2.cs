@@ -455,7 +455,7 @@ public class X509CRL2 {
     /// Determines whether the specified object is equal to the current object. Two CRLs are equal when
     /// they have same version, type, issuer, CRL number and <see cref="ThisUpdate"/> values.
     /// </summary>
-    /// <inheritdoc cref="Object.Equals" select="param|returns"/>
+    /// <inheritdoc cref="Object.Equals(Object)" select="param|returns"/>
     public override Boolean Equals(Object obj) {
         return !(obj is null) &&
                (ReferenceEquals(this, obj)

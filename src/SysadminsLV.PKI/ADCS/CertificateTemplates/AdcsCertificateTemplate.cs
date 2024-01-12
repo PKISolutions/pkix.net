@@ -15,6 +15,11 @@ public class AdcsCertificateTemplate {
     readonly X509ExtensionCollection _extensions = new();
     readonly List<String> _supersedeTemplates = new();
 
+    /// <summary>
+    /// Initializes a new instance of <strong>AdcsCertificateTemplate</strong> class from certificate template information.
+    /// </summary>
+    /// <param name="template">Certificate template information.</param>
+    /// <exception cref="ArgumentNullException"><strong>template</strong> parameter is null.</exception>
     public AdcsCertificateTemplate(IAdcsCertificateTemplate template) {
         if (template == null) {
             throw new ArgumentNullException(nameof(template));
@@ -28,11 +33,11 @@ public class AdcsCertificateTemplate {
         SubjectName = template.SubjectNameFlags;
         SchemaVersion = template.SchemaVersion;
         OID = new Oid(template.Oid, DisplayName);
-        if (template.ExtendedProperties.ContainsKey("LastWriteTime")) {
-            LastWriteTime = template.ExtendedProperties["LastWriteTime"] as DateTime?;
+        if (template.ExtendedProperties.TryGetValue("LastWriteTime", out Object value)) {
+            LastWriteTime = value as DateTime?;
         }
-        if (template.ExtendedProperties.ContainsKey("DistinguishedName")) {
-            DistinguishedName = template.ExtendedProperties["DistinguishedName"] as String;
+        if (template.ExtendedProperties.TryGetValue("DistinguishedName", out value)) {
+            DistinguishedName = value as String;
         }
         ValidityPeriod = ValidityPeriod.FromFileTime(template.ValidityPeriod);
         RenewalPeriod = ValidityPeriod.FromFileTime(template.RenewalPeriod);

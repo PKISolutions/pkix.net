@@ -43,7 +43,7 @@ public class CertValiditySetting {
     /// <summary>
     /// Gets or sets the maximum validity period for issued certificates.
     /// <para>New validity period must be set in the following format: "5 years". As for validity period units the following
-    /// values are alloved: <strong>hours</strong>, <strong>days</strong>, <strong>weeks</strong>, <strong>months</strong> and
+    /// values are allowed: <strong>hours</strong>, <strong>days</strong>, <strong>weeks</strong>, <strong>months</strong> and
     /// <strong>years</strong>. All unit qualifiers must be specified in plural form.
     /// </para>
     /// </summary>
@@ -51,11 +51,11 @@ public class CertValiditySetting {
     /// The string assigned to the property does not match required pattern.
     /// </exception>
     public String ValidityPeriod {
-        get { return m_validity; }
-        set { set_validity(value.ToLower()); }
+        get => m_validity;
+        set => setValidity(value.ToLower());
     }
     /// <summary>
-    /// Indiciates whether the object was modified after it was instantiated.
+    /// Indicates whether the object was modified after it was instantiated.
     /// </summary>
     public Boolean IsModified { get; private set; }
 
@@ -68,19 +68,19 @@ public class CertValiditySetting {
             m_validity = Convert.ToString((Int32)CryptoRegistry.GetRReg("ValidityPeriodUnits", Name, ComputerName)) + " ";
             m_validity += (String)CryptoRegistry.GetRReg("ValidityPeriod", Name, ComputerName);
         } else {
-            if (certificateAuthority.Ping()) {
+            if (certificateAuthority.PingAdmin()) {
                 m_validity = Convert.ToString((Int32)CryptoRegistry.GetRegFallback(ConfigString, String.Empty, "ValidityPeriodUnits"));
                 m_validity += (String)CryptoRegistry.GetRegFallback(ConfigString, String.Empty, "ValidityPeriod");
             } else {
-                ServerUnavailableException e = new ServerUnavailableException(DisplayName);
+                var e = new ServerUnavailableException(DisplayName);
                 e.Data.Add(nameof(e.Source), (OfflineSource)3);
                 throw e;
             }
         }
     }
-    void set_validity(String validity) {
+    void setValidity(String validity) {
         if (validity != ValidityPeriod) {
-            Regex regex = new Regex(@"^(\d+)\s(hours|days|weeks|months|years)");
+            var regex = new Regex(@"^(\d+)\s(hours|days|weeks|months|years)");
             Match match = regex.Match(validity);
             if (match.Success) {
                 Period = Convert.ToInt32(match.Groups[1].Value);
@@ -95,7 +95,7 @@ public class CertValiditySetting {
     /// Updates issued certificate validity setting. Any issued certificate validity cannot exceed this value.
     /// </summary>
     /// <param name="restart">
-    /// Indiciates whether to restart certificate services to immediately apply changes. Updated settings has no effect until
+    /// Indicates whether to restart certificate services to immediately apply changes. Updated settings has no effect until
     /// CA service is restarted.
     /// </param>
     /// <exception cref="UnauthorizedAccessException">
@@ -125,7 +125,7 @@ public class CertValiditySetting {
             if (restart) { CertificateAuthority.Restart(ComputerName); }
             return true;
         }
-        ServerUnavailableException e = new ServerUnavailableException(DisplayName);
+        var e = new ServerUnavailableException(DisplayName);
         e.Data.Add(nameof(e.Source), (OfflineSource)3);
         throw e;
     }

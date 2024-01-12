@@ -185,6 +185,7 @@ public sealed class CertSrvCdpUrlEntry : ICertSrvCdpAiaUri {
     /// and publish flags.
     /// </summary>
     /// <param name="uri">An URL that is formatted as shown in Certification Authority management console.</param>
+    /// <param name="publishFlags">Publish flags associated with the URI.</param>
     /// <exception cref="ArgumentException">The <strong>uri</strong> parameter is null or empty string.</exception>
     /// <exception cref="FormatException">The string in the <strong>uri</strong> parameter does not match required pattern.</exception>
     /// <remarks>

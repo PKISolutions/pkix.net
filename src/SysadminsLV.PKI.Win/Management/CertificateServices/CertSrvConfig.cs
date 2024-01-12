@@ -191,6 +191,9 @@ public abstract class CertSrvConfig {
     /// </summary>
     protected List<RegConfigEntry> ConfigEntries { get; } = new();
 
+    /// <summary>
+    /// Calls actions before commiting changes back to source.
+    /// </summary>
     protected virtual void OnCommit() { }
 
     /// <summary>

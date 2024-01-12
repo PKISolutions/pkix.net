@@ -38,6 +38,11 @@ public class OCSPResponse {
         _wc = web;
         decodeResponse();
     }
+
+    /// <summary>
+    /// Initializes a new instance of <strong>OCSPResponse</strong> class from ASN.1-encoded binary OCSP response.
+    /// </summary>
+    /// <param name="rawData">OCSP binary response.</param>
     public OCSPResponse(Byte[] rawData) {
         _rawResponse = rawData;
         decodeResponse();

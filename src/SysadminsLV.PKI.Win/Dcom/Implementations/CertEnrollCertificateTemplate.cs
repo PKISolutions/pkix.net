@@ -148,5 +148,6 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
     public Int32 ExtBasicConstraintsPathLength { get; } = -1;
     /// <inheritdoc />
     public X509KeyUsageFlags ExtKeyUsages { get; }
+    /// <inheritdoc />
     public IDictionary<String, Object> ExtendedProperties { get; }
 }

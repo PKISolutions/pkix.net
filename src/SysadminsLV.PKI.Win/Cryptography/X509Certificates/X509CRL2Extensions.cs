@@ -4,6 +4,10 @@ using PKI.Structs;
 using SysadminsLV.PKI.Win32;
 
 namespace SysadminsLV.PKI.Cryptography.X509Certificates;
+
+/// <summary>
+/// Contains extension methods for <see cref="X509CRL2"/> class.
+/// </summary>
 public static class X509CRL2Extensions {
     /// <summary>
     ///     Gets a <see cref="SafeCRLHandleContext" /> for the X509 certificate revocation list. The caller of this

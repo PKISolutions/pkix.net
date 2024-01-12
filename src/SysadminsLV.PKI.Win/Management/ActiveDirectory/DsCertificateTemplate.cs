@@ -96,6 +96,7 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
     public Int32 ExtBasicConstraintsPathLength { get; private set; }
     /// <inheritdoc />
     public X509KeyUsageFlags ExtKeyUsages { get; private set; }
+    /// <inheritdoc />
     public IDictionary<String, Object> ExtendedProperties { get; }
 
     static DsPropertyCollection getDsEntryProperties(String ldapPath) {

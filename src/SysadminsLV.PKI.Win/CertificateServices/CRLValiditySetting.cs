@@ -35,29 +35,29 @@ public class CRLValiditySetting {
     /// Gets or sets Base CRL validity period.
     /// </summary>
     public String BaseCRL {
-        get { return $"{BaseUnits} {BasePeriod}"; }
-        set { validate($"{BaseUnits} {BasePeriod}", value, "Base"); }
+        get => $"{BaseUnits} {BasePeriod}";
+        set => validate($"{BaseUnits} {BasePeriod}", value, "Base");
     }
     /// <summary>
     /// Gets or sets Base CRL validity extension after new Base CRL is issued.
     /// </summary>
     public String BaseCRLOverlap {
-        get { return $"{BaseOverlapUnits} {BaseOverlap}"; }
-        set { validate($"{BaseOverlapUnits} {BaseOverlap}", value, "BaseOverlap"); }
+        get => $"{BaseOverlapUnits} {BaseOverlap}";
+        set => validate($"{BaseOverlapUnits} {BaseOverlap}", value, "BaseOverlap");
     }
     /// <summary>
     /// Gets or sets Delta CRL validity period.
     /// </summary>
     public String DeltaCRL {
-        get { return $"{DeltaUnits} {DeltaPeriod}"; }
-        set { validate($"{DeltaUnits} {DeltaPeriod}", value, "Delta"); }
+        get => $"{DeltaUnits} {DeltaPeriod}";
+        set => validate($"{DeltaUnits} {DeltaPeriod}", value, "Delta");
     }
     /// <summary>
     /// Gets or sets Base CRL validity extension after new Delta CRL is issued.
     /// </summary>
     public String DeltaCRLOverlap {
-        get { return $"{DeltaOverlapUnits} {DeltaOverlap}"; }
-        set { validate($"{DeltaOverlapUnits} {DeltaOverlap}", value, "DeltaOverlap"); }
+        get => $"{DeltaOverlapUnits} {DeltaOverlap}";
+        set => validate($"{DeltaOverlapUnits} {DeltaOverlap}", value, "DeltaOverlap");
     }
     /// <summary>
     /// Returns <strong>True</strong> if the current object is modified after it is created.
@@ -83,7 +83,7 @@ public class CRLValiditySetting {
             DeltaOverlapUnits = (Int32)CryptoRegistry.GetRReg("CRLDeltaOverlapUnits", Name, ComputerName);
             DeltaOverlap = (String)CryptoRegistry.GetRReg("CRLDeltaOverlapPeriod", Name, ComputerName);
         } else {
-            if (certificateAuthority.Ping()) {
+            if (certificateAuthority.PingAdmin()) {
                 // Base CRL
                 BaseUnits = (Int32)CryptoRegistry.GetRegFallback(ConfigString, String.Empty, "CRLPeriodUnits");
                 BasePeriod = (String)CryptoRegistry.GetRegFallback(ConfigString, String.Empty, "CRLPeriod");
@@ -97,7 +97,7 @@ public class CRLValiditySetting {
                 DeltaOverlapUnits = (Int32)CryptoRegistry.GetRegFallback(ConfigString, String.Empty, "CRLDeltaOverlapUnits");
                 DeltaOverlap = (String)CryptoRegistry.GetRegFallback(ConfigString, String.Empty, "CRLDeltaOverlapPeriod");
             } else {
-                ServerUnavailableException e = new ServerUnavailableException(DisplayName);
+                var e = new ServerUnavailableException(DisplayName);
                 e.Data.Add(nameof(e.Source), (OfflineSource)3);
                 throw e;
             }
@@ -105,7 +105,7 @@ public class CRLValiditySetting {
     }
     void validate(String oldValidity, String newValidity, String source) {
         if (newValidity != oldValidity) {
-            Regex regex = new Regex(@"^(\d+)\s(hours|days|weeks|months|years)");
+            var regex = new Regex(@"^(\d+)\s(hours|days|weeks|months|years)");
             Match match = regex.Match(newValidity.ToLower());
             if (match.Success) {
                 switch (source) {
@@ -135,7 +135,7 @@ public class CRLValiditySetting {
     /// Updates CRL (Base and Delta CRL) setting.
     /// </summary>
     /// <param name="restart">
-    /// Indiciates whether to restart certificate services to immediately apply changes. Updated settings has no effect until
+    /// Indicates whether to restart certificate services to immediately apply changes. Updated settings has no effect until
     /// CA service is restarted.
     /// </param>
     /// <exception cref="UnauthorizedAccessException">
@@ -185,7 +185,7 @@ public class CRLValiditySetting {
             if (restart) { CertificateAuthority.Restart(ComputerName); }
             return true;
         }
-        ServerUnavailableException e = new ServerUnavailableException(DisplayName);
+        var e = new ServerUnavailableException(DisplayName);
         e.Data.Add(nameof(e.Source), (OfflineSource)3);
         throw e;
     }

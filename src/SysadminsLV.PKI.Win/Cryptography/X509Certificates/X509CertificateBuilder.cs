@@ -19,7 +19,7 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 /// </summary>
 /// <remarks>
 /// Although, the certificate is created in-memory, private key material still persists in CSP/KSP. When the
-/// certificate is no longer necessary, call <see cref="CLRExtensions.X509Certificate2Extensions.DeletePrivateKey">
+/// certificate is no longer necessary, call <see cref="X509Certificate2Extensions.DeletePrivateKey">
 /// X509Certificate2.DeletePrivateKey</see> extension method.
 /// </remarks>
 public class X509CertificateBuilder {

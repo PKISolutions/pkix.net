@@ -55,8 +55,8 @@ public class KRA {
 
     void m_initialize(CertificateAuthority certificateAuthority) {
         if (!certificateAuthority.IsEnterprise) { throw new PlatformNotSupportedException(); }
-        if (!certificateAuthority.Ping()) {
-            ServerUnavailableException e = new ServerUnavailableException(certificateAuthority.DisplayName);
+        if (!certificateAuthority.PingAdmin()) {
+            var e = new ServerUnavailableException(certificateAuthority.DisplayName);
             e.Data.Add(nameof(e.Source), OfflineSource.DCOM);
             throw e;
         }
@@ -65,7 +65,7 @@ public class KRA {
         ComputerName = certificateAuthority.ComputerName;
         ConfigString = certificateAuthority.ConfigString;
 
-        CCertAdmin CertAdmin = new CCertAdmin();
+        var CertAdmin = new CCertAdmin();
         Int32 KRACount = (Int32)CertAdmin.GetCAProperty(certificateAuthority.ConfigString, CertAdmConstants.CrPropKracertcount, 0, CertAdmConstants.ProptypeLong, 0);
         if (KRACount > 0) {
             for (Int32 index = 0; index < KRACount; index++) {
@@ -88,7 +88,7 @@ public class KRA {
         if (certs == null || certs.Length == 0) { throw new ArgumentNullException(nameof(certs)); }
 
         Int32 before = _certs.Count;
-        X509Chain chain = new X509Chain();
+        var chain = new X509Chain();
         chain.ChainPolicy.ApplicationPolicy.Add(new Oid("1.3.6.1.4.1.311.21.6"));
         foreach (X509Certificate2 cert in certs.Where(chain.Build)) {
             if (
@@ -110,7 +110,7 @@ public class KRA {
             Certificate.Clear();
             IsModified = true;
         } else {
-            List<X509Certificate2> certs2 = new List<X509Certificate2>();
+            var certs2 = new List<X509Certificate2>();
             certs2.AddRange(_certs);
             if (certs2.Count > 0) {
                 foreach (X509Certificate2 cert in from cert in certs2 from thumb in thumbprint.Where(thumb => cert.Thumbprint == thumb.ToUpper().Replace(" ", null)) select cert) {
@@ -126,7 +126,7 @@ public class KRA {
     /// </summary>
     /// <param name="cert">An <see cref="X509Certificate2"/> object to remove.</param>
     public void Remove(X509Certificate2 cert) {
-        List<X509Certificate2> certs2 = new List<X509Certificate2>();
+        var certs2 = new List<X509Certificate2>();
         certs2.AddRange(_certs);
         if (certs2.Any(cert2 => cert2.Thumbprint == cert.Thumbprint)) {
             IsModified = true;
@@ -160,15 +160,15 @@ public class KRA {
     public Boolean SetInfo(Boolean restart) {
         if (IsModified) {
             if (!CertificateAuthority.Ping(ComputerName)) {
-                ServerUnavailableException e = new ServerUnavailableException(DisplayName);
+                var e = new ServerUnavailableException(DisplayName);
                 e.Data.Add(nameof(e.Source), OfflineSource.DCOM);
                 throw e;
             }
-            CCertAdmin CertAdmin = new CCertAdmin();
+            var CertAdmin = new CCertAdmin();
             try {
                 if (_certs.Count > 0) {
-                    Int32 kracount = (Int32)CertAdmin.GetCAProperty(ConfigString, CertAdmConstants.CrPropKracertcount, 0, CertAdmConstants.ProptypeLong, 0);
-                    if (kracount > 0) { CertAdmin.SetCAProperty(ConfigString, CertAdmConstants.CrPropKracertcount, 0, CertAdmConstants.ProptypeLong, 0); }
+                    Int32 kraCount = (Int32)CertAdmin.GetCAProperty(ConfigString, CertAdmConstants.CrPropKracertcount, 0, CertAdmConstants.ProptypeLong, 0);
+                    if (kraCount > 0) { CertAdmin.SetCAProperty(ConfigString, CertAdmConstants.CrPropKracertcount, 0, CertAdmConstants.ProptypeLong, 0); }
                     for (Int32 index = 0; index < _certs.Count; index++) {
                         String der = CryptographyUtils.EncodeDerString(_certs[index].RawData);
                         CertAdmin.SetCAProperty(ConfigString, CertAdmConstants.CrPropKracert, index, CertAdmConstants.ProptypeBinary, der);
