@@ -139,7 +139,7 @@ static class DsUtils {
     /// <param name="searchRoot">Specifies the search root.</param>
     /// <param name="propName">Search RDN attribute name or its OID.</param>
     /// <param name="propValue">Search value.</param>
-    /// <returns>LDAP path with "LDAP://" prefix if the object is found, otherwise NULL.</returns>
+    /// <returns>Fully escaped LDAP path with "LDAP://" prefix if the object is found, otherwise NULL.</returns>
     public static String Find(String searchRoot, String propName, String propValue) {
         using var entry = new DirectoryEntry($"LDAP://{searchRoot}");
         using var searcher = new DirectorySearcher(entry);
@@ -198,7 +198,6 @@ static class DsUtils {
     public static String EscapeRDN(String inputStr) {
         return inputStr
             // replace with backslash and ASCII code (in hex)
-            .Replace("*", @"\2a")
             .Replace("\\", @"\5c")
             .Replace("\0", @"\00")
             .Replace("/", @"\/")
