@@ -4,7 +4,6 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Interop.CERTENROLLLib;
-using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
 using SysadminsLV.PKI.Cryptography;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
@@ -197,8 +196,8 @@ public class CertificateTemplateSettings {
         GeneralFlags = template.GetEnum<CertificateTemplateFlags>(EnrollmentTemplateProperty.TemplatePropGeneralFlags);
         EnrollmentOptions = template.GetEnum<CertificateTemplateEnrollmentFlags>(EnrollmentTemplateProperty.TemplatePropEnrollmentFlags);
         subjectFlags = template.GetInt32(EnrollmentTemplateProperty.TemplatePropSubjectNameFlags);
-        ValidityPeriod = readValidity(null, template.GetInt64(EnrollmentTemplateProperty.TemplatePropValidityPeriod));
-        RenewalPeriod = readValidity(null, template.GetInt64(EnrollmentTemplateProperty.TemplatePropRenewalPeriod));
+        ValidityPeriod = readValidity(template.GetInt64(EnrollmentTemplateProperty.TemplatePropValidityPeriod));
+        RenewalPeriod = readValidity(template.GetInt64(EnrollmentTemplateProperty.TemplatePropRenewalPeriod));
         SupersededTemplates = template.GetCollectionValue<String>(EnrollmentTemplateProperty.TemplatePropSupersede);
         var extensionList = ((IX509Extensions)template.Property[EnrollmentTemplateProperty.TemplatePropExtensions])
             .Cast<IX509Extension>()
@@ -211,30 +210,11 @@ public class CertificateTemplateSettings {
         extensionList.ForEach(_extensions.Add);
     }
 
-    static String readValidity(Byte[] rawData, Int64 fileTime = 0) {
-        Int64 Value;
-        String output;
-        if (rawData != null) {
-            String intBytes = AsnFormatter.BinaryToString(rawData.Reverse().ToArray());
-            Value = (Int64)(Convert.ToInt64(intBytes, 16) * -.0000001 / 3600);
-        } else {
-            Value = fileTime / 3600;
-        }
-        if (Value % 8760 == 0 && Value / 8760 >= 1) {
-            output = Convert.ToString(Value / 8760) + " years";
-        } else if (Value % 720 == 0 && Value / 720 >= 1) {
-            output = Convert.ToString(Value / 720) + " months";
-        } else if (Value % 168 == 0 && Value / 168 >= 1) {
-            output = Convert.ToString(Value / 168) + " weeks";
-        } else if (Value % 24 == 0 && Value / 24 >= 1) {
-            output = Convert.ToString(Value / 24) + " days";
-        } else if (Value % 1 == 0 && Value / 1 >= 1) {
-            output = Convert.ToString(Value) + " hours";
-        } else {
-            output = "0 hours";
-        }
-
-        return output;
+    static String readValidity(Byte[] rawData) {
+        return SysadminsLV.PKI.ADCS.ValidityPeriod.FromFileTime(rawData).ValidityString;
+    }
+    static String readValidity(Int64 fileTime) {
+        return SysadminsLV.PKI.ADCS.ValidityPeriod.FromFileTime(fileTime).ValidityString;
     }
     void readEKU() {
         try {
