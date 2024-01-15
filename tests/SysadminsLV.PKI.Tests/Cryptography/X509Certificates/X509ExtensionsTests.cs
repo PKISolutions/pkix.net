@@ -62,7 +62,7 @@ public class X509ExtensionsTests {
     }
     [TestMethod]
     public void TestSANEmptyExtensionDecode() {
-        AsnEncodedData asn = new AsnEncodedData(Convert.FromBase64String(Extensions.NameConstraintsEmpty));
+        var asn = new AsnEncodedData(Convert.FromBase64String(Extensions.NameConstraintsEmpty));
         var ext = new X509NameConstraintsExtension(asn);
         try {
             var san = new X509SubjectAlternativeNamesExtension(ext.PermittedSubtree, false);
@@ -76,33 +76,35 @@ public class X509ExtensionsTests {
     }
     [TestMethod]
     public void TestCDP() {
-        List<String> uris = new List<String> {
-                                                     "http://ca.whitebearhome.com:8080/ejbca/publicweb/webdist/certdist?cmd=crl&issuer=CN=Whitebear Home CA,O=Whitebear Home,C=CA",
-                                                     "http://ca.whitebearhome.com:8080/ejbca/publicweb/webdist/certdist?cmd=deltacrl&issuer=CN=Whitebear Home CA,O=Whitebear Home,C=CA"
-                                                 };
+        List<String> uris = new() {
+                                      "http://ca.whitebearhome.com:8080/ejbca/publicweb/webdist/certdist?cmd=crl&issuer=CN=Whitebear Home CA,O=Whitebear Home,C=CA",
+                                      "http://ca.whitebearhome.com:8080/ejbca/publicweb/webdist/certdist?cmd=deltacrl&issuer=CN=Whitebear Home CA,O=Whitebear Home,C=CA"
+                                  };
         var cdp = new X509CRLDistributionPointsExtension(uris.ToArray());
-        var cert = new X509Certificate2(Convert.FromBase64String(Resources.MultiCDP));
-        X509Extension ex = null;
-        foreach (var ext in cert.Extensions.Cast<X509Extension>().Where(ext => ext.Oid.Value == "2.5.29.31")) {
-            ex = ext;
+        Assert.AreEqual(1, cdp.CRLDistributionPoints.Length);
+        Assert.AreEqual(2, cdp.CRLDistributionPoints[0].FullName.Count);
+        for (Int32 index = 0; index < cdp.CRLDistributionPoints[0].FullName.Count; index++) {
+            Assert.AreEqual(X509AlternativeNamesEnum.URL, cdp.CRLDistributionPoints[0].FullName[index].Type);
+            Assert.AreEqual(uris[index].Replace(" ","%20"), cdp.CRLDistributionPoints[0].FullName[index].Value);
         }
+
+        var cert = new X509Certificate2(Convert.FromBase64String(Resources.MultiCDP));
+        X509Extension ex = cert.Extensions[X509ExtensionOid.CRLDistributionPoints];
         var cdp2 = new X509CRLDistributionPointsExtension(ex, false);
-        var urllist = cdp2.GetURLs();
+        String[] urlList = cdp2.GetURLs();
+        Assert.AreEqual(4, urlList.Length);
 
         var cert3 = new X509Certificate2(Convert.FromBase64String(Resources.CRLIssuer));
-        X509Extension ex3 = null;
-        foreach (var ext in cert3.Extensions.Cast<X509Extension>().Where(ext => ext.Oid.Value == "2.5.29.31")) {
-            ex3 = ext;
-        }
+        X509Extension ex3 = cert3.Extensions[X509ExtensionOid.CRLDistributionPoints];
         var cdp3 = new X509CRLDistributionPointsExtension(ex3, false);
-        var urllist3 = cdp3.GetURLs();
+        String[] urlList3 = cdp3.GetURLs();
     }
     [TestMethod]
     public void TextNameConstraintsDecode() {
-        AsnEncodedData asn = new AsnEncodedData(Convert.FromBase64String(Extensions.NameConstraints));
-        X509NameConstraintsExtension ext = new X509NameConstraintsExtension(asn);
+        var asn = new AsnEncodedData(Convert.FromBase64String(Extensions.NameConstraints));
+        var ext = new X509NameConstraintsExtension(asn);
         Assert.IsTrue(ext.Critical, "Extension is not critical.");
-        Assert.IsTrue(ext.Oid.Value == "2.5.29.30");
+        Assert.IsTrue(ext.Oid.Value == X509ExtensionOid.NameConstraints);
 
         Assert.AreEqual(ext.PermittedSubtree.Count, 11);
         Assert.AreEqual(ext.ExcludedSubtree.Count, 4);
@@ -156,7 +158,7 @@ public class X509ExtensionsTests {
     }
     [TestMethod]
     public void TestNameConstraintsEmptyDecode() {
-        AsnEncodedData asn = new AsnEncodedData(Convert.FromBase64String(Extensions.NameConstraintsEmpty));
+        var asn = new AsnEncodedData(Convert.FromBase64String(Extensions.NameConstraintsEmpty));
         var ext = new X509NameConstraintsExtension(asn);
         Assert.IsTrue(ext.Critical, "Extension is not critical.");
         Assert.IsTrue(ext.Oid.Value == "2.5.29.30");
@@ -164,12 +166,11 @@ public class X509ExtensionsTests {
     [TestMethod]
     public void TestNameConstraintsEncode() {
         var permittedSubTree = new X509AlternativeNameCollection();
-        var excludedSubTree = new X509AlternativeNameCollection();
-        excludedSubTree.Add(new X509AlternativeName(X509AlternativeNamesEnum.DnsName, "example.com"));
+        var excludedSubTree = new X509AlternativeNameCollection { new(X509AlternativeNamesEnum.DnsName, "example.com") };
         var ns = new X509NameConstraintsExtension(permittedSubTree, excludedSubTree);
         Assert.AreEqual(0, ns.PermittedSubtree.Count);
         Assert.AreEqual(1, ns.ExcludedSubtree.Count);
-        var rw = ns.Encode();
+        Byte[] rw = ns.Encode();
         var asn = new AsnEncodedData(X509ExtensionOid.NameConstraints, ns.RawData);
         ns = new X509NameConstraintsExtension(asn);
         Assert.AreEqual(0, ns.PermittedSubtree.Count);
@@ -177,7 +178,7 @@ public class X509ExtensionsTests {
     }
     [TestMethod]
     public void TestCertPolicyConstraintsDecode() {
-        AsnEncodedData asn = new AsnEncodedData(Convert.FromBase64String(Extensions.CertPolicyConstraintsFull));
+        var asn = new AsnEncodedData(Convert.FromBase64String(Extensions.CertPolicyConstraintsFull));
         var ext = new X509CertificatePolicyConstraintsExtension(asn);
         Assert.IsTrue(ext.Critical);
         Assert.AreEqual(ext.Oid.Value, "2.5.29.36");
@@ -226,7 +227,7 @@ public class X509ExtensionsTests {
     }
     [TestMethod]
     public void TestCertPolicyMappingsDecode() {
-        AsnEncodedData asn = new AsnEncodedData(Convert.FromBase64String(Extensions.CertPolicyMappings));
+        var asn = new AsnEncodedData(Convert.FromBase64String(Extensions.CertPolicyMappings));
         var ext = new X509CertificatePolicyMappingsExtension(asn);
         Assert.IsTrue(ext.Critical);
         Assert.AreEqual(ext.Oid.Value, "2.5.29.33");
@@ -241,7 +242,7 @@ public class X509ExtensionsTests {
     }
     [TestMethod]
     public void TestCertPolicyMappingsEncode() {
-        List<OidMapping> oids = new List<OidMapping>();
+        var oids = new List<OidMapping>();
         oids.Add(new OidMapping(new Oid("1.3.6.1.4.1.311.21.53"), new Oid("1.2.3.4.87")));
         oids.Add(new OidMapping(new Oid("1.3.6.1.4.1.311.21.54"), new Oid("1.2.3.4.89")));
         var ext = new X509CertificatePolicyMappingsExtension(oids.ToArray());
@@ -258,7 +259,7 @@ public class X509ExtensionsTests {
     }
     [TestMethod]
     public void TestAppPolicyConstraintsDecode() {
-        AsnEncodedData asn = new AsnEncodedData(Convert.FromBase64String(Extensions.AppPolicyConstraintsFull));
+        var asn = new AsnEncodedData(Convert.FromBase64String(Extensions.AppPolicyConstraintsFull));
         var ext = new X509ApplicationPolicyConstraintsExtension(asn);
         Assert.IsTrue(ext.Critical);
         Assert.AreEqual(ext.Oid.Value, "1.3.6.1.4.1.311.21.12");
@@ -304,7 +305,7 @@ public class X509ExtensionsTests {
     }
     [TestMethod]
     public void TestAppPolicyMappingsDecode() {
-        AsnEncodedData asn = new AsnEncodedData(Convert.FromBase64String(Extensions.AppPolicyMappings));
+        var asn = new AsnEncodedData(Convert.FromBase64String(Extensions.AppPolicyMappings));
         var ext = new X509ApplicationPolicyMappingsExtension(asn);
         Assert.IsTrue(ext.Critical);
         Assert.AreEqual(ext.Oid.Value, "1.3.6.1.4.1.311.21.11");
@@ -319,7 +320,7 @@ public class X509ExtensionsTests {
     }
     [TestMethod]
     public void TestAppPolicyMappingsEncode() {
-        AsnEncodedData asn = new AsnEncodedData(Convert.FromBase64String(Extensions.AppPolicyMappings));
+        var asn = new AsnEncodedData(Convert.FromBase64String(Extensions.AppPolicyMappings));
         var ext = new X509ApplicationPolicyMappingsExtension(asn);
         Assert.IsTrue(ext.Critical);
         Assert.AreEqual(ext.Oid.Value, "1.3.6.1.4.1.311.21.11");
@@ -334,7 +335,7 @@ public class X509ExtensionsTests {
     }
     [TestMethod]
     public void TestAkiDecode() {
-        AsnEncodedData asn = new AsnEncodedData(Convert.FromBase64String(Extensions.AKIIssuerSerial));
+        var asn = new AsnEncodedData(Convert.FromBase64String(Extensions.AKIIssuerSerial));
         var ext = new X509AuthorityKeyIdentifierExtension(asn, false);
         Assert.IsFalse(ext.Critical);
         Assert.AreEqual(ext.Oid.Value, "2.5.29.35");
@@ -360,7 +361,7 @@ public class X509ExtensionsTests {
     }
     [TestMethod]
     public void TestCrossCertDp() {
-        AsnEncodedData asn = new AsnEncodedData(Convert.FromBase64String(Extensions.CrossCertDistrPoint));
+        var asn = new AsnEncodedData(Convert.FromBase64String(Extensions.CrossCertDistrPoint));
         var ext = new X509CrossCertificateDistributionPointsExtension(asn, false);
         Assert.IsFalse(ext.Critical);
         Assert.AreEqual(ext.Oid.Value, "1.3.6.1.4.1.311.10.9.1");
@@ -381,7 +382,7 @@ public class X509ExtensionsTests {
     public void TestNextCrlPublishDecode() {
         var bytes = Convert.FromBase64String(Resources.BaseCRLv2);
         var crl = new X509CRL2(bytes);
-        X509NextCRLPublishExtension ext = (X509NextCRLPublishExtension)crl.Extensions["1.3.6.1.4.1.311.21.4"];
+        var ext = (X509NextCRLPublishExtension)crl.Extensions["1.3.6.1.4.1.311.21.4"];
         Assert.AreEqual(new DateTime(2010, 04, 18, 14, 21, 44), ext.NextCRLPublish);
     }
     [TestMethod]
@@ -521,7 +522,7 @@ public class X509ExtensionsTests {
         Assert.IsFalse(idpExt1.OnlyUserCerts);
         Assert.IsFalse(idpExt1.OnlyAttributeCerts);
         Assert.IsFalse(idpExt1.IndirectCRL);
-        String txt1 = idpExt1.Format(true);
+        var txt1 = idpExt1.Format(true);
         Debug.WriteLine(txt1);
 
         var idpPoint = new X509DistributionPoint(new[] { new Uri("http://www.sysadmins.lv/pki/evca-2.crl") });
@@ -534,7 +535,7 @@ public class X509ExtensionsTests {
         Assert.IsFalse(idpExt1.OnlyUserCerts);
         Assert.IsFalse(idpExt1.OnlyAttributeCerts);
         Assert.IsFalse(idpExt1.IndirectCRL);
-        String txt2 = idpExt2.Format(true);
+        var txt2 = idpExt2.Format(true);
         Assert.AreEqual(txt2, txt1);
 
         idpExt2 = new X509IssuingDistributionPointsExtension(idpPoint, false, X509RevocationReasonFlag.CACompromise | X509RevocationReasonFlag.CeaseOfOperation);
