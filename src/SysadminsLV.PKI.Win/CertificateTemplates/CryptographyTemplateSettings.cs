@@ -37,7 +37,7 @@ public class CryptographyTemplateSettings {
     /// Gets or sets a list of cryptographic service providers (CSPs) that are used to create the private key and public key.
     /// If the property is null, a client may use any CSP installed on the client system.
     /// </summary>
-    public String[] ProviderList { get; private set; }
+    public String[] ProviderList { get; private set; } = [];
     /// <summary>
     /// Gets or sets key algorithm required by the certificate template.
     /// </summary>
@@ -111,7 +111,7 @@ public class CryptographyTemplateSettings {
         ProviderList = cspList.ToArray();
     }
     void readKeyUsages() {
-        if (!(_entry[DsUtils.PropPkiKeyUsage] is Byte[] ku)) {
+        if (_entry[DsUtils.PropPkiKeyUsage] is not Byte[] ku) {
             KeyUsage = X509KeyUsageFlags.None;
         } else {
             if (ku.Length == 1) {
@@ -122,25 +122,23 @@ public class CryptographyTemplateSettings {
             }
         }
         if (schemaVersion > 2) {
-            X509KeyUsageFlags decryptionFlags =
-                X509KeyUsageFlags.DataEncipherment
-                | X509KeyUsageFlags.DecipherOnly
-                | X509KeyUsageFlags.EncipherOnly
-                | X509KeyUsageFlags.KeyEncipherment;
+            const X509KeyUsageFlags decryptionFlags = X509KeyUsageFlags.DataEncipherment
+                                                      | X509KeyUsageFlags.DecipherOnly
+                                                      | X509KeyUsageFlags.EncipherOnly
+                                                      | X509KeyUsageFlags.KeyEncipherment;
 
             if ((KeyUsage & decryptionFlags) == decryptionFlags) {
                 CNGKeyUsage |= CngKeyUsages.Decryption;
             }
 
-            X509KeyUsageFlags signingFlags =
-                X509KeyUsageFlags.CrlSign
-                | X509KeyUsageFlags.DigitalSignature
-                | X509KeyUsageFlags.KeyCertSign;
+            const X509KeyUsageFlags signingFlags = X509KeyUsageFlags.CrlSign
+                                                   | X509KeyUsageFlags.DigitalSignature
+                                                   | X509KeyUsageFlags.KeyCertSign;
             if ((KeyUsage & signingFlags) == signingFlags) {
                 CNGKeyUsage |= CngKeyUsages.Signing;
             }
 
-            X509KeyUsageFlags agreementFlags = X509KeyUsageFlags.KeyAgreement;
+            const X509KeyUsageFlags agreementFlags = X509KeyUsageFlags.KeyAgreement;
             if ((KeyUsage & agreementFlags) == agreementFlags) {
                 CNGKeyUsage |= CngKeyUsages.KeyAgreement;
             }
@@ -148,8 +146,7 @@ public class CryptographyTemplateSettings {
             // all CNG usages enabled if at least one usage in every category is enabled.
             if ((KeyUsage & decryptionFlags) > 0
                 && (KeyUsage & signingFlags) > 0
-                && (KeyUsage & agreementFlags) > 0)
-            {
+                && (KeyUsage & agreementFlags) > 0) {
                 CNGKeyUsage = CngKeyUsages.AllUsages;
             }
         }
@@ -195,8 +192,9 @@ public class CryptographyTemplateSettings {
             SB.AppendLine("Any installed CSP");
         } else {
             SB.Append(nl);
-            foreach (String csp in ProviderList) {
-                SB.AppendLine($"     {csp}");
+            for (Int32 index = 0; index < ProviderList.Length; index++) {
+                String csp = ProviderList[index];
+                SB.AppendLine($"     {index}:{csp}");
             }
         }
         SB.AppendLine(@$"  Key Algorithm: {KeyAlgorithm.Format(true)}
