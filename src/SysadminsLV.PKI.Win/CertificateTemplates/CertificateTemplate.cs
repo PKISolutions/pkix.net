@@ -333,6 +333,23 @@ public class CertificateTemplate {
         return new CertTemplateSecurityDescriptor(this);
     }
     /// <summary>
+    /// Gets template major version. Major version is used by autoenrollment component to determine if certificate
+    /// needs to be renewed prior to scheduled renewal period.
+    /// </summary>
+    /// <returns>Template major version.</returns>
+    public Int32 GetMajorVersion() {
+        return major;
+    }
+    /// <summary>
+    /// Gets template minor version. Minor version is increased with every template setting change
+    /// (excluding ACL, common and display names) and used by autoenrollment component to determine whether to use
+    /// new or renewal request during re-enrollment.
+    /// </summary>
+    /// <returns>Template minor version.</returns>
+    public Int32 GetMinorVersion() {
+        return minor;
+    }
+    /// <summary>
     /// Gets certificate template textual representation.
     /// </summary>
     /// <returns>Certificate template textual representation.</returns>
