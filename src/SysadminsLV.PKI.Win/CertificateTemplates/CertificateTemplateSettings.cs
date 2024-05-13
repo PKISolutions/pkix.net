@@ -142,7 +142,7 @@ public class CertificateTemplateSettings {
     /// <summary>
     /// Gets certificate template name list that is superseded by the current template.
     /// </summary>
-    public String[] SupersededTemplates { get; private set; }
+    public String[] SupersededTemplates { get; private set; } = [];
     /// <summary>
     /// Gets or sets whether the requests based on a referenced template are put to a pending state.
     /// </summary>
