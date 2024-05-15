@@ -15,15 +15,15 @@ namespace SysadminsLV.PKI.Dcom.Implementations;
 /// Represents CertEnroll-based implementation of <see cref="IAdcsCertificateTemplate"/>.
 /// </summary>
 public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
-    readonly List<Byte> _validityPeriod = new();
-    readonly List<Byte> _renewalPeriod = new();
-    readonly List<String> _raAppPolicies = new();
-    readonly List<String> _raCertPolicies = new();
-    readonly List<String> _cryptCspList = new();
-    readonly List<String> _supersededTemplates = new();
-    readonly List<String> _criticalExtensions = new();
-    readonly List<String> _eku = new();
-    readonly List<ICertificateTemplateCertificatePolicy> _certPolicies = new();
+    readonly List<Byte> _validityPeriod = [];
+    readonly List<Byte> _renewalPeriod = [];
+    readonly List<String> _raAppPolicies = [];
+    readonly List<String> _raCertPolicies = [];
+    readonly List<String> _cryptCspList = [];
+    readonly List<String> _supersededTemplates = [];
+    readonly List<String> _criticalExtensions = [];
+    readonly List<String> _eku = [];
+    readonly List<ICertificateTemplateCertificatePolicy> _certPolicies = [];
 
     /// <summary>
     /// Initializes a new instance of <strong>CertEnrollCertificateTemplate</strong> class from an <see cref="IX509CertificateTemplate"/> COM interface.
@@ -58,8 +58,8 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
         CryptSymmetricKeyLength = template.GetInt32(EnrollmentTemplateProperty.TemplatePropSymmetricKeyLength);
         CryptSymmetricAlgorithm = template.GetScalarValue<String>(EnrollmentTemplateProperty.TemplatePropSymmetricAlgorithm);
         CryptPublicKeyLength = template.GetInt32(EnrollmentTemplateProperty.TemplatePropMinimumKeySize);
-        CryptPublicKeyAlgorithm = template.GetScalarValue<String>(EnrollmentTemplateProperty.TemplatePropAsymmetricAlgorithm);
-        CryptHashAlgorithm = template.GetScalarValue<String>(EnrollmentTemplateProperty.TemplatePropHashAlgorithm);
+        CryptPublicKeyAlgorithm = template.GetScalarValue<String>(EnrollmentTemplateProperty.TemplatePropAsymmetricAlgorithm, "RSA");
+        CryptHashAlgorithm = template.GetScalarValue<String>(EnrollmentTemplateProperty.TemplatePropHashAlgorithm, "SHA1");
         _cryptCspList.AddRange(template.GetCollectionValue<String>(EnrollmentTemplateProperty.TemplatePropCryptoProviders));
         _supersededTemplates.AddRange(template.GetCollectionValue<String>(EnrollmentTemplateProperty.TemplatePropSupersede));
         _eku.AddRange(template.GetCollectionValue<String>(EnrollmentTemplateProperty.TemplatePropEKUs));
@@ -105,9 +105,9 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
     /// <inheritdoc />
     public Int32 MinorVersion { get; }
     /// <inheritdoc />
-    public Byte[] ValidityPeriod => _validityPeriod.ToArray();
+    public Byte[] ValidityPeriod => [.. _validityPeriod];
     /// <inheritdoc />
-    public Byte[] RenewalPeriod => _renewalPeriod.ToArray();
+    public Byte[] RenewalPeriod => [.. _renewalPeriod];
     /// <inheritdoc />
     public CertificateTemplateFlags Flags { get; }
     /// <inheritdoc />
@@ -117,9 +117,9 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
     /// <inheritdoc />
     public Int32 RASignatureCount { get; }
     /// <inheritdoc />
-    public String[] RAApplicationPolicies => _raAppPolicies.ToArray();
+    public String[] RAApplicationPolicies => [.. _raAppPolicies];
     /// <inheritdoc />
-    public String[] RACertificatePolicies => _raCertPolicies.ToArray();
+    public String[] RACertificatePolicies => [.. _raCertPolicies];
     /// <inheritdoc />
     public PrivateKeyFlags CryptPrivateKeyFlags { get; }
     /// <inheritdoc />
@@ -135,15 +135,15 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
     /// <inheritdoc />
     public String CryptHashAlgorithm { get; }
     /// <inheritdoc />
-    public String[] CryptSupportedProviders => _cryptCspList.ToArray();
+    public String[] CryptSupportedProviders => [.. _cryptCspList];
     /// <inheritdoc />
-    public String[] SupersededTemplates => _supersededTemplates.ToArray();
+    public String[] SupersededTemplates => [.. _supersededTemplates];
     /// <inheritdoc />
-    public String[] CriticalExtensions => _criticalExtensions.ToArray();
+    public String[] CriticalExtensions => [.. _criticalExtensions];
     /// <inheritdoc />
-    public String[] ExtEKU => _eku.ToArray();
+    public String[] ExtEKU => [.. _eku];
     /// <inheritdoc />
-    public ICertificateTemplateCertificatePolicy[] ExtCertPolicies => _certPolicies.ToArray();
+    public ICertificateTemplateCertificatePolicy[] ExtCertPolicies => [.. _certPolicies];
     /// <inheritdoc />
     public Int32 ExtBasicConstraintsPathLength { get; } = -1;
     /// <inheritdoc />
