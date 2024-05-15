@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Interop.CERTENROLLLib;
@@ -42,21 +43,19 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
         ExtendedProperties = new Dictionary<String, Object>(StringComparer.OrdinalIgnoreCase);
         CommonName = template.GetScalarValue<String>(EnrollmentTemplateProperty.TemplatePropCommonName);
         DisplayName = template.GetScalarValue<String>(EnrollmentTemplateProperty.TemplatePropFriendlyName);
-        Oid = template.GetScalarValue<IObjectId>(EnrollmentTemplateProperty.TemplatePropOID).Value;
+        Oid = template.GetScalarValue<String>(EnrollmentTemplateProperty.TemplatePropOID);
         Description = template.GetScalarValue<String>(EnrollmentTemplateProperty.TemplatePropDescription);
         SchemaVersion = template.GetInt32(EnrollmentTemplateProperty.TemplatePropSchemaVersion);
         MajorVersion = template.GetInt32(EnrollmentTemplateProperty.TemplatePropMajorRevision);
         MinorVersion = template.GetInt32(EnrollmentTemplateProperty.TemplatePropMinorRevision);
-        Int64 timeInSeconds = template.GetInt64(EnrollmentTemplateProperty.TemplatePropValidityPeriod);
-        _validityPeriod.AddRange(BitConverter.GetBytes(TimeSpan.FromSeconds(timeInSeconds).Ticks));
-        timeInSeconds = template.GetInt64(EnrollmentTemplateProperty.TemplatePropRenewalPeriod);
-        _renewalPeriod.AddRange(BitConverter.GetBytes(TimeSpan.FromSeconds(timeInSeconds).Ticks));
+        _validityPeriod.AddRange(BitConverter.GetBytes(template.GetInt64(EnrollmentTemplateProperty.TemplatePropValidityPeriod, 99)));
+        _renewalPeriod.AddRange(BitConverter.GetBytes(template.GetInt64(EnrollmentTemplateProperty.TemplatePropRenewalPeriod, 99)));
         Flags = template.GetEnum<CertificateTemplateFlags>(EnrollmentTemplateProperty.TemplatePropGeneralFlags);
         SubjectNameFlags = template.GetEnum<CertificateTemplateNameFlags>(EnrollmentTemplateProperty.TemplatePropSubjectNameFlags);
         EnrollmentFlags = template.GetEnum<CertificateTemplateEnrollmentFlags>(EnrollmentTemplateProperty.TemplatePropEnrollmentFlags);
         RASignatureCount = template.GetInt32(EnrollmentTemplateProperty.TemplatePropRASignatureCount);
-        _raAppPolicies.AddRange(template.GetCollectionValue<String>(EnrollmentTemplateProperty.TemplatePropRAEKUs));
-        _raCertPolicies.AddRange(template.GetCollectionValue<String>(EnrollmentTemplateProperty.TemplatePropRACertificatePolicies));
+        _raAppPolicies.AddRange(template.GetScalarValue<IObjectIds>(EnrollmentTemplateProperty.TemplatePropRAEKUs).Cast<IObjectId>().Select(x => x.Value));
+        _raCertPolicies.AddRange(template.GetScalarValue<IObjectIds>(EnrollmentTemplateProperty.TemplatePropRACertificatePolicies).Cast<IObjectId>().Select(x => x.Value));
         CryptPrivateKeyFlags = template.GetEnum<PrivateKeyFlags>(EnrollmentTemplateProperty.TemplatePropPrivateKeyFlags);
         CryptKeySpec = template.GetEnum<X509KeySpecFlags>(EnrollmentTemplateProperty.TemplatePropKeySpec);
         CryptSymmetricKeyLength = template.GetInt32(EnrollmentTemplateProperty.TemplatePropSymmetricKeyLength);
@@ -67,7 +66,7 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
         CryptPrivateKeySDDL = template.GetScalarValue<String>(EnrollmentTemplateProperty.TemplatePropKeySecurityDescriptor);
         _cryptCspList.AddRange(template.GetCollectionValue<String>(EnrollmentTemplateProperty.TemplatePropCryptoProviders));
         _supersededTemplates.AddRange(template.GetCollectionValue<String>(EnrollmentTemplateProperty.TemplatePropSupersede));
-        _eku.AddRange(template.GetCollectionValue<String>(EnrollmentTemplateProperty.TemplatePropEKUs));
+        _eku.AddRange(template.GetScalarValue<IObjectIds>(EnrollmentTemplateProperty.TemplatePropEKUs).Cast<IObjectId>().Select(x => x.Value));
         ExtKeyUsages = template.GetEnum<X509KeyUsageFlags>(EnrollmentTemplateProperty.TemplatePropKeyUsage);
         foreach (String policyOid in template.GetCollectionValue<String>(EnrollmentTemplateProperty.TemplatePropCertificatePolicies)) {
             var certPolicy = new CertificateTemplateCertificatePolicy(policyOid);
