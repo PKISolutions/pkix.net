@@ -3,15 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using Interop.CERTENROLLLib;
 using SysadminsLV.Asn1Parser.Universal;
+using SysadminsLV.PKI.CertificateTemplates;
 using SysadminsLV.PKI.Cryptography;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
 using SysadminsLV.PKI.Management.ActiveDirectory;
 using SysadminsLV.PKI.Utils;
-using SysadminsLV.PKI.Utils.CLRExtensions;
-using EncodingType = Interop.CERTENROLLLib.EncodingType;
-using X509KeyUsageFlags = System.Security.Cryptography.X509Certificates.X509KeyUsageFlags;
 
 namespace PKI.CertificateTemplates;
 
@@ -19,21 +16,25 @@ namespace PKI.CertificateTemplates;
 /// This class represents certificate template extended settings.
 /// </summary>
 public class CertificateTemplateSettings {
+    readonly CertificateTemplate _template;
     readonly DsPropertyCollection _dsEntryProperties;
-    readonly List<X509Extension> _extensions = new();
-    readonly List<Oid> _ekuList = new();
-    readonly List<Oid> _criticalExtensions = new();
-    readonly List<Oid> _certPolicies = new();
-    Int32 pathLength, pkf, schemaVersion, subjectFlags;
+    readonly List<X509Extension> _extensions = [];
+    readonly List<Oid> _ekuList = [];
+    readonly List<Oid> _criticalExtensions = [];
+    readonly List<Oid> _certPolicies = [];
+    readonly List<String> _superseded = [];
+    Int32 pathLength, pkf, subjectFlags;
 
-    internal CertificateTemplateSettings(IX509CertificateTemplate template) {
-        initializeFromCOM(template);
+    internal CertificateTemplateSettings(IAdcsCertificateTemplate template, CertificateTemplate templateManaged) {
+        _template = templateManaged;
         Cryptography = new CryptographyTemplateSettings(template);
         RegistrationAuthority = new IssuanceRequirements(template);
         KeyArchivalSettings = new KeyArchivalOptions(template);
+        initializeFromCOM(template);
     }
-    internal CertificateTemplateSettings(DsPropertyCollection dsEntryProperties) {
+    internal CertificateTemplateSettings(DsPropertyCollection dsEntryProperties, CertificateTemplate templateManaged) {
         _dsEntryProperties = dsEntryProperties;
+        _template = templateManaged;
         Cryptography = new CryptographyTemplateSettings(_dsEntryProperties);
         RegistrationAuthority = new IssuanceRequirements(_dsEntryProperties);
         KeyArchivalSettings = new KeyArchivalOptions(_dsEntryProperties);
@@ -142,11 +143,12 @@ public class CertificateTemplateSettings {
     /// <summary>
     /// Gets certificate template name list that is superseded by the current template.
     /// </summary>
-    public String[] SupersededTemplates { get; private set; } = [];
+    public String[] SupersededTemplates => _superseded.ToArray();
     /// <summary>
     /// Gets or sets whether the requests based on a referenced template are put to a pending state.
     /// </summary>
-    public Boolean CAManagerApproval { get; private set; }
+    [Obsolete("Use 'RegistrationAuthority.CAManagerApproval' property instead.")]
+    public Boolean CAManagerApproval => RegistrationAuthority.CAManagerApproval;
     /// <summary>
     /// Gets registration authority requirements. These are number of authorized signatures and authorized certificate application and/or issuance
     /// policy requirements.
@@ -155,10 +157,12 @@ public class CertificateTemplateSettings {
     /// <summary>
     /// Gets a collection of critical extensions.
     /// </summary>
+    [Obsolete("This property is obsolete. Use 'X509Extension.IsCritical' property in Extensions member.")]
     public OidCollection CriticalExtensions {
         get {
             var oids = new OidCollection();
-            _criticalExtensions.ForEach(x => oids.Add(x));
+            _extensions.Where(x => x.Critical).ToList().ForEach(x => oids.Add(x.Oid));
+
             return oids;
         }
     }
@@ -183,39 +187,28 @@ public class CertificateTemplateSettings {
         ValidityPeriod = readValidity((Byte[])_dsEntryProperties[DsUtils.PropPkiNotAfter]);
         RenewalPeriod = readValidity((Byte[])_dsEntryProperties[DsUtils.PropPkiRenewalPeriod]);
         pathLength = (Int32)_dsEntryProperties[DsUtils.PropPkiPathLength];
-        if ((EnrollmentOptions & CertificateTemplateEnrollmentFlags.CAManagerApproval) > 0) {
-            CAManagerApproval = true;
-        }
         readEKU();
         readCertPolicies();
         readCriticalExtensions();
         readSuperseded();
         readExtensions();
     }
-    void initializeFromCOM(IX509CertificateTemplate template) {
-        GeneralFlags = template.GetEnum<CertificateTemplateFlags>(EnrollmentTemplateProperty.TemplatePropGeneralFlags);
-        EnrollmentOptions = template.GetEnum<CertificateTemplateEnrollmentFlags>(EnrollmentTemplateProperty.TemplatePropEnrollmentFlags);
-        subjectFlags = template.GetInt32(EnrollmentTemplateProperty.TemplatePropSubjectNameFlags);
-        ValidityPeriod = readValidity(template.GetInt64(EnrollmentTemplateProperty.TemplatePropValidityPeriod));
-        RenewalPeriod = readValidity(template.GetInt64(EnrollmentTemplateProperty.TemplatePropRenewalPeriod));
-        SupersededTemplates = template.GetCollectionValue<String>(EnrollmentTemplateProperty.TemplatePropSupersede);
-        var extensionList = ((IX509Extensions)template.Property[EnrollmentTemplateProperty.TemplatePropExtensions])
-            .Cast<IX509Extension>()
-            .Select(ext => new X509Extension(
-                        ext.ObjectId.Value,
-                        Convert.FromBase64String(ext.RawData[EncodingType.XCN_CRYPT_STRING_BASE64]),
-                        ext.Critical))
-            .Select(x => x.ConvertExtension())
-            .ToList();
-        extensionList.ForEach(_extensions.Add);
+    void initializeFromCOM(IAdcsCertificateTemplate template) {
+        GeneralFlags = template.Flags;
+        EnrollmentOptions = template.EnrollmentFlags;
+        subjectFlags = (Int32)template.SubjectNameFlags;
+        ValidityPeriod = readValidity(template.ValidityPeriod);
+        RenewalPeriod = readValidity(template.RenewalPeriod);
+        _superseded.AddRange(template.SupersededTemplates);
+        _ekuList.AddRange(template.ExtEKU.Select(x => new Oid(x)));
+        _certPolicies.AddRange(template.ExtCertPolicies.Select(x => new Oid(x.PolicyID)));
+        _criticalExtensions.AddRange(template.CriticalExtensions.Select(x => new Oid(x)));
+        readExtensions();
     }
 
     static String readValidity(Byte[] rawData) {
         Int64 fileTime = BitConverter.ToInt64(rawData, 0);
 
-        return SysadminsLV.PKI.ADCS.ValidityPeriod.FromFileTime(fileTime).ValidityString;
-    }
-    static String readValidity(Int64 fileTime) {
         return SysadminsLV.PKI.ADCS.ValidityPeriod.FromFileTime(fileTime).ValidityString;
     }
     void readEKU() {
@@ -254,24 +247,21 @@ public class CertificateTemplateSettings {
         }
     }
     void readSuperseded() {
-        var temps = new List<String>();
         try {
             Object[] templates = (Object[])_dsEntryProperties[DsUtils.PropPkiSupersede];
             if (templates != null) {
-                temps.AddRange(templates.Cast<String>());
+                _superseded.AddRange(templates.Cast<String>());
             }
         } catch {
-            temps.Add((String)_dsEntryProperties[DsUtils.PropPkiSupersede]);
+            _superseded.Add((String)_dsEntryProperties[DsUtils.PropPkiSupersede]);
         }
-        SupersededTemplates = temps.ToArray();
     }
     void readExtensions() {
-        schemaVersion = (Int32)_dsEntryProperties[DsUtils.PropPkiSchemaVersion];
         foreach (String oid in new[] {
-                                         X509ExtensionOid.KeyUsage,
+                                         X509ExtensionOid.CertTemplateInfoV2,
                                          X509ExtensionOid.EnhancedKeyUsage,
                                          X509ExtensionOid.CertificatePolicies,
-                                         X509ExtensionOid.CertTemplateInfoV2,
+                                         X509ExtensionOid.KeyUsage,
                                          X509ExtensionOid.BasicConstraints,
                                          X509ExtensionOid.OcspRevNoCheck}) {
             switch (oid) {
@@ -302,13 +292,10 @@ public class CertificateTemplateSettings {
                     break;
                 case X509ExtensionOid.CertTemplateInfoV2:
                     Boolean isCritical = isExtensionCritical(X509ExtensionOid.CertTemplateInfoV2);
-                    if (schemaVersion == 1) {
-                        _extensions.Add(new X509Extension(X509ExtensionOid.CertTemplateInfoV2, new Asn1BMPString((String)_dsEntryProperties[DsUtils.PropCN]).GetRawData(), isCritical));
+                    if (_template.SchemaVersion == 1) {
+                        _extensions.Add(new X509Extension(X509ExtensionOid.CertTemplateInfoV2, new Asn1BMPString(_template.Name).GetRawData(), isCritical));
                     } else {
-                        Int32 major = (Int32)_dsEntryProperties[DsUtils.PropPkiTemplateMajorVersion];
-                        Int32 minor = (Int32)_dsEntryProperties[DsUtils.PropPkiTemplateMinorVersion];
-                        var templateOid = new Oid((String)_dsEntryProperties[DsUtils.PropCertTemplateOid]);
-                        var extension = new X509CertificateTemplateExtension(templateOid, major, minor, false) {
+                        var extension = new X509CertificateTemplateExtension(_template.OID, _template.GetMajorVersion(), _template.GetMinorVersion(), false) {
                             Critical = isCritical
                         };
                         _extensions.Add(extension);
@@ -317,7 +304,7 @@ public class CertificateTemplateSettings {
                 case X509ExtensionOid.BasicConstraints:
                     if (
                         SubjectType is CertTemplateSubjectType.CA or CertTemplateSubjectType.CrossCA ||
-                        (EnrollmentOptions & CertificateTemplateEnrollmentFlags.BasicConstraintsInEndEntityCerts) > 0
+                        (EnrollmentOptions & CertificateTemplateEnrollmentFlags.BasicConstraintsInEndEntityCerts) != 0
                     ) {
                         Boolean isCA = SubjectType is CertTemplateSubjectType.CA or CertTemplateSubjectType.CrossCA;
                         Boolean hasConstraints = GetPathLengthConstraint() != -1;
@@ -326,8 +313,8 @@ public class CertificateTemplateSettings {
                     }
                     break;
                 case X509ExtensionOid.OcspRevNoCheck:
-                    if ((EnrollmentOptions & CertificateTemplateEnrollmentFlags.IncludeOcspRevNoCheck) > 0) {
-                        _extensions.Add(new X509Extension(X509ExtensionOid.OcspRevNoCheck, new Byte[] { 5, 0 }, isExtensionCritical(
+                    if ((EnrollmentOptions & CertificateTemplateEnrollmentFlags.IncludeOcspRevNoCheck) != 0) {
+                        _extensions.Add(new X509Extension(X509ExtensionOid.OcspRevNoCheck, [5, 0], isExtensionCritical(
                             X509ExtensionOid.OcspRevNoCheck)));
                     }
                     break;

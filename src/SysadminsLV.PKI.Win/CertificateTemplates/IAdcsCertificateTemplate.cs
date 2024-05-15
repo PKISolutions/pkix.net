@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.ComTypes;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using PKI.CertificateTemplates;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
@@ -76,6 +77,10 @@ public interface IAdcsCertificateTemplate {
     /// </summary>
     PrivateKeyFlags CryptPrivateKeyFlags { get; }
     /// <summary>
+    /// Gets CNG key usages.
+    /// </summary>
+    CngKeyUsages CryptCngKeyUsages { get; }
+    /// <summary>
     /// Gets private key's KeySpec.
     /// </summary>
     X509KeySpecFlags CryptKeySpec { get; }
@@ -104,6 +109,10 @@ public interface IAdcsCertificateTemplate {
     /// </summary>
     String[] CryptSupportedProviders { get; }
     /// <summary>
+    /// Gets optional private key security descriptor in SDDL format.
+    /// </summary>
+    String CryptPrivateKeySDDL { get; }
+    /// <summary>
     /// Gets a collection of superseded template common names.
     /// </summary>
     String[] SupersededTemplates { get; }
@@ -127,6 +136,7 @@ public interface IAdcsCertificateTemplate {
     /// Gets template Key Usages.
     /// </summary>
     X509KeyUsageFlags ExtKeyUsages { get; }
+    
     /// <summary>
     /// Gets a collection of custom template properties.
     /// </summary>

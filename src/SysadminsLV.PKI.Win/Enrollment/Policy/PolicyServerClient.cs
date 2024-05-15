@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using Interop.CERTENROLLLib;
 using PKI.CertificateTemplates;
+using SysadminsLV.PKI.Dcom.Implementations;
 using SysadminsLV.PKI.Exceptions;
 using SysadminsLV.PKI.Utils;
 
@@ -164,7 +165,10 @@ public class PolicyServerClient {
         }
     }
     void get_templates() {
-        Templates = (from IX509CertificateTemplate temp in policy.GetTemplates() select new CertificateTemplate(temp)).ToArray();
+        Templates = policy.GetTemplates()
+            .Cast<IX509CertificateTemplate>()
+            .Select(x => new CertificateTemplate(new CertEnrollCertificateTemplate(x)))
+            .ToArray();
     }
     void set_property(String propName, Object propValue) {
         if (FromPolicy) { return; }

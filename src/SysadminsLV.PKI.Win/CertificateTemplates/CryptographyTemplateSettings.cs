@@ -4,7 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using Interop.CERTENROLLLib;
+using SysadminsLV.PKI.CertificateTemplates;
 using SysadminsLV.PKI.Cryptography;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
 using SysadminsLV.PKI.Management.ActiveDirectory;
@@ -19,7 +19,7 @@ public class CryptographyTemplateSettings {
     Int32 schemaVersion;
     readonly DsPropertyCollection _entry;
 
-    internal CryptographyTemplateSettings(IX509CertificateTemplate template) {
+    internal CryptographyTemplateSettings(IAdcsCertificateTemplate template) {
         initializeFromCom(template);
     }
     internal CryptographyTemplateSettings(DsPropertyCollection Entry) {
@@ -83,7 +83,7 @@ public class CryptographyTemplateSettings {
         readKeyUsages();
         String ap = (String)_entry[DsUtils.PropPkiRaAppPolicy];
         if (ap != null && ap.Contains("`")) {
-            String[] delimiter = { "`" };
+            String[] delimiter = ["`"];
             String[] strings = ap.Split(delimiter, StringSplitOptions.RemoveEmptyEntries);
             for (Int32 index = 0; index < strings.Length; index += 3) {
                 switch (strings[index]) {
@@ -151,31 +151,16 @@ public class CryptographyTemplateSettings {
             }
         }
     }
-    void initializeFromCom(IX509CertificateTemplate template) {
-        try {
-            PrivateKeyOptions = (PrivateKeyFlags)Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropPrivateKeyFlags]);
-        } catch { }
-        MinimalKeyLength = Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropMinimumKeySize]);
-        KeySpec = (X509KeySpecFlags)Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropKeySpec]);
-        try {
-            CNGKeyUsage = (CngKeyUsages)Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropKeyUsage]);
-        } catch { }
-        try {
-            ProviderList = (String[])template.Property[EnrollmentTemplateProperty.TemplatePropCryptoProviders];
-        } catch { }
-        try {
-            KeyAlgorithm = new Oid((String)template.Property[EnrollmentTemplateProperty.TemplatePropAsymmetricAlgorithm]);
-        } catch {
-            KeyAlgorithm = new Oid("RSA");
-        }
-        try {
-            HashAlgorithm = new Oid((String)template.Property[EnrollmentTemplateProperty.TemplatePropHashAlgorithm]);
-        } catch {
-            HashAlgorithm = new Oid("SHA1");
-        }
-        try {
-            PrivateKeySecuritySDDL = (String)template.Property[EnrollmentTemplateProperty.TemplatePropKeySecurityDescriptor];
-        } catch { }
+    void initializeFromCom(IAdcsCertificateTemplate template) {
+        PrivateKeyOptions = template.CryptPrivateKeyFlags;
+        MinimalKeyLength = template.CryptPublicKeyLength;
+        KeySpec = template.CryptKeySpec;
+        KeyUsage = template.ExtKeyUsages;
+        CNGKeyUsage = template.CryptCngKeyUsages;
+        ProviderList = template.CryptSupportedProviders;
+        KeyAlgorithm = new Oid(template.CryptPublicKeyAlgorithm);
+        HashAlgorithm = new Oid(template.CryptHashAlgorithm);
+        PrivateKeySecuritySDDL = template.CryptPrivateKeySDDL;
     }
 
     /// <summary>

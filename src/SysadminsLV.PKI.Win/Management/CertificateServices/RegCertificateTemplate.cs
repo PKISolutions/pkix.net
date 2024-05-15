@@ -15,20 +15,20 @@ namespace SysadminsLV.PKI.Management.CertificateServices;
 /// Represents local registry cache-based implementation of <see cref="IAdcsCertificateTemplate"/> interface.
 /// </summary>
 public class RegCertificateTemplate : IAdcsCertificateTemplate {
-    readonly List<Byte> _validityPeriod = new();
-    readonly List<Byte> _renewalPeriod = new();
-    readonly List<String> _raAppPolicies = new();
-    readonly List<String> _raCertPolicies = new();
-    readonly List<String> _cryptCspList = new();
-    readonly List<String> _supersededTemplates = new();
-    readonly List<String> _criticalExtensions = new();
-    readonly List<String> _eku = new();
-    readonly List<ICertificateTemplateCertificatePolicy> _certPolicies = new();
+    readonly List<Byte> _validityPeriod = [];
+    readonly List<Byte> _renewalPeriod = [];
+    readonly List<String> _raAppPolicies = [];
+    readonly List<String> _raCertPolicies = [];
+    readonly List<String> _cryptCspList = [];
+    readonly List<String> _supersededTemplates = [];
+    readonly List<String> _criticalExtensions = [];
+    readonly List<String> _eku = [];
+    readonly List<ICertificateTemplateCertificatePolicy> _certPolicies = [];
 
     /// <summary>
     /// Initializes a new instance of <strong>RegCertificateTemplate</strong> class from template name.
     /// </summary>
-    /// <param name="commonName"></param>
+    /// <param name="commonName">Template common name.</param>
     /// <exception cref="ArgumentException"></exception>
     public RegCertificateTemplate(String commonName) {
         var regReader = new RegistryReader(@"SOFTWARE\Microsoft\Cryptography\CertificateTemplateCache");
@@ -87,9 +87,9 @@ public class RegCertificateTemplate : IAdcsCertificateTemplate {
     /// <inheritdoc />
     public Int32 MinorVersion { get; }
     /// <inheritdoc />
-    public Byte[] ValidityPeriod => _validityPeriod.ToArray();
+    public Byte[] ValidityPeriod => [.. _validityPeriod];
     /// <inheritdoc />
-    public Byte[] RenewalPeriod => _renewalPeriod.ToArray();
+    public Byte[] RenewalPeriod => [.. _renewalPeriod];
     /// <inheritdoc />
     public CertificateTemplateFlags Flags { get; }
     /// <inheritdoc />
@@ -97,13 +97,14 @@ public class RegCertificateTemplate : IAdcsCertificateTemplate {
     /// <inheritdoc />
     public CertificateTemplateEnrollmentFlags EnrollmentFlags { get; }
     /// <inheritdoc />
-    public Int32 RASignatureCount { get; }
+    public Int32 RASignatureCount { get; private set; }
     /// <inheritdoc />
-    public String[] RAApplicationPolicies => _raAppPolicies.ToArray();
+    public String[] RAApplicationPolicies => [.. _raAppPolicies];
     /// <inheritdoc />
-    public String[] RACertificatePolicies => _raCertPolicies.ToArray();
+    public String[] RACertificatePolicies => [.. _raCertPolicies];
     /// <inheritdoc />
     public PrivateKeyFlags CryptPrivateKeyFlags { get; }
+    public CngKeyUsages CryptCngKeyUsages { get; set; }
     /// <inheritdoc />
     public X509KeySpecFlags CryptKeySpec { get; }
     /// <inheritdoc />
@@ -117,15 +118,16 @@ public class RegCertificateTemplate : IAdcsCertificateTemplate {
     /// <inheritdoc />
     public String CryptHashAlgorithm { get; private set; } = AlgorithmOid.SHA1;
     /// <inheritdoc />
-    public String[] CryptSupportedProviders => _cryptCspList.ToArray();
+    public String[] CryptSupportedProviders => [.. _cryptCspList];
+    public String CryptPrivateKeySDDL { get; set; }
     /// <inheritdoc />
-    public String[] SupersededTemplates => _supersededTemplates.ToArray();
+    public String[] SupersededTemplates => [.. _supersededTemplates];
     /// <inheritdoc />
-    public String[] CriticalExtensions => _criticalExtensions.ToArray();
+    public String[] CriticalExtensions => [.. _criticalExtensions];
     /// <inheritdoc />
-    public String[] ExtEKU => _eku.ToArray();
+    public String[] ExtEKU => [.. _eku];
     /// <inheritdoc />
-    public ICertificateTemplateCertificatePolicy[] ExtCertPolicies => _certPolicies.ToArray();
+    public ICertificateTemplateCertificatePolicy[] ExtCertPolicies => [.. _certPolicies];
     /// <inheritdoc />
     public Int32 ExtBasicConstraintsPathLength { get; }
     /// <inheritdoc />
@@ -134,31 +136,38 @@ public class RegCertificateTemplate : IAdcsCertificateTemplate {
     public IDictionary<String, Object> ExtendedProperties { get; }
 
     void decodeRegistrationAuthority(RegistryReader regReader) {
+        RASignatureCount = regReader.GetDWordValue(DsUtils.PropPkiRaSignature);
         if (RASignatureCount > 0) {
             _raCertPolicies.AddRange(regReader.GetMultiStringValue(DsUtils.PropPkiRaCertPolicy));
-            String[] raAppPolicies = regReader.GetMultiStringValue(DsUtils.PropPkiRaAppPolicy);
-            if (raAppPolicies == null || raAppPolicies.Length < 1) {
-                return;
-            }
-            if (raAppPolicies[0].Contains("`")) {
-                String[] delimiter = { "`" };
-                String[] strings = raAppPolicies[0].Split(delimiter, StringSplitOptions.RemoveEmptyEntries);
-                for (Int32 index = 0; index < strings.Length; index += 3) {
-                    switch (strings[index]) {
-                        case DsUtils.PropPkiRaAppPolicy:
-                            _raAppPolicies.Add(strings[index + 2]);
-                            break;
-                        case DsUtils.PropPkiAsymAlgo:
-                            CryptPublicKeyAlgorithm = strings[index + 2];
-                            break;
-                        case DsUtils.PropPkiHashAlgo:
-                            CryptHashAlgorithm = strings[index + 2];
-                            break;
-                    }
+        }
+        String[] raAppPolicies = regReader.GetMultiStringValue(DsUtils.PropPkiRaAppPolicy);
+        if (raAppPolicies == null || raAppPolicies.Length < 1) {
+            return;
+        }
+        if (raAppPolicies[0].Contains("`")) {
+            String[] delimiter = ["`"];
+            String[] strings = raAppPolicies[0].Split(delimiter, StringSplitOptions.RemoveEmptyEntries);
+            for (Int32 index = 0; index < strings.Length; index += 3) {
+                switch (strings[index]) {
+                    case DsUtils.PropPkiRaAppPolicy:
+                        _raAppPolicies.Add(strings[index + 2]);
+                        break;
+                    case DsUtils.PropPkiAsymAlgo:
+                        CryptPublicKeyAlgorithm = strings[index + 2];
+                        break;
+                    case DsUtils.PropPkiHashAlgo:
+                        CryptHashAlgorithm = strings[index + 2];
+                        break;
+                    case DsUtils.PropPkiKeySddl:
+                        CryptPrivateKeySDDL = strings[index + 2];
+                        break;
+                    case DsUtils.PropPkiKeyUsageCng:
+                        CryptCngKeyUsages = (CngKeyUsages)Convert.ToInt32(strings[index + 2]);
+                        break;
                 }
-            } else {
-                _raAppPolicies.AddRange(raAppPolicies);
             }
+        } else if (RASignatureCount > 0) {
+            _raAppPolicies.AddRange(raAppPolicies);
         }
     }
 }

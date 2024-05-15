@@ -4,7 +4,7 @@ using System.DirectoryServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using Interop.CERTENROLLLib;
+using SysadminsLV.PKI.CertificateTemplates;
 using SysadminsLV.PKI.Management.ActiveDirectory;
 using SysadminsLV.PKI.Security.AccessControl;
 using SysadminsLV.PKI.Utils;
@@ -18,9 +18,8 @@ public class CertificateTemplate {
     Int32 major, minor, flags;
     static readonly String _baseDsPath = $"CN=Certificate Templates, CN=Public Key Services, CN=Services,{DsUtils.ConfigContext}";
 
-    internal CertificateTemplate(IX509CertificateTemplate template) {
+    internal CertificateTemplate(IAdcsCertificateTemplate template) {
         initializeFromCom(template);
-        Settings = new CertificateTemplateSettings(template);
     }
     /// <param name="findType">
     /// Specifies certificate template search type. The search type can be either:
@@ -203,7 +202,7 @@ public class CertificateTemplate {
         SchemaVersion = props.GetDsScalarValue<Int32>(DsUtils.PropPkiSchemaVersion);
         OID = new Oid(props.GetDsScalarValue<String>(DsUtils.PropCertTemplateOid));
         LastWriteTime = props.GetDsScalarValue<DateTime>(DsUtils.PropWhenChanged);
-        Settings = new CertificateTemplateSettings(props);
+        Settings = new CertificateTemplateSettings(props, this);
 
         setClientSupport(props.GetDsScalarValue<PrivateKeyFlags>(DsUtils.PropPkiPKeyFlags));
         setServerSupport(props.GetDsScalarValue<PrivateKeyFlags>(DsUtils.PropPkiPKeyFlags));
@@ -256,17 +255,17 @@ public class CertificateTemplate {
             _ => "Unknown"
         };
     }
-    void initializeFromCom(IX509CertificateTemplate template) {
-        Name = (String)template.Property[EnrollmentTemplateProperty.TemplatePropCommonName];
-        DisplayName = (String)template.Property[EnrollmentTemplateProperty.TemplatePropFriendlyName];
-        OID = new Oid(((IObjectId)template.Property[EnrollmentTemplateProperty.TemplatePropOID]).Value);
+    void initializeFromCom(IAdcsCertificateTemplate template) {
+        Name = template.CommonName;
+        DisplayName = template.DisplayName;
+        OID = new Oid(template.Oid, DisplayName);
         // we use Convert.ToInt32, because COM variants can be either signed or unsigned integer based on a platform.
-        major = Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropMajorRevision]);
-        minor = Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropMinorRevision]);
-        SchemaVersion = Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropSchemaVersion]);
-        Settings = new CertificateTemplateSettings(template);
-        setClientSupport((PrivateKeyFlags)Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropPrivateKeyFlags]));
-        setServerSupport((PrivateKeyFlags)Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropPrivateKeyFlags]));
+        major = template.MajorVersion;
+        minor = template.MinorVersion;
+        SchemaVersion = template.SchemaVersion;
+        Settings = new CertificateTemplateSettings(template, this);
+        setClientSupport(template.CryptPrivateKeyFlags);
+        setServerSupport(template.CryptPrivateKeyFlags);
     }
 
     /// <summary>

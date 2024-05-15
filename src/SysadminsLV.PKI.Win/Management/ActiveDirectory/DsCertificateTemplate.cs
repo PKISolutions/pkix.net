@@ -17,15 +17,15 @@ namespace SysadminsLV.PKI.Management.ActiveDirectory;
 /// </summary>
 public class DsCertificateTemplate : IAdcsCertificateTemplate {
     static readonly String _baseDsPath = $"CN=Certificate Templates, CN=Public Key Services, CN=Services,{DsUtils.ConfigContext}";
-    readonly List<Byte> _validityPeriod = new();
-    readonly List<Byte> _renewalPeriod = new();
-    readonly List<String> _raAppPolicies = new();
-    readonly List<String> _raCertPolicies = new();
-    readonly List<String> _cryptCspList = new();
-    readonly List<String> _supersededTemplates = new();
-    readonly List<String> _criticalExtensions = new();
-    readonly List<String> _eku = new();
-    readonly List<ICertificateTemplateCertificatePolicy> _certPolicies = new();
+    readonly List<Byte> _validityPeriod = [];
+    readonly List<Byte> _renewalPeriod = [];
+    readonly List<String> _raAppPolicies = [];
+    readonly List<String> _raCertPolicies = [];
+    readonly List<String> _cryptCspList = [];
+    readonly List<String> _supersededTemplates = [];
+    readonly List<String> _criticalExtensions = [];
+    readonly List<String> _eku = [];
+    readonly List<ICertificateTemplateCertificatePolicy> _certPolicies = [];
 
     DsCertificateTemplate(String cn) {
         ExtendedProperties = new Dictionary<String, Object>(StringComparer.OrdinalIgnoreCase);
@@ -84,6 +84,7 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
     public X509KeySpecFlags CryptKeySpec { get; private set; }
     /// <inheritdoc />
     public String[] CryptSupportedProviders => _cryptCspList.ToArray();
+    public String CryptPrivateKeySDDL { get; set; }
     /// <inheritdoc />
     public String[] SupersededTemplates => _supersededTemplates.ToArray();
     /// <inheritdoc />
@@ -96,6 +97,8 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
     public Int32 ExtBasicConstraintsPathLength { get; private set; }
     /// <inheritdoc />
     public X509KeyUsageFlags ExtKeyUsages { get; private set; }
+    public CngKeyUsages CryptCngKeyUsages { get; set; }
+    public X509ExtensionCollection Extensions { get; set; }
     /// <inheritdoc />
     public IDictionary<String, Object> ExtendedProperties { get; }
 
@@ -153,7 +156,6 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
         _renewalPeriod.AddRange(props.GetDsScalarValue<Byte[]>(DsUtils.PropPkiRenewalPeriod));
         SubjectNameFlags = props.GetDsScalarValue<CertificateTemplateNameFlags>(DsUtils.PropPkiSubjectFlags);
         EnrollmentFlags = props.GetDsScalarValue<CertificateTemplateEnrollmentFlags>(DsUtils.PropPkiEnrollFlags);
-        RASignatureCount = props.GetDsScalarValue<Int32>(DsUtils.PropPkiRaSignature);
         decodeRegistrationAuthority(props);
         CryptSymmetricKeyLength = props.GetDsScalarValue<Int32>(DsUtils.PropPkiSymLength);
         CryptSymmetricAlgorithm = props.GetDsScalarValue<String>(DsUtils.PropPkiSymAlgo);
@@ -180,31 +182,38 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
     }
 
     void decodeRegistrationAuthority(DsPropertyCollection props) {
+        RASignatureCount = props.GetDsScalarValue<Int32>(DsUtils.PropPkiRaSignature);
         if (RASignatureCount > 0) {
             _raCertPolicies.AddRange(props.GetDsCollectionValue<String>(DsUtils.PropPkiRaCertPolicy));
-            String raAppPolicies = props.GetDsScalarValue<String>(DsUtils.PropPkiRaAppPolicy);
-            if (raAppPolicies == null) {
-                return;
-            }
-            if (raAppPolicies.Contains("`")) {
-                String[] delimiter = { "`" };
-                String[] strings = raAppPolicies.Split(delimiter, StringSplitOptions.RemoveEmptyEntries);
-                for (Int32 index = 0; index < strings.Length; index += 3) {
-                    switch (strings[index]) {
-                        case DsUtils.PropPkiRaAppPolicy:
-                            _raAppPolicies.Add(strings[index + 2]);
-                            break;
-                        case DsUtils.PropPkiAsymAlgo:
-                            CryptPublicKeyAlgorithm = strings[index + 2];
-                            break;
-                        case DsUtils.PropPkiHashAlgo:
-                            CryptHashAlgorithm = strings[index + 2];
-                            break;
-                    }
+        }
+        String raAppPolicies = props.GetDsScalarValue<String>(DsUtils.PropPkiRaAppPolicy);
+        if (String.IsNullOrEmpty(raAppPolicies)) {
+            return;
+        }
+        if (raAppPolicies.Contains("`")) {
+            String[] delimiter = ["`"];
+            String[] strings = raAppPolicies.Split(delimiter, StringSplitOptions.RemoveEmptyEntries);
+            for (Int32 index = 0; index < strings.Length; index += 3) {
+                switch (strings[index]) {
+                    case DsUtils.PropPkiRaAppPolicy:
+                        _raAppPolicies.Add(strings[index + 2]);
+                        break;
+                    case DsUtils.PropPkiAsymAlgo:
+                        CryptPublicKeyAlgorithm = strings[index + 2];
+                        break;
+                    case DsUtils.PropPkiHashAlgo:
+                        CryptHashAlgorithm = strings[index + 2];
+                        break;
+                    case DsUtils.PropPkiKeySddl:
+                        CryptPrivateKeySDDL = strings[index + 2];
+                        break;
+                    case DsUtils.PropPkiKeyUsageCng:
+                        CryptCngKeyUsages = (CngKeyUsages)Convert.ToInt32(strings[index + 2]);
+                        break;
                 }
-            } else {
-                _raAppPolicies.Add(raAppPolicies);
             }
+        } else if (RASignatureCount > 0) {
+            _raAppPolicies.Add(raAppPolicies);
         }
     }
 

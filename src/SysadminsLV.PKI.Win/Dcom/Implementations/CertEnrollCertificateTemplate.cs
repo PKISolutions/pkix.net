@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using Interop.CERTENROLLLib;
 using PKI.CertificateTemplates;
 using SysadminsLV.PKI.CertificateTemplates;
@@ -24,6 +25,7 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
     readonly List<String> _criticalExtensions = [];
     readonly List<String> _eku = [];
     readonly List<ICertificateTemplateCertificatePolicy> _certPolicies = [];
+    readonly X509ExtensionCollection _extensions = [];
 
     /// <summary>
     /// Initializes a new instance of <strong>CertEnrollCertificateTemplate</strong> class from an <see cref="IX509CertificateTemplate"/> COM interface.
@@ -45,8 +47,8 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
         SchemaVersion = template.GetInt32(EnrollmentTemplateProperty.TemplatePropSchemaVersion);
         MajorVersion = template.GetInt32(EnrollmentTemplateProperty.TemplatePropMajorRevision);
         MinorVersion = template.GetInt32(EnrollmentTemplateProperty.TemplatePropMinorRevision);
-        _validityPeriod.AddRange(BitConverter.GetBytes(template.GetInt64(EnrollmentTemplateProperty.TemplatePropValidityPeriod)));
-        _renewalPeriod.AddRange(BitConverter.GetBytes(template.GetInt64(EnrollmentTemplateProperty.TemplatePropRenewalPeriod)));
+        _validityPeriod.AddRange(BitConverter.GetBytes(template.GetInt64(EnrollmentTemplateProperty.TemplatePropValidityPeriod, 99)));
+        _renewalPeriod.AddRange(BitConverter.GetBytes(template.GetInt64(EnrollmentTemplateProperty.TemplatePropRenewalPeriod, 99)));
         Flags = template.GetEnum<CertificateTemplateFlags>(EnrollmentTemplateProperty.TemplatePropGeneralFlags);
         SubjectNameFlags = template.GetEnum<CertificateTemplateNameFlags>(EnrollmentTemplateProperty.TemplatePropSubjectNameFlags);
         EnrollmentFlags = template.GetEnum<CertificateTemplateEnrollmentFlags>(EnrollmentTemplateProperty.TemplatePropEnrollmentFlags);
@@ -58,8 +60,9 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
         CryptSymmetricKeyLength = template.GetInt32(EnrollmentTemplateProperty.TemplatePropSymmetricKeyLength);
         CryptSymmetricAlgorithm = template.GetScalarValue<String>(EnrollmentTemplateProperty.TemplatePropSymmetricAlgorithm);
         CryptPublicKeyLength = template.GetInt32(EnrollmentTemplateProperty.TemplatePropMinimumKeySize);
-        CryptPublicKeyAlgorithm = template.GetScalarValue<String>(EnrollmentTemplateProperty.TemplatePropAsymmetricAlgorithm, "RSA");
-        CryptHashAlgorithm = template.GetScalarValue<String>(EnrollmentTemplateProperty.TemplatePropHashAlgorithm, "SHA1");
+        CryptPublicKeyAlgorithm = template.GetScalarValue(EnrollmentTemplateProperty.TemplatePropAsymmetricAlgorithm, "RSA");
+        CryptHashAlgorithm = template.GetScalarValue(EnrollmentTemplateProperty.TemplatePropHashAlgorithm, "SHA1");
+        CryptPrivateKeySDDL = template.GetScalarValue<String>(EnrollmentTemplateProperty.TemplatePropKeySecurityDescriptor);
         _cryptCspList.AddRange(template.GetCollectionValue<String>(EnrollmentTemplateProperty.TemplatePropCryptoProviders));
         _supersededTemplates.AddRange(template.GetCollectionValue<String>(EnrollmentTemplateProperty.TemplatePropSupersede));
         _eku.AddRange(template.GetCollectionValue<String>(EnrollmentTemplateProperty.TemplatePropEKUs));
@@ -75,6 +78,8 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
         IX509Extensions extensions = template.GetScalarValue<IX509Extensions>(EnrollmentTemplateProperty.TemplatePropExtensions);
         if (extensions != null) {
             foreach (IX509Extension extension in extensions) {
+                Byte[] value = Convert.FromBase64String(extension.RawData[EncodingType.XCN_CRYPT_STRING_BASE64]);
+                _extensions.Add(new X509Extension(extension.ObjectId.Value, value, extension.Critical));
                 if (extension.Critical) {
                     _criticalExtensions.Add(extension.ObjectId.Value);
                 }
@@ -137,6 +142,8 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
     /// <inheritdoc />
     public String[] CryptSupportedProviders => [.. _cryptCspList];
     /// <inheritdoc />
+    public String CryptPrivateKeySDDL { get; set; }
+    /// <inheritdoc />
     public String[] SupersededTemplates => [.. _supersededTemplates];
     /// <inheritdoc />
     public String[] CriticalExtensions => [.. _criticalExtensions];
@@ -148,6 +155,19 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
     public Int32 ExtBasicConstraintsPathLength { get; } = -1;
     /// <inheritdoc />
     public X509KeyUsageFlags ExtKeyUsages { get; }
+    /// <inheritdoc />
+    public CngKeyUsages CryptCngKeyUsages { get; set; }
+    /// <inheritdoc />
+    public X509ExtensionCollection Extensions {
+        get {
+            var extensions = new X509ExtensionCollection();
+            foreach (X509Extension ext in _extensions) {
+                extensions.Add(ext);
+            }
+
+            return extensions;
+        }
+    }
     /// <inheritdoc />
     public IDictionary<String, Object> ExtendedProperties { get; }
 }

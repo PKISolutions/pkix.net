@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using Interop.CERTENROLLLib;
+using SysadminsLV.PKI.CertificateTemplates;
 using SysadminsLV.PKI.Cryptography;
 using SysadminsLV.PKI.Management.ActiveDirectory;
 using SysadminsLV.PKI.Utils;
@@ -15,17 +15,22 @@ namespace PKI.CertificateTemplates;
 /// policy requirements.
 /// </summary>
 public class IssuanceRequirements {
-    readonly List<Oid> _certPolicies = new();
+    readonly List<Oid> _certPolicies = [];
     readonly DsPropertyCollection _entry;
-    Int32 enrollmentFlags;
+    CertificateTemplateEnrollmentFlags enrollmentFlags;
 
-    internal IssuanceRequirements(IX509CertificateTemplate template) {
+    internal IssuanceRequirements(IAdcsCertificateTemplate template) {
         initializeCom(template);
     }
     internal IssuanceRequirements(DsPropertyCollection Entry) {
         _entry = Entry;
         initializeDs();
     }
+
+    /// <summary>
+    /// Gets or sets whether the requests based on a referenced template are put to a pending state.
+    /// </summary>
+    public Boolean CAManagerApproval { get; private set; }
     /// <summary>
     /// Gets the number of registration agent (aka enrollment agent) signatures that are required on a request
     /// that references this template.
@@ -50,10 +55,10 @@ public class IssuanceRequirements {
     /// existing valid certificate is sufficient for re-enrollment, otherwise, the same enrollment
     /// criteria is required for certificate renewal as was used for initial enrollment.
     /// </summary>
-    public Boolean ExistingCertForRenewal => (enrollmentFlags & (Int32)CertificateTemplateEnrollmentFlags.ReenrollExistingCert) > 0;
+    public Boolean ExistingCertForRenewal => (enrollmentFlags & CertificateTemplateEnrollmentFlags.ReenrollExistingCert) != 0;
 
     void initializeDs() {
-        enrollmentFlags = (Int32)_entry[DsUtils.PropPkiEnrollFlags];
+        enrollmentFlags = (CertificateTemplateEnrollmentFlags)_entry[DsUtils.PropPkiEnrollFlags];
         SignatureCount = (Int32)_entry[DsUtils.PropPkiRaSignature];
         if (SignatureCount > 0) {
             readRaPolicies();
@@ -62,7 +67,7 @@ public class IssuanceRequirements {
                 return;
             }
             if (ap.Contains("`")) {
-                String[] delimiter = { "`" };
+                String[] delimiter = ["`"];
                 String[] strings = ap.Split(delimiter, StringSplitOptions.RemoveEmptyEntries);
                 for (Int32 index = 0; index < strings.Length; index += 3) {
                     switch (strings[index]) {
@@ -72,7 +77,9 @@ public class IssuanceRequirements {
             } else {
                 ApplicationPolicy = new Oid(ap);
             }
-
+        }
+        if ((enrollmentFlags & CertificateTemplateEnrollmentFlags.CAManagerApproval) > 0) {
+            CAManagerApproval = true;
         }
     }
     void readRaPolicies() {
@@ -88,25 +95,20 @@ public class IssuanceRequirements {
             _certPolicies.Add(new Oid(RaString));
         }
     }
-    void initializeCom(IX509CertificateTemplate template) {
-        try {
-            SignatureCount = Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropRASignatureCount]);
-            enrollmentFlags = Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropEnrollmentFlags]);
-        } catch {
-            SignatureCount = 0;
-            enrollmentFlags = 0;
-        }
+    void initializeCom(IAdcsCertificateTemplate template) {
+        SignatureCount = template.RASignatureCount;
+        enrollmentFlags = template.EnrollmentFlags;
         if (SignatureCount > 0) {
-            try {
-                IObjectIds oids = (IObjectIds)template.Property[EnrollmentTemplateProperty.TemplatePropRAEKUs];
-                ApplicationPolicy = new Oid(oids[0].Value);
-            } catch { }
-            try {
-                IObjectIds oids = (IObjectIds)template.Property[EnrollmentTemplateProperty.TemplatePropRACertificatePolicies];
-                foreach (IObjectId rapoid in oids) {
-                    _certPolicies.Add(new Oid(rapoid.Value));
-                }
-            } catch { }
+            if (template.RAApplicationPolicies.Length > 0) {
+                ApplicationPolicy = new Oid(template.RAApplicationPolicies[0]);
+            }
+
+            foreach (String raCertPolicy in template.RACertificatePolicies) {
+                _certPolicies.Add(new Oid(raCertPolicy));
+            }
+        }
+        if ((template.EnrollmentFlags & CertificateTemplateEnrollmentFlags.CAManagerApproval) > 0) {
+            CAManagerApproval = true;
         }
     }
 
