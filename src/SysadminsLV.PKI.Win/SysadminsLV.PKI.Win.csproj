@@ -110,8 +110,12 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CertificateTemplates\CertificateTemplateCollection.cs" />
+    <Compile Include="CertificateTemplates\CertificateTemplateExportFormat.cs" />
+    <Compile Include="CertificateTemplates\CertificateTemplateXcepFormatter.cs" />
     <Compile Include="CertificateTemplates\ICertificateTemplateCertificatePolicy.cs" />
     <Compile Include="CertificateTemplates\IAdcsCertificateTemplate.cs" />
+    <Compile Include="CertificateTemplates\ICertificateTemplateFormatter.cs" />
     <Compile Include="Cryptography\CspAlgorithmOperation.cs" />
     <Compile Include="Cryptography\CspAlgorithmType.cs" />
     <Compile Include="Cryptography\CspProviderType.cs" />
