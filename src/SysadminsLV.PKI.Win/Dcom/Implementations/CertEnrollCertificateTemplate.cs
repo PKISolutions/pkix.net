@@ -42,13 +42,15 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
         ExtendedProperties = new Dictionary<String, Object>(StringComparer.OrdinalIgnoreCase);
         CommonName = template.GetScalarValue<String>(EnrollmentTemplateProperty.TemplatePropCommonName);
         DisplayName = template.GetScalarValue<String>(EnrollmentTemplateProperty.TemplatePropFriendlyName);
-        Oid = template.GetScalarValue<String>(EnrollmentTemplateProperty.TemplatePropOID);
+        Oid = template.GetScalarValue<IObjectId>(EnrollmentTemplateProperty.TemplatePropOID).Value;
         Description = template.GetScalarValue<String>(EnrollmentTemplateProperty.TemplatePropDescription);
         SchemaVersion = template.GetInt32(EnrollmentTemplateProperty.TemplatePropSchemaVersion);
         MajorVersion = template.GetInt32(EnrollmentTemplateProperty.TemplatePropMajorRevision);
         MinorVersion = template.GetInt32(EnrollmentTemplateProperty.TemplatePropMinorRevision);
-        _validityPeriod.AddRange(BitConverter.GetBytes(template.GetInt64(EnrollmentTemplateProperty.TemplatePropValidityPeriod, 99)));
-        _renewalPeriod.AddRange(BitConverter.GetBytes(template.GetInt64(EnrollmentTemplateProperty.TemplatePropRenewalPeriod, 99)));
+        Int64 timeInSeconds = template.GetInt64(EnrollmentTemplateProperty.TemplatePropValidityPeriod);
+        _validityPeriod.AddRange(BitConverter.GetBytes(TimeSpan.FromSeconds(timeInSeconds).Ticks));
+        timeInSeconds = template.GetInt64(EnrollmentTemplateProperty.TemplatePropRenewalPeriod);
+        _renewalPeriod.AddRange(BitConverter.GetBytes(TimeSpan.FromSeconds(timeInSeconds).Ticks));
         Flags = template.GetEnum<CertificateTemplateFlags>(EnrollmentTemplateProperty.TemplatePropGeneralFlags);
         SubjectNameFlags = template.GetEnum<CertificateTemplateNameFlags>(EnrollmentTemplateProperty.TemplatePropSubjectNameFlags);
         EnrollmentFlags = template.GetEnum<CertificateTemplateEnrollmentFlags>(EnrollmentTemplateProperty.TemplatePropEnrollmentFlags);
