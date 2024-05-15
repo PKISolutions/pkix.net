@@ -68,9 +68,9 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
         _supersededTemplates.AddRange(template.GetCollectionValue<String>(EnrollmentTemplateProperty.TemplatePropSupersede));
         _eku.AddRange(template.GetScalarValue<IObjectIds>(EnrollmentTemplateProperty.TemplatePropEKUs, new CObjectIdsClass()).Cast<IObjectId>().Select(x => x.Value));
         ExtKeyUsages = template.GetEnum<X509KeyUsageFlags>(EnrollmentTemplateProperty.TemplatePropKeyUsage);
-        foreach (String policyOid in template.GetCollectionValue<String>(EnrollmentTemplateProperty.TemplatePropCertificatePolicies)) {
-            var certPolicy = new CertificateTemplateCertificatePolicy(policyOid);
-            var oid2 = new Oid2(policyOid, OidGroup.Policy, true);
+        foreach (IObjectId policyOid in template.GetScalarValue<IObjectIds>(EnrollmentTemplateProperty.TemplatePropCertificatePolicies)) {
+            var certPolicy = new CertificateTemplateCertificatePolicy(policyOid.Value);
+            var oid2 = new Oid2(policyOid.Value, OidGroup.Policy, true);
             try {
                 certPolicy.PolicyLocation = new Uri(oid2.GetCPSLinks()[0]);
             } catch { }
