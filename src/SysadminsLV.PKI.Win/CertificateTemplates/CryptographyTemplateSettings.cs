@@ -153,12 +153,12 @@ public class CryptographyTemplateSettings {
     }
     void initializeFromCom(IX509CertificateTemplate template) {
         try {
-            PrivateKeyOptions = (PrivateKeyFlags)Convert.ToInt32((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropPrivateKeyFlags]);
+            PrivateKeyOptions = (PrivateKeyFlags)Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropPrivateKeyFlags]);
         } catch { }
-        MinimalKeyLength = Convert.ToInt32((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropMinimumKeySize]);
-        KeySpec = (X509KeySpecFlags)Convert.ToInt32((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropKeySpec]);
+        MinimalKeyLength = Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropMinimumKeySize]);
+        KeySpec = (X509KeySpecFlags)Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropKeySpec]);
         try {
-            CNGKeyUsage = (CngKeyUsages)Convert.ToInt32((UInt32)template.Property[EnrollmentTemplateProperty.TemplatePropKeyUsage]);
+            CNGKeyUsage = (CngKeyUsages)Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropKeyUsage]);
         } catch { }
         try {
             ProviderList = (String[])template.Property[EnrollmentTemplateProperty.TemplatePropCryptoProviders];
