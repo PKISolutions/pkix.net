@@ -9,6 +9,7 @@ using SysadminsLV.PKI.CertificateTemplates;
 using SysadminsLV.PKI.Dcom.Implementations;
 using SysadminsLV.PKI.Management.ActiveDirectory;
 using SysadminsLV.PKI.Management.CertificateServices;
+using SysadminsLV.PKI.Utils;
 
 namespace SysadminsLV.PKI.Win.Tests.CertificateTemplates;
 [TestClass]
@@ -32,18 +33,6 @@ public class CertificateTemplateTests {
         }
     }
     [TestMethod]
-    public void TestCertificates() {
-        var col = new CertificateTemplateCollection();
-        foreach (var template in new[] {CertificateTemplate.FromCommonName("crossca")}) {
-            Console.WriteLine(template.Name);
-            col.Clear();
-            col.Add(template);
-            var s = col.Export(CertificateTemplateExportFormat.XCep);
-            var policy = new CX509EnrollmentPolicyWebServiceClass();
-            policy.InitializeImport(Encoding.UTF8.GetBytes(s));
-        }        
-    }
-    [TestMethod]
     public void TestCertEnrollTemplates() {
         var col = new CertificateTemplateCollection(CertificateTemplate.EnumTemplates());
         String serializedString = col.Export(CertificateTemplateExportFormat.XCep);
@@ -58,6 +47,9 @@ public class CertificateTemplateTests {
             var refTemplate = new CertificateTemplate(certEnrollTemplate);
             assertTemplate(source, refTemplate);
         }
+
+        CryptographyUtils.ReleaseCom(policy);
+        CryptographyUtils.ReleaseCom(templates);
     }
     static void assertTemplate(CertificateTemplate source, CertificateTemplate target) {
         Assert.AreEqual(source.Name, target.Name);
@@ -129,5 +121,47 @@ public class CertificateTemplateTests {
         Assert.IsNotNull(target);
         //Assert.AreEqual(source.FriendlyName, target.FriendlyName);
         Assert.AreEqual(source.Value, target.Value);
+    }
+    [TestMethod]
+    public void TestRegExportImport() {
+        var col = new CertificateTemplateCollection();
+        foreach (CertificateTemplate template in CertificateTemplate.EnumTemplates()) {
+            Console.WriteLine(template.Name);
+            var regTemplate = new RegCertificateTemplate(template.Name);
+            var refTemplate = new CertificateTemplate(regTemplate);
+            col.Add(refTemplate);
+        }
+        String serializedString = col.Export(CertificateTemplateExportFormat.XCep);
+        var col2 = new CertificateTemplateCollection();
+        col2.Import(serializedString, CertificateTemplateExportFormat.XCep);
+
+        Assert.AreEqual(col.Count, col2.Count);
+        for (Int32 index = 0; index < col.Count; index++) {
+            CertificateTemplate source = col[index];
+            Console.WriteLine(source.Name);
+            var target = col2[index];
+            assertTemplate(source, target);
+        }
+    }
+    [TestMethod]
+    public void TestDsExportImport() {
+        var col = new CertificateTemplateCollection();
+        foreach (CertificateTemplate template in CertificateTemplate.EnumTemplates()) {
+            Console.WriteLine(template.Name);
+            var dsTemplate = new DsCertificateTemplate(template.Name);
+            var refTemplate = new CertificateTemplate(dsTemplate);
+            col.Add(refTemplate);
+        }
+        String serializedString = col.Export(CertificateTemplateExportFormat.XCep);
+        var col2 = new CertificateTemplateCollection();
+        col2.Import(serializedString, CertificateTemplateExportFormat.XCep);
+
+        Assert.AreEqual(col.Count, col2.Count);
+        for (Int32 index = 0; index < col.Count; index++) {
+            CertificateTemplate source = col[index];
+            Console.WriteLine(source.Name);
+            var target = col2[index];
+            assertTemplate(source, target);
+        }
     }
 }
