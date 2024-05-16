@@ -143,7 +143,7 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
     /// <inheritdoc />
     public String[] CryptSupportedProviders => [.. _cryptCspList];
     /// <inheritdoc />
-    public String CryptPrivateKeySDDL { get; set; }
+    public String CryptPrivateKeySDDL { get; }
     /// <inheritdoc />
     public String[] SupersededTemplates => [.. _supersededTemplates];
     /// <inheritdoc />
@@ -157,7 +157,7 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
     /// <inheritdoc />
     public X509KeyUsageFlags ExtKeyUsages { get; }
     /// <inheritdoc />
-    public CngKeyUsages CryptCngKeyUsages { get; set; }
+    public CngKeyUsages CryptCngKeyUsages { get; }
     /// <inheritdoc />
     public IDictionary<String, Object> ExtendedProperties { get; }
 }
