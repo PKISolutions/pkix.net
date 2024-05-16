@@ -25,10 +25,6 @@ public interface IAdcsCertificateTemplate {
     /// </summary>
     String Oid { get; }
     /// <summary>
-    /// Gets template description.
-    /// </summary>
-    String Description { get; }
-    /// <summary>
     /// Gets template schema version.
     /// </summary>
     Int32 SchemaVersion { get; }

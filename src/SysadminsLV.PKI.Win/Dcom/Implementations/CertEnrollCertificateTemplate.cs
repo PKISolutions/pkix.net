@@ -44,7 +44,6 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
         CommonName = template.GetScalarValue<String>(EnrollmentTemplateProperty.TemplatePropCommonName);
         DisplayName = template.GetScalarValue<String>(EnrollmentTemplateProperty.TemplatePropFriendlyName);
         Oid = template.GetScalarValue<IObjectId>(EnrollmentTemplateProperty.TemplatePropOID).Value;
-        Description = template.GetScalarValue<String>(EnrollmentTemplateProperty.TemplatePropDescription);
         SchemaVersion = template.GetInt32(EnrollmentTemplateProperty.TemplatePropSchemaVersion);
         MajorVersion = template.GetInt32(EnrollmentTemplateProperty.TemplatePropMajorRevision);
         MinorVersion = template.GetInt32(EnrollmentTemplateProperty.TemplatePropMinorRevision);
@@ -107,8 +106,6 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
     public String DisplayName { get; }
     /// <inheritdoc />
     public String Oid { get; }
-    /// <inheritdoc />
-    public String Description { get; }
     /// <inheritdoc />
     public Int32 SchemaVersion { get; }
     /// <inheritdoc />

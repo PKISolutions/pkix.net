@@ -79,8 +79,6 @@ public class RegCertificateTemplate : IAdcsCertificateTemplate {
     /// <inheritdoc />
     public String Oid { get; }
     /// <inheritdoc />
-    public String Description { get; }
-    /// <inheritdoc />
     public Int32 SchemaVersion { get; }
     /// <inheritdoc />
     public Int32 MajorVersion { get; }

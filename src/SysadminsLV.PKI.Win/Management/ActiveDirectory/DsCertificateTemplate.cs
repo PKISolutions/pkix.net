@@ -45,8 +45,6 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
     /// <inheritdoc />
     public String Oid { get; private set; }
     /// <inheritdoc />
-    public String Description { get; private set; }
-    /// <inheritdoc />
     public Int32 SchemaVersion { get; private set; }
     /// <inheritdoc />
     public Int32 MajorVersion { get; private set; }
@@ -147,7 +145,6 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
         Flags = props.GetDsScalarValue<CertificateTemplateFlags>(DsUtils.PropFlags);
         CommonName = props.GetDsScalarValue<String>(DsUtils.PropCN);
         Oid = props.GetDsScalarValue<String>(DsUtils.PropCertTemplateOid);
-        Description = props.GetDsScalarValue<String>(DsUtils.PropDescription);
         DisplayName = props.GetDsScalarValue<String>(DsUtils.PropDisplayName);
         SchemaVersion = props.GetDsScalarValue<Int32>(DsUtils.PropPkiSchemaVersion);
         MajorVersion = props.GetDsScalarValue<Int32>(DsUtils.PropPkiTemplateMajorVersion);
