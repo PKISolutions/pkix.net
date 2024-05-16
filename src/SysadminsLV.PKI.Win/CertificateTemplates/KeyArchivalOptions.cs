@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Text;
-using Interop.CERTENROLLLib;
+using SysadminsLV.PKI.CertificateTemplates;
 using SysadminsLV.PKI.Cryptography;
 using SysadminsLV.PKI.Management.ActiveDirectory;
 using SysadminsLV.PKI.Utils;
@@ -24,7 +24,7 @@ public class KeyArchivalOptions {
         _entry = Entry;
         initializeFromDs();
     }
-    internal KeyArchivalOptions (IX509CertificateTemplate template) : this() {
+    internal KeyArchivalOptions (IAdcsCertificateTemplate template) : this() {
         initializeFromCom(template);
     }
 
@@ -46,7 +46,7 @@ public class KeyArchivalOptions {
             KeyArchival = true;
             String ap = (String)_entry[DsUtils.PropPkiRaAppPolicy];
             if (ap != null && ap.Contains("`")) {
-                String[] delimiter = { "`" };
+                String[] delimiter = ["`"];
                 String[] strings = ap.Split(delimiter, StringSplitOptions.RemoveEmptyEntries);
                 for (Int32 index = 0; index < strings.Length; index += 3) {
                     switch (strings[index]) {
@@ -57,17 +57,14 @@ public class KeyArchivalOptions {
             }
         }
     }
-    void initializeFromCom(IX509CertificateTemplate template) {
-        Int32 pkFlags = Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropPrivateKeyFlags]);
-        if ((pkFlags & (Int32)PrivateKeyFlags.RequireKeyArchival) > 0) {
+    void initializeFromCom(IAdcsCertificateTemplate template) {
+        PrivateKeyFlags pkFlags = template.CryptPrivateKeyFlags;
+        if ((pkFlags & PrivateKeyFlags.RequireKeyArchival) != 0) {
             KeyArchival = true;
-            try {
-                var symmetricAlgorithmID = (IObjectId)template.Property[EnrollmentTemplateProperty.TemplatePropSymmetricAlgorithm];
-                EncryptionAlgorithm = new Oid(symmetricAlgorithmID.Value);
-            } catch { }
-            try {
-                KeyLength = Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropSymmetricKeyLength]);
-            } catch { }
+            if (!String.IsNullOrEmpty(template.CryptSymmetricAlgorithm)) {
+                EncryptionAlgorithm = new Oid(template.CryptSymmetricAlgorithm);
+            }
+            KeyLength = template.CryptSymmetricKeyLength;
         }
     }
 
