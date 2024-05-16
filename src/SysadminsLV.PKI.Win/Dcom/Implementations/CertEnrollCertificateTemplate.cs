@@ -63,11 +63,11 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
         CryptPublicKeyLength = template.GetInt32(EnrollmentTemplateProperty.TemplatePropMinimumKeySize);
         CryptPublicKeyAlgorithm = template.GetScalarValue(EnrollmentTemplateProperty.TemplatePropAsymmetricAlgorithm, "RSA");
         CryptHashAlgorithm = template.GetScalarValue(EnrollmentTemplateProperty.TemplatePropHashAlgorithm, "SHA1");
+        CryptCngKeyUsages = template.GetEnum<CngKeyUsages>(EnrollmentTemplateProperty.TemplatePropKeyUsage);
         CryptPrivateKeySDDL = template.GetScalarValue<String>(EnrollmentTemplateProperty.TemplatePropKeySecurityDescriptor);
         _cryptCspList.AddRange(template.GetCollectionValue<String>(EnrollmentTemplateProperty.TemplatePropCryptoProviders));
         _supersededTemplates.AddRange(template.GetCollectionValue<String>(EnrollmentTemplateProperty.TemplatePropSupersede));
         _eku.AddRange(template.GetScalarValue<IObjectIds>(EnrollmentTemplateProperty.TemplatePropEKUs, new CObjectIdsClass()).Cast<IObjectId>().Select(x => x.Value));
-        ExtKeyUsages = template.GetEnum<X509KeyUsageFlags>(EnrollmentTemplateProperty.TemplatePropKeyUsage);
         foreach (IObjectId policyOid in template.GetScalarValue<IObjectIds>(EnrollmentTemplateProperty.TemplatePropCertificatePolicies)) {
             var certPolicy = new CertificateTemplateCertificatePolicy(policyOid.Value);
             var oid2 = new Oid2(policyOid.Value, OidGroup.Policy, true);
@@ -89,6 +89,11 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
                     case X509ExtensionOid.BasicConstraints:
                         if (extension is IX509ExtensionBasicConstraints bc) {
                             ExtBasicConstraintsPathLength = bc.PathLenConstraint;
+                        }
+                        break;
+                    case X509ExtensionOid.KeyUsage:
+                        if (extension is IX509ExtensionKeyUsage ku) {
+                            ExtKeyUsages = (X509KeyUsageFlags)ku.KeyUsage;
                         }
                         break;
                 }
