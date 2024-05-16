@@ -73,6 +73,7 @@ public class CertificateTemplateSettings {
     /// <summary>
     /// Gets or sets a list of OIDs that represent extended key usages (certificate purposes).
     /// </summary>
+    [Obsolete("Use 'Extensions' property instead.")]
     public OidCollection EnhancedKeyUsage {
         get {
             var oids = new OidCollection();
@@ -84,6 +85,7 @@ public class CertificateTemplateSettings {
     /// <summary>
     /// Gets issuance policies designated to the template.
     /// </summary>
+    [Obsolete("Use 'Extensions' property instead.")]
     public OidCollection CertificatePolicies {
         get {
             var oids = new OidCollection();

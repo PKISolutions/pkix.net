@@ -27,7 +27,7 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
     readonly List<String> _eku = [];
     readonly List<ICertificateTemplateCertificatePolicy> _certPolicies = [];
 
-    DsCertificateTemplate(String cn) {
+    internal DsCertificateTemplate(String cn) {
         ExtendedProperties = new Dictionary<String, Object>(StringComparer.OrdinalIgnoreCase);
         CryptPublicKeyAlgorithm = AlgorithmOid.RSA;
         CryptHashAlgorithm = AlgorithmOid.SHA1;
