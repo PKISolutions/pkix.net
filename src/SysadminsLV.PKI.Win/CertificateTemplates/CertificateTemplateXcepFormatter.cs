@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using Interop.CERTENROLLLib;
 using PKI.CertificateTemplates;
 using SysadminsLV.PKI.Cryptography;
+using SysadminsLV.PKI.Dcom.Implementations;
 using SysadminsLV.PKI.Utils;
 
 namespace SysadminsLV.PKI.CertificateTemplates;
@@ -68,8 +69,8 @@ class CertificateTemplateXCepFormatter : ICertificateTemplateFormatter {
         sb.Append(getRevisionSection(template));
         sb.Append(getSupersededTemplatesSection(template));
         sb.Append(getNullableSection("privateKeyFlags", (Int32)template.Settings.Cryptography.PrivateKeyOptions));
-        sb.Append(getNullableSection("subjectNameFlags", (Int32)template.Settings.SubjectName));
-        sb.Append(getNullableSection("enrollmentFlags", (Int32)(template.Settings.EnrollmentOptions & ~CertificateTemplateEnrollmentFlags.Autoenrollment)));
+        sb.Append(getNullableSection("subjectNameFlags", intToUInt((Int32)template.Settings.SubjectName)));
+        sb.Append(getNullableSection("enrollmentFlags", (Int32)(template.Settings.EnrollmentOptions)));
         sb.Append(getNullableSection("generalFlags", (Int32)template.Settings.GeneralFlags));
         sb.Append(getRequestHashSection(template.Settings.Cryptography));
         sb.Append(getRegistrationAuthoritySection(template.Settings.RegistrationAuthority));
@@ -79,7 +80,7 @@ class CertificateTemplateXCepFormatter : ICertificateTemplateFormatter {
     }
 
     String getTemplateIdSection(CertificateTemplate template) {
-        Int32 oidID = getOidIndex(new Oid2(template.OID, OidGroup.Template, false));
+        Int32 oidID = getOidIndex(Oid2.GetOid2Unsafe(new Oid(template.OID.Value, template.DisplayName), OidGroup.Template));
 
         return getNullableSection("policyOIDReference", oidID);
     }
@@ -167,7 +168,7 @@ class CertificateTemplateXCepFormatter : ICertificateTemplateFormatter {
             return getNullableSection("rARequirements");
         }
 
-        var sb = new StringBuilder(getNullableSection("rASignatures"), regAuthority.SignatureCount);
+        var sb = new StringBuilder(getNullableSection("rASignatures", regAuthority.SignatureCount));
         // EA application policy. Can be only one.
         if (regAuthority.ApplicationPolicy == null) {
             sb.Append(getNullableSection("rAEKUs"));
@@ -177,7 +178,7 @@ class CertificateTemplateXCepFormatter : ICertificateTemplateFormatter {
         }
 
         // EA certificate policies. Can be multiple
-        if (regAuthority.CertificatePolicies.Count > 0) {
+        if (regAuthority.CertificatePolicies.Count == 0) {
             sb.Append(getNullableSection("rAPolicies"));
         } else {
             String oidListString = String.Empty;
@@ -218,6 +219,13 @@ class CertificateTemplateXCepFormatter : ICertificateTemplateFormatter {
         _oidList.Add(oid);
 
         return _oidList.Count - 1;
+    }
+    static UInt32 intToUInt(Int32 integer) {
+        if (integer < 0) {
+            return unchecked((UInt32)integer);
+        }
+
+        return (UInt32)integer;
     }
 
     static Int64 getSecondsFromPeriod(String periodString) {
@@ -274,7 +282,7 @@ class CertificateTemplateXCepFormatter : ICertificateTemplateFormatter {
         try {
             policy.InitializeImport(Encoding.UTF8.GetBytes(serializedString));
             foreach (IX509CertificateTemplate comTemplate in policy.GetTemplates()) {
-                retValue.Add(new CertificateTemplate(comTemplate));
+                retValue.Add(new CertificateTemplate(new CertEnrollCertificateTemplate(comTemplate)));
                 CryptographyUtils.ReleaseCom(comTemplate);
             }
         } catch (Exception ex) {

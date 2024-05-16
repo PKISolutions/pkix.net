@@ -4,7 +4,7 @@ using System.DirectoryServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using Interop.CERTENROLLLib;
+using SysadminsLV.PKI.CertificateTemplates;
 using SysadminsLV.PKI.Management.ActiveDirectory;
 using SysadminsLV.PKI.Security.AccessControl;
 using SysadminsLV.PKI.Utils;
@@ -15,12 +15,12 @@ namespace PKI.CertificateTemplates;
 /// Represents a certificate template object.
 /// </summary>
 public class CertificateTemplate {
-    Int32 major, minor, flags;
+    Int32 major, minor;
+    CertificateTemplateFlags flags;
     static readonly String _baseDsPath = $"CN=Certificate Templates, CN=Public Key Services, CN=Services,{DsUtils.ConfigContext}";
 
-    internal CertificateTemplate(IX509CertificateTemplate template) {
+    internal CertificateTemplate(IAdcsCertificateTemplate template) {
         initializeFromCom(template);
-        Settings = new CertificateTemplateSettings(template);
     }
     /// <param name="findType">
     /// Specifies certificate template search type. The search type can be either:
@@ -60,7 +60,7 @@ public class CertificateTemplate {
     /// <summary>
     /// This flag indicates whether clients can perform autoenrollment for the specified template.
     /// </summary>
-    public Boolean AutoenrollmentAllowed => SchemaVersion > 1 && (flags & (Int32)CertificateTemplateFlags.Autoenrollment) != 0;
+    public Boolean AutoenrollmentAllowed => SchemaVersion > 1 && (flags & CertificateTemplateFlags.Autoenrollment) != 0;
 
     /// <summary>
     /// Gets certificate template's object identifier. Object identifiers are used to uniquely identify certificate template. While
@@ -194,7 +194,7 @@ public class CertificateTemplate {
             DsUtils.PropPkiKeyUsage,
             DsUtils.PropPkiKeyUsageCng
         );
-        flags = props.GetDsScalarValue<Int32>(DsUtils.PropFlags);
+        flags = props.GetDsScalarValue<CertificateTemplateFlags>(DsUtils.PropFlags);
         Name = props.GetDsScalarValue<String>(DsUtils.PropCN);
         DistinguishedName = ldapPath.Replace("LDAP://", null); // we have to use ldapPath, because it is fully escaped and re-usable. DN is not.
         DisplayName = props.GetDsScalarValue<String>(DsUtils.PropDisplayName);
@@ -203,7 +203,7 @@ public class CertificateTemplate {
         SchemaVersion = props.GetDsScalarValue<Int32>(DsUtils.PropPkiSchemaVersion);
         OID = new Oid(props.GetDsScalarValue<String>(DsUtils.PropCertTemplateOid));
         LastWriteTime = props.GetDsScalarValue<DateTime>(DsUtils.PropWhenChanged);
-        Settings = new CertificateTemplateSettings(props);
+        Settings = new CertificateTemplateSettings(props, this);
 
         setClientSupport(props.GetDsScalarValue<PrivateKeyFlags>(DsUtils.PropPkiPKeyFlags));
         setServerSupport(props.GetDsScalarValue<PrivateKeyFlags>(DsUtils.PropPkiPKeyFlags));
@@ -256,17 +256,18 @@ public class CertificateTemplate {
             _ => "Unknown"
         };
     }
-    void initializeFromCom(IX509CertificateTemplate template) {
-        Name = (String)template.Property[EnrollmentTemplateProperty.TemplatePropCommonName];
-        DisplayName = (String)template.Property[EnrollmentTemplateProperty.TemplatePropFriendlyName];
-        OID = new Oid(((IObjectId)template.Property[EnrollmentTemplateProperty.TemplatePropOID]).Value);
+    void initializeFromCom(IAdcsCertificateTemplate template) {
+        Name = template.CommonName;
+        DisplayName = template.DisplayName;
+        OID = new Oid(template.Oid, DisplayName);
         // we use Convert.ToInt32, because COM variants can be either signed or unsigned integer based on a platform.
-        major = Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropMajorRevision]);
-        minor = Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropMinorRevision]);
-        SchemaVersion = Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropSchemaVersion]);
-        Settings = new CertificateTemplateSettings(template);
-        setClientSupport((PrivateKeyFlags)Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropPrivateKeyFlags]));
-        setServerSupport((PrivateKeyFlags)Convert.ToInt32(template.Property[EnrollmentTemplateProperty.TemplatePropPrivateKeyFlags]));
+        major = template.MajorVersion;
+        minor = template.MinorVersion;
+        flags = template.Flags;
+        SchemaVersion = template.SchemaVersion;
+        Settings = new CertificateTemplateSettings(template, this);
+        setClientSupport(template.CryptPrivateKeyFlags);
+        setServerSupport(template.CryptPrivateKeyFlags);
     }
 
     /// <summary>
