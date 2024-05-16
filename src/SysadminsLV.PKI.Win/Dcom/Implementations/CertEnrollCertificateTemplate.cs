@@ -45,8 +45,8 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
         SchemaVersion = template.GetInt32(EnrollmentTemplateProperty.TemplatePropSchemaVersion);
         MajorVersion = template.GetInt32(EnrollmentTemplateProperty.TemplatePropMajorRevision);
         MinorVersion = template.GetInt32(EnrollmentTemplateProperty.TemplatePropMinorRevision);
-        _validityPeriod.AddRange(BitConverter.GetBytes(template.GetInt64(EnrollmentTemplateProperty.TemplatePropValidityPeriod, 99)));
-        _renewalPeriod.AddRange(BitConverter.GetBytes(template.GetInt64(EnrollmentTemplateProperty.TemplatePropRenewalPeriod, 99)));
+        _validityPeriod.AddRange(BitConverter.GetBytes(TimeSpan.FromSeconds(template.GetInt64(EnrollmentTemplateProperty.TemplatePropValidityPeriod)).Ticks));
+        _renewalPeriod.AddRange(BitConverter.GetBytes(TimeSpan.FromSeconds(template.GetInt64(EnrollmentTemplateProperty.TemplatePropRenewalPeriod)).Ticks));
         Flags = template.GetEnum<CertificateTemplateFlags>(EnrollmentTemplateProperty.TemplatePropGeneralFlags);
         SubjectNameFlags = template.GetEnum<CertificateTemplateNameFlags>(EnrollmentTemplateProperty.TemplatePropSubjectNameFlags);
         EnrollmentFlags = template.GetEnum<CertificateTemplateEnrollmentFlags>(EnrollmentTemplateProperty.TemplatePropEnrollmentFlags);

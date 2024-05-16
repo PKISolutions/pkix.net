@@ -31,10 +31,23 @@ public class CertificateTemplateTests {
             assertTemplate(template, refTemplate);
         }
     }
+    [TestMethod]
+    public void TestCertificates() {
+        var col = new CertificateTemplateCollection();
+        foreach (var template in new[] {CertificateTemplate.FromCommonName("crossca")}) {
+            Console.WriteLine(template.Name);
+            col.Clear();
+            col.Add(template);
+            var s = col.Export(CertificateTemplateExportFormat.XCep);
+            var policy = new CX509EnrollmentPolicyWebServiceClass();
+            policy.InitializeImport(Encoding.UTF8.GetBytes(s));
+        }        
+    }
+    [TestMethod]
     public void TestCertEnrollTemplates() {
         var col = new CertificateTemplateCollection(CertificateTemplate.EnumTemplates());
         String serializedString = col.Export(CertificateTemplateExportFormat.XCep);
-        var policy = new CX509EnrollmentPolicyWebService();
+        var policy = new CX509EnrollmentPolicyWebServiceClass();
         policy.InitializeImport(Encoding.UTF8.GetBytes(serializedString));
         IX509CertificateTemplates templates = policy.GetTemplates();
         Assert.AreEqual(col.Count, templates.Count);
@@ -116,14 +129,5 @@ public class CertificateTemplateTests {
         Assert.IsNotNull(target);
         //Assert.AreEqual(source.FriendlyName, target.FriendlyName);
         Assert.AreEqual(source.Value, target.Value);
-    }
-    [TestMethod]
-    public void Test2() {
-        var col = new CertificateTemplateCollection();
-        var t = CertificateTemplate.FromCommonName("rdp-tlsv3");
-        col.Add(t);
-        var s = col.Export(CertificateTemplateExportFormat.XCep);
-        var col2 = new CertificateTemplateCollection();
-        col2.Import(s, CertificateTemplateExportFormat.XCep);
     }
 }

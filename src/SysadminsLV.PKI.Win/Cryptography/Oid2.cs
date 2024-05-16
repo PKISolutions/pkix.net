@@ -357,6 +357,18 @@ public sealed class Oid2 {
         return ToOid().Format(fullValue);
     }
 
+    internal static Oid2 GetOid2Unsafe(Oid oid, OidGroup group) {
+        var safeOid = new Oid2(oid.Value, group, true);
+        if (String.IsNullOrEmpty(safeOid.FriendlyName)) {
+            return new Oid2 {
+                FriendlyName = oid.FriendlyName,
+                Value = oid.Value,
+                OidGroup = group
+            };
+        }
+
+        return safeOid;
+    }
     /// <summary>
     /// Gets all registrations for the specified OID value.
     /// </summary>
