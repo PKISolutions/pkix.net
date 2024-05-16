@@ -8,6 +8,7 @@ using PKI.CertificateTemplates;
 using SysadminsLV.PKI.CertificateTemplates;
 using SysadminsLV.PKI.Cryptography;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
+using SysadminsLV.PKI.Utils;
 using SysadminsLV.PKI.Utils.CLRExtensions;
 using X509KeyUsageFlags = System.Security.Cryptography.X509Certificates.X509KeyUsageFlags;
 
@@ -26,7 +27,6 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
     readonly List<String> _criticalExtensions = [];
     readonly List<String> _eku = [];
     readonly List<ICertificateTemplateCertificatePolicy> _certPolicies = [];
-    readonly X509ExtensionCollection _extensions = [];
 
     /// <summary>
     /// Initializes a new instance of <strong>CertEnrollCertificateTemplate</strong> class from an <see cref="IX509CertificateTemplate"/> COM interface.
@@ -67,7 +67,7 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
         _cryptCspList.AddRange(template.GetCollectionValue<String>(EnrollmentTemplateProperty.TemplatePropCryptoProviders));
         _supersededTemplates.AddRange(template.GetCollectionValue<String>(EnrollmentTemplateProperty.TemplatePropSupersede));
         _eku.AddRange(template.GetScalarValue<IObjectIds>(EnrollmentTemplateProperty.TemplatePropEKUs, new CObjectIdsClass()).Cast<IObjectId>().Select(x => x.Value));
-        foreach (IObjectId policyOid in template.GetScalarValue<IObjectIds>(EnrollmentTemplateProperty.TemplatePropCertificatePolicies)) {
+        foreach (IObjectId policyOid in template.GetScalarValue<IObjectIds>(EnrollmentTemplateProperty.TemplatePropCertificatePolicies, new CObjectIdsClass())) {
             var certPolicy = new CertificateTemplateCertificatePolicy(policyOid.Value);
             var oid2 = new Oid2(policyOid.Value, OidGroup.Policy, true);
             try {
@@ -75,27 +75,25 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
             } catch { }
             _certPolicies.Add(certPolicy);
         }
-        IX509Extensions extensions = template.GetScalarValue<IX509Extensions>(EnrollmentTemplateProperty.TemplatePropExtensions);
-        if (extensions != null) {
-            foreach (IX509Extension extension in extensions) {
-                Byte[] value = Convert.FromBase64String(extension.RawData[EncodingType.XCN_CRYPT_STRING_BASE64]);
-                _extensions.Add(new X509Extension(extension.ObjectId.Value, value, extension.Critical));
-                if (extension.Critical) {
-                    _criticalExtensions.Add(extension.ObjectId.Value);
-                }
+        IX509Extensions extensions = template.GetScalarValue<IX509Extensions>(EnrollmentTemplateProperty.TemplatePropExtensions, new CX509Extensions());
+        foreach (IX509Extension extension in extensions) {
+            if (extension.Critical) {
+                _criticalExtensions.Add(extension.ObjectId.Value);
+            }
 
-                switch (extension.ObjectId.Value) {
-                    case X509ExtensionOid.BasicConstraints:
-                        if (extension is IX509ExtensionBasicConstraints bc) {
-                            ExtBasicConstraintsPathLength = bc.PathLenConstraint;
-                        }
-                        break;
-                    case X509ExtensionOid.KeyUsage:
-                        if (extension is IX509ExtensionKeyUsage ku) {
-                            ExtKeyUsages = (X509KeyUsageFlags)ku.KeyUsage;
-                        }
-                        break;
-                }
+            switch (extension.ObjectId.Value) {
+                case X509ExtensionOid.BasicConstraints:
+                    var bc = new CX509ExtensionBasicConstraintsClass();
+                    bc.InitializeDecode(EncodingType.XCN_CRYPT_STRING_BASE64, extension.RawData[EncodingType.XCN_CRYPT_STRING_BASE64]);
+                    ExtBasicConstraintsPathLength = bc.PathLenConstraint;
+                    CryptographyUtils.ReleaseCom(bc);
+                    break;
+                case X509ExtensionOid.KeyUsage:
+                    var ku = new CX509ExtensionKeyUsageClass();
+                    ku.InitializeDecode(EncodingType.XCN_CRYPT_STRING_BASE64, extension.RawData[EncodingType.XCN_CRYPT_STRING_BASE64]);
+                    ExtKeyUsages = (X509KeyUsageFlags)ku.KeyUsage;
+                    CryptographyUtils.ReleaseCom(ku);
+                    break;
             }
         }
     }
@@ -160,17 +158,6 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
     public X509KeyUsageFlags ExtKeyUsages { get; }
     /// <inheritdoc />
     public CngKeyUsages CryptCngKeyUsages { get; set; }
-    /// <inheritdoc />
-    public X509ExtensionCollection Extensions {
-        get {
-            var extensions = new X509ExtensionCollection();
-            foreach (X509Extension ext in _extensions) {
-                extensions.Add(ext);
-            }
-
-            return extensions;
-        }
-    }
     /// <inheritdoc />
     public IDictionary<String, Object> ExtendedProperties { get; }
 }

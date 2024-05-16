@@ -131,8 +131,7 @@ public interface IAdcsCertificateTemplate {
     /// <summary>
     /// Gets template Key Usages.
     /// </summary>
-    X509KeyUsageFlags ExtKeyUsages { get; }
-    
+    X509KeyUsageFlags ExtKeyUsages { get; }    
     /// <summary>
     /// Gets a collection of custom template properties.
     /// </summary>
