@@ -39,7 +39,6 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
             throw new ArgumentNullException(nameof(template));
         }
 
-        ExtendedProperties = new Dictionary<String, Object>(StringComparer.OrdinalIgnoreCase);
         CommonName = template.GetScalarValue<String>(EnrollmentTemplateProperty.TemplatePropCommonName);
         DisplayName = template.GetScalarValue<String>(EnrollmentTemplateProperty.TemplatePropFriendlyName);
         Oid = template.GetScalarValue<IObjectId>(EnrollmentTemplateProperty.TemplatePropOID).Value;
@@ -158,5 +157,5 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
     /// <inheritdoc />
     public CngKeyUsages CryptCngKeyUsages { get; }
     /// <inheritdoc />
-    public IDictionary<String, Object> ExtendedProperties { get; }
+    public IDictionary<String, Object> ExtendedProperties { get; } = new Dictionary<String, Object>();
 }
