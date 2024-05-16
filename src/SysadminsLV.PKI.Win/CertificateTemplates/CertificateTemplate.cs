@@ -15,7 +15,8 @@ namespace PKI.CertificateTemplates;
 /// Represents a certificate template object.
 /// </summary>
 public class CertificateTemplate {
-    Int32 major, minor, flags;
+    Int32 major, minor;
+    CertificateTemplateFlags flags;
     static readonly String _baseDsPath = $"CN=Certificate Templates, CN=Public Key Services, CN=Services,{DsUtils.ConfigContext}";
 
     internal CertificateTemplate(IAdcsCertificateTemplate template) {
@@ -59,7 +60,7 @@ public class CertificateTemplate {
     /// <summary>
     /// This flag indicates whether clients can perform autoenrollment for the specified template.
     /// </summary>
-    public Boolean AutoenrollmentAllowed => SchemaVersion > 1 && (flags & (Int32)CertificateTemplateFlags.Autoenrollment) != 0;
+    public Boolean AutoenrollmentAllowed => SchemaVersion > 1 && (flags & CertificateTemplateFlags.Autoenrollment) != 0;
 
     /// <summary>
     /// Gets certificate template's object identifier. Object identifiers are used to uniquely identify certificate template. While
@@ -193,7 +194,7 @@ public class CertificateTemplate {
             DsUtils.PropPkiKeyUsage,
             DsUtils.PropPkiKeyUsageCng
         );
-        flags = props.GetDsScalarValue<Int32>(DsUtils.PropFlags);
+        flags = props.GetDsScalarValue<CertificateTemplateFlags>(DsUtils.PropFlags);
         Name = props.GetDsScalarValue<String>(DsUtils.PropCN);
         DistinguishedName = ldapPath.Replace("LDAP://", null); // we have to use ldapPath, because it is fully escaped and re-usable. DN is not.
         DisplayName = props.GetDsScalarValue<String>(DsUtils.PropDisplayName);
@@ -262,6 +263,7 @@ public class CertificateTemplate {
         // we use Convert.ToInt32, because COM variants can be either signed or unsigned integer based on a platform.
         major = template.MajorVersion;
         minor = template.MinorVersion;
+        flags = template.Flags;
         SchemaVersion = template.SchemaVersion;
         Settings = new CertificateTemplateSettings(template, this);
         setClientSupport(template.CryptPrivateKeyFlags);

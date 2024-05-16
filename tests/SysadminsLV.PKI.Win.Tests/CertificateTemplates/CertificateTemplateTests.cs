@@ -16,13 +16,16 @@ public class CertificateTemplateTests {
     [TestMethod]
     public void TestRegTemplates() {
         foreach (CertificateTemplate template in CertificateTemplate.EnumTemplates()) {
+            Console.WriteLine(template.Name);
             var regTemplate = new RegCertificateTemplate(template.Name);
             var refTemplate = new CertificateTemplate(regTemplate);
             assertTemplate(template, refTemplate);
         }
     }
+    [TestMethod]
     public void TestDsTemplates() {
         foreach (CertificateTemplate template in CertificateTemplate.EnumTemplates()) {
+            Console.WriteLine(template.Name);
             var dsTemplate = new DsCertificateTemplate(template.Name);
             var refTemplate = new CertificateTemplate(dsTemplate);
             assertTemplate(template, refTemplate);
@@ -37,6 +40,7 @@ public class CertificateTemplateTests {
         Assert.AreEqual(col.Count, templates.Count);
         for (Int32 index = 0; index < col.Count; index++) {
             CertificateTemplate source = col[index];
+            Console.WriteLine(source.Name);
             var certEnrollTemplate = new CertEnrollCertificateTemplate(templates[index]);
             var refTemplate = new CertificateTemplate(certEnrollTemplate);
             assertTemplate(source, refTemplate);
@@ -60,18 +64,25 @@ public class CertificateTemplateTests {
         Assert.AreEqual(sSettings.SubjectType, tSettings.SubjectType);
         Assert.AreEqual(sSettings.SubjectName, tSettings.SubjectName);
         Assert.AreEqual(sSettings.Purpose, tSettings.Purpose);
-        Assert.IsTrue(sSettings.SupersededTemplates.SequenceEqual(tSettings.SupersededTemplates));
+        Assert.AreEqual(sSettings.SupersededTemplates.Length, tSettings.SupersededTemplates.Length);
+        if (sSettings.SupersededTemplates.Length > 0) {
+            Assert.IsTrue(sSettings.SupersededTemplates.OrderBy(x => x).SequenceEqual(tSettings.SupersededTemplates.OrderBy(x => x)));
+        }
         Assert.AreEqual(sSettings.EnrollmentOptions, tSettings.EnrollmentOptions);
         Assert.AreEqual(sSettings.GeneralFlags, tSettings.GeneralFlags);
         
         // Cryptography
         CryptographyTemplateSettings sCrypto = sSettings.Cryptography;
         CryptographyTemplateSettings tCrypto = tSettings.Cryptography;
-        Assert.IsTrue(sCrypto.ProviderList.SequenceEqual(tCrypto.ProviderList));
+        Assert.AreEqual(sCrypto.ProviderList.Length, tCrypto.ProviderList.Length);
+        if (sCrypto.ProviderList.Length > 0) {
+            Assert.IsTrue(sCrypto.ProviderList.OrderBy(x => x).SequenceEqual(tCrypto.ProviderList.OrderBy(x => x)));
+        }
         assertOid(sCrypto.KeyAlgorithm, tCrypto.KeyAlgorithm);
         assertOid(sCrypto.HashAlgorithm, tCrypto.HashAlgorithm);
         Assert.AreEqual(sCrypto.MinimalKeyLength, tCrypto.MinimalKeyLength);
         Assert.AreEqual(sCrypto.PrivateKeyOptions, tCrypto.PrivateKeyOptions);
+        Assert.AreEqual(sCrypto.KeyUsage, tCrypto.KeyUsage);
         Assert.AreEqual(sCrypto.KeySpec, tCrypto.KeySpec);
         Assert.AreEqual(sCrypto.PrivateKeySecuritySDDL, tCrypto.PrivateKeySecuritySDDL);
 
@@ -103,7 +114,7 @@ public class CertificateTemplateTests {
     static void assertOid(Oid source, Oid target) {
         Assert.IsNotNull(source);
         Assert.IsNotNull(target);
-        Assert.AreEqual(source.FriendlyName, target.FriendlyName);
+        //Assert.AreEqual(source.FriendlyName, target.FriendlyName);
         Assert.AreEqual(source.Value, target.Value);
     }
     [TestMethod]

@@ -159,7 +159,7 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
         CryptPublicKeyLength = props.GetDsScalarValue<Int32>(DsUtils.PropPkiKeySize);
         CryptPrivateKeyFlags = props.GetDsScalarValue<PrivateKeyFlags>(DsUtils.PropPkiPKeyFlags);
         CryptKeySpec = props.GetDsScalarValue<X509KeySpecFlags>(DsUtils.PropPkiKeySpec);
-        _cryptCspList.AddRange(props.GetDsCollectionValue<String>(DsUtils.PropPkiKeyCsp));
+        decodeProvList(props);
         _supersededTemplates.AddRange(props.GetDsCollectionValue<String>(DsUtils.PropPkiSupersede));
         _criticalExtensions.AddRange(props.GetDsCollectionValue<String>(DsUtils.PropPkiCriticalExt));
         _eku.AddRange(props.GetDsCollectionValue<String>(DsUtils.PropCertTemplateEKU));
@@ -173,11 +173,17 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
         }
         ExtBasicConstraintsPathLength = props.GetDsScalarValue<Int32>(DsUtils.PropPkiPathLength);
         Byte[] keyUsagesBytes = props.GetDsCollectionValue<Byte>(DsUtils.PropPkiKeyUsage);
-        ExtKeyUsages = (X509KeyUsageFlags)Convert.ToInt16(String.Join("", keyUsagesBytes.Select(x => $"{x:x2}").ToArray()), 16);
+        ExtKeyUsages = (X509KeyUsageFlags)Convert.ToInt16(String.Join("", keyUsagesBytes.Reverse().Select(x => $"{x:x2}").ToArray()), 16);
         ExtendedProperties.Add("LastWriteTime", props.GetDsScalarValue<DateTime>(DsUtils.PropWhenChanged));
         ExtendedProperties.Add("DistinguishedName", ldapPath.Replace("LDAP://", null));
     }
 
+    void decodeProvList(DsPropertyCollection props) {
+        var provList = props.GetDsCollectionValue<String>(DsUtils.PropPkiKeyCsp).OrderBy(x => x);
+        foreach (String provName in provList) {
+            _cryptCspList.Add(provName.Split(',')[1]);
+        }
+    }
     void decodeRegistrationAuthority(DsPropertyCollection props) {
         RASignatureCount = props.GetDsScalarValue<Int32>(DsUtils.PropPkiRaSignature);
         if (RASignatureCount > 0) {

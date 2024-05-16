@@ -36,6 +36,7 @@ public class RegCertificateTemplate : IAdcsCertificateTemplate {
             throw new ArgumentException($"Specified template '{commonName}' does not exist in local template cache.");
         }
 
+        regReader.SetContextSubKey(commonName);
         ExtendedProperties = new Dictionary<String, Object>(StringComparer.OrdinalIgnoreCase);
         CommonName = commonName;
         DisplayName = regReader.GetStringValue(DsUtils.PropDisplayName);
@@ -69,7 +70,7 @@ public class RegCertificateTemplate : IAdcsCertificateTemplate {
         }
         ExtBasicConstraintsPathLength = regReader.GetDWordValue("PathLen");
         Byte[] keyUsagesBytes = regReader.GetBinaryValue("KeyUsage");
-        ExtKeyUsages = (X509KeyUsageFlags)Convert.ToInt16(String.Join("", keyUsagesBytes.Select(x => $"{x:x2}").ToArray()), 16);
+        ExtKeyUsages = (X509KeyUsageFlags)Convert.ToInt16(String.Join("", keyUsagesBytes.Reverse().Select(x => $"{x:x2}").ToArray()), 16);
     }
 
     /// <inheritdoc />

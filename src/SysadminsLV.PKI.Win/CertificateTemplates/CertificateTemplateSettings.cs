@@ -23,7 +23,9 @@ public class CertificateTemplateSettings {
     readonly List<Oid> _criticalExtensions = [];
     readonly List<Oid> _certPolicies = [];
     readonly List<String> _superseded = [];
-    Int32 pathLength, pkf, subjectFlags;
+    Int32 pathLength;
+    PrivateKeyFlags pkf;
+    CertificateTemplateNameFlags subjectFlags;
 
     internal CertificateTemplateSettings(IAdcsCertificateTemplate template, CertificateTemplate templateManaged) {
         _template = templateManaged;
@@ -103,27 +105,27 @@ public class CertificateTemplateSettings {
                 Cryptography.KeySpec == X509KeySpecFlags.AT_KEYEXCHANGE &&
                 (EnrollmentOptions & CertificateTemplateEnrollmentFlags.RemoveInvalidFromStore) == 0 &&
                 (EnrollmentOptions & CertificateTemplateEnrollmentFlags.IncludeSymmetricAlgorithms) == 0 &&
-                (pkf & (Int32)PrivateKeyFlags.RequireKeyArchival) == 0 &&
+                (pkf & PrivateKeyFlags.RequireKeyArchival) == 0 &&
                 ((EnrollmentOptions & CertificateTemplateEnrollmentFlags.RequireUserInteraction) != 0 ||
-                 (pkf & (Int32)PrivateKeyFlags.RequireStrongProtection) != 0)
+                 (pkf & PrivateKeyFlags.RequireStrongProtection) != 0)
             ) { return CertificateTemplatePurpose.SignatureAndSmartCardLogon; }
             if (
-                ((Int32)Cryptography.KeyUsage & (Int32)X509KeyUsageFlags.DigitalSignature) == 0 &&
-                ((Int32)Cryptography.KeyUsage & (Int32)X509KeyUsageFlags.NonRepudiation) == 0 &&
-                ((Int32)Cryptography.KeyUsage & (Int32)X509KeyUsageFlags.CrlSign) == 0 &&
-                ((Int32)Cryptography.KeyUsage & (Int32)X509KeyUsageFlags.KeyCertSign) == 0 &&
+                (Cryptography.KeyUsage & X509KeyUsageFlags.DigitalSignature) == 0 &&
+                (Cryptography.KeyUsage & X509KeyUsageFlags.NonRepudiation) == 0 &&
+                (Cryptography.KeyUsage & X509KeyUsageFlags.CrlSign) == 0 &&
+                (Cryptography.KeyUsage & X509KeyUsageFlags.KeyCertSign) == 0 &&
                 (EnrollmentOptions & CertificateTemplateEnrollmentFlags.RemoveInvalidFromStore) == 0
             ) { return CertificateTemplatePurpose.Encryption; }
             if (
-                ((Int32)Cryptography.KeyUsage & (Int32)X509KeyUsageFlags.CrlSign) == 0 &&
-                ((Int32)Cryptography.KeyUsage & (Int32)X509KeyUsageFlags.KeyCertSign) == 0 &&
-                ((Int32)Cryptography.KeyUsage & (Int32)X509KeyUsageFlags.KeyAgreement) == 0 &&
-                ((Int32)Cryptography.KeyUsage & (Int32)X509KeyUsageFlags.KeyEncipherment) == 0 &&
-                ((Int32)Cryptography.KeyUsage & (Int32)X509KeyUsageFlags.DataEncipherment) == 0 &&
-                ((Int32)Cryptography.KeyUsage & (Int32)X509KeyUsageFlags.DecipherOnly) == 0 &&
+                (Cryptography.KeyUsage & X509KeyUsageFlags.CrlSign) == 0 &&
+                (Cryptography.KeyUsage & X509KeyUsageFlags.KeyCertSign) == 0 &&
+                (Cryptography.KeyUsage & X509KeyUsageFlags.KeyAgreement) == 0 &&
+                (Cryptography.KeyUsage & X509KeyUsageFlags.KeyEncipherment) == 0 &&
+                (Cryptography.KeyUsage & X509KeyUsageFlags.DataEncipherment) == 0 &&
+                (Cryptography.KeyUsage & X509KeyUsageFlags.DecipherOnly) == 0 &&
                 Cryptography.KeySpec == X509KeySpecFlags.AT_SIGNATURE &&
                 (EnrollmentOptions & CertificateTemplateEnrollmentFlags.IncludeSymmetricAlgorithms) == 0 &&
-                (pkf & (Int32)PrivateKeyFlags.RequireKeyArchival) == 0
+                (pkf & PrivateKeyFlags.RequireKeyArchival) == 0
             ) { return CertificateTemplatePurpose.Signature; }
             return CertificateTemplatePurpose.EncryptionAndSignature;
         }
@@ -183,9 +185,9 @@ public class CertificateTemplateSettings {
 
     void initializeFromDsEntry() {
         GeneralFlags = (CertificateTemplateFlags)_dsEntryProperties[DsUtils.PropFlags];
-        subjectFlags = (Int32)_dsEntryProperties[DsUtils.PropPkiSubjectFlags];
+        subjectFlags = (CertificateTemplateNameFlags)_dsEntryProperties[DsUtils.PropPkiSubjectFlags];
         EnrollmentOptions = (CertificateTemplateEnrollmentFlags)_dsEntryProperties[DsUtils.PropPkiEnrollFlags];
-        pkf = (Int32)_dsEntryProperties[DsUtils.PropPkiPKeyFlags];
+        pkf = (PrivateKeyFlags)_dsEntryProperties[DsUtils.PropPkiPKeyFlags];
         ValidityPeriod = readValidity((Byte[])_dsEntryProperties[DsUtils.PropPkiNotAfter]);
         RenewalPeriod = readValidity((Byte[])_dsEntryProperties[DsUtils.PropPkiRenewalPeriod]);
         pathLength = (Int32)_dsEntryProperties[DsUtils.PropPkiPathLength];
@@ -198,7 +200,8 @@ public class CertificateTemplateSettings {
     void initializeFromCOM(IAdcsCertificateTemplate template) {
         GeneralFlags = template.Flags;
         EnrollmentOptions = template.EnrollmentFlags;
-        subjectFlags = (Int32)template.SubjectNameFlags;
+        subjectFlags = template.SubjectNameFlags;
+        pkf = template.CryptPrivateKeyFlags;
         ValidityPeriod = readValidity(template.ValidityPeriod);
         RenewalPeriod = readValidity(template.RenewalPeriod);
         _superseded.AddRange(template.SupersededTemplates);

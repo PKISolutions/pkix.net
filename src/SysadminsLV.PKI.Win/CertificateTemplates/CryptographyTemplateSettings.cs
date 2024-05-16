@@ -78,7 +78,7 @@ public class CryptographyTemplateSettings {
         HashAlgorithm = new Oid("SHA1");
         MinimalKeyLength = (Int32)_entry[DsUtils.PropPkiKeySize];
         PrivateKeyOptions = (PrivateKeyFlags)_entry[DsUtils.PropPkiPKeyFlags];
-        KeySpec = (X509KeySpecFlags)(Int32)_entry[DsUtils.PropPkiKeySpec];
+        KeySpec = (X509KeySpecFlags)_entry[DsUtils.PropPkiKeySpec];
         readCsp();
         readKeyUsages();
         String ap = (String)_entry[DsUtils.PropPkiRaAppPolicy];
