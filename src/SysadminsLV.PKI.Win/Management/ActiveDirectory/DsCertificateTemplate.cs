@@ -248,6 +248,14 @@ public sealed class DsCertificateTemplate : IAdcsCertificateTemplate {
     }
 
     /// <summary>
+    /// Gets LDAP path for specified certificate template.
+    /// </summary>
+    /// <param name="commonName">Template common name.</param>
+    /// <returns>LDAP path. Can be null if template with specified name doesn't exist.</returns>
+    internal static String GetLdapPath(String commonName) {
+        return DsUtils.Find(_baseDsPath, DsUtils.PropCN, commonName);
+    }
+    /// <summary>
     /// Returns an instance of <see cref="IAdcsCertificateTemplate"/> interface from template common name.
     /// </summary>
     /// <param name="cn">Template common name.</param>
