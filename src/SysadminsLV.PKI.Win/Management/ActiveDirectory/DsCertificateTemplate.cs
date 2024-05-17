@@ -27,15 +27,26 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
     readonly List<String> _eku = [];
     readonly List<ICertificateTemplateCertificatePolicy> _certPolicies = [];
 
-    internal DsCertificateTemplate(String cn) {
+    /// <summary>
+    /// Initializes a new instance of <see cref="DsCertificateTemplate"/> from search type and search value.
+    /// </summary>
+    /// <param name="findType">
+    /// Specifies certificate template search type. The search type can be either:
+    /// Name, DisplayName or OID.
+    /// </param>
+    /// <param name="findValue">
+    /// Specifies search pattern for a type specified in <strong>findType</strong> argument.
+    /// </param>
+    /// <remarks>Wildcards are not allowed.</remarks>
+    internal DsCertificateTemplate(String findType, String findValue) {
         ExtendedProperties = new Dictionary<String, Object>(StringComparer.OrdinalIgnoreCase);
         CryptPublicKeyAlgorithm = AlgorithmOid.RSA;
         CryptHashAlgorithm = AlgorithmOid.SHA1;
-        String ldapPath = DsUtils.Find(_baseDsPath, "cn", cn);
-        if (String.IsNullOrEmpty(ldapPath)) {
-            throw new ArgumentException("No certificate templates match search criteria.");
+        if (!DsUtils.Ping()) {
+            throw new Exception(ErrorHelper.E_DCUNAVAILABLE);
         }
-        initializeFromDs(ldapPath);
+        searchByQuery(findType, findValue);
+
     }
 
     /// <inheritdoc />
@@ -99,6 +110,21 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
     public X509KeyUsageFlags ExtensionKeyUsages { get; private set; }
     /// <inheritdoc />
     public IDictionary<String, Object> ExtendedProperties { get; }
+
+    void searchByQuery(String findType, String findValue) {
+        String ldapPath = findType.ToLower() switch {
+            "name"        => DsUtils.Find(_baseDsPath, DsUtils.PropCN, findValue),
+            "displayname" => DsUtils.Find(_baseDsPath, DsUtils.PropDisplayName, findValue),
+            "oid"         => DsUtils.Find(_baseDsPath, DsUtils.PropCertTemplateOid, findValue),
+            _             => throw new Exception("The value for 'findType' must be either 'Name', 'DisplayName' or 'OID'.")
+        };
+
+        if (String.IsNullOrWhiteSpace(ldapPath)) {
+            throw new ArgumentException("No certificate templates match search criteria.");
+        }
+
+        initializeFromDs(ldapPath);
+    }
 
     static DsPropertyCollection getDsEntryProperties(String ldapPath) {
         return DsUtils.GetEntryProperties(
@@ -227,13 +253,33 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
     /// <param name="cn">Template common name.</param>
     /// <returns>Instance of <see cref="IAdcsCertificateTemplate"/> interface.</returns>
     public static IAdcsCertificateTemplate FromCommonName(String cn) {
-        return new DsCertificateTemplate(cn);
+        return new DsCertificateTemplate("Name", cn);
     }
+    /// <summary>
+    /// Creates a new instance of <strong>CertificateTemplate</strong> object from certificate template's display name.
+    /// </summary>
+    /// <param name="displayName">Certificate template's display/friendly name.</param>
+    /// <returns>Certificate template object.</returns>
+    public static IAdcsCertificateTemplate FromDisplayName(String displayName) {
+        return new DsCertificateTemplate("DisplayName", displayName);
+    }
+    /// <summary>
+    /// Creates a new instance of <strong>CertificateTemplate</strong> object from certificate template's object identifier (OID).
+    /// </summary>
+    /// <param name="oid">Certificate template's dot-decimal object identifier.</param>
+    /// <returns>Certificate template object.</returns>
+    public static IAdcsCertificateTemplate FromOid(String oid) {
+        return new DsCertificateTemplate("OID", oid);
+    }
+
     /// <summary>
     /// Returns a collection of certificate templates as <see cref="IAdcsCertificateTemplate"/> instances.
     /// </summary>
     /// <returns>A collection of certificate templates.</returns>
     public static IEnumerable<IAdcsCertificateTemplate> GetAll() {
+        if (!DsUtils.Ping()) {
+            throw new Exception(ErrorHelper.E_DCUNAVAILABLE);
+        }
         foreach (DirectoryEntry dsEntry in DsUtils.GetChildItems(_baseDsPath)) {
             using (dsEntry) {
                 yield return FromCommonName(dsEntry.Properties["cn"].Value.ToString());

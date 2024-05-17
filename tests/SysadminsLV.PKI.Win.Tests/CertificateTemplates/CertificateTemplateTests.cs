@@ -28,7 +28,7 @@ public class CertificateTemplateTests {
     public void TestDsTemplates() {
         foreach (CertificateTemplate template in CertificateTemplate.EnumTemplates()) {
             Console.WriteLine(template.Name);
-            var dsTemplate = new DsCertificateTemplate(template.Name);
+            IAdcsCertificateTemplate dsTemplate = DsCertificateTemplate.FromCommonName(template.Name);
             var refTemplate = new CertificateTemplate(dsTemplate);
             assertTemplate(template, refTemplate);
         }
@@ -159,7 +159,7 @@ public class CertificateTemplateTests {
         var col = new CertificateTemplateCollection();
         foreach (CertificateTemplate template in CertificateTemplate.EnumTemplates()) {
             Console.WriteLine(template.Name);
-            var dsTemplate = new DsCertificateTemplate(template.Name);
+            IAdcsCertificateTemplate dsTemplate = DsCertificateTemplate.FromCommonName(template.Name);
             var refTemplate = new CertificateTemplate(dsTemplate);
             col.Add(refTemplate);
         }

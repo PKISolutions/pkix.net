@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.DirectoryServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using SysadminsLV.PKI.CertificateTemplates;
 using SysadminsLV.PKI.Management.ActiveDirectory;
 using SysadminsLV.PKI.Security.AccessControl;
-using SysadminsLV.PKI.Utils;
 
 namespace PKI.CertificateTemplates;
 
@@ -15,26 +13,11 @@ namespace PKI.CertificateTemplates;
 /// Represents a certificate template object.
 /// </summary>
 public class CertificateTemplate {
-    Int32 major, minor;
-    CertificateTemplateFlags flags;
-    static readonly String _baseDsPath = $"CN=Certificate Templates, CN=Public Key Services, CN=Services,{DsUtils.ConfigContext}";
+    readonly IAdcsCertificateTemplate _template;
 
     internal CertificateTemplate(IAdcsCertificateTemplate template) {
-        initializeFromCom(template);
-    }
-    /// <param name="findType">
-    /// Specifies certificate template search type. The search type can be either:
-    /// Name, DisplayName or OID.
-    /// </param>
-    /// <param name="findValue">
-    /// Specifies search pattern for a type specified in <strong>findType</strong> argument.
-    /// </param>
-    /// <remarks>Wildcards are not allowed.</remarks>
-    CertificateTemplate(String findType, String findValue) {
-        if (!DsUtils.Ping()) {
-            throw new Exception(ErrorHelper.E_DCUNAVAILABLE);
-        }
-        searchByQuery(findType, findValue);
+        _template = template;
+        initialize();
     }
 
     /// <summary>
@@ -50,7 +33,7 @@ public class CertificateTemplate {
     /// Any template changes causes internal version change.
     /// </summary>
     /// <remarks>Template internal version is not changed if you modify template ACL only.</remarks>
-    public String Version => $"{major}.{minor}";
+    public String Version => $"{_template.MajorVersion}.{_template.MinorVersion}";
 
     /// <summary>
     /// Gets certificate template schema version (also known as template version). The value can be either 1, 2, 3 or 4. For template support
@@ -60,7 +43,7 @@ public class CertificateTemplate {
     /// <summary>
     /// This flag indicates whether clients can perform autoenrollment for the specified template.
     /// </summary>
-    public Boolean AutoenrollmentAllowed => SchemaVersion > 1 && (flags & CertificateTemplateFlags.Autoenrollment) != 0;
+    public Boolean AutoenrollmentAllowed => SchemaVersion > 1 && (_template.Flags & CertificateTemplateFlags.Autoenrollment) != 0;
 
     /// <summary>
     /// Gets certificate template's object identifier. Object identifiers are used to uniquely identify certificate template. While
@@ -142,75 +125,9 @@ public class CertificateTemplate {
     /// </summary>
     public CertificateTemplateSettings Settings { get; private set; }
 
-    void searchByQuery(String findType, String findValue) {
-        String dn         = findType.ToLower() switch {
-            "name"        => DsUtils.Find(_baseDsPath, DsUtils.PropCN, findValue),
-            "displayname" => DsUtils.Find(_baseDsPath, DsUtils.PropDisplayName, findValue),
-            "oid"         => DsUtils.Find(_baseDsPath, DsUtils.PropCertTemplateOid, findValue),
-            _             => throw new Exception("The value for 'findType' must be either 'Name', 'DisplayName' or 'OID'.")
-        };
-
-        if (String.IsNullOrWhiteSpace(dn)) {
-            throw new ArgumentException("No certificate templates match search criteria.");
-        }
-        
-        initializeFromDs(dn);
-    }
-    void initializeFromDs(String ldapPath) {
-        DsPropertyCollection props = DsUtils.GetEntryProperties(
-            ldapPath,
-            DsUtils.PropCN,
-            DsUtils.PropDN,
-            DsUtils.PropDisplayName,
-            DsUtils.PropFlags,
-            DsUtils.PropCpsOid,
-            DsUtils.PropCertTemplateOid,
-            DsUtils.PropLocalizedOid,
-            DsUtils.PropPkiTemplateMajorVersion,
-            DsUtils.PropPkiTemplateMinorVersion,
-            DsUtils.PropPkiSchemaVersion,
-            DsUtils.PropWhenChanged,
-            DsUtils.PropPkiSubjectFlags,
-            DsUtils.PropPkiEnrollFlags,
-            DsUtils.PropPkiPKeyFlags,
-            DsUtils.PropPkiNotAfter,
-            DsUtils.PropPkiRenewalPeriod,
-            DsUtils.PropPkiPathLength,
-            DsUtils.PropCertTemplateEKU,
-            DsUtils.PropPkiCertPolicy,
-            DsUtils.PropPkiCriticalExt,
-            DsUtils.PropPkiSupersede,
-            DsUtils.PropPkiKeyCsp,
-            DsUtils.PropPkiKeySize,
-            DsUtils.PropPkiKeySpec,
-            DsUtils.PropPkiKeySddl,
-            DsUtils.PropPkiRaAppPolicy,
-            DsUtils.PropPkiRaCertPolicy,
-            DsUtils.PropPkiRaSignature,
-            DsUtils.PropPkiAsymAlgo,
-            DsUtils.PropPkiSymAlgo,
-            DsUtils.PropPkiSymLength,
-            DsUtils.PropPkiHashAlgo,
-            DsUtils.PropPkiKeyUsage,
-            DsUtils.PropPkiKeyUsageCng
-        );
-        flags = props.GetDsScalarValue<CertificateTemplateFlags>(DsUtils.PropFlags);
-        Name = props.GetDsScalarValue<String>(DsUtils.PropCN);
-        DistinguishedName = ldapPath.Replace("LDAP://", null); // we have to use ldapPath, because it is fully escaped and re-usable. DN is not.
-        DisplayName = props.GetDsScalarValue<String>(DsUtils.PropDisplayName);
-        major = props.GetDsScalarValue<Int32>(DsUtils.PropPkiTemplateMajorVersion);
-        minor = props.GetDsScalarValue<Int32>(DsUtils.PropPkiTemplateMinorVersion);
-        SchemaVersion = props.GetDsScalarValue<Int32>(DsUtils.PropPkiSchemaVersion);
-        OID = new Oid(props.GetDsScalarValue<String>(DsUtils.PropCertTemplateOid));
-        LastWriteTime = props.GetDsScalarValue<DateTime>(DsUtils.PropWhenChanged);
-        Settings = new CertificateTemplateSettings(props, this);
-
-        setClientSupport(props.GetDsScalarValue<PrivateKeyFlags>(DsUtils.PropPkiPKeyFlags));
-        setServerSupport(props.GetDsScalarValue<PrivateKeyFlags>(DsUtils.PropPkiPKeyFlags));
-    }
-    void setClientSupport(PrivateKeyFlags pkFlags) {
+    void setClientSupport() {
         const Int32 mask = 0x0F000000;
-        PrivateKeyFlags result = pkFlags & (PrivateKeyFlags)mask;
+        PrivateKeyFlags result = _template.CryptPrivateKeyFlags & (PrivateKeyFlags)mask;
 
         SupportedClient                  = result switch {
             PrivateKeyFlags.None         => getClientSupportLegacy(),
@@ -232,9 +149,9 @@ public class CertificateTemplate {
             _ => "Unknown"
         };
     }
-    void setServerSupport(PrivateKeyFlags pkFlags) {
+    void setServerSupport() {
         const Int32 mask = 0x000F0000;
-        PrivateKeyFlags result = pkFlags & (PrivateKeyFlags)mask;
+        PrivateKeyFlags result = _template.CryptPrivateKeyFlags & (PrivateKeyFlags)mask;
 
         SupportedCA                      = result switch {
             PrivateKeyFlags.None         => getServerSupportLegacy(),
@@ -256,18 +173,14 @@ public class CertificateTemplate {
             _ => "Unknown"
         };
     }
-    void initializeFromCom(IAdcsCertificateTemplate template) {
-        Name = template.CommonName;
-        DisplayName = template.DisplayName;
-        OID = new Oid(template.Oid, DisplayName);
-        // we use Convert.ToInt32, because COM variants can be either signed or unsigned integer based on a platform.
-        major = template.MajorVersion;
-        minor = template.MinorVersion;
-        flags = template.Flags;
-        SchemaVersion = template.SchemaVersion;
-        Settings = new CertificateTemplateSettings(template, this);
-        setClientSupport(template.CryptPrivateKeyFlags);
-        setServerSupport(template.CryptPrivateKeyFlags);
+    void initialize() {
+        Name = _template.CommonName;
+        DisplayName = _template.DisplayName;
+        OID = new Oid(_template.Oid, DisplayName);
+        SchemaVersion = _template.SchemaVersion;
+        Settings = new CertificateTemplateSettings(_template);
+        setClientSupport();
+        setServerSupport();
     }
 
     /// <summary>
@@ -275,15 +188,9 @@ public class CertificateTemplate {
     /// </summary>
     /// <returns>An array of certificate templates.</returns>
     public static CertificateTemplate[] EnumTemplates() {
-        if (!DsUtils.Ping()) {
-            throw new Exception(ErrorHelper.E_DCUNAVAILABLE);
-        }
-
         var retValue = new List<CertificateTemplate>();
-        foreach (DirectoryEntry dsEntry in DsUtils.GetChildItems(_baseDsPath)) {
-            using (dsEntry) {
-                retValue.Add(FromCommonName(dsEntry.Properties["cn"].Value.ToString()));
-            }
+        foreach (IAdcsCertificateTemplate dsEntry in DsCertificateTemplate.GetAll()) {
+            retValue.Add(new CertificateTemplate(dsEntry));
         }
         return retValue.ToArray();
     }
@@ -339,7 +246,7 @@ public class CertificateTemplate {
     /// </summary>
     /// <returns>Template major version.</returns>
     public Int32 GetMajorVersion() {
-        return major;
+        return _template.MajorVersion;
     }
     /// <summary>
     /// Gets template minor version. Minor version is increased with every template setting change
@@ -348,7 +255,7 @@ public class CertificateTemplate {
     /// </summary>
     /// <returns>Template minor version.</returns>
     public Int32 GetMinorVersion() {
-        return minor;
+        return _template.MinorVersion;
     }
     /// <summary>
     /// Gets certificate template textual representation.
@@ -396,7 +303,7 @@ public class CertificateTemplate {
     /// <param name="cn">Certificate template's common name.</param>
     /// <returns>Certificate template object.</returns>
     public static CertificateTemplate FromCommonName(String cn) {
-        return new CertificateTemplate("Name", cn);
+        return new CertificateTemplate(DsCertificateTemplate.FromCommonName(cn));
     }
     /// <summary>
     /// Creates a new instance of <strong>CertificateTemplate</strong> object from certificate template's display name.
@@ -404,7 +311,7 @@ public class CertificateTemplate {
     /// <param name="displayName">Certificate template's display/friendly name.</param>
     /// <returns>Certificate template object.</returns>
     public static CertificateTemplate FromDisplayName(String displayName) {
-        return new CertificateTemplate("DisplayName", displayName);
+        return new CertificateTemplate(DsCertificateTemplate.FromDisplayName(displayName));
     }
     /// <summary>
     /// Creates a new instance of <strong>CertificateTemplate</strong> object from certificate template's object identifier (OID).
@@ -412,6 +319,7 @@ public class CertificateTemplate {
     /// <param name="oid">Certificate template's dot-decimal object identifier.</param>
     /// <returns>Certificate template object.</returns>
     public static CertificateTemplate FromOid(String oid) {
-        return new CertificateTemplate("OID", oid);
+        return new CertificateTemplate(DsCertificateTemplate.FromOid(oid));
     }
+
 }

@@ -1,30 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Text.RegularExpressions;
 using SysadminsLV.PKI.CertificateTemplates;
 using SysadminsLV.PKI.Cryptography;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
-using SysadminsLV.PKI.Management.ActiveDirectory;
-using SysadminsLV.PKI.Utils;
-using X509KeyUsageFlags = System.Security.Cryptography.X509Certificates.X509KeyUsageFlags;
 
 namespace PKI.CertificateTemplates;
 /// <summary>
 /// This class represents certificate template cryptography settings.
 /// </summary>
 public class CryptographyTemplateSettings {
-    Int32 schemaVersion;
-    readonly DsPropertyCollection _entry;
+    readonly IAdcsCertificateTemplate _template;
 
     internal CryptographyTemplateSettings(IAdcsCertificateTemplate template) {
-        initializeFromCom(template);
-    }
-    internal CryptographyTemplateSettings(DsPropertyCollection Entry) {
-        _entry = Entry;
-        initializeFromDs();
+        _template = template;
+        initialize();
     }
 
     /// <summary>
@@ -72,95 +63,16 @@ public class CryptographyTemplateSettings {
     /// </summary>
     public String PrivateKeySecuritySDDL { get; private set; }
 
-    void initializeFromDs() {
-        schemaVersion = (Int32)_entry[DsUtils.PropPkiSchemaVersion];
-        KeyAlgorithm = new Oid("RSA");
-        HashAlgorithm = new Oid("SHA1");
-        MinimalKeyLength = (Int32)_entry[DsUtils.PropPkiKeySize];
-        PrivateKeyOptions = (PrivateKeyFlags)_entry[DsUtils.PropPkiPKeyFlags];
-        KeySpec = (X509KeySpecFlags)_entry[DsUtils.PropPkiKeySpec];
-        readCsp();
-        readKeyUsages();
-        String ap = (String)_entry[DsUtils.PropPkiRaAppPolicy];
-        if (ap != null && ap.Contains("`")) {
-            String[] delimiter = ["`"];
-            String[] strings = ap.Split(delimiter, StringSplitOptions.RemoveEmptyEntries);
-            for (Int32 index = 0; index < strings.Length; index += 3) {
-                switch (strings[index]) {
-                    case DsUtils.PropPkiKeySddl: PrivateKeySecuritySDDL = strings[index + 2]; break;
-                    case DsUtils.PropPkiAsymAlgo: KeyAlgorithm = new Oid(strings[index + 2]); break;
-                    case DsUtils.PropPkiHashAlgo: HashAlgorithm = new Oid(strings[index + 2]); break;
-                    case DsUtils.PropPkiKeyUsageCng: CNGKeyUsage = (CngKeyUsages)Convert.ToInt32(strings[index + 2]); break;
-                }
-            }
-        }
-
-    }
-    void readCsp() {
-        var cspList = new List<String>();
-
-        try {
-            Object[] cspObject = (Object[])_entry[DsUtils.PropPkiKeyCsp];
-            if (cspObject != null) {
-                cspList.AddRange(cspObject.Select(csp => Regex.Replace(csp.ToString(), "^\\d+,", String.Empty)));
-            }
-        } catch {
-            String cspString = (String)_entry[DsUtils.PropPkiKeyCsp];
-            cspList.Add(Regex.Replace(cspString, "^\\d+,", String.Empty));
-        }
-        ProviderList = cspList.ToArray();
-    }
-    void readKeyUsages() {
-        if (_entry[DsUtils.PropPkiKeyUsage] is not Byte[] ku) {
-            KeyUsage = X509KeyUsageFlags.None;
-        } else {
-            if (ku.Length == 1) {
-                KeyUsage = (X509KeyUsageFlags)ku[0];
-            } else {
-                Array.Reverse(ku);
-                KeyUsage = (X509KeyUsageFlags)Convert.ToInt32(String.Join("", ku.Select(item => $"{item:x2}").ToArray()), 16);
-            }
-        }
-        if (schemaVersion > 2) {
-            const X509KeyUsageFlags decryptionFlags = X509KeyUsageFlags.DataEncipherment
-                                                      | X509KeyUsageFlags.DecipherOnly
-                                                      | X509KeyUsageFlags.EncipherOnly
-                                                      | X509KeyUsageFlags.KeyEncipherment;
-
-            if ((KeyUsage & decryptionFlags) == decryptionFlags) {
-                CNGKeyUsage |= CngKeyUsages.Decryption;
-            }
-
-            const X509KeyUsageFlags signingFlags = X509KeyUsageFlags.CrlSign
-                                                   | X509KeyUsageFlags.DigitalSignature
-                                                   | X509KeyUsageFlags.KeyCertSign;
-            if ((KeyUsage & signingFlags) == signingFlags) {
-                CNGKeyUsage |= CngKeyUsages.Signing;
-            }
-
-            const X509KeyUsageFlags agreementFlags = X509KeyUsageFlags.KeyAgreement;
-            if ((KeyUsage & agreementFlags) == agreementFlags) {
-                CNGKeyUsage |= CngKeyUsages.KeyAgreement;
-            }
-
-            // all CNG usages enabled if at least one usage in every category is enabled.
-            if ((KeyUsage & decryptionFlags) > 0
-                && (KeyUsage & signingFlags) > 0
-                && (KeyUsage & agreementFlags) > 0) {
-                CNGKeyUsage = CngKeyUsages.AllUsages;
-            }
-        }
-    }
-    void initializeFromCom(IAdcsCertificateTemplate template) {
-        PrivateKeyOptions = template.CryptPrivateKeyFlags;
-        MinimalKeyLength = template.CryptPublicKeyLength;
-        KeySpec = template.CryptKeySpec;
-        KeyUsage = template.ExtensionKeyUsages;
-        CNGKeyUsage = template.CryptCngKeyUsages;
-        ProviderList = template.CryptSupportedProviders;
-        KeyAlgorithm = new Oid(template.CryptPublicKeyAlgorithm);
-        HashAlgorithm = new Oid(template.CryptHashAlgorithm);
-        PrivateKeySecuritySDDL = template.CryptPrivateKeySDDL;
+    void initialize() {
+        PrivateKeyOptions = _template.CryptPrivateKeyFlags;
+        MinimalKeyLength = _template.CryptPublicKeyLength;
+        KeySpec = _template.CryptKeySpec;
+        KeyUsage = _template.ExtensionKeyUsages;
+        CNGKeyUsage = _template.CryptCngKeyUsages;
+        ProviderList = _template.CryptSupportedProviders;
+        KeyAlgorithm = new Oid(_template.CryptPublicKeyAlgorithm);
+        HashAlgorithm = new Oid(_template.CryptHashAlgorithm);
+        PrivateKeySecuritySDDL = _template.CryptPrivateKeySDDL;
     }
 
     /// <summary>
