@@ -51,9 +51,9 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
     /// <inheritdoc />
     public Int32 MinorVersion { get; private set; }
     /// <inheritdoc />
-    public Byte[] ValidityPeriod => _validityPeriod.ToArray();
+    public Byte[] ValidityPeriod => [.. _validityPeriod];
     /// <inheritdoc />
-    public Byte[] RenewalPeriod => _renewalPeriod.ToArray();
+    public Byte[] RenewalPeriod => [.. _renewalPeriod];
     /// <inheritdoc />
     public CertificateTemplateFlags Flags { get; private set; }
     /// <inheritdoc />
@@ -63,9 +63,9 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
     /// <inheritdoc />
     public Int32 RASignatureCount { get; private set; }
     /// <inheritdoc />
-    public String[] RAApplicationPolicies => _raAppPolicies.ToArray();
+    public String[] RAApplicationPolicies => [.. _raAppPolicies];
     /// <inheritdoc />
-    public String[] RACertificatePolicies => _raCertPolicies.ToArray();
+    public String[] RACertificatePolicies => [.. _raCertPolicies];
     /// <inheritdoc />
     public PrivateKeyFlags CryptPrivateKeyFlags { get; private set; }
     /// <inheritdoc />
@@ -81,16 +81,16 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
     /// <inheritdoc />
     public X509KeySpecFlags CryptKeySpec { get; private set; }
     /// <inheritdoc />
-    public String[] CryptSupportedProviders => _cryptCspList.ToArray();
+    public String[] CryptSupportedProviders => [.. _cryptCspList];
     public String CryptPrivateKeySDDL { get; set; }
     /// <inheritdoc />
-    public String[] SupersededTemplates => _supersededTemplates.ToArray();
+    public String[] SupersededTemplates => [.. _supersededTemplates];
     /// <inheritdoc />
-    public String[] CriticalExtensions => _criticalExtensions.ToArray();
+    public String[] CriticalExtensions => [.. _criticalExtensions];
     /// <inheritdoc />
-    public String[] ExtEKU => _eku.ToArray();
+    public String[] ExtEKU => [.. _eku];
     /// <inheritdoc />
-    public ICertificateTemplateCertificatePolicy[] ExtCertPolicies => _certPolicies.ToArray();
+    public ICertificateTemplateCertificatePolicy[] ExtCertPolicies => [.. _certPolicies];
     /// <inheritdoc />
     public Int32 ExtBasicConstraintsPathLength { get; private set; }
     /// <inheritdoc />
