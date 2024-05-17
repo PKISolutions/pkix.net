@@ -106,7 +106,7 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
             DsUtils.PropCN,
             DsUtils.PropDN,
             DsUtils.PropDisplayName,
-            DsUtils.PropDescription,
+            DsUtils.PropAcl,
             DsUtils.PropFlags,
             DsUtils.PropCpsOid,
             DsUtils.PropCertTemplateOid,
@@ -174,12 +174,13 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
         ExtBasicConstraintsPathLength = props.GetDsScalarValue<Int32>(DsUtils.PropPkiPathLength);
         Byte[] keyUsagesBytes = props.GetDsCollectionValue<Byte>(DsUtils.PropPkiKeyUsage);
         ExtKeyUsages = (X509KeyUsageFlags)Convert.ToInt16(String.Join("", keyUsagesBytes.Reverse().Select(x => $"{x:x2}").ToArray()), 16);
-        ExtendedProperties.Add("LastWriteTime", props.GetDsScalarValue<DateTime>(DsUtils.PropWhenChanged));
-        ExtendedProperties.Add("DistinguishedName", ldapPath.Replace("LDAP://", null));
+        ExtendedProperties.Add(DsUtils.PropWhenChanged, props.GetDsScalarValue<DateTime>(DsUtils.PropWhenChanged));
+        ExtendedProperties.Add(DsUtils.PropDN, ldapPath.Replace("LDAP://", null));
+        ExtendedProperties.Add(DsUtils.PropAcl, props[DsUtils.PropAcl]);
     }
 
     void decodeProvList(DsPropertyCollection props) {
-        var provList = props.GetDsCollectionValue<String>(DsUtils.PropPkiKeyCsp).OrderBy(x => x);
+        IEnumerable<String> provList = props.GetDsCollectionValue<String>(DsUtils.PropPkiKeyCsp).OrderBy(x => x);
         foreach (String provName in provList) {
             _cryptCspList.Add(provName.Split(',')[1]);
         }
