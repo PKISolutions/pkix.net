@@ -202,6 +202,7 @@ public class CertificateTemplateSettings {
         EnrollmentOptions = template.EnrollmentFlags;
         subjectFlags = template.SubjectNameFlags;
         pkf = template.CryptPrivateKeyFlags;
+        pathLength = template.ExtensionBasicConstraintsPathLength;
         ValidityPeriod = readValidity(template.ValidityPeriod);
         RenewalPeriod = readValidity(template.RenewalPeriod);
         _superseded.AddRange(template.SupersededTemplates);
