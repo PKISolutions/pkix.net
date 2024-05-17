@@ -14,7 +14,7 @@ namespace SysadminsLV.PKI.Win.Tests.CertificateTemplates;
 public class CertificateTemplateTests {
     [TestMethod]
     public void TestRegTemplates() {
-        foreach (CertificateTemplate template in CertificateTemplate.EnumTemplates()) {
+        foreach (CertificateTemplate template in CertificateTemplateFactory.GetTemplatesDs()) {
             Console.WriteLine(template.Name);
             CertificateTemplate refTemplate = CertificateTemplateFactory.CreateFromCommonNameRegistry(template.Name);
             assertTemplate(template, refTemplate);
@@ -22,7 +22,7 @@ public class CertificateTemplateTests {
     }
     [TestMethod]
     public void TestDsTemplates() {
-        foreach (CertificateTemplate template in CertificateTemplate.EnumTemplates()) {
+        foreach (CertificateTemplate template in CertificateTemplateFactory.GetTemplatesDs()) {
             Console.WriteLine(template.Name);
             CertificateTemplate refTemplate = CertificateTemplateFactory.CreateFromCommonNameDs(template.Name);
             assertTemplate(template, refTemplate);
@@ -30,7 +30,7 @@ public class CertificateTemplateTests {
     }
     [TestMethod]
     public void TestCertEnrollTemplates() {
-        var col = new CertificateTemplateCollection(CertificateTemplate.EnumTemplates());
+        CertificateTemplateCollection col = CertificateTemplateFactory.GetTemplatesDs();
         String serializedString = col.Export(CertificateTemplateExportFormat.XCep);
         var policy = new CX509EnrollmentPolicyWebServiceClass();
         policy.InitializeImport(Encoding.UTF8.GetBytes(serializedString));
@@ -130,7 +130,7 @@ public class CertificateTemplateTests {
     [TestMethod]
     public void TestRegExportImport() {
         var col = new CertificateTemplateCollection();
-        foreach (CertificateTemplate template in CertificateTemplate.EnumTemplates()) {
+        foreach (CertificateTemplate template in CertificateTemplateFactory.GetTemplatesDs()) {
             Console.WriteLine(template.Name);
             CertificateTemplate refTemplate = CertificateTemplateFactory.CreateFromCommonNameRegistry(template.Name);
             col.Add(refTemplate);
@@ -150,7 +150,7 @@ public class CertificateTemplateTests {
     [TestMethod]
     public void TestDsExportImport() {
         var col = new CertificateTemplateCollection();
-        foreach (CertificateTemplate template in CertificateTemplate.EnumTemplates()) {
+        foreach (CertificateTemplate template in CertificateTemplateFactory.GetTemplatesDs()) {
             Console.WriteLine(template.Name);
             CertificateTemplate refTemplate = CertificateTemplateFactory.CreateFromCommonNameDs(template.Name);
             col.Add(refTemplate);
