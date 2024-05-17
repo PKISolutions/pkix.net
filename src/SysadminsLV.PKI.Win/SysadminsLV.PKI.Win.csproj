@@ -112,6 +112,7 @@
   <ItemGroup>
     <Compile Include="CertificateTemplates\CertificateTemplateCollection.cs" />
     <Compile Include="CertificateTemplates\CertificateTemplateExportFormat.cs" />
+    <Compile Include="CertificateTemplates\CertificateTemplateFactory.cs" />
     <Compile Include="CertificateTemplates\CertificateTemplateXcepFormatter.cs" />
     <Compile Include="CertificateTemplates\ICertificateTemplateCertificatePolicy.cs" />
     <Compile Include="CertificateTemplates\IAdcsCertificateTemplate.cs" />

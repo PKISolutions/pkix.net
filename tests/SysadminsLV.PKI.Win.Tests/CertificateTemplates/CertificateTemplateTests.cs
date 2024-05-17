@@ -7,9 +7,6 @@ using Interop.CERTENROLLLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PKI.CertificateTemplates;
 using SysadminsLV.PKI.CertificateTemplates;
-using SysadminsLV.PKI.Dcom.Implementations;
-using SysadminsLV.PKI.Management.ActiveDirectory;
-using SysadminsLV.PKI.Management.CertificateServices;
 using SysadminsLV.PKI.Utils;
 
 namespace SysadminsLV.PKI.Win.Tests.CertificateTemplates;
@@ -19,8 +16,7 @@ public class CertificateTemplateTests {
     public void TestRegTemplates() {
         foreach (CertificateTemplate template in CertificateTemplate.EnumTemplates()) {
             Console.WriteLine(template.Name);
-            var regTemplate = new RegCertificateTemplate(template.Name);
-            var refTemplate = new CertificateTemplate(regTemplate);
+            CertificateTemplate refTemplate = CertificateTemplateFactory.CreateFromCommonNameRegistry(template.Name);
             assertTemplate(template, refTemplate);
         }
     }
@@ -28,8 +24,7 @@ public class CertificateTemplateTests {
     public void TestDsTemplates() {
         foreach (CertificateTemplate template in CertificateTemplate.EnumTemplates()) {
             Console.WriteLine(template.Name);
-            IAdcsCertificateTemplate dsTemplate = DsCertificateTemplate.FromCommonName(template.Name);
-            var refTemplate = new CertificateTemplate(dsTemplate);
+            CertificateTemplate refTemplate = CertificateTemplateFactory.CreateFromCommonNameDs(template.Name);
             assertTemplate(template, refTemplate);
         }
     }
@@ -44,8 +39,7 @@ public class CertificateTemplateTests {
         for (Int32 index = 0; index < col.Count; index++) {
             CertificateTemplate source = col[index];
             Console.WriteLine(source.Name);
-            var certEnrollTemplate = new CertEnrollCertificateTemplate(templates[index]);
-            var refTemplate = new CertificateTemplate(certEnrollTemplate);
+            CertificateTemplate refTemplate = CertificateTemplateFactory.CreateFromCertEnrollTemplate(templates[index]);
             assertTemplate(source, refTemplate);
         }
 
@@ -138,8 +132,7 @@ public class CertificateTemplateTests {
         var col = new CertificateTemplateCollection();
         foreach (CertificateTemplate template in CertificateTemplate.EnumTemplates()) {
             Console.WriteLine(template.Name);
-            var regTemplate = new RegCertificateTemplate(template.Name);
-            var refTemplate = new CertificateTemplate(regTemplate);
+            CertificateTemplate refTemplate = CertificateTemplateFactory.CreateFromCommonNameRegistry(template.Name);
             col.Add(refTemplate);
         }
         String serializedString = col.Export(CertificateTemplateExportFormat.XCep);
@@ -159,8 +152,7 @@ public class CertificateTemplateTests {
         var col = new CertificateTemplateCollection();
         foreach (CertificateTemplate template in CertificateTemplate.EnumTemplates()) {
             Console.WriteLine(template.Name);
-            IAdcsCertificateTemplate dsTemplate = DsCertificateTemplate.FromCommonName(template.Name);
-            var refTemplate = new CertificateTemplate(dsTemplate);
+            CertificateTemplate refTemplate = CertificateTemplateFactory.CreateFromCommonNameDs(template.Name);
             col.Add(refTemplate);
         }
         String serializedString = col.Export(CertificateTemplateExportFormat.XCep);

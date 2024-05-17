@@ -14,7 +14,7 @@ namespace SysadminsLV.PKI.Management.CertificateServices;
 /// <summary>
 /// Represents local registry cache-based implementation of <see cref="IAdcsCertificateTemplate"/> interface.
 /// </summary>
-public class RegCertificateTemplate : IAdcsCertificateTemplate {
+public sealed class RegCertificateTemplate : IAdcsCertificateTemplate {
     readonly List<Byte> _validityPeriod = [];
     readonly List<Byte> _renewalPeriod = [];
     readonly List<String> _raAppPolicies = [];
@@ -30,7 +30,7 @@ public class RegCertificateTemplate : IAdcsCertificateTemplate {
     /// </summary>
     /// <param name="commonName">Template common name.</param>
     /// <exception cref="ArgumentException"></exception>
-    public RegCertificateTemplate(String commonName) {
+    internal RegCertificateTemplate(String commonName) {
         var regReader = new RegistryReader(@"SOFTWARE\Microsoft\Cryptography\CertificateTemplateCache");
         if (!regReader.TestSubKeyExists(commonName)) {
             throw new ArgumentException($"Specified template '{commonName}' does not exist in local template cache.");

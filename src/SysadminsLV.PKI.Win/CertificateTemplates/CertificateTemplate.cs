@@ -195,8 +195,8 @@ public class CertificateTemplate {
     /// <returns>An array of certificate templates.</returns>
     public static CertificateTemplate[] EnumTemplates() {
         var retValue = new List<CertificateTemplate>();
-        foreach (IAdcsCertificateTemplate dsEntry in DsCertificateTemplate.GetAll()) {
-            retValue.Add(new CertificateTemplate(dsEntry));
+        foreach (IAdcsCertificateTemplate templateInfo in DsCertificateTemplate.GetAll()) {
+            retValue.Add(CertificateTemplateFactory.CreateFromTemplateInfo(templateInfo));
         }
         return retValue.ToArray();
     }
@@ -308,24 +308,27 @@ public class CertificateTemplate {
     /// </summary>
     /// <param name="cn">Certificate template's common name.</param>
     /// <returns>Certificate template object.</returns>
+    [Obsolete("Use 'CertificateTemplateFactory.CreateFromCommonNameDs' instead.")]
     public static CertificateTemplate FromCommonName(String cn) {
-        return new CertificateTemplate(DsCertificateTemplate.FromCommonName(cn));
+        return CertificateTemplateFactory.CreateFromCommonNameDs(cn);
     }
     /// <summary>
     /// Creates a new instance of <strong>CertificateTemplate</strong> object from certificate template's display name.
     /// </summary>
     /// <param name="displayName">Certificate template's display/friendly name.</param>
     /// <returns>Certificate template object.</returns>
+    [Obsolete("Use 'CertificateTemplateFactory.CreateFromDisplayNameDs' instead.")]
     public static CertificateTemplate FromDisplayName(String displayName) {
-        return new CertificateTemplate(DsCertificateTemplate.FromDisplayName(displayName));
+        return CertificateTemplateFactory.CreateFromDisplayNameDs(displayName);
     }
     /// <summary>
     /// Creates a new instance of <strong>CertificateTemplate</strong> object from certificate template's object identifier (OID).
     /// </summary>
     /// <param name="oid">Certificate template's dot-decimal object identifier.</param>
     /// <returns>Certificate template object.</returns>
+    [Obsolete("Use 'CertificateTemplateFactory.CreateFromOidDs' instead.")]
     public static CertificateTemplate FromOid(String oid) {
-        return new CertificateTemplate(DsCertificateTemplate.FromOid(oid));
+        return CertificateTemplateFactory.CreateFromOidDs(oid);
     }
 
 }
