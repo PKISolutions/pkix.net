@@ -192,9 +192,9 @@ public class CertificateTemplate {
     /// Enumerates certificate templates registered in Active Directory.
     /// </summary>
     /// <returns>An array of certificate templates.</returns>
-    [Obsolete("Use 'CertificateTemplateFactory.GetTemplatesDs()' instead.")]
+    [Obsolete("Use 'CertificateTemplateFactory.GetTemplatesFromDs()' instead.")]
     public static CertificateTemplate[] EnumTemplates() {
-        return CertificateTemplateFactory.GetTemplatesDs().ToArray();
+        return CertificateTemplateFactory.GetTemplatesFromDs().ToArray();
     }
 
     /// <summary>

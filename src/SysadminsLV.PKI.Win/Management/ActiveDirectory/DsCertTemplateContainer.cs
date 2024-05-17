@@ -10,7 +10,7 @@ public class DsCertTemplateContainer : DsPkiContainer {
     internal DsCertTemplateContainer() {
         ContainerType = DsContainerType.CertificateTemplates;
         BaseEntryPath = "CN=Certificate Templates";
-        CertificateTemplates = CertificateTemplateFactory.GetTemplatesDs();
+        CertificateTemplates = CertificateTemplateFactory.GetTemplatesFromDs();
     }
 
     /// <summary>

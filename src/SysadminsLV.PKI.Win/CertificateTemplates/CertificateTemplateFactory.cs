@@ -71,7 +71,15 @@ public static class CertificateTemplateFactory {
     /// Creates a collection of all certificate templates registered in Active Directory.
     /// </summary>
     /// <returns>Certificate template collection.</returns>
-    public static CertificateTemplateCollection GetTemplatesDs() {
+    public static CertificateTemplateCollection GetTemplatesFromDs() {
         return new CertificateTemplateCollection(DsCertificateTemplate.GetAll().Select(CreateFromTemplateInfo));
+    }
+    /// <summary>
+    /// Creates a collection of all certificate templates registered in local registry cache.
+    /// </summary>
+    /// <returns>Certificate template collection.</returns>
+    /// <exception cref="ArgumentException">Registry cache doesn't exist.</exception>
+    public static CertificateTemplateCollection GetTemplatesFromRegistry() {
+        return new CertificateTemplateCollection(RegCertificateTemplate.GetAll().Select(CreateFromTemplateInfo));
     }
 }

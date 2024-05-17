@@ -169,4 +169,15 @@ public sealed class RegCertificateTemplate : IAdcsCertificateTemplate {
             _raAppPolicies.AddRange(raAppPolicies);
         }
     }
+
+    internal static IEnumerable<IAdcsCertificateTemplate> GetAll() {
+        var regReader = new RegistryReader(@"SOFTWARE\Microsoft\Cryptography");
+        if (!regReader.TestSubKeyExists("CertificateTemplateCache")) {
+            throw new ArgumentException("Certificate template registry storage doesn't exist.");
+        }
+        regReader.SetContextSubKey("CertificateTemplateCache");
+        foreach (String templateName in regReader.GetSubKeyNames()) {
+            yield return new RegCertificateTemplate(templateName);
+        }
+    }
 }
