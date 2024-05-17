@@ -167,4 +167,33 @@ public class CertificateTemplateTests {
             assertTemplate(source, target);
         }
     }
+
+    [TestMethod]
+    public void TestDsTemplateAcl() {
+        foreach (CertificateTemplate template in CertificateTemplateFactory.GetTemplatesDs()) {
+            Console.WriteLine(template.Name);
+            var acl = template.GetSecurityDescriptor();
+            Assert.IsNotNull(acl);
+        }
+    }
+    [TestMethod]
+    public void TestRegTemplateAcl() {
+        foreach (CertificateTemplate template in CertificateTemplateFactory.GetTemplatesDs()) {
+            var regTemplate = CertificateTemplateFactory.CreateFromCommonNameRegistry(template.Name);
+            Console.WriteLine(template.Name);
+            var acl = regTemplate.GetSecurityDescriptor();
+            Assert.IsNotNull(acl);
+        }
+    }
+    [TestMethod]
+    public void TestCertEnrollTemplateAcl() {
+        String serializedString = CertificateTemplateFactory.GetTemplatesDs().Export(CertificateTemplateExportFormat.XCep);
+        var col = new CertificateTemplateCollection();
+        col.Import(serializedString, CertificateTemplateExportFormat.XCep);
+        foreach (CertificateTemplate template in col) {
+            Console.WriteLine(template.Name);
+            var acl = template.GetSecurityDescriptor();
+            Assert.IsNotNull(acl);
+        }
+    }
 }
