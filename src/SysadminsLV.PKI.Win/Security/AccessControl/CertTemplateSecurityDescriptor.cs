@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using PKI.CertificateTemplates;
+using SysadminsLV.PKI.Management.ActiveDirectory;
 using SysadminsLV.PKI.Utils;
 
 namespace SysadminsLV.PKI.Security.AccessControl;
@@ -15,14 +16,22 @@ namespace SysadminsLV.PKI.Security.AccessControl;
 public sealed class CertTemplateSecurityDescriptor : CommonObjectSecurity {
     const String GUID_ENROLL     = "0e10c968-78fb-11d2-90d4-00c04f79dc55";
     const String GUID_AUTOENROLL = "a05b8cc2-17bc-4802-a710-e7c15ab866a2";
-    //readonly String _x500Name;
     readonly String _x500Path;
     readonly Int32 _schemaVersion;
 
     internal CertTemplateSecurityDescriptor(CertificateTemplate template) : base(false) {
         DisplayName = template.DisplayName;
         _schemaVersion = template.SchemaVersion;
-        _x500Path = "LDAP://" + template.DistinguishedName;
+        String ldapPath;
+        if (String.IsNullOrEmpty(template.DistinguishedName)) {
+            ldapPath = DsCertificateTemplate.GetLdapPath(template.Name);
+            if (String.IsNullOrEmpty(ldapPath)) {
+                throw new ArgumentException($"Requested certificate template '{template.Name}' was not found in Active Directory or connection failed.");
+            }
+        } else {
+            ldapPath = template.DistinguishedName;
+        }
+        _x500Path = "LDAP://" + ldapPath;
         fromActiveDirectorySecurity();
     }
 
