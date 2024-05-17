@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Interop.CERTENROLLLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -115,6 +116,7 @@ public class CertificateTemplateTests {
         }
 
         // Extensions
+        assertExtensions(sSettings.Extensions, tSettings.Extensions);
     }
     static void assertOid(Oid source, Oid target) {
         Assert.IsNotNull(source);
@@ -122,6 +124,15 @@ public class CertificateTemplateTests {
         //Assert.AreEqual(source.FriendlyName, target.FriendlyName);
         Assert.AreEqual(source.Value, target.Value);
     }
+    static void assertExtensions(X509ExtensionCollection source, X509ExtensionCollection target) {
+        Assert.AreEqual(source.Count, target.Count);
+        for (Int32 index = 0; index < source.Count; index++) {
+            assertOid(source[index].Oid, target[index].Oid);
+            Assert.AreEqual(source[index].Critical, target[index].Critical);
+            Assert.IsTrue(source[index].RawData.SequenceEqual(target[index].RawData));
+        }
+    }
+
     [TestMethod]
     public void TestRegExportImport() {
         var col = new CertificateTemplateCollection();
@@ -139,7 +150,7 @@ public class CertificateTemplateTests {
         for (Int32 index = 0; index < col.Count; index++) {
             CertificateTemplate source = col[index];
             Console.WriteLine(source.Name);
-            var target = col2[index];
+            CertificateTemplate target = col2[index];
             assertTemplate(source, target);
         }
     }
@@ -160,7 +171,7 @@ public class CertificateTemplateTests {
         for (Int32 index = 0; index < col.Count; index++) {
             CertificateTemplate source = col[index];
             Console.WriteLine(source.Name);
-            var target = col2[index];
+            CertificateTemplate target = col2[index];
             assertTemplate(source, target);
         }
     }
