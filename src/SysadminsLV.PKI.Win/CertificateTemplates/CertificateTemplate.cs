@@ -181,6 +181,12 @@ public class CertificateTemplate {
         Settings = new CertificateTemplateSettings(_template);
         setClientSupport();
         setServerSupport();
+        if (_template.ExtendedProperties.TryGetValue("whenChanged", out Object whenChanged)) {
+            LastWriteTime = (DateTime)whenChanged;
+        }
+        if (_template.ExtendedProperties.TryGetValue("distinguishedName", out Object dn)) {
+            DistinguishedName = (String)dn;
+        }
     }
 
     /// <summary>
@@ -224,14 +230,14 @@ public class CertificateTemplate {
     /// name and OID values.
     /// </remarks>
     protected Boolean Equals(CertificateTemplate other) {
-        return String.Equals(Name, other.Name) && OID?.Value == other.OID?.Value;
+        return String.Equals(_template.CommonName, other._template.CommonName) && _template.Oid == other._template.Oid;
     }
     /// <summary>
     /// Serves as a hash function for a particular type.
     /// </summary>
     /// <returns>The hash code for the certificate template as an integer.</returns>
     public override Int32 GetHashCode() {
-        unchecked { return (Name.GetHashCode() * 397) ^ OID?.Value.GetHashCode() ?? 0; }
+        unchecked { return (_template.CommonName.GetHashCode() * 397) ^ _template.Oid.GetHashCode(); }
     }
     /// <summary>
     /// Gets access control list (security descriptor) of the current certificate template.
