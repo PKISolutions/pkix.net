@@ -70,7 +70,7 @@ public class CertificateTemplateSettings {
     /// <summary>
     /// Gets or sets the way how the certificate's subject should be constructed.
     /// </summary>
-    public CertificateTemplateNameFlags SubjectName => (CertificateTemplateNameFlags)subjectFlags;
+    public CertificateTemplateNameFlags SubjectName => subjectFlags;
 
     /// <summary>
     /// Gets or sets a list of OIDs that represent extended key usages (certificate purposes).
@@ -205,8 +205,8 @@ public class CertificateTemplateSettings {
         ValidityPeriod = readValidity(template.ValidityPeriod);
         RenewalPeriod = readValidity(template.RenewalPeriod);
         _superseded.AddRange(template.SupersededTemplates);
-        _ekuList.AddRange(template.ExtEKU.Select(x => new Oid(x)));
-        _certPolicies.AddRange(template.ExtCertPolicies.Select(x => new Oid(x.PolicyID)));
+        _ekuList.AddRange(template.ExtensionEKU.Select(x => new Oid(x)));
+        _certPolicies.AddRange(template.ExtensionCertPolicies.Select(x => new Oid(x.PolicyID)));
         _criticalExtensions.AddRange(template.CriticalExtensions.Select(x => new Oid(x)));
         readExtensions();
     }

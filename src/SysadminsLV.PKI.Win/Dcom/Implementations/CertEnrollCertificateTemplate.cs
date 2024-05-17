@@ -83,13 +83,13 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
                 case X509ExtensionOid.BasicConstraints:
                     var bc = new CX509ExtensionBasicConstraintsClass();
                     bc.InitializeDecode(EncodingType.XCN_CRYPT_STRING_BASE64, extension.RawData[EncodingType.XCN_CRYPT_STRING_BASE64]);
-                    ExtBasicConstraintsPathLength = bc.PathLenConstraint;
+                    ExtensionBasicConstraintsPathLength = bc.PathLenConstraint;
                     CryptographyUtils.ReleaseCom(bc);
                     break;
                 case X509ExtensionOid.KeyUsage:
                     var ku = new CX509ExtensionKeyUsageClass();
                     ku.InitializeDecode(EncodingType.XCN_CRYPT_STRING_BASE64, extension.RawData[EncodingType.XCN_CRYPT_STRING_BASE64]);
-                    ExtKeyUsages = (X509KeyUsageFlags)ku.KeyUsage;
+                    ExtensionKeyUsages = (X509KeyUsageFlags)ku.KeyUsage;
                     CryptographyUtils.ReleaseCom(ku);
                     break;
             }
@@ -152,13 +152,13 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
     /// <inheritdoc />
     public String[] CriticalExtensions => [.. _criticalExtensions];
     /// <inheritdoc />
-    public String[] ExtEKU => [.. _eku];
+    public String[] ExtensionEKU => [.. _eku];
     /// <inheritdoc />
-    public ICertificateTemplateCertificatePolicy[] ExtCertPolicies => [.. _certPolicies];
+    public ICertificateTemplateCertificatePolicy[] ExtensionCertPolicies => [.. _certPolicies];
     /// <inheritdoc />
-    public Int32 ExtBasicConstraintsPathLength { get; } = -1;
+    public Int32 ExtensionBasicConstraintsPathLength { get; } = -1;
     /// <inheritdoc />
-    public X509KeyUsageFlags ExtKeyUsages { get; }
+    public X509KeyUsageFlags ExtensionKeyUsages { get; }
     /// <inheritdoc />
     public CngKeyUsages CryptCngKeyUsages { get; }
     /// <inheritdoc />

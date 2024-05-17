@@ -68,9 +68,9 @@ public class RegCertificateTemplate : IAdcsCertificateTemplate {
             } catch { }
             _certPolicies.Add(certPolicy);
         }
-        ExtBasicConstraintsPathLength = regReader.GetDWordValue("PathLen");
+        ExtensionBasicConstraintsPathLength = regReader.GetDWordValue("PathLen");
         Byte[] keyUsagesBytes = regReader.GetBinaryValue("KeyUsage");
-        ExtKeyUsages = (X509KeyUsageFlags)Convert.ToInt16(String.Join("", keyUsagesBytes.Reverse().Select(x => $"{x:x2}").ToArray()), 16);
+        ExtensionKeyUsages = (X509KeyUsageFlags)Convert.ToInt16(String.Join("", keyUsagesBytes.Reverse().Select(x => $"{x:x2}").ToArray()), 16);
     }
 
     /// <inheritdoc />
@@ -124,13 +124,13 @@ public class RegCertificateTemplate : IAdcsCertificateTemplate {
     /// <inheritdoc />
     public String[] CriticalExtensions => [.. _criticalExtensions];
     /// <inheritdoc />
-    public String[] ExtEKU => [.. _eku];
+    public String[] ExtensionEKU => [.. _eku];
     /// <inheritdoc />
-    public ICertificateTemplateCertificatePolicy[] ExtCertPolicies => [.. _certPolicies];
+    public ICertificateTemplateCertificatePolicy[] ExtensionCertPolicies => [.. _certPolicies];
     /// <inheritdoc />
-    public Int32 ExtBasicConstraintsPathLength { get; }
+    public Int32 ExtensionBasicConstraintsPathLength { get; }
     /// <inheritdoc />
-    public X509KeyUsageFlags ExtKeyUsages { get; }
+    public X509KeyUsageFlags ExtensionKeyUsages { get; }
     /// <inheritdoc />
     public IDictionary<String, Object> ExtendedProperties { get; }
 
