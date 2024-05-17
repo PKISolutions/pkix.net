@@ -22,16 +22,16 @@ public sealed class CertTemplateSecurityDescriptor : CommonObjectSecurity {
     internal CertTemplateSecurityDescriptor(CertificateTemplate template) : base(false) {
         DisplayName = template.DisplayName;
         _schemaVersion = template.SchemaVersion;
-        String ldapPath;
         if (String.IsNullOrEmpty(template.DistinguishedName)) {
-            ldapPath = DsCertificateTemplate.GetLdapPath(template.Name);
+            String ldapPath = DsCertificateTemplate.GetLdapPath(template.Name);
             if (String.IsNullOrEmpty(ldapPath)) {
                 throw new ArgumentException($"Requested certificate template '{template.Name}' was not found in Active Directory or connection failed.");
             }
+            _x500Path = ldapPath;
         } else {
-            ldapPath = template.DistinguishedName;
+            _x500Path = "LDAP://" + template.DistinguishedName;
         }
-        _x500Path = "LDAP://" + ldapPath;
+
         fromActiveDirectorySecurity();
     }
 
