@@ -239,6 +239,7 @@ public class CertificateTemplate {
     /// Gets access control list (security descriptor) of the current certificate template.
     /// </summary>
     /// <returns>Security descriptor.</returns>
+    /// <exception cref="ArgumentException">Certificate template doesn't exist in Active Directory or connection failed.</exception>
     public CertTemplateSecurityDescriptor GetSecurityDescriptor() {
         return new CertTemplateSecurityDescriptor(this);
     }
