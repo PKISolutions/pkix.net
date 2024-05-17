@@ -155,7 +155,7 @@ public class CryptographyTemplateSettings {
         PrivateKeyOptions = template.CryptPrivateKeyFlags;
         MinimalKeyLength = template.CryptPublicKeyLength;
         KeySpec = template.CryptKeySpec;
-        KeyUsage = template.ExtKeyUsages;
+        KeyUsage = template.ExtensionKeyUsages;
         CNGKeyUsage = template.CryptCngKeyUsages;
         ProviderList = template.CryptSupportedProviders;
         KeyAlgorithm = new Oid(template.CryptPublicKeyAlgorithm);

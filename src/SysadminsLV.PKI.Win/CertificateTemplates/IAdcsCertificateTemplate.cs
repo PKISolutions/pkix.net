@@ -119,19 +119,19 @@ public interface IAdcsCertificateTemplate {
     /// <summary>
     /// Gets template application policies (EKUs).
     /// </summary>
-    String[] ExtEKU { get; }
+    String[] ExtensionEKU { get; }
     /// <summary>
     /// Gets template certificate policies.
     /// </summary>
-    ICertificateTemplateCertificatePolicy[] ExtCertPolicies { get; }
+    ICertificateTemplateCertificatePolicy[] ExtensionCertPolicies { get; }
     /// <summary>
     /// Gets Basic Constraints path length restriction. Applicable only for CA templates.
     /// </summary>
-    Int32 ExtBasicConstraintsPathLength { get; }
+    Int32 ExtensionBasicConstraintsPathLength { get; }
     /// <summary>
     /// Gets template Key Usages.
     /// </summary>
-    X509KeyUsageFlags ExtKeyUsages { get; }    
+    X509KeyUsageFlags ExtensionKeyUsages { get; }
     /// <summary>
     /// Gets a collection of custom template properties.
     /// </summary>

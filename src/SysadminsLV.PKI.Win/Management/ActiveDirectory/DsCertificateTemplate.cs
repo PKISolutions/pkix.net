@@ -81,6 +81,8 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
     /// <inheritdoc />
     public X509KeySpecFlags CryptKeySpec { get; private set; }
     /// <inheritdoc />
+    public CngKeyUsages CryptCngKeyUsages { get; set; }
+    /// <inheritdoc />
     public String[] CryptSupportedProviders => [.. _cryptCspList];
     public String CryptPrivateKeySDDL { get; set; }
     /// <inheritdoc />
@@ -88,15 +90,13 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
     /// <inheritdoc />
     public String[] CriticalExtensions => [.. _criticalExtensions];
     /// <inheritdoc />
-    public String[] ExtEKU => [.. _eku];
+    public String[] ExtensionEKU => [.. _eku];
     /// <inheritdoc />
-    public ICertificateTemplateCertificatePolicy[] ExtCertPolicies => [.. _certPolicies];
+    public ICertificateTemplateCertificatePolicy[] ExtensionCertPolicies => [.. _certPolicies];
     /// <inheritdoc />
-    public Int32 ExtBasicConstraintsPathLength { get; private set; }
+    public Int32 ExtensionBasicConstraintsPathLength { get; private set; }
     /// <inheritdoc />
-    public X509KeyUsageFlags ExtKeyUsages { get; private set; }
-    public CngKeyUsages CryptCngKeyUsages { get; set; }
-    public X509ExtensionCollection Extensions { get; set; }
+    public X509KeyUsageFlags ExtensionKeyUsages { get; private set; }
     /// <inheritdoc />
     public IDictionary<String, Object> ExtendedProperties { get; }
 
@@ -171,9 +171,9 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
             } catch { }
             _certPolicies.Add(certPolicy);
         }
-        ExtBasicConstraintsPathLength = props.GetDsScalarValue<Int32>(DsUtils.PropPkiPathLength);
+        ExtensionBasicConstraintsPathLength = props.GetDsScalarValue<Int32>(DsUtils.PropPkiPathLength);
         Byte[] keyUsagesBytes = props.GetDsCollectionValue<Byte>(DsUtils.PropPkiKeyUsage);
-        ExtKeyUsages = (X509KeyUsageFlags)Convert.ToInt16(String.Join("", keyUsagesBytes.Reverse().Select(x => $"{x:x2}").ToArray()), 16);
+        ExtensionKeyUsages = (X509KeyUsageFlags)Convert.ToInt16(String.Join("", keyUsagesBytes.Reverse().Select(x => $"{x:x2}").ToArray()), 16);
         ExtendedProperties.Add(DsUtils.PropWhenChanged, props.GetDsScalarValue<DateTime>(DsUtils.PropWhenChanged));
         ExtendedProperties.Add(DsUtils.PropDN, ldapPath.Replace("LDAP://", null));
         ExtendedProperties.Add(DsUtils.PropAcl, props[DsUtils.PropAcl]);
