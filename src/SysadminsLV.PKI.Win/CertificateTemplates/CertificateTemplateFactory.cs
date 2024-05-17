@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Interop.CERTENROLLLib;
 using PKI.CertificateTemplates;
@@ -64,5 +65,13 @@ public static class CertificateTemplateFactory {
     /// <exception cref="COMException">Any exception propagated from COM object.</exception>
     public static CertificateTemplate CreateFromCertEnrollTemplate(IX509CertificateTemplate template) {
         return new CertificateTemplate(new CertEnrollCertificateTemplate(template));
+    }
+
+    /// <summary>
+    /// Creates a collection of all certificate templates registered in Active Directory.
+    /// </summary>
+    /// <returns>Certificate template collection.</returns>
+    public static CertificateTemplateCollection GetTemplatesDs() {
+        return new CertificateTemplateCollection(DsCertificateTemplate.GetAll().Select(CreateFromTemplateInfo));
     }
 }

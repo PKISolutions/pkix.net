@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using SysadminsLV.PKI.CertificateTemplates;
-using SysadminsLV.PKI.Management.ActiveDirectory;
 using SysadminsLV.PKI.Security.AccessControl;
 
 namespace PKI.CertificateTemplates;
@@ -193,12 +192,9 @@ public class CertificateTemplate {
     /// Enumerates certificate templates registered in Active Directory.
     /// </summary>
     /// <returns>An array of certificate templates.</returns>
+    [Obsolete("Use 'CertificateTemplateFactory.GetTemplatesDs()' instead.")]
     public static CertificateTemplate[] EnumTemplates() {
-        var retValue = new List<CertificateTemplate>();
-        foreach (IAdcsCertificateTemplate templateInfo in DsCertificateTemplate.GetAll()) {
-            retValue.Add(CertificateTemplateFactory.CreateFromTemplateInfo(templateInfo));
-        }
-        return retValue.ToArray();
+        return CertificateTemplateFactory.GetTemplatesDs().ToArray();
     }
 
     /// <summary>

@@ -276,7 +276,7 @@ public sealed class DsCertificateTemplate : IAdcsCertificateTemplate {
     /// Returns a collection of certificate templates as <see cref="IAdcsCertificateTemplate"/> instances.
     /// </summary>
     /// <returns>A collection of certificate templates.</returns>
-    public static IEnumerable<IAdcsCertificateTemplate> GetAll() {
+    internal static IEnumerable<IAdcsCertificateTemplate> GetAll() {
         if (!DsUtils.Ping()) {
             throw new Exception(ErrorHelper.E_DCUNAVAILABLE);
         }
