@@ -16,7 +16,7 @@ namespace SysadminsLV.PKI.Dcom.Implementations;
 /// <summary>
 /// Represents CertEnroll-based implementation of <see cref="IAdcsCertificateTemplate"/>.
 /// </summary>
-public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
+public sealed class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
     readonly List<Byte> _validityPeriod = [];
     readonly List<Byte> _renewalPeriod = [];
     readonly List<String> _raAppPolicies = [];
@@ -34,7 +34,7 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
     /// <exception cref="ArgumentNullException">
     ///     <strong>template</strong> parameter is null.
     /// </exception>
-    public CertEnrollCertificateTemplate(IX509CertificateTemplate template) {
+    internal CertEnrollCertificateTemplate(IX509CertificateTemplate template) {
         if (template == null) {
             throw new ArgumentNullException(nameof(template));
         }

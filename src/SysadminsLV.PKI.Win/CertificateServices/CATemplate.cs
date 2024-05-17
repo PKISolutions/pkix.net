@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using PKI.CertificateTemplates;
+using SysadminsLV.PKI.CertificateTemplates;
 using SysadminsLV.PKI.Dcom;
 using SysadminsLV.PKI.Dcom.Implementations;
 using SysadminsLV.PKI.Exceptions;
@@ -74,7 +75,7 @@ public class CATemplate {
 
         String[,] templates = propReader.GetCaTemplates();
         for (Int32 i = 0; i <= templates.GetUpperBound(0); i++) {
-            _templates.Add(CertificateTemplate.FromCommonName(templates[i, 0]));
+            _templates.Add(CertificateTemplateFactory.CreateFromCommonNameDs(templates[i, 0]));
         }
     }
     Boolean IsSupported(Int32 schemaVersion) {

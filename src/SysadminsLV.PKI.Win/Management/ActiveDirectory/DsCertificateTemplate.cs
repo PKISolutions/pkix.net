@@ -15,7 +15,7 @@ namespace SysadminsLV.PKI.Management.ActiveDirectory;
 /// <summary>
 /// Represents an Active Directory-based implementation of <see cref="IAdcsCertificateTemplate"/> interface.
 /// </summary>
-public class DsCertificateTemplate : IAdcsCertificateTemplate {
+public sealed class DsCertificateTemplate : IAdcsCertificateTemplate {
     static readonly String _baseDsPath = $"CN=Certificate Templates, CN=Public Key Services, CN=Services,{DsUtils.ConfigContext}";
     readonly List<Byte> _validityPeriod = [];
     readonly List<Byte> _renewalPeriod = [];
@@ -252,7 +252,7 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
     /// </summary>
     /// <param name="cn">Template common name.</param>
     /// <returns>Instance of <see cref="IAdcsCertificateTemplate"/> interface.</returns>
-    public static IAdcsCertificateTemplate FromCommonName(String cn) {
+    internal static IAdcsCertificateTemplate FromCommonName(String cn) {
         return new DsCertificateTemplate("Name", cn);
     }
     /// <summary>
@@ -260,7 +260,7 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
     /// </summary>
     /// <param name="displayName">Certificate template's display/friendly name.</param>
     /// <returns>Certificate template object.</returns>
-    public static IAdcsCertificateTemplate FromDisplayName(String displayName) {
+    internal static IAdcsCertificateTemplate FromDisplayName(String displayName) {
         return new DsCertificateTemplate("DisplayName", displayName);
     }
     /// <summary>
@@ -268,7 +268,7 @@ public class DsCertificateTemplate : IAdcsCertificateTemplate {
     /// </summary>
     /// <param name="oid">Certificate template's dot-decimal object identifier.</param>
     /// <returns>Certificate template object.</returns>
-    public static IAdcsCertificateTemplate FromOid(String oid) {
+    internal static IAdcsCertificateTemplate FromOid(String oid) {
         return new DsCertificateTemplate("OID", oid);
     }
 
