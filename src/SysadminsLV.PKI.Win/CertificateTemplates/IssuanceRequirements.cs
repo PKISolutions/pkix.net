@@ -5,8 +5,6 @@ using System.Security.Cryptography;
 using System.Text;
 using SysadminsLV.PKI.CertificateTemplates;
 using SysadminsLV.PKI.Cryptography;
-using SysadminsLV.PKI.Management.ActiveDirectory;
-using SysadminsLV.PKI.Utils;
 
 namespace PKI.CertificateTemplates;
 
@@ -15,16 +13,12 @@ namespace PKI.CertificateTemplates;
 /// policy requirements.
 /// </summary>
 public class IssuanceRequirements {
+    readonly IAdcsCertificateTemplate _template;
     readonly List<Oid> _certPolicies = [];
-    readonly DsPropertyCollection _entry;
-    CertificateTemplateEnrollmentFlags enrollmentFlags;
 
     internal IssuanceRequirements(IAdcsCertificateTemplate template) {
-        initializeCom(template);
-    }
-    internal IssuanceRequirements(DsPropertyCollection Entry) {
-        _entry = Entry;
-        initializeDs();
+        _template = template;
+        initialize();
     }
 
     /// <summary>
@@ -55,59 +49,20 @@ public class IssuanceRequirements {
     /// existing valid certificate is sufficient for re-enrollment, otherwise, the same enrollment
     /// criteria is required for certificate renewal as was used for initial enrollment.
     /// </summary>
-    public Boolean ExistingCertForRenewal => (enrollmentFlags & CertificateTemplateEnrollmentFlags.ReenrollExistingCert) != 0;
+    public Boolean ExistingCertForRenewal => (_template.EnrollmentFlags & CertificateTemplateEnrollmentFlags.ReenrollExistingCert) != 0;
 
-    void initializeDs() {
-        enrollmentFlags = (CertificateTemplateEnrollmentFlags)_entry[DsUtils.PropPkiEnrollFlags];
-        SignatureCount = (Int32)_entry[DsUtils.PropPkiRaSignature];
+    void initialize() {
+        SignatureCount = _template.RASignatureCount;
         if (SignatureCount > 0) {
-            readRaPolicies();
-            String ap = (String)_entry[DsUtils.PropPkiRaAppPolicy];
-            if (ap == null) {
-                return;
-            }
-            if (ap.Contains("`")) {
-                String[] delimiter = ["`"];
-                String[] strings = ap.Split(delimiter, StringSplitOptions.RemoveEmptyEntries);
-                for (Int32 index = 0; index < strings.Length; index += 3) {
-                    switch (strings[index]) {
-                        case DsUtils.PropPkiRaAppPolicy: ApplicationPolicy = new Oid(strings[index + 2]); break;
-                    }
-                }
-            } else {
-                ApplicationPolicy = new Oid(ap);
-            }
-        }
-        if ((enrollmentFlags & CertificateTemplateEnrollmentFlags.CAManagerApproval) > 0) {
-            CAManagerApproval = true;
-        }
-    }
-    void readRaPolicies() {
-        try {
-            Object[] RaObject = (Object[])_entry[DsUtils.PropPkiRaCertPolicy];
-            if (RaObject != null) {
-                foreach (Object obj in RaObject) {
-                    _certPolicies.Add(new Oid(obj.ToString()));
-                }
-            }
-        } catch {
-            String RaString = (String)_entry[DsUtils.PropPkiRaCertPolicy];
-            _certPolicies.Add(new Oid(RaString));
-        }
-    }
-    void initializeCom(IAdcsCertificateTemplate template) {
-        SignatureCount = template.RASignatureCount;
-        enrollmentFlags = template.EnrollmentFlags;
-        if (SignatureCount > 0) {
-            if (template.RAApplicationPolicies.Length > 0) {
-                ApplicationPolicy = new Oid(template.RAApplicationPolicies[0]);
+            if (_template.RAApplicationPolicies.Length > 0) {
+                ApplicationPolicy = new Oid(_template.RAApplicationPolicies[0]);
             }
 
-            foreach (String raCertPolicy in template.RACertificatePolicies) {
+            foreach (String raCertPolicy in _template.RACertificatePolicies) {
                 _certPolicies.Add(new Oid(raCertPolicy));
             }
         }
-        if ((template.EnrollmentFlags & CertificateTemplateEnrollmentFlags.CAManagerApproval) > 0) {
+        if ((_template.EnrollmentFlags & CertificateTemplateEnrollmentFlags.CAManagerApproval) > 0) {
             CAManagerApproval = true;
         }
     }

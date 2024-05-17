@@ -7,8 +7,6 @@ using SysadminsLV.Asn1Parser.Universal;
 using SysadminsLV.PKI.CertificateTemplates;
 using SysadminsLV.PKI.Cryptography;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
-using SysadminsLV.PKI.Management.ActiveDirectory;
-using SysadminsLV.PKI.Utils;
 
 namespace PKI.CertificateTemplates;
 
@@ -16,31 +14,18 @@ namespace PKI.CertificateTemplates;
 /// This class represents certificate template extended settings.
 /// </summary>
 public class CertificateTemplateSettings {
-    readonly CertificateTemplate _template;
-    readonly DsPropertyCollection _dsEntryProperties;
+    readonly IAdcsCertificateTemplate _template;
     readonly List<X509Extension> _extensions = [];
     readonly List<Oid> _ekuList = [];
     readonly List<Oid> _criticalExtensions = [];
     readonly List<Oid> _certPolicies = [];
-    readonly List<String> _superseded = [];
-    Int32 pathLength;
-    PrivateKeyFlags pkf;
-    CertificateTemplateNameFlags subjectFlags;
 
-    internal CertificateTemplateSettings(IAdcsCertificateTemplate template, CertificateTemplate templateManaged) {
-        _template = templateManaged;
+    internal CertificateTemplateSettings(IAdcsCertificateTemplate template) {
+        _template = template;
         Cryptography = new CryptographyTemplateSettings(template);
         RegistrationAuthority = new IssuanceRequirements(template);
         KeyArchivalSettings = new KeyArchivalOptions(template);
-        initializeFromCOM(template);
-    }
-    internal CertificateTemplateSettings(DsPropertyCollection dsEntryProperties, CertificateTemplate templateManaged) {
-        _dsEntryProperties = dsEntryProperties;
-        _template = templateManaged;
-        Cryptography = new CryptographyTemplateSettings(_dsEntryProperties);
-        RegistrationAuthority = new IssuanceRequirements(_dsEntryProperties);
-        KeyArchivalSettings = new KeyArchivalOptions(_dsEntryProperties);
-        initializeFromDsEntry();
+        initialize();
     }
 
     /// <summary>
@@ -70,7 +55,7 @@ public class CertificateTemplateSettings {
     /// <summary>
     /// Gets or sets the way how the certificate's subject should be constructed.
     /// </summary>
-    public CertificateTemplateNameFlags SubjectName => subjectFlags;
+    public CertificateTemplateNameFlags SubjectName => _template.SubjectNameFlags;
 
     /// <summary>
     /// Gets or sets a list of OIDs that represent extended key usages (certificate purposes).
@@ -105,9 +90,9 @@ public class CertificateTemplateSettings {
                 Cryptography.KeySpec == X509KeySpecFlags.AT_KEYEXCHANGE &&
                 (EnrollmentOptions & CertificateTemplateEnrollmentFlags.RemoveInvalidFromStore) == 0 &&
                 (EnrollmentOptions & CertificateTemplateEnrollmentFlags.IncludeSymmetricAlgorithms) == 0 &&
-                (pkf & PrivateKeyFlags.RequireKeyArchival) == 0 &&
+                (_template.CryptPrivateKeyFlags & PrivateKeyFlags.RequireKeyArchival) == 0 &&
                 ((EnrollmentOptions & CertificateTemplateEnrollmentFlags.RequireUserInteraction) != 0 ||
-                 (pkf & PrivateKeyFlags.RequireStrongProtection) != 0)
+                 (_template.CryptPrivateKeyFlags & PrivateKeyFlags.RequireStrongProtection) != 0)
             ) { return CertificateTemplatePurpose.SignatureAndSmartCardLogon; }
             if (
                 (Cryptography.KeyUsage & X509KeyUsageFlags.DigitalSignature) == 0 &&
@@ -125,7 +110,7 @@ public class CertificateTemplateSettings {
                 (Cryptography.KeyUsage & X509KeyUsageFlags.DecipherOnly) == 0 &&
                 Cryptography.KeySpec == X509KeySpecFlags.AT_SIGNATURE &&
                 (EnrollmentOptions & CertificateTemplateEnrollmentFlags.IncludeSymmetricAlgorithms) == 0 &&
-                (pkf & PrivateKeyFlags.RequireKeyArchival) == 0
+                (_template.CryptPrivateKeyFlags & PrivateKeyFlags.RequireKeyArchival) == 0
             ) { return CertificateTemplatePurpose.Signature; }
             return CertificateTemplatePurpose.EncryptionAndSignature;
         }
@@ -147,7 +132,7 @@ public class CertificateTemplateSettings {
     /// <summary>
     /// Gets certificate template name list that is superseded by the current template.
     /// </summary>
-    public String[] SupersededTemplates => _superseded.ToArray();
+    public String[] SupersededTemplates => _template.SupersededTemplates;
     /// <summary>
     /// Gets or sets whether the requests based on a referenced template are put to a pending state.
     /// </summary>
@@ -183,32 +168,14 @@ public class CertificateTemplateSettings {
     /// </summary>
     public CertificateTemplateFlags GeneralFlags { get; private set; }
 
-    void initializeFromDsEntry() {
-        GeneralFlags = (CertificateTemplateFlags)_dsEntryProperties[DsUtils.PropFlags];
-        subjectFlags = (CertificateTemplateNameFlags)_dsEntryProperties[DsUtils.PropPkiSubjectFlags];
-        EnrollmentOptions = (CertificateTemplateEnrollmentFlags)_dsEntryProperties[DsUtils.PropPkiEnrollFlags];
-        pkf = (PrivateKeyFlags)_dsEntryProperties[DsUtils.PropPkiPKeyFlags];
-        ValidityPeriod = readValidity((Byte[])_dsEntryProperties[DsUtils.PropPkiNotAfter]);
-        RenewalPeriod = readValidity((Byte[])_dsEntryProperties[DsUtils.PropPkiRenewalPeriod]);
-        pathLength = (Int32)_dsEntryProperties[DsUtils.PropPkiPathLength];
-        readEKU();
-        readCertPolicies();
-        readCriticalExtensions();
-        readSuperseded();
-        readExtensions();
-    }
-    void initializeFromCOM(IAdcsCertificateTemplate template) {
-        GeneralFlags = template.Flags;
-        EnrollmentOptions = template.EnrollmentFlags;
-        subjectFlags = template.SubjectNameFlags;
-        pkf = template.CryptPrivateKeyFlags;
-        pathLength = template.ExtensionBasicConstraintsPathLength;
-        ValidityPeriod = readValidity(template.ValidityPeriod);
-        RenewalPeriod = readValidity(template.RenewalPeriod);
-        _superseded.AddRange(template.SupersededTemplates);
-        _ekuList.AddRange(template.ExtensionEKU.Select(x => new Oid(x)));
-        _certPolicies.AddRange(template.ExtensionCertPolicies.Select(x => new Oid(x.PolicyID)));
-        _criticalExtensions.AddRange(template.CriticalExtensions.Select(x => new Oid(x)));
+    void initialize() {
+        GeneralFlags = _template.Flags;
+        EnrollmentOptions = _template.EnrollmentFlags;
+        ValidityPeriod = readValidity(_template.ValidityPeriod);
+        RenewalPeriod = readValidity(_template.RenewalPeriod);
+        _ekuList.AddRange(_template.ExtensionEKU.Select(x => new Oid(x)));
+        _certPolicies.AddRange(_template.ExtensionCertPolicies.Select(x => new Oid(x.PolicyID)));
+        _criticalExtensions.AddRange(_template.CriticalExtensions.Select(x => new Oid(x)));
         readExtensions();
     }
 
@@ -216,51 +183,6 @@ public class CertificateTemplateSettings {
         Int64 fileTime = BitConverter.ToInt64(rawData, 0);
 
         return SysadminsLV.PKI.ADCS.ValidityPeriod.FromFileTime(fileTime).ValidityString;
-    }
-    void readEKU() {
-        try {
-            Object[] EkuObject = (Object[])_dsEntryProperties[DsUtils.PropCertTemplateEKU];
-            if (EkuObject != null) {
-                foreach (Object item in EkuObject) {
-                    _ekuList.Add(new Oid(item.ToString()));
-                }
-            }
-        } catch {
-            String EkuString = (String)_dsEntryProperties[DsUtils.PropCertTemplateEKU];
-            _ekuList.Add(new Oid(EkuString));
-        }
-    }
-    void readCertPolicies() {
-        try {
-            Object[] oids = (Object[])_dsEntryProperties[DsUtils.PropPkiCertPolicy];
-            if (oids == null) { return; }
-            foreach (Object oid in oids) {
-                _certPolicies.Add(new Oid((String)oid));
-            }
-        } catch {
-            _certPolicies.Add(new Oid((String)_dsEntryProperties[DsUtils.PropPkiCertPolicy]));
-        }
-    }
-    void readCriticalExtensions() {
-        try {
-            Object[] oids = (Object[])_dsEntryProperties[DsUtils.PropPkiCriticalExt];
-            if (oids == null) { return; }
-            foreach (Object oid in oids) {
-                _criticalExtensions.Add(new Oid((String)oid));
-            }
-        } catch {
-            _criticalExtensions.Add(new Oid((String)_dsEntryProperties[DsUtils.PropPkiCriticalExt]));
-        }
-    }
-    void readSuperseded() {
-        try {
-            Object[] templates = (Object[])_dsEntryProperties[DsUtils.PropPkiSupersede];
-            if (templates != null) {
-                _superseded.AddRange(templates.Cast<String>());
-            }
-        } catch {
-            _superseded.Add((String)_dsEntryProperties[DsUtils.PropPkiSupersede]);
-        }
     }
     void readExtensions() {
         foreach (String oid in new[] {
@@ -278,8 +200,10 @@ public class CertificateTemplateSettings {
                     if (_ekuList.Count == 0) {
                         break;
                     }
-                    _extensions.Add(new X509EnhancedKeyUsageExtension(EnhancedKeyUsage, isExtensionCritical(X509ExtensionOid.EnhancedKeyUsage)));
-                    _extensions.Add(new X509ApplicationPoliciesExtension(EnhancedKeyUsage, isExtensionCritical(X509ExtensionOid.ApplicationPolicies)));
+                    var oidCollection = new OidCollection();
+                    _ekuList.ForEach(x => oidCollection.Add(x));
+                    _extensions.Add(new X509EnhancedKeyUsageExtension(oidCollection, isExtensionCritical(X509ExtensionOid.EnhancedKeyUsage)));
+                    _extensions.Add(new X509ApplicationPoliciesExtension(oidCollection, isExtensionCritical(X509ExtensionOid.ApplicationPolicies)));
                     break;
                 case X509ExtensionOid.CertificatePolicies:
                     if (_certPolicies.Count > 0) {
@@ -299,9 +223,10 @@ public class CertificateTemplateSettings {
                 case X509ExtensionOid.CertTemplateInfoV2:
                     Boolean isCritical = isExtensionCritical(X509ExtensionOid.CertTemplateInfoV2);
                     if (_template.SchemaVersion == 1) {
-                        _extensions.Add(new X509Extension(X509ExtensionOid.CertTemplateInfoV2, new Asn1BMPString(_template.Name).GetRawData(), isCritical));
+                        _extensions.Add(new X509Extension(X509ExtensionOid.CertTemplateInfoV2, new Asn1BMPString(_template.CommonName).GetRawData(), isCritical));
                     } else {
-                        var extension = new X509CertificateTemplateExtension(_template.OID, _template.GetMajorVersion(), _template.GetMinorVersion(), false) {
+                        var templateOid = new Oid(_template.Oid, _template.DisplayName);
+                        var extension = new X509CertificateTemplateExtension(templateOid, _template.MajorVersion, _template.MinorVersion, false) {
                             Critical = isCritical
                         };
                         _extensions.Add(extension);
@@ -341,6 +266,6 @@ public class CertificateTemplateSettings {
     /// A value that indicates how many additional CAs under this certificate may appear in the certificate chain.
     /// </returns>
     public Int32 GetPathLengthConstraint() {
-        return pathLength;
+        return _template.ExtensionBasicConstraintsPathLength;
     }
 }

@@ -3,8 +3,6 @@ using System.Security.Cryptography;
 using System.Text;
 using SysadminsLV.PKI.CertificateTemplates;
 using SysadminsLV.PKI.Cryptography;
-using SysadminsLV.PKI.Management.ActiveDirectory;
-using SysadminsLV.PKI.Utils;
 
 namespace PKI.CertificateTemplates;
 
@@ -12,20 +10,14 @@ namespace PKI.CertificateTemplates;
 /// Represents certificate template key archival settings.
 /// </summary>
 public class KeyArchivalOptions {
-    readonly DsPropertyCollection _entry;
+    readonly IAdcsCertificateTemplate _template;
 
-    KeyArchivalOptions() {
+    internal KeyArchivalOptions (IAdcsCertificateTemplate template) {
+        _template = template;
         // default encryption algorithm to 3DES
         EncryptionAlgorithm = new Oid(AlgorithmOid.TrippleDES);
         KeyLength = 168;
-    }
-
-    internal KeyArchivalOptions(DsPropertyCollection Entry) : this() {
-        _entry = Entry;
-        initializeFromDs();
-    }
-    internal KeyArchivalOptions (IAdcsCertificateTemplate template) : this() {
-        initializeFromCom(template);
+        initialize();
     }
 
     /// <summary>
@@ -41,30 +33,15 @@ public class KeyArchivalOptions {
     /// </summary>
     public Int32 KeyLength { get; private set; }
 
-    void initializeFromDs() {
-        if (((Int32)_entry[DsUtils.PropPkiPKeyFlags] & (Int32)PrivateKeyFlags.RequireKeyArchival) != 0) {
+    void initialize() {
+        if ((_template.CryptPrivateKeyFlags & PrivateKeyFlags.RequireKeyArchival) != 0) {
             KeyArchival = true;
-            String ap = (String)_entry[DsUtils.PropPkiRaAppPolicy];
-            if (ap != null && ap.Contains("`")) {
-                String[] delimiter = ["`"];
-                String[] strings = ap.Split(delimiter, StringSplitOptions.RemoveEmptyEntries);
-                for (Int32 index = 0; index < strings.Length; index += 3) {
-                    switch (strings[index]) {
-                        case DsUtils.PropPkiSymAlgo: EncryptionAlgorithm = new Oid(strings[index + 2]); break;
-                        case DsUtils.PropPkiSymLength: KeyLength = Convert.ToInt32(strings[index + 2]); break;
-                    }
-                }
+            if (!String.IsNullOrEmpty(_template.CryptSymmetricAlgorithm)) {
+                EncryptionAlgorithm = new Oid(_template.CryptSymmetricAlgorithm);
             }
-        }
-    }
-    void initializeFromCom(IAdcsCertificateTemplate template) {
-        PrivateKeyFlags pkFlags = template.CryptPrivateKeyFlags;
-        if ((pkFlags & PrivateKeyFlags.RequireKeyArchival) != 0) {
-            KeyArchival = true;
-            if (!String.IsNullOrEmpty(template.CryptSymmetricAlgorithm)) {
-                EncryptionAlgorithm = new Oid(template.CryptSymmetricAlgorithm);
+            if (_template.CryptSymmetricKeyLength != 0) {
+                KeyLength = _template.CryptSymmetricKeyLength;
             }
-            KeyLength = template.CryptSymmetricKeyLength;
         }
     }
 
