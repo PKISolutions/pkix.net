@@ -7,6 +7,7 @@ using Interop.CERTENROLLLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PKI.CertificateTemplates;
 using SysadminsLV.PKI.CertificateTemplates;
+using SysadminsLV.PKI.Security.AccessControl;
 using SysadminsLV.PKI.Utils;
 
 namespace SysadminsLV.PKI.Win.Tests.CertificateTemplates;
@@ -14,7 +15,7 @@ namespace SysadminsLV.PKI.Win.Tests.CertificateTemplates;
 public class CertificateTemplateTests {
     [TestMethod]
     public void TestRegTemplates() {
-        foreach (CertificateTemplate template in CertificateTemplateFactory.GetTemplatesDs()) {
+        foreach (CertificateTemplate template in CertificateTemplateFactory.GetTemplatesFromDs()) {
             Console.WriteLine(template.Name);
             CertificateTemplate refTemplate = CertificateTemplateFactory.CreateFromCommonNameRegistry(template.Name);
             assertTemplate(template, refTemplate);
@@ -22,7 +23,7 @@ public class CertificateTemplateTests {
     }
     [TestMethod]
     public void TestDsTemplates() {
-        foreach (CertificateTemplate template in CertificateTemplateFactory.GetTemplatesDs()) {
+        foreach (CertificateTemplate template in CertificateTemplateFactory.GetTemplatesFromDs()) {
             Console.WriteLine(template.Name);
             CertificateTemplate refTemplate = CertificateTemplateFactory.CreateFromCommonNameDs(template.Name);
             assertTemplate(template, refTemplate);
@@ -30,7 +31,7 @@ public class CertificateTemplateTests {
     }
     [TestMethod]
     public void TestCertEnrollTemplates() {
-        CertificateTemplateCollection col = CertificateTemplateFactory.GetTemplatesDs();
+        CertificateTemplateCollection col = CertificateTemplateFactory.GetTemplatesFromDs();
         String serializedString = col.Export(CertificateTemplateExportFormat.XCep);
         var policy = new CX509EnrollmentPolicyWebServiceClass();
         policy.InitializeImport(Encoding.UTF8.GetBytes(serializedString));
@@ -130,7 +131,7 @@ public class CertificateTemplateTests {
     [TestMethod]
     public void TestRegExportImport() {
         var col = new CertificateTemplateCollection();
-        foreach (CertificateTemplate template in CertificateTemplateFactory.GetTemplatesDs()) {
+        foreach (CertificateTemplate template in CertificateTemplateFactory.GetTemplatesFromDs()) {
             Console.WriteLine(template.Name);
             CertificateTemplate refTemplate = CertificateTemplateFactory.CreateFromCommonNameRegistry(template.Name);
             col.Add(refTemplate);
@@ -150,7 +151,7 @@ public class CertificateTemplateTests {
     [TestMethod]
     public void TestDsExportImport() {
         var col = new CertificateTemplateCollection();
-        foreach (CertificateTemplate template in CertificateTemplateFactory.GetTemplatesDs()) {
+        foreach (CertificateTemplate template in CertificateTemplateFactory.GetTemplatesFromDs()) {
             Console.WriteLine(template.Name);
             CertificateTemplate refTemplate = CertificateTemplateFactory.CreateFromCommonNameDs(template.Name);
             col.Add(refTemplate);
@@ -170,29 +171,28 @@ public class CertificateTemplateTests {
 
     [TestMethod]
     public void TestDsTemplateAcl() {
-        foreach (CertificateTemplate template in CertificateTemplateFactory.GetTemplatesDs()) {
+        foreach (CertificateTemplate template in CertificateTemplateFactory.GetTemplatesFromDs()) {
             Console.WriteLine(template.Name);
-            var acl = template.GetSecurityDescriptor();
+            CertTemplateSecurityDescriptor acl = template.GetSecurityDescriptor();
             Assert.IsNotNull(acl);
         }
     }
     [TestMethod]
     public void TestRegTemplateAcl() {
-        foreach (CertificateTemplate template in CertificateTemplateFactory.GetTemplatesDs()) {
-            var regTemplate = CertificateTemplateFactory.CreateFromCommonNameRegistry(template.Name);
+        foreach (CertificateTemplate template in CertificateTemplateFactory.GetTemplatesFromRegistry()) {
             Console.WriteLine(template.Name);
-            var acl = regTemplate.GetSecurityDescriptor();
+            CertTemplateSecurityDescriptor acl = template.GetSecurityDescriptor();
             Assert.IsNotNull(acl);
         }
     }
     [TestMethod]
     public void TestCertEnrollTemplateAcl() {
-        String serializedString = CertificateTemplateFactory.GetTemplatesDs().Export(CertificateTemplateExportFormat.XCep);
+        String serializedString = CertificateTemplateFactory.GetTemplatesFromDs().Export(CertificateTemplateExportFormat.XCep);
         var col = new CertificateTemplateCollection();
         col.Import(serializedString, CertificateTemplateExportFormat.XCep);
         foreach (CertificateTemplate template in col) {
             Console.WriteLine(template.Name);
-            var acl = template.GetSecurityDescriptor();
+            CertTemplateSecurityDescriptor acl = template.GetSecurityDescriptor();
             Assert.IsNotNull(acl);
         }
     }
