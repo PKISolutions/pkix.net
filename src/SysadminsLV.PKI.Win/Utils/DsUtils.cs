@@ -4,6 +4,7 @@ using System.DirectoryServices;
 using System.DirectoryServices.ActiveDirectory;
 using System.Linq;
 using System.Net;
+using System.Security.AccessControl;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
@@ -20,13 +21,14 @@ static class DsUtils {
     public const String PropDisplayName             = "displayName";
     public const String PropDescription             = "description";
     public const String PropFlags                   = "flags";
+    public const String PropAcl                     = "SecurityDescriptor";
     public const String PropCpsOid                  = "msPKI-OID-CPS";
     public const String PropCertTemplateOid         = "msPKI-Cert-Template-OID";
     public const String PropLocalizedOid            = "msPKI-OIDLocalizedName";
     public const String PropPkiTemplateMajorVersion = "Revision";
     public const String PropPkiTemplateMinorVersion = "msPKI-Template-Minor-Revision";
     public const String PropPkiSchemaVersion        = "msPKI-Template-Schema-Version";
-    public const String PropWhenChanged             = "WhenChanged";
+    public const String PropWhenChanged             = "whenChanged";
     public const String PropPkiSubjectFlags         = "msPKI-Certificate-Name-Flag";
     public const String PropPkiEnrollFlags          = "msPKI-Enrollment-Flag";
     public const String PropPkiPKeyFlags            = "msPKI-Private-Key-Flag";
@@ -99,6 +101,9 @@ static class DsUtils {
             retValue.Add(prop, entry.Properties.Contains(prop)
                 ? entry.Properties[prop].Value
                 : null);
+        }
+        if (properties.Contains(PropAcl)) {
+            retValue.Add(PropAcl, entry.ObjectSecurity.GetSecurityDescriptorSddlForm(AccessControlSections.All));
         }
 
         return retValue;

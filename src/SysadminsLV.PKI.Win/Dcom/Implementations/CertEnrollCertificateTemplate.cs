@@ -94,6 +94,11 @@ public class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
                     break;
             }
         }
+
+        String templateSecurity = template.GetScalarValue<String>(EnrollmentTemplateProperty.TemplatePropSecurityDescriptor);
+        if (templateSecurity != null) {
+            ExtendedProperties.Add("SecurityDescriptor", templateSecurity);
+        }
     }
 
     /// <inheritdoc />

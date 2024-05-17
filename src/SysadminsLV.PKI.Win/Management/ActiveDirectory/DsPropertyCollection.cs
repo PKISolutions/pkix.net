@@ -56,28 +56,33 @@ public sealed class DsPropertyCollection : IReadOnlyDictionary<String, Object> {
     /// <returns>Value that represents requested attribute or default value.</returns>
     public TValue[] GetDsCollectionValue<TValue>(String key) {
         if (!ContainsKey(key) || this[key] == null) {
-            return Array.Empty<TValue>();
+            return [];
         }
 
         try {
-            if (this[key] is TValue[] value) {
-                return value;
-            }
-            if (this[key] is TValue scalarValue) {
-                return new[] { scalarValue };
-            }
-            if (this[key] is Object[] objects) {
-                return objects.Cast<TValue>().ToArray();
+            switch (this[key]) {
+                case TValue[] value:
+                    return value;
+                case TValue scalarValue:
+                    return [scalarValue];
+                case Object[] objects:
+                    return objects.Cast<TValue>().ToArray();
             }
         } catch {
-            return Array.Empty<TValue>();
+            return [];
         }
 
-        return Array.Empty<TValue>();
+        return [];
     }
 
+    /// <summary>
+    /// Adds or updates the key in dictionary. A new key will be added if specified key doesn't exist in dictionary.
+    /// Existing key value will be updated if specified key exists in dictionary.
+    /// </summary>
+    /// <param name="key">Key name.</param>
+    /// <param name="value">Key value.</param>
     internal void Add(String key, Object value) {
-        _properties.Add(key, value);
+        _properties[key] = value;
     }
 
     #region Explicit interface implementation
