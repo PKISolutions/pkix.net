@@ -202,6 +202,7 @@ public class OCSPResponse {
             Version = 1;
         }
         //responderID
+        Int32 offset = tbsResponseData.Offset;
         switch (tbsResponseData.Tag) {
             case 161:
                 ResponderNameId = new X500DistinguishedName(tbsResponseData.GetPayload());
@@ -210,9 +211,14 @@ public class OCSPResponse {
             case 162:
                 tbsResponseData.MoveNext();
                 var SB = new StringBuilder();
-                foreach (Byte element in tbsResponseData.GetPayload()) { SB.Append(element.ToString("X2")); }
+                foreach (Byte element in tbsResponseData.GetPayload()) {
+                    SB.Append(element.ToString("X2"));
+                }
                 ResponderKeyId = SB.ToString();
-                tbsResponseData.MoveNext();
+                // in rare cases KeyID coincidentally represents a complex structure, so we have to skip it,
+                // walk up and down.
+                tbsResponseData.Seek(offset);
+                tbsResponseData.MoveNextSibling();
                 break;
             default:
                 throw new Exception("Invalid tag at responderID. Expected 161 (byName) or 162 (byKey).");
