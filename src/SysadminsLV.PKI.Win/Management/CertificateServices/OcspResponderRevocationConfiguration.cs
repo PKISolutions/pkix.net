@@ -9,6 +9,7 @@ using SysadminsLV.PKI.Cryptography.Pkcs;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
 using SysadminsLV.PKI.Dcom.Implementations;
 using SysadminsLV.PKI.Utils;
+using SysadminsLV.PKI.Win.Cryptography.X509Certificates;
 
 namespace SysadminsLV.PKI.Management.CertificateServices;
 /// <summary>
