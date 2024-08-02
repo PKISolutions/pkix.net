@@ -6,18 +6,15 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
-using SysadminsLV.PKI.Cryptography;
-using SysadminsLV.PKI.Cryptography.X509Certificates;
-using SysadminsLV.PKI.Utils;
+using SysadminsLV.PKI.CLRExtensions;
 
-namespace SysadminsLV.PKI.Win.Cryptography.X509Certificates;
+namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
 /// <summary>
 /// Represents X.509 certificate revocation list (CRL) generator class.
 /// </summary>
-[Obsolete("Use 'SysadminsLV.PKI.Cryptography.X509Certificates.X509CrlBuilder' instead.")]
 public class X509CrlBuilder {
-    readonly List<X509Extension> _extensions = new();
+    readonly List<X509Extension> _extensions = [];
 
     /// <summary>
     /// Initializes a new instance of <strong>X509CrlBuilder</strong> with no CRL information.
@@ -76,7 +73,7 @@ public class X509CrlBuilder {
     /// <summary>
     /// Gets or adds a list of revoked certificates contained in CRL.
     /// </summary>
-    public X509CRLEntryCollection RevokedCertificates { get; } = new();
+    public X509CRLEntryCollection RevokedCertificates { get; } = [];
     /// <summary>
     /// Gets or sets hashing algorithm to use during encoding. If not set, default value 'SHA256' is set.
     /// </summary>
@@ -90,13 +87,13 @@ public class X509CrlBuilder {
     }
     void processAkiExtension(X509Certificate2 issuer) {
         // remove AKI extension from existing extensions
-        GenericArray.RemoveExtension(_extensions, X509ExtensionOid.AuthorityKeyIdentifier);
+        _extensions.RemoveExtension(X509ExtensionOid.AuthorityKeyIdentifier);
         // generate AKI from issuer certificate
         _extensions.Add(new X509AuthorityKeyIdentifierExtension(issuer, AuthorityKeyIdentifierType.KeyIdentifier, false));
     }
     void processCAVersionExtension(X509Certificate2 issuer) {
         // remove CA Version extension from existing extensions
-        GenericArray.RemoveExtension(_extensions, X509ExtensionOid.CAVersion);
+        _extensions.RemoveExtension(X509ExtensionOid.CAVersion);
         X509Extension e = issuer.Extensions[X509ExtensionOid.CAVersion];
         // if CA Version in issuer certificate is presented, copy it to CRL
         // otherwise, skip CA Version.
@@ -118,7 +115,7 @@ public class X509CrlBuilder {
             newCrlVersion = ((X509CRLNumberExtension)crlNumberExt).CRLNumber + CrlNumberIncrement;
         }
         if (CrlNumberIncrement > 0) {
-            GenericArray.RemoveExtension(_extensions, X509ExtensionOid.CRLNumber);
+            _extensions.RemoveExtension(X509ExtensionOid.CRLNumber);
             crlNumberExt = new X509CRLNumberExtension(newCrlVersion, false);
             _extensions.Add(crlNumberExt);
         }
@@ -134,14 +131,12 @@ public class X509CrlBuilder {
         }
     }
 
-    List<Byte> buildTbs(Byte[] signatureAlgorithm, X509Certificate2 issuer) {
+    List<Byte> buildTbs(IEnumerable<Byte> signatureAlgorithm, X509Certificate2 issuer) {
         if (String.IsNullOrEmpty(issuer.Issuer)) {
             throw new ArgumentException("Subject name is empty.");
         }
         // coerce hashing algorithm
-        if (HashingAlgorithm == null) {
-            HashingAlgorithm = new Oid(AlgorithmOid.SHA256);
-        }
+        HashingAlgorithm ??= new Oid(AlgorithmOid.SHA256);
         // coerce version
         if (_extensions.Count > 0) {
             Version = 2;
@@ -173,7 +168,7 @@ public class X509CrlBuilder {
             rawBytes.AddRange(Asn1Utils.Encode(Extensions.Encode(), 160));
         }
         // generate tbs
-        return new List<Byte>(Asn1Utils.Encode(rawBytes.ToArray(), 48));
+        return [..Asn1Utils.Encode(rawBytes.ToArray(), 48)];
     }
 
     /// <summary>
@@ -184,7 +179,7 @@ public class X509CrlBuilder {
     /// </param>
     /// <returns>An instance of generated CRL object.</returns>
     public X509CRL2 BuildAndHash(X509Certificate2 hasherInfo) {
-        var dummyBlob = new SignedContentBlob(new Byte[] { 0 }, ContentBlobType.ToBeSignedBlob);
+        var dummyBlob = new SignedContentBlob([0], ContentBlobType.ToBeSignedBlob);
         dummyBlob.Hash(HashingAlgorithm);
         List<Byte> tbs = buildTbs(dummyBlob.SignatureAlgorithm.RawData, hasherInfo);
         var blob = new SignedContentBlob(tbs.ToArray(), ContentBlobType.ToBeSignedBlob);
@@ -200,7 +195,7 @@ public class X509CrlBuilder {
         if (signerInfo == null) { throw new ArgumentNullException(nameof(signerInfo)); }
 
         // create dummy blob, sign/hash it to get proper encoded signature algorithm identifier.
-        var dummyBlob = new SignedContentBlob(new Byte[] { 0 }, ContentBlobType.ToBeSignedBlob);
+        var dummyBlob = new SignedContentBlob([0], ContentBlobType.ToBeSignedBlob);
         dummyBlob.Sign(signerInfo);
         // generate tbs
         List<Byte> tbs = buildTbs(dummyBlob.SignatureAlgorithm.RawData, signerInfo.SignerCertificate);
