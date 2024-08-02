@@ -327,5 +327,4 @@ public class CertificateTemplate {
     public static CertificateTemplate FromOid(String oid) {
         return CertificateTemplateFactory.CreateFromOidDs(oid);
     }
-
 }

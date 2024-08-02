@@ -46,7 +46,6 @@ public sealed class DsCertificateTemplate : IAdcsCertificateTemplate {
             throw new Exception(ErrorHelper.E_DCUNAVAILABLE);
         }
         searchByQuery(findType, findValue);
-
     }
 
     /// <inheritdoc />
@@ -279,7 +278,6 @@ public sealed class DsCertificateTemplate : IAdcsCertificateTemplate {
     internal static IAdcsCertificateTemplate FromOid(String oid) {
         return new DsCertificateTemplate("OID", oid);
     }
-
     /// <summary>
     /// Returns a collection of certificate templates as <see cref="IAdcsCertificateTemplate"/> instances.
     /// </summary>
