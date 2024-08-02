@@ -42,7 +42,7 @@ public class CertificateTemplate {
     /// <summary>
     /// This flag indicates whether clients can perform autoenrollment for the specified template.
     /// </summary>
-    public Boolean AutoenrollmentAllowed => SchemaVersion > 1 && (_template.Flags & CertificateTemplateFlags.Autoenrollment) != 0;
+    public Boolean AutoenrollmentAllowed => SchemaVersion > 1 && (_template.EnrollmentFlags & CertificateTemplateEnrollmentFlags.Autoenrollment) != 0;
 
     /// <summary>
     /// Gets certificate template's object identifier. Object identifiers are used to uniquely identify certificate template. While
