@@ -14,17 +14,17 @@
     <tags>X509 PKI PKIX</tags>
     <dependencies>
       <group targetFramework=".NETFramework4.7.2">
-        <dependency id="SysadminsLV.Asn1Parser" version="1.2.12" />
+        <dependency id="SysadminsLV.Asn1Parser" version="1.3.0" />
         <dependency id="System.Security.Cryptography.Pkcs" version="8.0.0" />
       </group>
       <group targetFramework="netstandard2.0">
-        <dependency id="SysadminsLV.Asn1Parser" version="1.2.12" />
+        <dependency id="SysadminsLV.Asn1Parser" version="1.3.0" />
         <dependency id="System.Security.Cryptography.Pkcs" version="8.0.0" />
       </group>
     </dependencies>
   </metadata>
     <files>
-        <file src="..\src\SysadminsLV.PKI\bin\Release\net472\*.*" target="lib/net472"/>
-        <file src="..\src\SysadminsLV.PKI\bin\Release\netstandard2.0\*.*" target="lib/netstandard2.0"/>
+        <file src="..\src\SysadminsLV.PKI\bin\Release\net472\SysadminsLV.PKI.*" target="lib/net472"/>
+        <file src="..\src\SysadminsLV.PKI\bin\Release\netstandard2.0\SysadminsLV.PKI.*" target="lib/netstandard2.0"/>
     </files>
 </package>
