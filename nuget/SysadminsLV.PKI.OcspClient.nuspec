@@ -14,11 +14,9 @@
         <tags>X509 PKI PKIX OCSP</tags>
         <dependencies>
             <group targetFramework=".NETFramework4.7.2">
-              <dependency id="SysadminsLV.Asn1Parser" version="1.3.0" />
               <dependency id="SysadminsLV.PKI" version="4.2.0" />
             </group>
             <group targetFramework="netstandard2.0">
-              <dependency id="SysadminsLV.Asn1Parser" version="1.3.0" />
               <dependency id="SysadminsLV.PKI" version="4.2.0" />
             </group>
         </dependencies>
