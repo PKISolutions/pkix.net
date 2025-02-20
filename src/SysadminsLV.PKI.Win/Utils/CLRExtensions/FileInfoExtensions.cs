@@ -40,7 +40,7 @@ public static class FileInfoExtensions {
         }
 
         Byte[] pvData = new Byte[pcbData];
-        Crypt32.CryptMsgGetParam(phMsg, CMSG_ENCODED_MESSAGE, 0, pvData, out _);
+        Crypt32.CryptMsgGetParam(phMsg, CMSG_ENCODED_MESSAGE, 0, pvData, out pcbData);
         Crypt32.CryptMsgClose(phMsg);
         Crypt32.CertCloseStore(phCertStore, 0);
 
