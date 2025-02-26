@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
-    <metadata>
-        <id>SysadminsLV.PKI.OcspClient</id>
-        <version>$version$</version>
-        <authors>Vadims Podans</authors>
-        <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <license type="expression">MS-PL</license>
-        <repository type="git" url="https://github.com/PKISolutions/pkix.net" />
-        <projectUrl>https://github.com/PKISolutions/pkix.net</projectUrl>
-        <description>This package provides a managed .NET OCSP client.</description>
-        <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
-        <copyright>Copyright © PKI Solutions LLC 2019-$year$</copyright>
-        <tags>X509 PKI PKIX OCSP</tags>
-        <dependencies>
-            <group targetFramework=".NETFramework4.7.2">
-              <dependency id="SysadminsLV.Asn1Parser" version="1.2.12" />
-              <dependency id="SysadminsLV.PKI" version="4.2.0" />
-            </group>
-            <group targetFramework="netstandard2.0">
-              <dependency id="SysadminsLV.Asn1Parser" version="1.2.12" />
-              <dependency id="SysadminsLV.PKI" version="4.2.0" />
-            </group>
-        </dependencies>
-    </metadata>
-    <files>
-        <file src="..\src\SysadminsLV.PKI.OcspClient\bin\Release\net472\*.*" target="lib/net472"/>
-        <file src="..\src\SysadminsLV.PKI.OcspClient\bin\Release\netstandard2.0\*.*" target="lib/netstandard2.0"/>
-    </files>
+  <metadata>
+    <id>SysadminsLV.PKI.OcspClient</id>
+    <version>$version$</version>
+    <authors>Vadims Podans</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MS-PL</license>
+    <repository type="git" url="https://github.com/PKISolutions/pkix.net" />
+    <projectUrl>https://github.com/PKISolutions/pkix.net</projectUrl>
+    <description>This package provides a managed .NET OCSP client.</description>
+    <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
+    <copyright>Copyright © PKI Solutions LLC 2019-$year$</copyright>
+    <tags>X509 PKI PKIX OCSP</tags>
+    <dependencies>
+      <group targetFramework="net472">
+        <dependency id="SysadminsLV.Asn1Parser" version="1.3.0" />
+        <dependency id="SysadminsLV.PKI" version="4.2.0" />
+      </group>
+      <group targetFramework="netstandard2.0">
+        <dependency id="SysadminsLV.Asn1Parser" version="1.3.0" />
+        <dependency id="SysadminsLV.PKI" version="4.2.0" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\src\SysadminsLV.PKI.OcspClient\bin\Release\net472\SysadminsLV.PKI.OcspClient.*" target="lib/net472"/>
+    <file src="..\src\SysadminsLV.PKI.OcspClient\bin\Release\netstandard2.0\SysadminsLV.PKI.OcspClient.*" target="lib/netstandard2.0"/>
+  </files>
 </package>
