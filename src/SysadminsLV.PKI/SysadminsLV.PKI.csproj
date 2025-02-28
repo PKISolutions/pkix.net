@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SysadminsLV.Asn1Parser"/>
-    <PackageReference Include="System.Security.Cryptography.Pkcs"/>
+    <PackageReference Include="SysadminsLV.Asn1Parser" Version="1.2.12"/>
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="8.0.0"/>
   </ItemGroup>
 </Project>
