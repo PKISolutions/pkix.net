@@ -35,14 +35,11 @@ public sealed class SafeCryptoApiBlobContext : SafeHandleZeroOrMinusOneIsInvalid
     }
 
     /// <inheritdoc />
+    /// <remarks>This method does not release unmanaged resources held by the object referenced by this handle.</remarks>
     protected override Boolean ReleaseHandle() {
-        if (!IsInvalid) {
-            Marshal.FreeHGlobal(DangerousGetHandle());
-            handle = IntPtr.Zero;
+        Marshal.FreeHGlobal(DangerousGetHandle());
+        handle = IntPtr.Zero;
 
-            return true;
-        }
-
-        return false;
+        return true;
     }
 }

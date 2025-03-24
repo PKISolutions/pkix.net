@@ -140,6 +140,7 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Compile Include="UnmanagedTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\SysadminsLV.PKI.Win\SysadminsLV.PKI.Win.csproj">
