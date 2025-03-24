@@ -106,23 +106,26 @@ public sealed class Oid2 {
     public OidGroup OidGroup { get; private set; }
 
     void initializeLocal(String oid, OidGroup group) {
-        IntPtr ptr, oidPtr;
+        // MUST NOT be freed.
+        IntPtr oidInfoPtr;
+        // must be freed.
+        IntPtr oidStrPtr;
         if ("ByValue".Equals(_searchBy, StringComparison.OrdinalIgnoreCase)) {
-            oidPtr = Marshal.StringToHGlobalAnsi(oid);
-            ptr = Crypt32.CryptFindOIDInfo(Wincrypt.CRYPT_OID_INFO_OID_KEY, oidPtr, (UInt32)group);
+            oidStrPtr = Marshal.StringToHGlobalAnsi(oid);
+            oidInfoPtr = Crypt32.CryptFindOIDInfo(Wincrypt.CRYPT_OID_INFO_OID_KEY, oidStrPtr, (UInt32)group);
         } else {
-            oidPtr = Marshal.StringToHGlobalUni(oid);
-            ptr = Crypt32.CryptFindOIDInfo(Wincrypt.CRYPT_OID_INFO_NAME_KEY, oidPtr, (UInt32)group);
+            oidStrPtr = Marshal.StringToHGlobalUni(oid);
+            oidInfoPtr = Crypt32.CryptFindOIDInfo(Wincrypt.CRYPT_OID_INFO_NAME_KEY, oidStrPtr, (UInt32)group);
         }
-        if (ptr.Equals(IntPtr.Zero)) {
+        if (oidInfoPtr.Equals(IntPtr.Zero)) {
             return;
         }
 
-        var OidInfo = Marshal.PtrToStructure<Wincrypt.CRYPT_OID_INFO>(ptr);
+        var OidInfo = Marshal.PtrToStructure<Wincrypt.CRYPT_OID_INFO>(oidInfoPtr);
         FriendlyName = OidInfo.pwszName;
         Value = OidInfo.pszOID;
         OidGroup = OidInfo.dwGroupId;
-        Marshal.FreeHGlobal(oidPtr);
+        Marshal.FreeHGlobal(oidStrPtr);
     }
     void initializeDS(String oid, OidGroup group) {
         var exclude = new List<Int32>([1, 2, 3, 4, 5, 6, 10]);
