@@ -6,6 +6,7 @@ using System.Text;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.PKI.Exceptions;
 using SysadminsLV.PKI.OcspClient;
+using SysadminsLV.PKI.Structs;
 using static PKI.Structs.Wincrypt;
 
 namespace SysadminsLV.PKI.Cryptography.X509Certificates;
@@ -69,7 +70,7 @@ public class X509CertificateContextProperty {
                 break;
         }
     }
-    internal X509CertificateContextProperty(X509Certificate2 cert, X509CertificatePropertyType propID, IntPtr data)
+    internal X509CertificateContextProperty(X509Certificate2 cert, X509CertificatePropertyType propID, SafeUnmanagedContext data)
         : this(cert, propID) {
         initializeStruct(data);
     }
@@ -144,7 +145,7 @@ public class X509CertificateContextProperty {
                 break;
         }
     }
-    void initializeStruct(IntPtr ptr) {
+    void initializeStruct(SafeUnmanagedContext ptr) {
         switch (PropertyName) {
             case X509CertificatePropertyType.Handle:
                 UnderlyingType = typeof(IntPtr);
@@ -152,11 +153,11 @@ public class X509CertificateContextProperty {
                 break;
             case X509CertificatePropertyType.KeyContext:
                 UnderlyingType = typeof(CERT_KEY_CONTEXT);
-                PropertyValue = Marshal.PtrToStructure<CERT_KEY_CONTEXT>(ptr);
+                PropertyValue = Marshal.PtrToStructure<CERT_KEY_CONTEXT>(ptr.DangerousGetHandle());
                 break;
             case X509CertificatePropertyType.ProviderInfo:
                 UnderlyingType = typeof(KeyProviderInfo);
-                CRYPT_KEY_PROV_INFO provInfo = Marshal.PtrToStructure<CRYPT_KEY_PROV_INFO>(ptr);
+                CRYPT_KEY_PROV_INFO provInfo = Marshal.PtrToStructure<CRYPT_KEY_PROV_INFO>(ptr.DangerousGetHandle());
                 PropertyValue = new KeyProviderInfo(provInfo);
                 break;
         }

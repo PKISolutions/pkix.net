@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.Win32.SafeHandles;
 using PKI.Structs;
 using SysadminsLV.PKI.Exceptions;
+using SysadminsLV.PKI.Structs;
 using SysadminsLV.PKI.Win32;
 
 namespace SysadminsLV.PKI.Cryptography.X509Certificates;
@@ -55,26 +55,27 @@ public static class X509Certificate2ExtensionsWin {
     /// </exception>
     /// <returns>Specified certificate context property.</returns>
     public static X509CertificateContextProperty GetCertificateContextProperty(this X509Certificate2 cert, X509CertificatePropertyType propID) {
-        if (cert == null) { throw new ArgumentNullException(nameof(cert)); }
-        if (IntPtr.Zero.Equals(cert.Handle)) { throw new UninitializedObjectException(); }
+        if (cert == null) {
+            throw new ArgumentNullException(nameof(cert));
+        }
+        if (IntPtr.Zero.Equals(cert.Handle)) {
+            throw new UninitializedObjectException();
+        }
         UInt32 pcbData = 0;
         switch (propID) {
             case X509CertificatePropertyType.Handle:
             case X509CertificatePropertyType.KeyContext:
             case X509CertificatePropertyType.ProviderInfo:
-                if (!Crypt32.CertGetCertificateContextProperty(cert.Handle, propID, IntPtr.Zero, ref pcbData)) {
+                if (!Crypt32.CertGetCertificateContextProperty(cert.Handle, propID, SafeUnmanagedContext.GetEmpty(), ref pcbData)) {
                     throw new Exception("No such property.");
                 }
-                IntPtr ptr = Marshal.AllocHGlobal((Int32)pcbData);
-                Crypt32.CertGetCertificateContextProperty(cert.Handle, propID, ptr, ref pcbData);
-                try {
-                    return new X509CertificateContextProperty(cert, propID, ptr);
-                } finally {
-                    Marshal.FreeHGlobal(ptr);
+                using (var handle = new SafeUnmanagedContext((Int32)pcbData)) {
+                    Crypt32.CertGetCertificateContextProperty(cert.Handle, propID, handle, ref pcbData);
+                    return new X509CertificateContextProperty(cert, propID, handle);
                 }
             // byte[]
             default:
-                if (!Crypt32.CertGetCertificateContextProperty(cert.Handle, propID, null, ref pcbData)) {
+                if (!Crypt32.CertGetCertificateContextProperty(cert.Handle, propID, (Byte[])null, ref pcbData)) {
                     throw new Exception("No such property.");
                 }
                 Byte[] bytes = new Byte[pcbData];
@@ -95,10 +96,14 @@ public static class X509Certificate2ExtensionsWin {
     /// </exception>
     /// <returns>A collection of certificate context properties.</returns>
     public static X509CertificateContextPropertyCollection GetCertificateContextProperties(this X509Certificate2 cert) {
-        if (cert == null) { throw new ArgumentNullException(nameof(cert)); }
-        if (IntPtr.Zero.Equals(cert.Handle)) { throw new UninitializedObjectException(); }
+        if (cert == null) {
+            throw new ArgumentNullException(nameof(cert));
+        }
+        if (IntPtr.Zero.Equals(cert.Handle)) {
+            throw new UninitializedObjectException();
+        }
         X509CertificatePropertyType[] props = GetCertificateContextPropertyList(cert);
-        X509CertificateContextPropertyCollection properties = new X509CertificateContextPropertyCollection();
+        X509CertificateContextPropertyCollection properties = [];
         foreach (X509CertificatePropertyType propID in props) {
             properties.Add(GetCertificateContextProperty(cert, propID));
         }

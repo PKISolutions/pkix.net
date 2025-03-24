@@ -61,6 +61,15 @@ namespace SysadminsLV.PKI.Win.Tests.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to AAAAAENFUlRcAAAAAQAAAAQAAAAACAAABAAAAAEAAAAQAAAA934Sgli0mBMj9JPHlZsW3xQAAAABAAAAFAAAALns/JUFzFTMT2CJvF2an4psgPkgCwAAAAEAAABWAAAAQQBTAFAALgBOAEUAVAAgAEMAbwByAGUAIABIAFQAVABQAFMAIABkAGUAdgBlAGwAbwBwAG0AZQBuAHQAIABjAGUAcgB0AGkAZgBpAGMAYQB0AGUAAAACAAAAAQAAALwAAAAcAAAAbAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAewBDADMANgA0ADQANAA0ADcALQAxADkAOAAzAC0ANAA5ADgAQgAtAEIANAAzADIALQBDADUAMgA3AEYANAA4AEYANgA0ADEAMwB9AAAAAABNAGkAYwByAG8AcwBvAGYAdAAgAFMAbwBmAHQAdwBhAHIAZQAgAEsAZQB5ACAAUwB0AG8AcgBhAGcAZQAgAFAAcgBvAHYAaQBkAGUAcgAAAAMA [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string CertSerializedStore {
+            get {
+                return ResourceManager.GetString("CertSerializedStore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to MIIEpzCCA4+gAwIBAgIKYZ1g8AAAAAAAAjANBgkqhkiG9w0BAQUFADB+MQswCQYD
         ///VQQGEwJMVjEVMBMGA1UEChMMU3lzYWRtaW5zIExWMRwwGgYDVQQLExNJbmZvcm1h
         ///dGlvbiBTeXN0ZW1zMTowOAYDVQQDEzFTeXNhZG1pbnMgTFYgQ2xhc3MgMSBSb290

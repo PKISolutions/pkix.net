@@ -7,6 +7,7 @@ using System.Text;
 using Microsoft.Win32.SafeHandles;
 using PKI.Structs;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
+using SysadminsLV.PKI.Structs;
 
 namespace SysadminsLV.PKI.Win32;
 
@@ -281,22 +282,8 @@ static class Crypt32 {
     [DllImport(DLL_NAME, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern Boolean CertGetCertificateContextProperty(
         [In]            IntPtr pCertContext,
-        [In]            UInt32 dwPropId,
-        [Out]           Byte[] pvData,
-        [In, Out]ref UInt32 pcbData
-    );
-    [DllImport(DLL_NAME, CharSet = CharSet.Auto, SetLastError = true)]
-    public static extern Boolean CertGetCertificateContextProperty(
-        [In]            IntPtr pCertContext,
-        [In]            UInt32 dwPropId,
-        [Out]           IntPtr pvData,
-        [In, Out]ref UInt32 pcbData
-    );
-    [DllImport(DLL_NAME, CharSet = CharSet.Auto, SetLastError = true)]
-    public static extern Boolean CertGetCertificateContextProperty(
-        [In]            IntPtr pCertContext,
         [In]            X509CertificatePropertyType dwPropId,
-        [Out]           IntPtr pvData,
+        [Out]           SafeUnmanagedContext pvData,
         [In, Out]ref UInt32 pcbData
     );
     [DllImport(DLL_NAME, CharSet = CharSet.Auto, SetLastError = true)]

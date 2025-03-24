@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -156,10 +155,8 @@ public class X509CertificateBuilder {
         if (PrivateKeyInfo.MachineContext) {
             keyInfo.dwFlags = nCrypt2.NCRYPT_MACHINE_KEY_FLAG;
         }
-        IntPtr ptr = Marshal.AllocHGlobal(Marshal.SizeOf(keyInfo));
-        Marshal.StructureToPtr(keyInfo, ptr, false);
-        Crypt32.CertSetCertificateContextProperty(cert.Handle, X509CertificatePropertyType.ProviderInfo, 0, ptr);
-        Marshal.FreeHGlobal(ptr);
+        using var handle = new SafeUnmanagedContext<Wincrypt.CRYPT_KEY_PROV_INFO>(keyInfo);
+        Crypt32.CertSetCertificateContextProperty(cert.Handle, X509CertificatePropertyType.ProviderInfo, 0, handle.DangerousGetHandle());
         PrivateKeyInfo.Dispose();
         // friendly name
         setFriendlyName(cert);
