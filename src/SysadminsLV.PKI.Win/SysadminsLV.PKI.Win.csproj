@@ -244,6 +244,7 @@
     <Compile Include="Security\AccessControl\OcspResponderRights.cs" />
     <Compile Include="Security\AccessControl\OcspResponderSecurityDescriptor.cs" />
     <Compile Include="Structs\OleAut.cs" />
+    <Compile Include="Structs\SafeHandles.cs" />
     <Compile Include="Utils\CLRExtensions\CX509CertificateTemplateExtensions.cs" />
     <Compile Include="Utils\CLRExtensions\FileInfoExtensions.cs" />
     <Compile Include="Win32\AdvAPI.cs" />

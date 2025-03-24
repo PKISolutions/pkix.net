@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
+using SysadminsLV.PKI.Structs;
 
 namespace PKI.Structs;
 
@@ -140,9 +141,45 @@ public static class Wincrypt {
     #region structs
     #region Generic structures
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-    public struct CRYPTOAPI_BLOB {
+    public struct CRYPTOAPI_BLOB : IDisposable {
         public UInt32 cbData;
         public IntPtr pbData;
+
+        /// <summary>
+        /// Writes current instance into unmanaged memory. Callers must release this handle using <see cref="Marshal.FreeHGlobal"/>
+        /// when this buffer is no longer needed.
+        /// </summary>
+        /// <returns></returns>
+        public SafeCryptoApiBlobContext GetSafeContext() {
+            return new SafeCryptoApiBlobContext(this);
+        }
+
+        /// <summary>
+        /// Creates a new instance of CRYPTOAPI_BLOB from a managed buffer.
+        /// </summary>
+        /// <param name="data">Managed buffer.</param>
+        /// <returns>Marshalled managed buffer.</returns>
+        public static CRYPTOAPI_BLOB FromBinaryData(Byte[] data) {
+            IntPtr ptr = Marshal.AllocHGlobal(data.Length);
+            Marshal.Copy(data, 0, ptr, data.Length);
+            return new CRYPTOAPI_BLOB {
+                cbData = (UInt32)data.Length,
+                pbData = ptr
+            };
+        }
+
+        /// <summary>
+        /// Releases allocated unmanaged buffer stored in <see cref="pbData"/> field. This method does nothing if either,
+        /// <see cref="cbData"/> is zero or <see cref="pbData"/> is <see cref="IntPtr.Zero"/>. If dispose is successful,
+        /// <see cref="cbData"/> is set to zero and <see cref="pbData"/> to <see cref="IntPtr.Zero"/>.
+        /// </summary>
+        public void Dispose() {
+            if (cbData != 0 && !IntPtr.Zero.Equals(pbData)) {
+                Marshal.FreeHGlobal(pbData);
+                cbData = 0;
+                pbData = IntPtr.Zero;
+            }
+        }
     }
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
     public struct CRYPT_ALGORITHM_IDENTIFIER {

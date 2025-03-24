@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using PKI.Structs;
 using SysadminsLV.PKI.Win32;
 
@@ -19,14 +18,8 @@ public static class Crypt32Managed {
     ///  layer of the BLOB cannot be decoded as a PFX packet, the method returns <strong>FALSE.</strong></returns>
     public static Boolean PfxisPfxBlob(Byte[] rawData) {
         if (rawData != null) {
-            IntPtr ptr = Marshal.AllocHGlobal(rawData.Length);
-            Marshal.Copy(rawData, 0, ptr, rawData.Length);
-            Wincrypt.CRYPTOAPI_BLOB PPfx = new Wincrypt.CRYPTOAPI_BLOB {
-                                                                           cbData = (UInt32)rawData.Length,
-                                                                           pbData = ptr
-                                                                       };
+            using Wincrypt.CRYPTOAPI_BLOB PPfx = Wincrypt.CRYPTOAPI_BLOB.FromBinaryData(rawData);
             Boolean result = Crypt32.PFXIsPFXBlob(PPfx);
-            Marshal.FreeHGlobal(ptr);
             return result;
         }
         throw new ArgumentNullException(nameof(rawData));
@@ -52,15 +45,8 @@ public static class Crypt32Managed {
     /// </returns>
     public static Boolean PfxVerifyPassword(Byte[] rawData, String password) {
         if (rawData != null) {
-            IntPtr ptr = Marshal.AllocHGlobal(rawData.Length);
-            Marshal.Copy(rawData, 0, ptr, rawData.Length);
-            Wincrypt.CRYPTOAPI_BLOB PPfx = new Wincrypt.CRYPTOAPI_BLOB {
-                                                                           cbData = (UInt32)rawData.Length,
-                                                                           pbData = ptr
-                                                                       };
-            Boolean result = Crypt32.PFXVerifyPassword(PPfx, password, 0);
-            Marshal.FreeHGlobal(ptr);
-            return result;
+            using Wincrypt.CRYPTOAPI_BLOB PPfx = Wincrypt.CRYPTOAPI_BLOB.FromBinaryData(rawData);
+            return Crypt32.PFXVerifyPassword(PPfx, password, 0);
         }
         throw new ArgumentNullException(nameof(rawData));
     }

@@ -8,6 +8,7 @@ using System.Text;
 using PKI.Structs;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
+using SysadminsLV.PKI.Structs;
 using SysadminsLV.PKI.Tools.MessageOperations;
 using SysadminsLV.PKI.Win32;
 
@@ -140,17 +141,9 @@ public class X509CertificateBuilder {
             return;
         }
         Byte[] stringBytes = Encoding.Unicode.GetBytes(FriendlyName + "\0");
-        IntPtr ptr = Marshal.AllocHGlobal(stringBytes.Length);
-        Marshal.Copy(stringBytes, 0, ptr, stringBytes.Length);
-        var blob = new Wincrypt.CRYPTOAPI_BLOB {
-            cbData = (UInt32)stringBytes.Length,
-            pbData = ptr
-        };
-        IntPtr blobPtr = Marshal.AllocHGlobal(Marshal.SizeOf(blob));
-        Marshal.StructureToPtr(blob, blobPtr, false);
-        Crypt32.CertSetCertificateContextProperty(cert.Handle, X509CertificatePropertyType.FriendlyName, 0, blobPtr);
-        Marshal.FreeHGlobal(ptr);
-        Marshal.FreeHGlobal(blobPtr);
+        using Wincrypt.CRYPTOAPI_BLOB blob = Wincrypt.CRYPTOAPI_BLOB.FromBinaryData(stringBytes);
+        using SafeCryptoApiBlobContext blobPtr = blob.GetSafeContext();
+        Crypt32.CertSetCertificateContextProperty(cert.Handle, X509CertificatePropertyType.FriendlyName, 0, blobPtr.DangerousGetHandle());
     }
     void postGenerate(X509Certificate2 cert) {
         // write key info to cert property
