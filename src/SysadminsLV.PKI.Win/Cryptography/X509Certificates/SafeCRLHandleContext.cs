@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Security.Permissions;
 using Microsoft.Win32.SafeHandles;
-using SysadminsLV.PKI.Utils.CLRExtensions;
 using SysadminsLV.PKI.Win32;
 
 namespace SysadminsLV.PKI.Cryptography.X509Certificates;
@@ -34,6 +33,11 @@ public sealed class SafeCRLHandleContext : SafeHandleZeroOrMinusOneIsInvalid {
     /// </summary>
     /// <returns><strong>True</strong> if the operation succeeds, otherwise <strong>False</strong>.</returns>
     protected override Boolean ReleaseHandle() {
-        return Crypt32.CertFreeCRLContext(handle);
+        Boolean result = Crypt32.CertFreeCRLContext(handle);
+        if (result) {
+            handle = IntPtr.Zero;
+        }
+
+        return result;
     }
 }
