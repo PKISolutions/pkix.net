@@ -118,14 +118,14 @@ public sealed class Oid2 {
             return;
         }
 
-        var OidInfo = (Wincrypt.CRYPT_OID_INFO)Marshal.PtrToStructure(ptr, typeof(Wincrypt.CRYPT_OID_INFO));
+        var OidInfo = Marshal.PtrToStructure<Wincrypt.CRYPT_OID_INFO>(ptr);
         FriendlyName = OidInfo.pwszName;
         Value = OidInfo.pszOID;
         OidGroup = OidInfo.dwGroupId;
         Marshal.FreeHGlobal(oidPtr);
     }
     void initializeDS(String oid, OidGroup group) {
-        var exclude = new List<Int32>(new[] { 1, 2, 3, 4, 5, 6, 10 });
+        var exclude = new List<Int32>([1, 2, 3, 4, 5, 6, 10]);
         if (exclude.Contains((Int32)group)) {
             initializeLocal(oid, group);
             return;

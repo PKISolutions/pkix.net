@@ -152,7 +152,7 @@ public class X509CertificateContextProperty {
                 break;
             case X509CertificatePropertyType.KeyContext:
                 UnderlyingType = typeof(CERT_KEY_CONTEXT);
-                PropertyValue = Marshal.PtrToStructure(ptr, typeof(CERT_KEY_CONTEXT));
+                PropertyValue = Marshal.PtrToStructure<CERT_KEY_CONTEXT>(ptr);
                 break;
             case X509CertificatePropertyType.ProviderInfo:
                 UnderlyingType = typeof(KeyProviderInfo);
