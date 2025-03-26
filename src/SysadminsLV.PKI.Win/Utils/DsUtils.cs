@@ -206,14 +206,13 @@ static class DsUtils {
     }
 
     public static String EscapeLdapPath(String ldapPath) {
-        var sb = new StringBuilder();
-        X500RdnAttributeCollection rdns = new X500DistinguishedName(ldapPath).GetRdnAttributes();
-        for (Int32 index = 1; index < rdns.Count; index++) {
-            X500RdnAttribute old = rdns[index];
+        var rdnAttrs = new X500DistinguishedName(ldapPath).GetRdnAttributes();
+        var sb = new StringBuilder($"{rdnAttrs[0].Oid.FriendlyName}={EscapeRDN(rdnAttrs[0].Value)}");
+        
+        for (Int32 index = 1; index < rdnAttrs.Count; index++) {
+            X500RdnAttribute old = rdnAttrs[index];
             sb.AppendFormat(",{0}={1}", old.Oid.FriendlyName, old.Value);
         }
-
-        sb.Insert(0, $"CN={EscapeRDN(rdns[0].Value)}");
 
         return sb.ToString();
     }
