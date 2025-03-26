@@ -146,10 +146,11 @@ public static class Wincrypt {
         public IntPtr pbData;
 
         /// <summary>
-        /// Writes current instance into unmanaged memory. Callers must release this handle using <see cref="Marshal.FreeHGlobal"/>
-        /// when this buffer is no longer needed.
+        /// Writes current instance into unmanaged memory. Callers must release this handle by calling
+        /// <see cref="SafeCryptoApiBlobContext.Dispose"/> when this buffer is no longer needed or wrapping
+        /// the call into a <c>using</c> statement.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Safe handle.</returns>
         public SafeCryptoApiBlobContext GetSafeContext() {
             return new SafeCryptoApiBlobContext(this);
         }
