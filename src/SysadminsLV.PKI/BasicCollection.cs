@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace SysadminsLV.PKI;
 
 /// <summary>
-/// Represents a strongly-typed collection of <see cref="T"/> objects.
+/// Represents a strongly-typed collection of <strong>T</strong> objects.
 /// </summary>
 /// <typeparam name="T">The type of elements in the list.</typeparam>
 /// <remarks>This class is abstract and cannot be used directly. Inherit from this class instead.</remarks>
@@ -16,7 +16,7 @@ public abstract class BasicCollection<T> : IList<T> {
     protected readonly List<T> InternalList;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="T"/> class.
+    /// Initializes a new instance of the <strong>T</strong> class.
     /// </summary>
     protected BasicCollection() {
         InternalList = [];
