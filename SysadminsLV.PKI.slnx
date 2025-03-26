@@ -9,7 +9,7 @@
   <Folder Name="/Tests/">
     <Project Path="tests/SysadminsLV.PKI.OcspClient.Tests/SysadminsLV.PKI.OcspClient.Tests.csproj" />
     <Project Path="tests/SysadminsLV.PKI.Tests/SysadminsLV.PKI.Tests.csproj" />
-    <Project Path="tests/SysadminsLV.PKI.Win.Tests/SysadminsLV.PKI.Win.Tests.csproj" />
+    <Project Path="tests/SysadminsLV.PKI.Win.Tests/SysadminsLV.PKI.Win.Tests.csproj" Id="1260da44-a370-44f0-b320-41478def6749" />
   </Folder>
   <Project Path="src/SysadminsLV.PKI.OcspClient/SysadminsLV.PKI.OcspClient.csproj" />
   <Project Path="src/SysadminsLV.PKI.Win/SysadminsLV.PKI.Win.csproj">
