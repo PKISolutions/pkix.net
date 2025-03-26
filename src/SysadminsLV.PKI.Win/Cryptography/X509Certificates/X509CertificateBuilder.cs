@@ -20,18 +20,17 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 /// </summary>
 /// <remarks>
 /// Although, the certificate is created in-memory, private key material still persists in CSP/KSP. When the
-/// certificate is no longer necessary, call <see cref="X509Certificate2Extensions.DeletePrivateKey">
+/// certificate is no longer necessary, call <see cref="X509Certificate2ExtensionsWin.DeletePrivateKey">
 /// X509Certificate2.DeletePrivateKey</see> extension method.
 /// </remarks>
 public class X509CertificateBuilder {
-    readonly Byte[] _versionBytes = { 0xa0, 03, 02, 01, 02 };
-    readonly HashSet<String> _excludedExtensions = new(
-        new[] {
-                  X509ExtensionOid.SubjectKeyIdentifier,
-                  X509ExtensionOid.AuthorityKeyIdentifier
-              }
-    );
-    readonly X509ExtensionCollection _extensions = new();
+    readonly Byte[] _versionBytes = [0xa0, 03, 02, 01, 02];
+    readonly HashSet<String> _excludedExtensions = [
+        X509ExtensionOid.SubjectKeyIdentifier,
+        X509ExtensionOid.AuthorityKeyIdentifier
+    ];
+    readonly X509ExtensionCollection _extensions = [];
+
     X509ExtensionCollection finalExtensions;
     Byte[] serialNumber;
 
@@ -67,7 +66,7 @@ public class X509CertificateBuilder {
     /// When adding extensions, <strong>Subject Key Identifier</strong> and <strong>Authority Key Identifier</strong>
     /// are generated at runtime and are ignored in this collection
     /// </remarks>
-    public X509ExtensionCollection Extensions { get; } = new();
+    public X509ExtensionCollection Extensions { get; } = [];
     /// <summary>
     /// Gets or sets hashing algorithm used to sign the certificate. Default value is SHA256.
     /// </summary>
