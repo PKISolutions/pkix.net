@@ -4,13 +4,17 @@
       <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
       <LangVersion>latest</LangVersion>
       <Title>.NET OCSP Client</Title>
+    <Version>4.2.0</Version>
       <Authors>Vadims Podans</Authors>
       <Company>PKI Solutions LLC</Company>
       <Description>Implements OCSP client to use in .NET</Description>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
       <PackageLicenseExpression>MS-PL</PackageLicenseExpression>
       <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
       <Version>4.2.0</Version>
       <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
 
   <ItemGroup>
