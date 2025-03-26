@@ -268,7 +268,7 @@ public sealed class Oid2 {
     }
 
     static String computeOidHash(String oid) {
-        String[] tokens = oid.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+        String[] tokens = oid.Split(['.'], StringSplitOptions.RemoveEmptyEntries);
         String LastArc = tokens[tokens.Length - 1];
         if (LastArc.Length >= 16) {
             LastArc = LastArc.Substring(0, 16);
