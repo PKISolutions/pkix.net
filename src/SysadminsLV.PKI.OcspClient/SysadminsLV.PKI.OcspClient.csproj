@@ -1,24 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-      <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
-      <LangVersion>latest</LangVersion>
-      <Title>.NET OCSP Client</Title>
+    <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <Title>.NET OCSP Client</Title>
     <Version>4.2.0</Version>
-      <Authors>Vadims Podans</Authors>
-      <Company>PKI Solutions LLC</Company>
-      <Description>Implements OCSP client to use in .NET</Description>
+    <Authors>Vadims Podans</Authors>
+    <Company>PKI Solutions LLC</Company>
+    <Description>Implements OCSP client to use in .NET</Description>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-      <PackageLicenseExpression>MS-PL</PackageLicenseExpression>
-      <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-      <Version>4.2.0</Version>
-      <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <PackageLicenseExpression>MS-PL</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <IncludeSymbols>true</IncludeSymbols>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SysadminsLV.Asn1Parser" Version ="1.2.12"/>
-    <PackageReference Include="SysadminsLV.PKI" Version="4.2.0"/>
+    <PackageReference Include="SysadminsLV.Asn1Parser" Version="1.3.0" />
+    <PackageReference Include="SysadminsLV.PKI" Version="4.3.0" />
   </ItemGroup>
 </Project>
