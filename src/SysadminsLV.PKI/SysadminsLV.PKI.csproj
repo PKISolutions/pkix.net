@@ -4,7 +4,7 @@
     <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <Title>Extended .NET Cryptography framework</Title>
-    <Version>4.2.0</Version>
+    <Version>4.3.0</Version>
     <Authors>Vadims Podans</Authors>
     <Company>PKI Solutions LLC</Company>
     <Description>Provides additional classes and functionality to extend native .NET functionality.</Description>
