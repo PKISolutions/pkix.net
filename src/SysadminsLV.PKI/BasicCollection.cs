@@ -19,7 +19,7 @@ public abstract class BasicCollection<T> : IList<T> {
     /// Initializes a new instance of the <see cref="T"/> class.
     /// </summary>
     protected BasicCollection() {
-        InternalList = new List<T>();
+        InternalList = [];
     }
     /// <summary>
     /// Initializes a new instance of the <see cref="BasicCollection{T}"/> class that contains elements copied
@@ -28,7 +28,7 @@ public abstract class BasicCollection<T> : IList<T> {
     /// <param name="collection">The collection whose elements are copied to the new list.</param>
     /// <exception cref="ArgumentNullException"><strong>collection</strong> is null.</exception>
     protected BasicCollection(IEnumerable<T> collection) {
-        InternalList = new List<T>(collection);
+        InternalList = [..collection];
     }
 
     /// <inheritdoc />
