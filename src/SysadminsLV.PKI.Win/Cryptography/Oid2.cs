@@ -258,7 +258,7 @@ public sealed class Oid2 {
     }
     static Boolean unregisterDS(String oid, OidGroup group) {
         String cn = computeOidHash(oid);
-        String ldapPath = $"LDAP://CN={cn},{_baseDsPath}";
+        String ldapPath = $"CN={cn},{_baseDsPath}";
         Int32 flags = (Int32)DsUtils.GetEntryProperty(ldapPath, DsUtils.PropFlags);
         switch (group) {
             case OidGroup.EnhancedKeyUsage:
