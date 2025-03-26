@@ -88,15 +88,27 @@ static class DsUtils {
             ? Domain.GetComputerDomain().Name
             : String.Empty;
     }
+    /// <summary>
+    /// Gets requested property value for DS object at specified LDAP path.
+    /// </summary>
+    /// <param name="ldapPath">Properly escaped DS object's LDAP path. This path MUST NOT include 'LDAP://' prefix.</param>
+    /// <param name="prop">DS property name.</param>
+    /// <returns>Requested property value.</returns>
     public static Object GetEntryProperty(String ldapPath, String prop) {
-        using var entry = new DirectoryEntry(ldapPath);
+        using var entry = new DirectoryEntry($"LDAP://{ldapPath}");
         return entry.Properties.Contains(prop)
             ? entry.Properties[prop].Value
             : null;
     }
+    /// <summary>
+    /// Gets requested properties for DS object at specified LDAP path.
+    /// </summary>
+    /// <param name="ldapPath">Properly escaped DS object's LDAP path. This path MUST NOT include 'LDAP://' prefix.</param>
+    /// <param name="properties">A collection of properties to retrieve.</param>
+    /// <returns>A collection of requested properties and their values.</returns>
     public static DsPropertyCollection GetEntryProperties(String ldapPath, params String[] properties) {
         var retValue = new DsPropertyCollection();
-        using var entry = new DirectoryEntry(ldapPath);
+        using var entry = new DirectoryEntry($"LDAP://{ldapPath}");
         foreach (String prop in properties) {
             retValue.Add(prop, entry.Properties.Contains(prop)
                 ? entry.Properties[prop].Value
@@ -111,7 +123,7 @@ static class DsUtils {
     /// <summary>
     /// Adds child entry to DS container.
     /// </summary>
-    /// <param name="parentPath">DS path to container object to add child to.</param>
+    /// <param name="parentPath">DS path to container object to add child to. This path MUST NOT include 'LDAP://' prefix.</param>
     /// <param name="name">Child common name.</param>
     /// <param name="schemaClass">Child schema class.</param>
     /// <returns>DS path to created child.</returns>
@@ -125,13 +137,19 @@ static class DsUtils {
     /// <summary>
     /// Removes child entry from DS container.
     /// </summary>
-    /// <param name="ldapPath">Child's DS path to remove.</param>
+    /// <param name="ldapPath">Child's DS path to remove. This path MUST NOT include 'LDAP://' prefix.</param>
     public static void RemoveEntry(String ldapPath) {
         using var entryToDelete = new DirectoryEntry($"LDAP://{EscapeLdapPath(ldapPath)}");
         using DirectoryEntry parent = entryToDelete.Parent;
         parent.Children.Remove(entryToDelete);
         parent.CommitChanges();
     }
+    /// <summary>
+    /// Sets DS entry property.
+    /// </summary>
+    /// <param name="ldapPath">DS path to a node. This path MUST NOT include 'LDAP://' prefix.</param>
+    /// <param name="prop">Property name to set.</param>
+    /// <param name="value">Property value.</param>
     public static void SetEntryProperty(String ldapPath, String prop, Object value) {
         using var entry = new DirectoryEntry($"LDAP://{EscapeLdapPath(ldapPath)}");
         entry.Properties[prop].Value = value;
