@@ -128,8 +128,15 @@ public sealed class Oid2 {
         Marshal.FreeHGlobal(oidStrPtr);
     }
     void initializeDS(String oid, OidGroup group) {
-        var exclude = new List<Int32>([1, 2, 3, 4, 5, 6, 10]);
-        if (exclude.Contains((Int32)group)) {
+        var exclude = new List<OidGroup>([
+            OidGroup.HashAlgorithm,
+            OidGroup.EncryptionAlgorithm,
+            OidGroup.PublicKeyAlgorithm,
+            OidGroup.SignatureAlgorithm,
+            OidGroup.Attribute,
+            OidGroup.ExtensionOrAttribute,
+            OidGroup.KeyDerivationFunction]);
+        if (exclude.Contains(group)) {
             initializeLocal(oid, group);
             return;
         }
@@ -172,7 +179,7 @@ public sealed class Oid2 {
                         Object[] cps = (Object[])oidInDs[DsUtils.PropCpsOid];
                         urls = cps.Cast<String>().ToArray();
                     } catch {
-                        urls = new[] { (String)oidInDs[DsUtils.PropCpsOid] };
+                        urls = [(String)oidInDs[DsUtils.PropCpsOid]];
                     }
                     break;
                 case 3:
@@ -375,8 +382,8 @@ public sealed class Oid2 {
     /// <summary>
     /// Gets all registrations for the specified OID value.
     /// </summary>
-    /// <param name="value">OID value to search. If the OID name is passed, it is converted to a best OID value
-    /// match and performs OID search by it's value.</param>
+    /// <param name="value">OID value to search. If the OID name is passed, it is converted to the best OID value
+    /// match and performs OID search by its value.</param>
     /// <param name="searchInDirectory">
     /// Specifies whether to search for an object identifier in Active Directory. If the machine is not
     /// domain-joined, an OID is searched by using local registration information.
@@ -427,7 +434,7 @@ public sealed class Oid2 {
     /// <exception cref="ArgumentException">
     ///        Specified OID group is not supported. See <strong>Remarks</strong> section for more details.
     /// </exception>
-    /// <exception cref="InvalidDataException"><strong>value</strong> parameter is not object idnetifier value.</exception>
+    /// <exception cref="InvalidDataException"><strong>value</strong> parameter is not object identifier value.</exception>
     /// <exception cref="NotSupportedException">
     ///        A caller chose OID registration in Active Directory, however, the current computer is not a member of any
     ///        Active Directory domain.
@@ -501,6 +508,7 @@ public sealed class Oid2 {
     ///        the method will attempt to unregister OID from a local OID registration database.
     /// </param>
     /// <exception cref="ArgumentNullException"><strong>value</strong> parameter is null or empty.</exception>
+    /// <exception cref="Win32Exception"><strong>value</strong> is not registered in local OID database.</exception>
     /// <returns>
     ///        <strong>True</strong> if OID or OIDs were unregistered successfully. If specified OID information is not
     ///        registered, the method returns <strong>False</strong>. An exception is thrown when caller do not have
@@ -512,6 +520,10 @@ public sealed class Oid2 {
     /// a caller must be a member of <strong>Enterprise Admins</strong> group or have delegated permissions on a OID
     /// container in Active Directory. OID container location is
     /// <i>CN=OID, CN=Public Key Services, CN=Services,CN=Configuration, {Configuration naming context}</i>.
+    /// <para>
+    /// Method will fail with <see cref="Win32Exception"/> exception if OID is registered in Active Directory and
+    /// <strong>deleteFromDirectory</strong> is set to <c>false</c>. 
+    /// </para>
     /// </remarks>
     public static Boolean Unregister(String value, OidGroup group, Boolean deleteFromDirectory) {
         if (String.IsNullOrEmpty(value)) {
@@ -519,6 +531,7 @@ public sealed class Oid2 {
         }
 
         var oidCollection = new List<Oid2>();
+        // if all groups, then enumerate all oid value registrations
         if (group == OidGroup.All) {
             try {
                 oidCollection.AddRange(GetAllOids(value, deleteFromDirectory));
@@ -526,18 +539,31 @@ public sealed class Oid2 {
                 return false;
             }
         } else {
+            // otherwise look for specified oid group
             oidCollection.Add(new Oid2(value, group, deleteFromDirectory));
             if (String.IsNullOrEmpty(oidCollection[0].Value)) {
                 return false;
             }
         }
+        // if either local OID db specified or DS is unavailable, try to remove OID from local OID db.
         if (!deleteFromDirectory || !DsUtils.Ping()) {
             return unregisterLocal(oidCollection);
         }
-        var valid = new List<Int32>(new[] { 0, 7, 8, 9 });
-        if (oidCollection.Where(oid => !String.IsNullOrEmpty(oid.DistinguishedName)).Any(oid => oid.OidGroup != group && group != OidGroup.All)) {
+        // if we reach this far, then we have to attempt to unregister OID from AD.
+        // filter out invalid OID registrations which doesn't exist in AD or have mismatched oid group. Say, OID is registered as ApplicationPolicy
+        // but requested OID group is Template.
+        if (oidCollection.Any(oid => String.IsNullOrEmpty(oid.DistinguishedName) || (oid.OidGroup != group && group != OidGroup.All))) {
             return false;
         }
-        return valid.Contains((Int32)group) && unregisterDS(oidCollection[0].Value, group);
+
+        // only limited OID groups are permitted by AD
+        var valid = new List<OidGroup>([
+            OidGroup.All,
+            OidGroup.EnhancedKeyUsage,
+            OidGroup.Policy,
+            OidGroup.Template]);
+        
+        // final check against a valid group list and attempt to unregister OID.
+        return valid.Contains(group) && unregisterDS(oidCollection[0].Value, group);
     }
 }
