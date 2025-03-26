@@ -160,6 +160,7 @@ public sealed class Oid2 {
             DistinguishedName = oidInDs.GetDsScalarValue<String>(DsUtils.PropDN);
             flags = oidInDs.GetDsScalarValue<Int32>(DsUtils.PropFlags);
             FriendlyName = oidInDs.GetDsScalarValue<String>(DsUtils.PropDisplayName);
+            Value = oidValue;
             switch (flags) {
                 case 1:
                     if (group != OidGroup.All && group != OidGroup.Template) {
