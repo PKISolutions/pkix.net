@@ -58,11 +58,9 @@ public static class CryptographyUtils {
         if (rawData.Length == 0) { throw new ArgumentException("The value is empty"); }
         List<Byte> rawBytes;
         if (rawData.Length % 2 > 0) {
-            rawBytes = new List<Byte>(rawData.Length + 1);
-            rawBytes.AddRange(rawData);
-            rawBytes.Add(0);
+            rawBytes = [..rawData, 0];
         } else {
-            rawBytes = new List<Byte>(rawData);
+            rawBytes = [..rawData];
         }
         var sb = new StringBuilder(rawBytes.Count / 2);
         for (Int32 index = 0; index < rawBytes.Count; index += 2) {
