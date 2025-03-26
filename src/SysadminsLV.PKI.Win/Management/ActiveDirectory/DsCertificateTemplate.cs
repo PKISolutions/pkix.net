@@ -118,6 +118,7 @@ public sealed class DsCertificateTemplate : IAdcsCertificateTemplate {
             _             => throw new Exception("The value for 'findType' must be either 'Name', 'DisplayName' or 'OID'.")
         };
 
+        ldapPath = ldapPath.Replace("LDAP://", null);
         if (String.IsNullOrWhiteSpace(ldapPath)) {
             throw new ArgumentException("No certificate templates match search criteria.");
         }
