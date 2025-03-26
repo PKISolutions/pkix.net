@@ -41,7 +41,7 @@ public class X509CertificateTrustListEntryCollection : BasicCollection<X509Certi
     /// </returns>
     public Byte[] Encode() {
         if (Count == 0) {
-            return new Byte[] { 48, 0 };
+            return [48, 0];
         }
         var rawData = new List<Byte>();
         foreach (X509CertificateTrustListEntry entry in this) {
