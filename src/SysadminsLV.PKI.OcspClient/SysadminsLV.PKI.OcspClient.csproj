@@ -3,7 +3,7 @@
     <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <Title>.NET OCSP Client</Title>
-    <Version>4.2.0</Version>
+    <Version>4.3.0</Version>
     <Authors>Vadims Podans</Authors>
     <Company>PKI Solutions LLC</Company>
     <Description>Implements OCSP client to use in .NET</Description>
