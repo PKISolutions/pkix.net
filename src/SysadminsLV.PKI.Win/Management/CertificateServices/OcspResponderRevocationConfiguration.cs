@@ -9,7 +9,7 @@ using SysadminsLV.PKI.Cryptography.Pkcs;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
 using SysadminsLV.PKI.Dcom.Implementations;
 using SysadminsLV.PKI.Utils;
-using SysadminsLV.PKI.Win.Cryptography.X509Certificates;
+using X509CrlBuilder = SysadminsLV.PKI.Cryptography.X509Certificates.X509CrlBuilder;
 
 namespace SysadminsLV.PKI.Management.CertificateServices;
 /// <summary>
@@ -331,14 +331,13 @@ public class OcspResponderRevocationConfiguration {
         }
     }
     Byte[] buildLocalRevInfo() {
-        X509Certificate2 cert = CACertificate;
         var crlBuilder = new X509CrlBuilder {
-            ThisUpdate = cert.NotBefore,
-            NextUpdate = cert.NotAfter
+            ThisUpdate = CACertificate.NotBefore,
+            NextUpdate = CACertificate.NotAfter
         };
         crlBuilder.RevokedCertificates.AddRange(_crlEntries);
         crlBuilder.HashingAlgorithm = new Oid(AlgorithmOid.SHA1);
-        return crlBuilder.BuildAndHash(cert).RawData;
+        return crlBuilder.BuildAndHash(CACertificate).RawData;
     }
 
     static Object[,] writeProvProperties(Object[,] source, String propName, Object value) {
