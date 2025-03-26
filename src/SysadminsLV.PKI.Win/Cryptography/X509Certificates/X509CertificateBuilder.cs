@@ -9,6 +9,7 @@ using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
 using SysadminsLV.PKI.Structs;
 using SysadminsLV.PKI.Tools.MessageOperations;
+using SysadminsLV.PKI.Utils;
 using SysadminsLV.PKI.Win32;
 
 namespace SysadminsLV.PKI.Cryptography.X509Certificates;
@@ -86,7 +87,7 @@ public class X509CertificateBuilder {
 
     void generateSerialNumber() {
         if (String.IsNullOrWhiteSpace(SerialNumber)) {
-            using MD5 hasher = MD5.Create();
+            using HashAlgorithm hasher = CryptographyUtils.GetHasher(HashAlgorithmName.MD5);
             serialNumber = hasher.ComputeHash(Guid.NewGuid().ToByteArray());
         } else {
             serialNumber = AsnFormatter.StringToBinary(SerialNumber, EncodingType.Hex);
@@ -109,7 +110,7 @@ public class X509CertificateBuilder {
     }
     // generates SKI and optionally AKI
     void generateKeyIdentifiers(X509Certificate2 signer) {
-        using (var hasher = SHA1.Create()) {
+        using (HashAlgorithm hasher = CryptographyUtils.GetHasher(HashAlgorithmName.SHA1)) {
             Byte[] hash = hasher.ComputeHash(PrivateKeyInfo.GetPublicKey().EncodedKeyValue.RawData);
             var ext = new X509SubjectKeyIdentifierExtension(hash, false);
             _extensions.Add(ext);

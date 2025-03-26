@@ -282,7 +282,7 @@ public sealed class Oid2 {
             LastArc = LastArc.Substring(0, 16);
         }
 
-        using var hasher = MD5.Create();
+        using HashAlgorithm hasher = CryptographyUtils.GetHasher(HashAlgorithmName.MD5);
         Byte[] bytes = hasher.ComputeHash(Encoding.Unicode.GetBytes(oid));
         String hexString = AsnFormatter.BinaryToString(bytes, EncodingType.HexRaw, EncodingFormat.NOCRLF, forceUpperCase: true);
         return LastArc + "." + hexString;

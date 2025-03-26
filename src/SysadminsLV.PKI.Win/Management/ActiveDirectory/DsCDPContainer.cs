@@ -115,7 +115,7 @@ public class DsCDPContainer : DsPkiContainer {
         // if subject is empty, calculate SHA1 hash over subject name's raw data (48, 0)
         if (tokens.Count == 0) {
             var sb = new StringBuilder();
-            using (var hasher = SHA1.Create()) {
+            using (HashAlgorithm hasher = CryptographyUtils.GetHasher(HashAlgorithmName.SHA1)) {
                 foreach (Byte b in hasher.ComputeHash(crl.IssuerName.RawData)) {
                     sb.AppendFormat("{0:x2}", b);
                 }

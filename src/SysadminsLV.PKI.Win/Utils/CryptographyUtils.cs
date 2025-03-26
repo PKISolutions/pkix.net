@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Security.Cryptography.Pkcs;
 using System.Text;
 
@@ -11,6 +12,10 @@ namespace SysadminsLV.PKI.Utils;
 /// Contains helper methods for cryptographic objects.
 /// </summary>
 public static class CryptographyUtils {
+    /// <summary>
+    /// Gets or sets the value that indicates whether the library has to use FIPS-compliant algorithms or not.
+    /// </summary>
+    internal static Boolean RequireFipsCompliance { get; set; }
     
     /// <summary>
     /// Converts a default instance of <see cref="Pkcs9AttributeObject"/> class to a specific attribute implementation object. 
@@ -67,5 +72,36 @@ public static class CryptographyUtils {
             sb.Append(Convert.ToChar(rawBytes[index + 1] << 8 | rawBytes[index]));
         }
         return sb.ToString();
+    }
+
+    /// <summary>
+    /// Gets cryptographic hasher for specified algorithm. Method will return the best hasher
+    /// implementation available that satisfies <see cref="RequireFipsCompliance"/> setting.
+    /// </summary>
+    /// <param name="hashAlgorithmName">Requested hashing algorithm.</param>
+    /// <returns>Hasher.</returns>
+    /// <exception cref="ArgumentException">Specified hashing algorithm is not supported.</exception>
+    internal static HashAlgorithm GetHasher(HashAlgorithmName hashAlgorithmName) {
+        if (HashAlgorithmName.MD5 == hashAlgorithmName) {
+            return RequireFipsCompliance ? new MD5CryptoServiceProvider() : MD5.Create();
+        }
+
+        if (HashAlgorithmName.SHA1 == hashAlgorithmName) {
+            return RequireFipsCompliance ? new SHA1CryptoServiceProvider() : SHA1.Create();
+        }
+
+        if (HashAlgorithmName.SHA256 == hashAlgorithmName) {
+            return RequireFipsCompliance ? new SHA256CryptoServiceProvider() : SHA256.Create();
+        }
+
+        if (HashAlgorithmName.SHA384 == hashAlgorithmName) {
+            return RequireFipsCompliance ? new SHA384CryptoServiceProvider() : SHA384.Create();
+        }
+
+        if (HashAlgorithmName.SHA512 == hashAlgorithmName) {
+            return RequireFipsCompliance ? new SHA512CryptoServiceProvider() : SHA512.Create();
+        }
+
+        throw new ArgumentException("Invalid hash algorithm is specified.");
     }
 }
