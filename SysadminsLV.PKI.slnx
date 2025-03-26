@@ -1,0 +1,19 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+  </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="tests/SysadminsLV.PKI.OcspClient.Tests/SysadminsLV.PKI.OcspClient.Tests.csproj" />
+    <Project Path="tests/SysadminsLV.PKI.Tests/SysadminsLV.PKI.Tests.csproj" />
+    <Project Path="tests/SysadminsLV.PKI.Win.Tests/SysadminsLV.PKI.Win.Tests.csproj" />
+  </Folder>
+  <Project Path="src/SysadminsLV.PKI.OcspClient/SysadminsLV.PKI.OcspClient.csproj" />
+  <Project Path="src/SysadminsLV.PKI.Win/SysadminsLV.PKI.Win.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="src/SysadminsLV.PKI/SysadminsLV.PKI.csproj" />
+</Solution>
