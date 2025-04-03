@@ -4,6 +4,9 @@ Packages in this repo:
 - [SysadminsLV.PKI.Win](#sysadminslvpkiwin-package)
 ---
 
+# API Documentation
+- [Unified documentation](https://www.pkisolutions.com/apidocs/pki)
+
 # SysadminsLV.PKI package
 
 ## Description
@@ -16,10 +19,6 @@ This package is a cross-platform framework library that provides extended crypto
 ## Dependencies
 This project requires the following NuGet packages:
 - [SysadminsLV.Asn1Parser](https://www.nuget.org/packages/SysadminsLV.Asn1Parser)
-
-## API Documentation
-- [Legacy documentation](https://www.pkisolutions.com/apidocs/pkix.net)
-- [SysadminsLV.PKI package docs](https://www.pkisolutions.com/apidocs/SysadminsLV.PKI)
 
 ## CI/CD and NuGet Status
 ![Build status](https://dev.azure.com/pkisolutions/PKI%20Libraries/_apis/build/status/SysadminsLV.PKI.Win-Nupkg)
@@ -39,9 +38,6 @@ This package is a cross-platform framework library that implements managed OCSP 
 This project requires the following NuGet packages:
 - [SysadminsLV.Asn1Parser](https://www.nuget.org/packages/SysadminsLV.Asn1Parser)
 - [SysadminsLV.PKI](https://www.nuget.org/packages/SysadminsLV.PKI)
-
-## API Documentation
-- [SysadminsLV.PKI.OcspClient package docs](https://www.pkisolutions.com/apidocs/SysadminsLV.PKI.OcspClient)
 
 ## CI/CD and NuGet Status
 ![Build Status](https://dev.azure.com/pkisolutions/PKI%20Libraries/_apis/build/status/SysadminsLV.PKI.OcspClient-Nupkg)
@@ -63,9 +59,6 @@ This project requires the following NuGet packages:
 - [SysadminsLV.Asn1Parser](https://www.nuget.org/packages/SysadminsLV.Asn1Parser)
 - [SysadminsLV.PKI](https://www.nuget.org/packages/SysadminsLV.PKI)
 - [SysadminsLV.PKI.OcspClient](https://www.nuget.org/packages/SysadminsLV.PKI.OcspClient)
-
-## API Documentation
-- [SysadminsLV.PKI.Win package docs](https://www.pkisolutions.com/apidocs/SysadminsLV.PKI.Win)
 
 ## CI/CD and NuGet Status
 ![Build Status](https://dev.azure.com/pkisolutions/PKI%20Libraries/_apis/build/status/SysadminsLV.PKI.Win-Nupkg)
