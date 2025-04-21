@@ -15,13 +15,13 @@
     <dependencies>
       <group targetFramework="net472">
         <dependency id="SysadminsLV.Asn1Parser" version="1.3.0" />
-        <dependency id="SysadminsLV.PKI" version="4.2.0" />
-        <dependency id="SysadminsLV.PKI.OcspClient" version="4.2.0" />
+        <dependency id="SysadminsLV.PKI" version="4.3.0" />
+        <dependency id="SysadminsLV.PKI.OcspClient" version="4.3.0" />
       </group>
     </dependencies>
   </metadata>
   <files>
-    <file src="..\src\SysadminsLV.PKI.Win\bin\Release\Interop.*" target="lib/net472"/>
-    <file src="..\src\SysadminsLV.PKI.Win\bin\Release\SysadminsLV.PKI.Win.*" target="lib/net472"/>
+    <file src="..\src\SysadminsLV.PKI.Win\bin\Release\net472\Interop.*" target="lib/net472"/>
+    <file src="..\src\SysadminsLV.PKI.Win\bin\Release\net472\SysadminsLV.PKI.Win.*" target="lib/net472"/>
   </files>
 </package>

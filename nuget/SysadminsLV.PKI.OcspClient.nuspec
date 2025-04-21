@@ -15,11 +15,11 @@
     <dependencies>
       <group targetFramework="net472">
         <dependency id="SysadminsLV.Asn1Parser" version="1.3.0" />
-        <dependency id="SysadminsLV.PKI" version="4.2.0" />
+        <dependency id="SysadminsLV.PKI" version="4.3.0" />
       </group>
       <group targetFramework="netstandard2.0">
         <dependency id="SysadminsLV.Asn1Parser" version="1.3.0" />
-        <dependency id="SysadminsLV.PKI" version="4.2.0" />
+        <dependency id="SysadminsLV.PKI" version="4.3.0" />
       </group>
     </dependencies>
   </metadata>
