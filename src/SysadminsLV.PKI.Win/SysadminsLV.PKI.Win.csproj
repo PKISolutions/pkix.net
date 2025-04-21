@@ -37,8 +37,8 @@
     </Reference>
     <Reference Include="Interop.CERTENROLLLib">
       <HintPath>_ExternalReferences\Interop.CERTENROLLLib.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-      <Private>True</Private>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.DirectoryServices" />
