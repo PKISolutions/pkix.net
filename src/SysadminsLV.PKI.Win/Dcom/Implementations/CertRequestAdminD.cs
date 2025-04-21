@@ -28,7 +28,7 @@ public class CertRequestAdminD : ICertRequestAdmin {
             throw new ArgumentNullException(nameof(extension));
         }
 
-        var certAdmin = new CCertAdminClass();
+        ICertAdmin2 certAdmin = CertAdminFactory.CreateICertAdmin();
         // BSTR is length-prefixed type, so allocate extra 4 bytes to store BSTR length
         IntPtr pbBstr = Marshal.AllocHGlobal(extension.RawData.Length + 4);
         // write length in front of actual BSTR value

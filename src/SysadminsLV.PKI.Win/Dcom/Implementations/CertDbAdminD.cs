@@ -21,7 +21,7 @@ public class CertDbAdminD : ICertDbAdminD {
 
     /// <inheritdoc />
     public AdcsPropCertState ApproveRequest(Int32 requestID) {
-        ICertAdmin2 certAdmin = new CCertAdminClass();
+        ICertAdmin2 certAdmin = CertAdminFactory.CreateICertAdmin();
         try {
             return (AdcsPropCertState)certAdmin.ResubmitRequest(_configString, requestID);
         } finally {
@@ -30,7 +30,7 @@ public class CertDbAdminD : ICertDbAdminD {
     }
     /// <inheritdoc />
     public void DenyRequest(Int32 requestID) {
-        ICertAdmin2 certAdmin = new CCertAdminClass();
+        ICertAdmin2 certAdmin = CertAdminFactory.CreateICertAdmin();
         try {
             certAdmin.DenyRequest(_configString, requestID);
         } finally {
@@ -39,7 +39,7 @@ public class CertDbAdminD : ICertDbAdminD {
     }
     /// <inheritdoc />
     public void RevokeRequest(String serialNumber, DateTime? revocationDate = null, AdcsCrlReason reason = AdcsCrlReason.Unspecified) {
-        ICertAdmin2 certAdmin = new CCertAdminClass();
+        ICertAdmin2 certAdmin = CertAdminFactory.CreateICertAdmin();
         try {
             certAdmin.RevokeCertificate(_configString, serialNumber, (Int32)reason, revocationDate ?? DateTime.UtcNow);
         } finally {
@@ -48,7 +48,7 @@ public class CertDbAdminD : ICertDbAdminD {
     }
     /// <inheritdoc />
     public Int32 DeleteDatabaseRow(Int32 requestID, AdcsDbCRTable table = AdcsDbCRTable.Request) {
-        ICertAdmin2 certAdmin = new CCertAdminClass();
+        ICertAdmin2 certAdmin = CertAdminFactory.CreateICertAdmin();
         try {
             return certAdmin.DeleteRow(_configString, 0, new DateTime(), (Int32)table, requestID);
         } finally {
@@ -57,7 +57,7 @@ public class CertDbAdminD : ICertDbAdminD {
     }
     /// <inheritdoc />
     public Int32 DeleteExpiredRequests(DateTime notAfter) {
-        ICertAdmin2 certAdmin = new CCertAdminClass();
+        ICertAdmin2 certAdmin = CertAdminFactory.CreateICertAdmin();
         try {
             return certAdmin.DeleteRow(_configString, (Int32)BulkRowRemovalOption.Expired, notAfter, (Int32)AdcsDbCRTable.Request, 0);
         } finally {
@@ -66,7 +66,7 @@ public class CertDbAdminD : ICertDbAdminD {
     }
     /// <inheritdoc />
     public Int32 DeleteExpiredCRLs(DateTime notAfter) {
-        ICertAdmin2 certAdmin = new CCertAdminClass();
+        ICertAdmin2 certAdmin = CertAdminFactory.CreateICertAdmin();
         try {
             return certAdmin.DeleteRow(_configString, (Int32)BulkRowRemovalOption.Expired, notAfter, (Int32)AdcsDbCRTable.CRL, 0);
         } finally {
@@ -75,7 +75,7 @@ public class CertDbAdminD : ICertDbAdminD {
     }
     /// <inheritdoc />
     public Int32 DeleteLastUpdatedRequests(DateTime notAfter) {
-        ICertAdmin2 certAdmin = new CCertAdminClass();
+        ICertAdmin2 certAdmin = CertAdminFactory.CreateICertAdmin();
         try {
             return certAdmin.DeleteRow(_configString, (Int32)BulkRowRemovalOption.LastChanged, notAfter, (Int32)AdcsDbCRTable.Request, 0);
         } finally {
@@ -88,7 +88,7 @@ public class CertDbAdminD : ICertDbAdminD {
             throw new ArgumentNullException(nameof(certificate));
         }
 
-        ICertAdmin2 certAdmin = new CCertAdminClass();
+        ICertAdmin2 certAdmin = CertAdminFactory.CreateICertAdmin();
         try {
             return certAdmin.ImportCertificate(
                 _configString,
@@ -107,7 +107,7 @@ public class CertDbAdminD : ICertDbAdminD {
             throw new ArgumentException("'serialNumber' parameter cannot be empty string");
         }
 
-        ICertAdmin2 certAdmin = new CCertAdminClass();
+        ICertAdmin2 certAdmin = CertAdminFactory.CreateICertAdmin();
         try {
             return (AdcsPropCertState)certAdmin.IsValidCertificate(_configString, serialNumber);
         } finally {

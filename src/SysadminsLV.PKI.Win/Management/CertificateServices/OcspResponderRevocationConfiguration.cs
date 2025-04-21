@@ -267,7 +267,7 @@ public class OcspResponderRevocationConfiguration {
         comConfig.HashAlgorithm = "sha1";
         comConfig.SigningFlags = (UInt32)(OcspSigningFlags.Silent | OcspSigningFlags.ManualSigningCert | OcspSigningFlags.ResponderIdKeyHash);
         comConfig.ReminderDuration = 90;
-        var props = new OCSPPropertyCollectionClass();
+        IOCSPPropertyCollection props = CertAdminFactory.CreateOCSPPropertyCollection();
         props.InitializeFromProperties(null);
         props.CreateProperty(MSFT_PROV_BASECRLURLS, new[] { "http://dummyurl" });
         comConfig.ProviderProperties = props.GetAllProperties();
@@ -279,7 +279,7 @@ public class OcspResponderRevocationConfiguration {
         try {
             Int32 index = certAdmin.GetCaCertificateCount() - 1;
             String[] urls = certAdmin.GetCdpURLs(index);
-            var props = new OCSPPropertyCollectionClass();
+            IOCSPPropertyCollection props = CertAdminFactory.CreateOCSPPropertyCollection();
             props.InitializeFromProperties(null);
             props.CreateProperty(MSFT_PROV_BASECRLURLS, urls);
             comConfig.ProviderProperties = props.GetAllProperties();
@@ -341,7 +341,7 @@ public class OcspResponderRevocationConfiguration {
     }
 
     static Object[,] writeProvProperties(Object[,] source, String propName, Object value) {
-        var props = new OCSPPropertyCollectionClass();
+        IOCSPPropertyCollection props = CertAdminFactory.CreateOCSPPropertyCollection();
         props.InitializeFromProperties(source);
         try {
             IOCSPProperty prop = (IOCSPProperty)props.ItemByName[propName];
@@ -375,14 +375,14 @@ public class OcspResponderRevocationConfiguration {
     /// </list>
     /// </remarks>
     public X509Certificate2Collection GetSigningCertificateCandidates() {
-        var ocspConfig = new OCSPAdminClass();
+        IOCSPAdmin ocspAdmin = CertAdminFactory.CreateIOCSPAdmin();
         try {
-            var cms = new DefaultSignedPkcs7((Byte[])ocspConfig.GetSigningCertificates(ComputerName, CACertificate.RawData));
+            var cms = new DefaultSignedPkcs7((Byte[])ocspAdmin.GetSigningCertificates(ComputerName, CACertificate.RawData));
             return cms.Certificates;
         } catch {
             return new X509Certificate2Collection();
         } finally {
-            CryptographyUtils.ReleaseCom(ocspConfig);
+            CryptographyUtils.ReleaseCom(ocspAdmin);
         }
     }
     /// <summary>
@@ -393,7 +393,7 @@ public class OcspResponderRevocationConfiguration {
             return;
         }
 
-        var ocspAdmin = new OCSPAdminClass();
+        IOCSPAdmin ocspAdmin = CertAdminFactory.CreateIOCSPAdmin();
         IOCSPCAConfiguration revConfig = null;
         try {
             ocspAdmin.GetConfiguration(ComputerName, true);

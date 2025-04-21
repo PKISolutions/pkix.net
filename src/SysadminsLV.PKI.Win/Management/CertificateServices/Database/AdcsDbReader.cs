@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using CERTADMINLib;
 using PKI.CertificateServices;
 using PKI.Structs;
+using SysadminsLV.PKI.Dcom.Implementations;
 using SysadminsLV.PKI.Utils;
 
 namespace SysadminsLV.PKI.Management.CertificateServices.Database;
@@ -76,7 +77,7 @@ public class AdcsDbReader : IDisposable {
                                                "CRLPublishError"
                                            };
     #endregion
-    readonly ICertView2 _caView = new CCertViewClass();
+    readonly ICertView2 _caView = CertAdminFactory.CreateICertView();
     IEnumCERTVIEWROW dbRow;
     readonly ISet<Int32> _columnIDs = new HashSet<Int32>();
     readonly IList<String> _columns = new List<String>();

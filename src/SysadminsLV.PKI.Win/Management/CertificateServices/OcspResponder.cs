@@ -6,6 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.ServiceProcess;
 using CERTADMINLib;
 using PKI.CertificateServices;
+using SysadminsLV.PKI.Dcom.Implementations;
 using SysadminsLV.PKI.Exceptions;
 using SysadminsLV.PKI.Security.AccessControl;
 using SysadminsLV.PKI.Utils;
@@ -37,7 +38,7 @@ public class OcspResponder {
     const String MSFT_MAX_NUM_OF_REQUEST_ENTRIES = "MaxNumOfRequestEntries";
     #endregion
     // readonly fields
-    readonly IOCSPAdmin _ocspAdmin = new OCSPAdminClass();
+    readonly IOCSPAdmin _ocspAdmin = CertAdminFactory.CreateIOCSPAdmin();
 
     OcspResponder(String serverName) {
         if (
@@ -212,7 +213,7 @@ public class OcspResponder {
     }
 
     Object readValue(String propertyName) {
-        var ocspAdmin = new OCSPAdminClass();
+        IOCSPAdmin ocspAdmin = CertAdminFactory.CreateIOCSPAdmin();
         try {
             ocspAdmin.GetConfiguration(ComputerName, true);
             var prop = (IOCSPProperty)ocspAdmin.OCSPServiceProperties.ItemByName[propertyName];
@@ -244,7 +245,7 @@ public class OcspResponder {
         }
     }
     T readScalarValue<T>(String propertyName) {
-        var ocspAdmin = new OCSPAdminClass();
+        IOCSPAdmin ocspAdmin = CertAdminFactory.CreateIOCSPAdmin();
         try {
             ocspAdmin.GetConfiguration(ComputerName, true);
             var prop = (IOCSPProperty)ocspAdmin.OCSPServiceProperties.ItemByName[propertyName];
@@ -262,7 +263,7 @@ public class OcspResponder {
         }
     }
     void writeValue(String propertyName, Object value) {
-        var ocspAdmin = new OCSPAdminClass();
+        IOCSPAdmin ocspAdmin = CertAdminFactory.CreateIOCSPAdmin();
         try {
             ocspAdmin.GetConfiguration(ComputerName, true);
             try {
@@ -278,7 +279,7 @@ public class OcspResponder {
         }
     }
     void deleteValue(String propertyName) {
-        var ocspAdmin = new OCSPAdminClass();
+        IOCSPAdmin ocspAdmin = CertAdminFactory.CreateIOCSPAdmin();
         try {
             ocspAdmin.GetConfiguration(ComputerName, true);
             try {
@@ -316,7 +317,7 @@ public class OcspResponder {
     ///     <strong>True</strong> if Online Responder service is up and running. Otherwise <strong>False</strong>.
     /// </returns>
     public static Boolean Ping(String computerName) {
-        var ocspAdmin = new OCSPAdminClass();
+        IOCSPAdmin ocspAdmin = CertAdminFactory.CreateIOCSPAdmin();
         try {
             ocspAdmin.Ping(computerName);
             return true;
@@ -358,7 +359,7 @@ public class OcspResponder {
     /// </summary>
     /// <returns></returns>
     public OcspResponderSecurityDescriptor GetSecurityDescriptor() {
-        var ocspAdmin = new OCSPAdminClass();
+        IOCSPAdmin ocspAdmin = CertAdminFactory.CreateIOCSPAdmin();
         try {
             var sd = new OcspResponderSecurityDescriptor(this);
             sd.SetSecurityDescriptorSddlForm(ocspAdmin.GetSecurity(ComputerName));
@@ -392,7 +393,7 @@ public class OcspResponder {
         if (caCertificate == null) {
             throw new ArgumentNullException(nameof(caCertificate));
         }
-        var ocspAdmin = new OCSPAdminClass();
+        IOCSPAdmin ocspAdmin = CertAdminFactory.CreateIOCSPAdmin();
         try {
             ocspAdmin.GetConfiguration(ComputerName, true);
             if (ocspAdmin.OCSPCAConfigurationCollection.Cast<IOCSPCAConfiguration>().Any(x => x.Identifier.Equals(name, StringComparison.CurrentCultureIgnoreCase))) {
@@ -424,7 +425,7 @@ public class OcspResponder {
         if (certificateAuthority == null) {
             throw new ArgumentNullException(nameof(certificateAuthority));
         }
-        var ocspAdmin = new OCSPAdminClass();
+        IOCSPAdmin ocspAdmin = CertAdminFactory.CreateIOCSPAdmin();
         try {
             ocspAdmin.GetConfiguration(ComputerName, true);
             if (ocspAdmin.OCSPCAConfigurationCollection.Cast<IOCSPCAConfiguration>().Any(x => x.Identifier.Equals(name, StringComparison.CurrentCultureIgnoreCase))) {
@@ -485,7 +486,7 @@ public class OcspResponder {
     /// Removes all revocation configurations on a current Online Responder server.
     /// </summary>
     public void ClearRevocationConfigurations() {
-        var ocspAdmin = new OCSPAdminClass();
+        IOCSPAdmin ocspAdmin = CertAdminFactory.CreateIOCSPAdmin();
         try {
             ocspAdmin.GetConfiguration(ComputerName, true);
             IEnumerable<String> revConfigs = ocspAdmin.OCSPCAConfigurationCollection
@@ -524,7 +525,7 @@ public class OcspResponder {
             throw new ArgumentException("Specified Online Responder is already part of this array.");
         }
 
-        var ocspAdmin = new OCSPAdminClass();
+        IOCSPAdmin ocspAdmin = CertAdminFactory.CreateIOCSPAdmin();
         try {
             // plan
             // 1. remove all configurations from target server
@@ -580,7 +581,7 @@ public class OcspResponder {
             throw new ArgumentException("Specified OCSP server is not part of current array.");
         }
 
-        var ocspAdmin = new OCSPAdminClass();
+        IOCSPAdmin ocspAdmin = CertAdminFactory.CreateIOCSPAdmin();
         try {
             // the plan is follows:
             // 1. remove all configurations from target server 
@@ -604,7 +605,7 @@ public class OcspResponder {
                 MSFT_ARRAY_MEMBERS,
                 ArrayMembers
                     .Select(x => x.ComputerName)
-                    .Except(new[] { remoteOcspInfo.ComputerName })
+                    .Except([remoteOcspInfo.ComputerName])
                     .ToArray());
         } finally {
             CryptographyUtils.ReleaseCom(ocspAdmin);
@@ -616,7 +617,7 @@ public class OcspResponder {
     /// </summary>
     /// <returns></returns>
     public OcspResponderClientRole GetMyRoles() {
-        var ocspAdmin = new OCSPAdminClass();
+        IOCSPAdmin ocspAdmin = CertAdminFactory.CreateIOCSPAdmin();
         try {
             return (OcspResponderClientRole) ocspAdmin.GetMyRoles(ComputerName);
         }

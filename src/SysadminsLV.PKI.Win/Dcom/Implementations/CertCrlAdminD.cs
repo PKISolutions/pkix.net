@@ -18,7 +18,7 @@ public class CertCrlAdminD : ICertCrlAdminD {
     }
 
     void publishCRL(AdcsCrlPublishType crlFlags, DateTime? nexUpdate = null) {
-        ICertAdmin2 certAdmin = new CCertAdminClass();
+        ICertAdmin2 certAdmin = CertAdminFactory.CreateICertAdmin();
         try {
             certAdmin.PublishCRLs(_configString, nexUpdate ?? DateTime.MinValue, (Int32)crlFlags);
         } finally {
