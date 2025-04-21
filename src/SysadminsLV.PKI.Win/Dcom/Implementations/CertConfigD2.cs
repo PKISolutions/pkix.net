@@ -9,7 +9,7 @@ namespace SysadminsLV.PKI.Dcom.Implementations;
 /// </summary>
 public static class  CertConfigD2 {
     static String getConfig(CertConfigOption option) {
-        var certConfig = new CCertConfigClass();
+        ICertConfig2 certConfig = CertCliFactory.CreateCertConfig();
         try {
             return certConfig.GetConfig((Int32)option);
         } catch {
@@ -46,7 +46,7 @@ public static class  CertConfigD2 {
     /// <inheritdoc cref="ICertConfigD.EnumConfigEntries"/>
     public static ICertConfigEntryD[] EnumConfigEntries() {
         var list = new List<ICertConfigEntryD>();
-        var certConfig = new CCertConfigClass();
+        ICertConfig2 certConfig = CertCliFactory.CreateCertConfig();
         while (certConfig.Next() >= 0) {
             list.Add(new CertConfigEntryD(certConfig));
         }
@@ -55,7 +55,7 @@ public static class  CertConfigD2 {
     }
     /// <inheritdoc cref="ICertConfigD.FindConfigEntryByCertificateName"/>
     public static ICertConfigEntryD FindConfigEntryByCertificateName(String caName) {
-        var certConfig = new CCertConfigClass();
+        ICertConfig2 certConfig = CertCliFactory.CreateCertConfig();
 
         while (certConfig.Next() >= 0) {
             try {
@@ -70,7 +70,7 @@ public static class  CertConfigD2 {
     }
     /// <inheritdoc cref="ICertConfigD.FindConfigEntryByServerName"/>
     public static ICertConfigEntryD FindConfigEntryByServerName(String computerName) {
-        var certConfig = new CCertConfigClass();
+        ICertConfig2 certConfig = CertCliFactory.CreateCertConfig();
 
         while (certConfig.Next() >= 0) {
             try {

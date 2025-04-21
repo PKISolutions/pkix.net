@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Security.Cryptography;
-using CERTCLILib;
 
 namespace SysadminsLV.PKI.Dcom.Implementations; 
 /// <summary>
@@ -27,7 +26,7 @@ public class CertPropReaderD : ICertPropReaderD {
         if (forceCertAdmin) {
             _getCaPropertyFunc = CertAdminFactory.CreateICertAdmin().GetCAProperty;
         } else {
-            _getCaPropertyFunc = new CCertRequestClass().GetCAProperty;
+            _getCaPropertyFunc = CertCliFactory.CreateCertRequest().GetCAProperty;
         }
     }
     Int32 getIntegerProperty(AdcsCAPropertyName propID, Int32 index = 0) {
