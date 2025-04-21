@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using CERTADMINLib;
+using SysadminsLV.PKI.Dcom.Implementations;
 using SysadminsLV.PKI.Exceptions;
 using SysadminsLV.PKI.Management.CertificateServices;
 using SysadminsLV.PKI.Utils;
@@ -168,7 +169,7 @@ public sealed class OcspResponderSecurityDescriptor : CommonObjectSecurity {
     ///         The target Online Responder server could not be contacted via remote registry and RPC protocol.
     ///  </exception>
     public void SetObjectSecurity() {
-        var ocspAdmin = new OCSPAdminClass();
+        IOCSPAdmin ocspAdmin = CertAdminFactory.CreateIOCSPAdmin();
         try {
             ocspAdmin.SetSecurity(ComputerName, GetSecurityDescriptorSddlForm(AccessControlSections.All));
         } catch (COMException cex) {

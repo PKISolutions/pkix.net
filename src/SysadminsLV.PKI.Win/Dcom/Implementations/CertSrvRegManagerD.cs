@@ -33,7 +33,7 @@ public class CertSrvRegManagerD : ICertRegManagerD {
     public String ActiveConfig { get; private set; }
 
     String readActiveConfig() {
-        ICertAdmin2 certAdmin = new CCertAdminClass();
+        ICertAdmin2 certAdmin = CertAdminFactory.CreateICertAdmin();
         try {
             String active = (String)certAdmin.GetConfigEntry(ComputerName, String.Empty, "Active");
             IsAccessible = true;
@@ -55,7 +55,7 @@ public class CertSrvRegManagerD : ICertRegManagerD {
             throw new ArgumentException("'entryName' parameter cannot be empty string.");
         }
 
-        ICertAdmin2 certAdmin = new CCertAdminClass();
+        ICertAdmin2 certAdmin = CertAdminFactory.CreateICertAdmin();
         try {
             return useActive
                 ? certAdmin.GetConfigEntry($"{ComputerName}\\{ActiveConfig}", node ?? String.Empty, entryName)
@@ -78,7 +78,7 @@ public class CertSrvRegManagerD : ICertRegManagerD {
             throw new ArgumentException("'entryName' parameter cannot be empty string.");
         }
 
-        ICertAdmin2 certAdmin = new CCertAdminClass();
+        ICertAdmin2 certAdmin = CertAdminFactory.CreateICertAdmin();
         try {
             return (T)(useActive
                 ? certAdmin.GetConfigEntry($"{ComputerName}\\{ActiveConfig}", node ?? String.Empty, entryName)
@@ -113,7 +113,7 @@ public class CertSrvRegManagerD : ICertRegManagerD {
             throw new ArgumentNullException(nameof(data));
         }
 
-        ICertAdmin2 certAdmin = new CCertAdminClass();
+        ICertAdmin2 certAdmin = CertAdminFactory.CreateICertAdmin();
         try {
             switch (data) {
                 case String _:
@@ -155,7 +155,7 @@ public class CertSrvRegManagerD : ICertRegManagerD {
     }
     /// <inheritdoc />
     public void DeleteConfigEntry(String entryName, String node = null) {
-        ICertAdmin2 certAdmin = new CCertAdminClass();
+        ICertAdmin2 certAdmin = CertAdminFactory.CreateICertAdmin();
         try {
             if (useActive) {
                 certAdmin.SetConfigEntry($"{ComputerName}\\{ActiveConfig}", node ?? String.Empty, entryName, null);
@@ -163,7 +163,7 @@ public class CertSrvRegManagerD : ICertRegManagerD {
                 certAdmin.SetConfigEntry(ComputerName, String.Empty, entryName, null);
             }
         } catch (Exception ex) {
-            if (!(ex is FileNotFoundException)) {
+            if (ex is not FileNotFoundException) {
                 throw;
             }
         } finally {
