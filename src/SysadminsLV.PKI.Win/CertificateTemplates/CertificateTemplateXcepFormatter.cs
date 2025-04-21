@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using Interop.CERTENROLLLib;
 using PKI.CertificateTemplates;
 using SysadminsLV.PKI.Cryptography;
+using SysadminsLV.PKI.Dcom.Implementations;
 using SysadminsLV.PKI.Utils;
 
 namespace SysadminsLV.PKI.CertificateTemplates;
@@ -276,7 +277,7 @@ class CertificateTemplateXCepFormatter : ICertificateTemplateFormatter {
 
     /// <inheritdoc />
     public CertificateTemplateCollection Deserialize(String serializedString) {
-        var policy = new CX509EnrollmentPolicyWebService();
+        IX509EnrollmentPolicyServer policy = CertEnrollFactory.CreateX509EnrollmentPolicyWebService();
         var retValue = new CertificateTemplateCollection();
         try {
             policy.InitializeImport(Encoding.UTF8.GetBytes(serializedString));

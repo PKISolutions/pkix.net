@@ -6,6 +6,7 @@ using System.Security;
 using Interop.CERTENROLLLib;
 using PKI.CertificateTemplates;
 using SysadminsLV.PKI.CertificateTemplates;
+using SysadminsLV.PKI.Dcom.Implementations;
 using SysadminsLV.PKI.Exceptions;
 using SysadminsLV.PKI.Utils;
 
@@ -15,7 +16,7 @@ namespace PKI.Enrollment.Policy;
 /// </summary>
 public class PolicyServerClient {
     Boolean registered;
-    CX509EnrollmentPolicyWebService policy;
+    IX509EnrollmentPolicyServer policy;
     String uName, name;
     SecureString uPassword;
     Int32 priority;
@@ -36,8 +37,8 @@ public class PolicyServerClient {
     /// <param name="userContext">Specifies whether the policy is intended for user or computer context.</param>
     /// <param name="authentication">Specifies the authentication type used for the policy server.</param>
     /// <param name="userName">
-    /// Specifies the user name to authenticate in enrollment policy server.
-    /// <para>If the authentication type is set to <strong>ClientCertificate</strong>, this parameter must contains
+    /// Specifies the username to authenticate in enrollment policy server.
+    /// <para>If the authentication type is set to <strong>ClientCertificate</strong>, this parameter must contain
     /// authentication certificate's thumbprint.</para>
     /// <para>This parameter must be omitted when <strong>Kerberos</strong> authentication is used.</para>
     /// </param>
@@ -173,7 +174,7 @@ public class PolicyServerClient {
     void set_property(String propName, Object propValue) {
         if (FromPolicy) { return; }
         if (propValue == null) { return; }
-        CX509PolicyServerListManager serverManager = new CX509PolicyServerListManager();
+        IX509PolicyServerListManager serverManager = CertEnrollFactory.CreateX509PolicyServerListManager();
         X509CertificateEnrollmentContext context = UserContext
                                                        ? X509CertificateEnrollmentContext.ContextUser
                                                        : X509CertificateEnrollmentContext.ContextMachine;
@@ -227,7 +228,7 @@ public class PolicyServerClient {
         if (String.IsNullOrEmpty(URL.AbsoluteUri)) { throw new UninitializedObjectException(); }
         if (!String.IsNullOrEmpty(userName)) { uName = userName; }
         if (password != null) { uPassword = password; }
-        policy = new CX509EnrollmentPolicyWebService();
+        policy = CertEnrollFactory.CreateX509EnrollmentPolicyWebService();
         try {
             if (!String.IsNullOrEmpty(uName)) {
                 switch (Authentication) {
@@ -261,7 +262,7 @@ public class PolicyServerClient {
     ///  </exception>
     public void Register() {
         if (URL == null) { throw new UninitializedObjectException(); }
-        CX509EnrollmentHelper urlClass = new CX509EnrollmentHelper();
+        IX509EnrollmentHelper urlClass = CertEnrollFactory.CreateX509EnrollmentHelper();
         urlClass.Initialize(UserContext
             ? X509CertificateEnrollmentContext.ContextUser
             : X509CertificateEnrollmentContext.ContextMachine);
@@ -318,7 +319,7 @@ public class PolicyServerClient {
     public void Unregister() {
         if (URL == null) { throw new UninitializedObjectException(); }
         if (!registered) { throw new InvalidOperationException("The current CEP object is not registered."); }
-        CX509PolicyServerUrl urlClass = new CX509PolicyServerUrl();
+        IX509PolicyServerUrl urlClass = CertEnrollFactory.CreateX509PolicyServerUrl();
         urlClass.Initialize(UserContext
             ? X509CertificateEnrollmentContext.ContextUser
             : X509CertificateEnrollmentContext.ContextMachine);
@@ -355,9 +356,9 @@ public class PolicyServerClient {
     /// Sets the credential used to contact the certificate enrollment policy (CEP) server
     /// </summary>
     /// <param name="userName">
-    ///        Specifies the user name to authenticate in enrollment policy server.
+    ///        Specifies the username to authenticate in enrollment policy server.
     ///        <para>
-    ///            If the authentication type is set to <strong>ClientCertificate</strong>, this parameter must contains
+    ///            If the authentication type is set to <strong>ClientCertificate</strong>, this parameter must contain
     ///            authentication certificate's thumbprint.
     ///        </para>
     /// <para>This parameter must be omitted when <strong>Kerberos</strong> authentication is used.</para>

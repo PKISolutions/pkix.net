@@ -51,8 +51,8 @@ public sealed class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
         SubjectNameFlags = template.GetEnum<CertificateTemplateNameFlags>(EnrollmentTemplateProperty.TemplatePropSubjectNameFlags);
         EnrollmentFlags = template.GetEnum<CertificateTemplateEnrollmentFlags>(EnrollmentTemplateProperty.TemplatePropEnrollmentFlags);
         RASignatureCount = template.GetInt32(EnrollmentTemplateProperty.TemplatePropRASignatureCount);
-        _raAppPolicies.AddRange(template.GetScalarValue<IObjectIds>(EnrollmentTemplateProperty.TemplatePropRAEKUs, new CObjectIdsClass()).Cast<IObjectId>().Select(x => x.Value));
-        _raCertPolicies.AddRange(template.GetScalarValue<IObjectIds>(EnrollmentTemplateProperty.TemplatePropRACertificatePolicies, new CObjectIdsClass()).Cast<IObjectId>().Select(x => x.Value));
+        _raAppPolicies.AddRange(template.GetScalarValue<IObjectIds>(EnrollmentTemplateProperty.TemplatePropRAEKUs, CertEnrollFactory.CreateObjectIds()).Cast<IObjectId>().Select(x => x.Value));
+        _raCertPolicies.AddRange(template.GetScalarValue<IObjectIds>(EnrollmentTemplateProperty.TemplatePropRACertificatePolicies, CertEnrollFactory.CreateObjectIds()).Cast<IObjectId>().Select(x => x.Value));
         CryptPrivateKeyFlags = template.GetEnum<PrivateKeyFlags>(EnrollmentTemplateProperty.TemplatePropPrivateKeyFlags);
         CryptKeySpec = template.GetEnum<X509KeySpecFlags>(EnrollmentTemplateProperty.TemplatePropKeySpec);
         CryptSymmetricKeyLength = template.GetInt32(EnrollmentTemplateProperty.TemplatePropSymmetricKeyLength);
@@ -64,8 +64,8 @@ public sealed class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
         CryptPrivateKeySDDL = template.GetScalarValue<String>(EnrollmentTemplateProperty.TemplatePropKeySecurityDescriptor);
         _cryptCspList.AddRange(template.GetCollectionValue<String>(EnrollmentTemplateProperty.TemplatePropCryptoProviders));
         _supersededTemplates.AddRange(template.GetCollectionValue<String>(EnrollmentTemplateProperty.TemplatePropSupersede));
-        _eku.AddRange(template.GetScalarValue<IObjectIds>(EnrollmentTemplateProperty.TemplatePropEKUs, new CObjectIdsClass()).Cast<IObjectId>().Select(x => x.Value));
-        foreach (IObjectId policyOid in template.GetScalarValue<IObjectIds>(EnrollmentTemplateProperty.TemplatePropCertificatePolicies, new CObjectIdsClass())) {
+        _eku.AddRange(template.GetScalarValue<IObjectIds>(EnrollmentTemplateProperty.TemplatePropEKUs, CertEnrollFactory.CreateObjectIds()).Cast<IObjectId>().Select(x => x.Value));
+        foreach (IObjectId policyOid in template.GetScalarValue<IObjectIds>(EnrollmentTemplateProperty.TemplatePropCertificatePolicies, CertEnrollFactory.CreateObjectIds())) {
             var certPolicy = new CertificateTemplateCertificatePolicy(policyOid.Value);
             var oid2 = new Oid2(policyOid.Value, OidGroup.Policy, true);
             try {
@@ -81,13 +81,13 @@ public sealed class CertEnrollCertificateTemplate : IAdcsCertificateTemplate {
 
             switch (extension.ObjectId.Value) {
                 case X509ExtensionOid.BasicConstraints:
-                    var bc = new CX509ExtensionBasicConstraintsClass();
+                    IX509ExtensionBasicConstraints bc = CertEnrollFactory.CreateX509ExtensionBasicConstraints();
                     bc.InitializeDecode(EncodingType.XCN_CRYPT_STRING_BASE64, extension.RawData[EncodingType.XCN_CRYPT_STRING_BASE64]);
                     ExtensionBasicConstraintsPathLength = bc.PathLenConstraint;
                     CryptographyUtils.ReleaseCom(bc);
                     break;
                 case X509ExtensionOid.KeyUsage:
-                    var ku = new CX509ExtensionKeyUsageClass();
+                    IX509ExtensionKeyUsage ku = CertEnrollFactory.CreateX509ExtensionKeyUsage();
                     ku.InitializeDecode(EncodingType.XCN_CRYPT_STRING_BASE64, extension.RawData[EncodingType.XCN_CRYPT_STRING_BASE64]);
                     ExtensionKeyUsages = (X509KeyUsageFlags)ku.KeyUsage;
                     CryptographyUtils.ReleaseCom(ku);

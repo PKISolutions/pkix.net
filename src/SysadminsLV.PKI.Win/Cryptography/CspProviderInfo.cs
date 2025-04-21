@@ -27,7 +27,8 @@ public class CspProviderInfo {
         KeySpec = (X509KeySpecFlags)csp.KeySpec;
         Version = csp.Version;
         IsValid = csp.Valid;
-        _algorithms.AddRange(from ICspAlgorithm alg in csp.CspAlgorithms select new CspProviderAlgorithmInfo(alg));
+        _algorithms.AddRange(csp.CspAlgorithms.Cast<ICspAlgorithm>()
+            .Select(alg => new CspProviderAlgorithmInfo(alg)));
         CryptographyUtils.ReleaseCom(csp);
     }
 
