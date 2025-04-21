@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Interop.CERTENROLLLib;
+using SysadminsLV.PKI.Dcom.Implementations;
 using SysadminsLV.PKI.Utils;
 
 namespace SysadminsLV.PKI.Cryptography;
@@ -17,10 +18,11 @@ public class CspProviderInfoCollection : BasicCollection<CspProviderInfo> {
     /// </exception>
     /// <returns>A collection of registered providers.</returns>
     public static CspProviderInfoCollection GetProviderInfo() {
-        var providers = new CCspInformations();
+        ICspInformations providers = CertEnrollFactory.CreateCspInformations();
         providers.AddAvailableCsps();
         var retValue = new CspProviderInfoCollection();
-        retValue.AddRange((from ICspInformation csp in providers select new CspProviderInfo(csp)).ToArray());
+        retValue.AddRange(providers.Cast<ICspInformation>()
+            .Select(csp => new CspProviderInfo(csp)).ToArray());
         CryptographyUtils.ReleaseCom(providers);
         return retValue;
     }
@@ -34,7 +36,7 @@ public class CspProviderInfoCollection : BasicCollection<CspProviderInfo> {
     /// </exception>
     /// <returns>Specified provider information. Method returns null if provider is not found.</returns>
     public static CspProviderInfo GetProviderInfo(String name) {
-        var providers = new CCspInformations();
+        ICspInformations providers = CertEnrollFactory.CreateCspInformations();
         providers.AddAvailableCsps();
         try {
             ICspInformation provider = providers.ItemByName[name];

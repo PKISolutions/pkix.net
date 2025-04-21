@@ -4,6 +4,7 @@ using System.Security.Cryptography.X509Certificates;
 using Interop.CERTENROLLLib;
 using SysadminsLV.Asn1Parser.Universal;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
+using SysadminsLV.PKI.Dcom.Implementations;
 using SysadminsLV.PKI.Utils;
 
 namespace SysadminsLV.PKI.Cryptography;
@@ -12,7 +13,7 @@ namespace SysadminsLV.PKI.Cryptography;
 /// Represents a managed X.509 private key generator.
 /// </summary>
 public class X509PrivateKeyBuilder : IKeyStorageInfo, IDisposable {
-    readonly IX509PrivateKey _keyGen = new CX509PrivateKeyClass();
+    readonly IX509PrivateKey _keyGen = CertEnrollFactory.CreateX509PrivateKey();
 
     /// <summary>
     /// Gets or sets a legacy cryptographic service provider (CSP) or CNG key storage provider (KSP).
@@ -56,7 +57,7 @@ public class X509PrivateKeyBuilder : IKeyStorageInfo, IDisposable {
     public Oid PublicKeyAlgorithm {
         get => new(_keyGen.Algorithm.Value);
         set {
-            var coid = new CObjectIdClass();
+            CObjectId coid = CertEnrollFactory.CreateObjectId();
             coid.InitializeFromValue(value.Value);
             _keyGen.Algorithm = coid;
         }
@@ -90,7 +91,7 @@ public class X509PrivateKeyBuilder : IKeyStorageInfo, IDisposable {
 
     }
     /// <summary>
-    /// Gets or sets private key protection options when the key is accessded.
+    /// Gets or sets private key protection options when the key is accessed.
     /// </summary>
     public X509PrivateKeyProtection KeyProtection {
         get => _keyGen.KeyProtection;
@@ -119,7 +120,7 @@ public class X509PrivateKeyBuilder : IKeyStorageInfo, IDisposable {
         Oid algorithm = PublicKeyAlgorithm.FriendlyName.StartsWith("EC", StringComparison.OrdinalIgnoreCase)
             ? new Oid(AlgorithmOid.ECC)
             : PublicKeyAlgorithm;
-        CX509PublicKey pubKey = _keyGen.ExportPublicKey();
+        IX509PublicKey pubKey = _keyGen.ExportPublicKey();
         var key = new AsnEncodedData(algorithm, Convert.FromBase64String(pubKey.EncodedKey));
         Byte[] paramBytes;
         try {

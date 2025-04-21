@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Interop.CERTENROLLLib;
 using PKI.Enrollment.Policy;
+using SysadminsLV.PKI.Dcom.Implementations;
 using SysadminsLV.PKI.Utils;
 
 namespace PKI.Enrollment;
@@ -30,7 +31,7 @@ public class Autoenrollment {
             ? X509CertificateEnrollmentContext.ContextUser 
             : X509CertificateEnrollmentContext.ContextMachine;
         foreach (PolicyServerUrlFlags flag in new []{PolicyServerUrlFlags.PsfLocationGroupPolicy, PolicyServerUrlFlags.PsfLocationRegistry}) {
-            var serverManager = new CX509PolicyServerListManager();
+            var serverManager = CertEnrollFactory.CreateX509PolicyServerListManager();
             try {
                 serverManager.Initialize(context, flag);
                 IEnumerator enumerator = serverManager.GetEnumerator();
