@@ -21,7 +21,6 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="..\src\SysadminsLV.PKI.Win\bin\Release\net472\Interop.*" target="lib/net472"/>
     <file src="..\src\SysadminsLV.PKI.Win\bin\Release\net472\SysadminsLV.PKI.Win.*" target="lib/net472"/>
   </files>
 </package>
