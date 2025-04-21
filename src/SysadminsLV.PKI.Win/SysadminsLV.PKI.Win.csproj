@@ -32,8 +32,8 @@
     </Reference>
     <Reference Include="Interop.CERTCLILib">
       <HintPath>_ExternalReferences\Interop.CERTCLILib.dll</HintPath>
-      <Private>True</Private>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <Private>False</Private>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Interop.CERTENROLLLib">
       <HintPath>_ExternalReferences\Interop.CERTENROLLLib.dll</HintPath>
