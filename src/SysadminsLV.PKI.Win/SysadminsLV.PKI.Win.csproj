@@ -5,10 +5,10 @@
     <Title>SysadminsLV.PKI.Win</Title>
     <Version>4.3.0</Version>
     <Authors>Vadims Podans</Authors>
-    <Company>PKI Solutions LLC</Company>
+    <Company>Sysadmins LV</Company>
     <Description>.NET Microsoft ADCS managed API</Description>
     <Product>PowerShell PKI Module</Product>
-    <Copyright>Copyright © 2012-2025, PKI Solutions</Copyright>
+    <Copyright>Copyright © 2012-2025, Sysadmins LV</Copyright>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <PackageLicenseExpression>MS-PL</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
