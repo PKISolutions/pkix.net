@@ -5,7 +5,7 @@
     <Title>.NET OCSP Client</Title>
     <Version>4.3.0</Version>
     <Authors>Vadims Podans</Authors>
-    <Company>PKI Solutions LLC</Company>
+    <Company>Sysadmins LV</Company>
     <Description>Implements OCSP client to use in .NET</Description>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <PackageLicenseExpression>MS-PL</PackageLicenseExpression>
