@@ -5,7 +5,7 @@
     <Title>Extended .NET Cryptography framework</Title>
     <Version>4.3.0</Version>
     <Authors>Vadims Podans</Authors>
-    <Company>PKI Solutions LLC</Company>
+    <Company>Sysadmins LV</Company>
     <Description>Provides additional classes and functionality to extend native .NET functionality.</Description>
     <PackageLicenseExpression>MS-PL</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
