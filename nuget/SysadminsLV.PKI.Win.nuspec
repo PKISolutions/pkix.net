@@ -6,11 +6,11 @@
     <authors>Vadims Podans</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">MS-PL</license>
-    <repository type="git" url="https://github.com/PKISolutions/pkix.net" />
-    <projectUrl>https://github.com/PKISolutions/pkix.net</projectUrl>
+    <repository type="git" url="https://github.com/Crypt32/pkix.net" />
+    <projectUrl>https://github.com/Crypt32/pkix.net</projectUrl>
     <description>This package is a framework library to Microsoft Active Directory Certificate Services in .NET.</description>
     <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
-    <copyright>Copyright © PKI Solutions LLC 2019-$year$</copyright>
+    <copyright>Copyright © Sysadmins LV 2019-$year$</copyright>
     <tags>X509 PKI PKIX ADCS</tags>
     <dependencies>
       <group targetFramework="net472">
