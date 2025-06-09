@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/Crypt32/pkix.net</projectUrl>
     <description>This package provides a managed .NET OCSP client.</description>
     <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
-    <copyright>Copyright © Crypt32 2019-$year$</copyright>
+    <copyright>Copyright © Sysadmins LV 2019-$year$</copyright>
     <tags>X509 PKI PKIX OCSP</tags>
     <dependencies>
       <group targetFramework="net472">
