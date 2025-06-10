@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 using CERTADMINLib;
 using PKI.CertificateServices;
-using PKI.CertificateTemplates;
 using PKI.Structs;
-using SysadminsLV.PKI.Cryptography.X509Certificates;
 using SysadminsLV.PKI.Dcom.Implementations;
 using SysadminsLV.PKI.Utils;
 
@@ -323,7 +319,7 @@ public class AdcsDbReader : IDisposable {
                 Table = table
             };
             enumColumnView(dbRow, row);
-            postProcessRow(row);
+            row.Properties.PostProcess();
             yield return row;
         }
         dbRow.Reset();
@@ -344,43 +340,6 @@ public class AdcsDbReader : IDisposable {
             row.Properties.Add(colName, colVal);
         }
         CryptographyUtils.ReleaseCom(dbColumn);
-    }
-    static void postProcessRow(AdcsDbRow row) {
-        setPropertyFlags<AdcsDbRequestType>(row, AdcsDbColumnName.Request_Request_Type);
-        setPropertyFlags<AdcsDbRequestFlags>(row, AdcsDbColumnName.Request_Request_Flags);
-        setPropertyFlags<CertificateTemplateEnrollmentFlags>(row, AdcsDbColumnName.Enrollment_Flags);
-        setPropertyFlags<CertificateTemplateFlags>(row, AdcsDbColumnName.General_Flags);
-        setPropertyFlags<PrivateKeyFlags>(row, AdcsDbColumnName.PrivateKey_Flags);
-        setPropertyFlags<AdcsDbExtensionFlags>(row, AdcsDbColumnName.Extension_Flags);
-        setPropertyFlags<AdcsDbCrlPublishFlags>(row, AdcsDbColumnName.CRL_Publish_Flags);
-        
-        if (row.Properties.TryGetValue(AdcsDbColumnName.Certificate_Template, out Object templateName) && !String.IsNullOrWhiteSpace((String)templateName)) {
-            row.Properties[AdcsDbColumnName.Certificate_Template + "Oid"] = new Oid((String)templateName);
-        }
-        if (row.Table == AdcsDbTableName.Extension) {
-            if (row.Properties.TryGetValue(AdcsDbColumnName.Extension_Name, out Object name)) {
-                // add extension name as OID.
-                row.Properties.Add(AdcsDbColumnName.Extension_Name + "Oid", new Oid((String)name));
-                if (row.Properties.TryGetValue(AdcsDbColumnName.Extension_Flags, out Object rawFlags) && row.Properties.TryGetValue(AdcsDbColumnName.Extension_Raw_Value, out Object value)) {
-                    // add X509Extension object to the row.
-                    AdcsDbExtensionFlags flags = (AdcsDbExtensionFlags)rawFlags;
-                    Boolean critical = (flags & AdcsDbExtensionFlags.Critical) != 0;
-                    var baseExtension = new X509Extension((String)name, Convert.FromBase64String((String)value), critical);
-                    try {
-                        row.Properties["ExtensionObject"] = baseExtension.ConvertExtension();
-                    } catch {
-                        row.Properties["ExtensionObject"] = baseExtension;
-                    }
-                }
-            }
-        }
-    }
-    
-    static void setPropertyFlags<TEnum>(AdcsDbRow row, String columnName) where TEnum : Enum {
-        const String propSuffix = "Enum";
-        if (row.Properties.TryGetValue(columnName, out Object columnValue)) {
-            row.Properties.Add(columnName + propSuffix, (TEnum)columnValue);
-        }
     }
 
     /// <summary>
