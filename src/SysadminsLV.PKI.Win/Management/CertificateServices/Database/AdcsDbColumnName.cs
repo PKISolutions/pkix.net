@@ -1,4 +1,5 @@
 ﻿using System;
+// ReSharper disable InconsistentNaming
 
 namespace SysadminsLV.PKI.Management.CertificateServices.Database;
 static class AdcsDbColumnName {
