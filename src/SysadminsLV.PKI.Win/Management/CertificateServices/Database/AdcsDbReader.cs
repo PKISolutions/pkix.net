@@ -18,65 +18,65 @@ namespace SysadminsLV.PKI.Management.CertificateServices.Database;
 public class AdcsDbReader : IDisposable {
     #region predefined columns per view table
     static readonly String[] _revokedColumns = [
-        "RequestID",
-        "Request.RevokedWhen",
-        "Request.RevokedReason",
-        "CommonName",
-        "SerialNumber",
-        "CertificateTemplate"
+        AdcsDbColumnName.Request_ID,
+        AdcsDbColumnName.Request_Revoked_When,
+        AdcsDbColumnName.Request_Revoked_Reason,
+        AdcsDbColumnName.Common_Name,
+        AdcsDbColumnName.Serial_Number,
+        AdcsDbColumnName.Certificate_Template
     ];
     static readonly String[] _issuedColumns = [
-        "RequestID",
-        "Request.RequesterName",
-        "CommonName",
-        "NotBefore",
-        "NotAfter",
-        "SerialNumber",
-        "CertificateTemplate"
+        AdcsDbColumnName.Request_ID,
+        AdcsDbColumnName.Request_Requester_Name,
+        AdcsDbColumnName.Common_Name,
+        AdcsDbColumnName.Not_Before,
+        AdcsDbColumnName.Not_After,
+        AdcsDbColumnName.Serial_Number,
+        AdcsDbColumnName.Certificate_Template
     ];
     static readonly String[] _pendingColumns = [
-        "RequestID",
-        "Request.RequesterName",
-        "Request.SubmittedWhen",
-        "Request.CommonName",
-        "CertificateTemplate"
+        AdcsDbColumnName.Request_ID,
+        AdcsDbColumnName.Request_Requester_Name,
+        AdcsDbColumnName.Request_Submitted_When,
+        AdcsDbColumnName.Request_Common_Name,
+        AdcsDbColumnName.Certificate_Template
     ];
     static readonly String[] _failedColumns = [
-        "RequestID",
-        "Request.StatusCode",
-        "Request.DispositionMessage",
-        "Request.RequesterName",
-        "Request.SubmittedWhen",
-        "Request.CommonName",
-        "CertificateTemplate"
+        AdcsDbColumnName.Request_ID,
+        AdcsDbColumnName.Request_Status_Code,
+        AdcsDbColumnName.Request_Disposition_Message,
+        AdcsDbColumnName.Request_Requester_Name,
+        AdcsDbColumnName.Request_Submitted_When,
+        AdcsDbColumnName.Request_Common_Name,
+        AdcsDbColumnName.Certificate_Template
     ];
     static readonly String[] _requestColumns = [
-        "RequestID",
-        "Request.StatusCode",
-        "Request.DispositionMessage",
-        "Request.RequesterName",
-        "Request.SubmittedWhen",
-        "Request.CommonName",
-        "CertificateTemplate"
+        AdcsDbColumnName.Request_ID,
+        AdcsDbColumnName.Request_Status_Code,
+        AdcsDbColumnName.Request_Disposition_Message,
+        AdcsDbColumnName.Request_Requester_Name,
+        AdcsDbColumnName.Request_Submitted_When,
+        AdcsDbColumnName.Request_Common_Name,
+        AdcsDbColumnName.Certificate_Template
     ];
     static readonly String[] _extensionColumns = [
-        "ExtensionRequestId",
-        "ExtensionName",
-        "ExtensionFlags",
-        "ExtensionRawValue"
+        AdcsDbColumnName.Extension_Request_ID,
+        AdcsDbColumnName.Extension_Name,
+        AdcsDbColumnName.Extension_Flags,
+        AdcsDbColumnName.Extension_Raw_Value
     ];
     static readonly String[] _attributeColumns = [
-        "AttributeRequestId",
-        "AttributeName",
-        "AttributeValue"
+        AdcsDbColumnName.Attribute_Request_ID,
+        AdcsDbColumnName.Attribute_Name,
+        AdcsDbColumnName.Attribute_Value
     ];
     static readonly String[] _crlColumns = [
-        "CRLRowId",
-        "CRLNumber",
-        "CRLThisUpdate",
-        "CRLNextUpdate",
-        "CRLPublishStatusCode",
-        "CRLPublishError"
+        AdcsDbColumnName.CRL_Row_ID,
+        AdcsDbColumnName.CRL_Number,
+        AdcsDbColumnName.CRL_This_Update,
+        AdcsDbColumnName.CRL_Next_Update,
+        AdcsDbColumnName.CRL_Publish_Status_Code,
+        AdcsDbColumnName.CRL_Publish_Error
     ];
     #endregion
     readonly ICertView2 _caView = CertAdminFactory.CreateICertView();
@@ -232,7 +232,7 @@ public class AdcsDbReader : IDisposable {
     public AdcsDbViewTableName ViewTable { get; }
 
     void mapTables() {
-        Int32 RColumn = _caView.GetColumnIndex(0, "Disposition");
+        Int32 RColumn = _caView.GetColumnIndex(0, AdcsDbColumnName.Request_Disposition);
         // map view table to DB table
         String[] columns;
         switch (ViewTable) {
@@ -297,7 +297,7 @@ public class AdcsDbReader : IDisposable {
         } else {
             columnCount = _columnIDs.Count;
             _caView.SetResultColumnCount(columnCount);
-            foreach (var columnID in _columnIDs) {
+            foreach (Int32 columnID in _columnIDs) {
                 _caView.SetResultColumn(columnID);
             }
         }
@@ -333,10 +333,10 @@ public class AdcsDbReader : IDisposable {
             String colName = dbColumn.GetName();
             Object colVal = dbColumn.GetValue(CertAdmConstants.CV_OUT_BASE64);
             switch (colName) {
-                case "RequestID":
-                case "ExtensionRequestId":
-                case "AttributeRequestId":
-                case "CRLRowId":
+                case AdcsDbColumnName.Request_ID:
+                case AdcsDbColumnName.Extension_Request_ID:
+                case AdcsDbColumnName.Attribute_Request_ID:
+                case AdcsDbColumnName.CRL_Row_ID:
                     row.RowId = (Int32)colVal;
                     break;
             }
@@ -345,14 +345,14 @@ public class AdcsDbReader : IDisposable {
         CryptographyUtils.ReleaseCom(dbColumn);
     }
     static void postProcessRow(AdcsDbRow row) {
-        if (row.Properties.ContainsKey("CertificateTemplate") && !String.IsNullOrWhiteSpace(row.Properties["CertificateTemplate"]?.ToString())) {
-            row.Properties.Add("CertificateTemplateOid", new Oid((String)row.Properties["CertificateTemplate"]));
+        if (row.Properties.TryGetValue(AdcsDbColumnName.Certificate_Template, out Object templateName) && !String.IsNullOrWhiteSpace((String)templateName)) {
+            row.Properties.Add(AdcsDbColumnName.Certificate_Template + "Oid", new Oid((String)templateName));
         }
         if (row.Table == AdcsDbTableName.Extension) {
-            if (row.Properties.TryGetValue("ExtensionName", out Object name)) {
+            if (row.Properties.TryGetValue(AdcsDbColumnName.Extension_Name, out Object name)) {
                 // add extension name as OID.
-                row.Properties.Add("ExtensionNameOid", new Oid((String)name));
-                if (row.Properties.TryGetValue("ExtensionFlags", out Object rawFlags) && row.Properties.TryGetValue("ExtensionRawValue", out Object value)) {
+                row.Properties.Add(AdcsDbColumnName.Extension_Name + "Oid", new Oid((String)name));
+                if (row.Properties.TryGetValue(AdcsDbColumnName.Extension_Flags, out Object rawFlags) && row.Properties.TryGetValue(AdcsDbColumnName.Extension_Raw_Value, out Object value)) {
                     // add X509Extension object to the row.
                     RequestExtensionFlags flags = (RequestExtensionFlags)rawFlags;
                     Boolean critical = (flags & RequestExtensionFlags.Critical) != 0;
@@ -473,12 +473,12 @@ public class AdcsDbReader : IDisposable {
         }
     }
     /// <summary>
-    /// Gets ADCS database schema for specified table. Table name is speicifed in <see cref="ViewTable"/> property.
+    /// Gets ADCS database schema for specified table. Table name is specified in <see cref="ViewTable"/> property.
     /// </summary>
     /// <returns>An array of table columns and their schema details.</returns>
     public AdcsDbColumnSchema[] GetTableSchema() {
         CCertView schemaView = new CCertView();
-        List<AdcsDbColumnSchema> items = new List<AdcsDbColumnSchema>();
+        List<AdcsDbColumnSchema> items = [];
         schemaView.OpenConnection(ConfigString);
         schemaView.SetTable((Int32)table);
         IEnumCERTVIEWCOLUMN columns = schemaView.EnumCertViewColumn(0);
