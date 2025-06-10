@@ -16,7 +16,7 @@ public enum AdcsDbTableName {
     /// </summary>
     Attribute = 0x4000,    // 16384
     /// <summary>
-    /// Contains Certificate Revocation List (CRL) issued by the CA during it's lifetime.
+    /// Contains Certificate Revocation List (CRL) issued by the CA during its lifetime.
     /// </summary>
     CRL       = 0x5000    // 20480
 }

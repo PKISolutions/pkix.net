@@ -456,14 +456,7 @@ public class AdcsDbReader : IDisposable {
         schemaView.SetTable((Int32)table);
         IEnumCERTVIEWCOLUMN columns = schemaView.EnumCertViewColumn(0);
         while (columns.Next() != -1) {
-            var column = new AdcsDbColumnSchema {
-                Name = columns.GetName(),
-                DisplayName = columns.GetDisplayName(),
-                DataType = (AdcsDbColumnDataType)columns.GetType(),
-                MaxLength = columns.GetMaxLength(),
-                IsIndexed = Convert.ToBoolean(columns.IsIndexed())
-            };
-            items.Add(column);
+            items.Add(new AdcsDbColumnSchema(columns));
         }
         CryptographyUtils.ReleaseCom(columns, schemaView);
         return items.ToArray();

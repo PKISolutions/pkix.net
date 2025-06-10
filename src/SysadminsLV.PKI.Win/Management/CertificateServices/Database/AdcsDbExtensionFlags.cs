@@ -2,7 +2,7 @@
 
 namespace SysadminsLV.PKI.Management.CertificateServices.Database;
 /// <summary>
-/// Contains enumeration values that represent extension flags.
+/// Contains enumeration values that represent extension row flags in CA database.
 /// This enumeration has a <see cref="FlagsAttribute"/> attribute that allows a bitwise combination of its member values.
 /// </summary>
 [Flags]

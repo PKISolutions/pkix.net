@@ -105,5 +105,4 @@ static class AdcsDbColumnName {
     public const String CRL_Publish_Status_Code              = "CRLPublishStatusCode";
     public const String CRL_Publish_Error                    = "CRLPublishError";
     public const String CRL_Raw_CRL                          = "CRLRawCRL";
-
 }
