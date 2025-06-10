@@ -170,8 +170,7 @@ public sealed class CertTemplateSecurityDescriptor : CommonObjectSecurity {
     /// <inheritdoc />
     public override Type AuditRuleType => typeof(CertTemplateAuditRule);
 
-    ActiveDirectorySecurity toAdSecurity(DirectoryEntry entry) {
-        ActiveDirectorySecurity dsSecurity = entry.ObjectSecurity;
+    void copyDacl(ActiveDirectorySecurity dsSecurity) {
         // clear all existing ACEs
         dsSecurity
             .GetAccessRules(true, true, typeof(NTAccount))
@@ -179,7 +178,7 @@ public sealed class CertTemplateSecurityDescriptor : CommonObjectSecurity {
             .Select(x => x.IdentityReference)
             .Distinct()
             .ToList()
-            .ForEach(x => dsSecurity.PurgeAccessRules(x));
+            .ForEach(dsSecurity.PurgeAccessRules);
         // iterate over local ACEs and translate to DS ACL
         foreach (CertTemplateAccessRule localAce in GetAccessRules(true, false, typeof(NTAccount))) {
             CertTemplateRights localRights = localAce.Rights;
@@ -235,6 +234,27 @@ public sealed class CertTemplateSecurityDescriptor : CommonObjectSecurity {
                 dsSecurity.AddAccessRule(ace);
             }
         }
+    }
+    Boolean copyOwner(ActiveDirectorySecurity dsSecurity) {
+        IdentityReference myOwner = GetOwner(typeof(SecurityIdentifier));
+        if (myOwner.Value != dsSecurity.GetOwner(typeof(SecurityIdentifier)).Value) {
+            dsSecurity.SetOwner(myOwner);
+            
+            return true;
+        }
+        
+        return false;
+    }
+    ActiveDirectorySecurity toAdSecurity(DirectoryEntry entry) {
+        ActiveDirectorySecurity dsSecurity = entry.ObjectSecurity;
+        // copy DACL
+        entry.Options.SecurityMasks = SecurityMasks.Dacl;
+        copyDacl(dsSecurity);
+        // check if owner is changed, so we need to adjust security masks.
+        if (copyOwner(dsSecurity)) {
+            entry.Options.SecurityMasks |= SecurityMasks.Owner;
+        }
+        
         return dsSecurity;
     }
 
