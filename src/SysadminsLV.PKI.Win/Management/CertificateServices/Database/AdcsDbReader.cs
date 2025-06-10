@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using CERTADMINLib;
 using PKI.CertificateServices;
 using PKI.Structs;
+using SysadminsLV.PKI.Cryptography.X509Certificates;
 using SysadminsLV.PKI.Dcom.Implementations;
 using SysadminsLV.PKI.Utils;
 
@@ -316,9 +318,9 @@ public class AdcsDbReader : IDisposable {
         while (dbRow.Next() != -1 && rowsTaken < takeRows) {
             rowsTaken++;
             var row = new AdcsDbRow {
-                                        ConfigString = ConfigString,
-                                        Table = table
-                                    };
+                ConfigString = ConfigString,
+                Table = table
+            };
             enumColumnView(dbRow, row);
             postProcessRow(row);
             yield return row;
@@ -346,11 +348,25 @@ public class AdcsDbReader : IDisposable {
         if (row.Properties.ContainsKey("CertificateTemplate") && !String.IsNullOrWhiteSpace(row.Properties["CertificateTemplate"]?.ToString())) {
             row.Properties.Add("CertificateTemplateOid", new Oid((String)row.Properties["CertificateTemplate"]));
         }
-        if (row.Properties.ContainsKey("ExtensionName")) {
-            row.Properties.Add("ExtensionNameOid", new Oid((String)row.Properties["ExtensionName"]));
+        if (row.Table == AdcsDbTableName.Extension) {
+            if (row.Properties.TryGetValue("ExtensionName", out Object name)) {
+                // add extension name as OID.
+                row.Properties.Add("ExtensionNameOid", new Oid((String)name));
+                if (row.Properties.TryGetValue("ExtensionFlags", out Object rawFlags) && row.Properties.TryGetValue("ExtensionRawValue", out Object value)) {
+                    // add X509Extension object to the row.
+                    RequestExtensionFlags flags = (RequestExtensionFlags)rawFlags;
+                    Boolean critical = (flags & RequestExtensionFlags.Critical) != 0;
+                    var baseExtension = new X509Extension((String)name, Convert.FromBase64String((String)value), critical);
+                    try {
+                        row.Properties.Add("ExtensionObject", baseExtension.ConvertExtension());
+                    } catch {
+                        row.Properties.Add("ExtensionObject", baseExtension);
+                    }
+                }
+            }
         }
     }
-
+    
         
 
     /// <summary>
@@ -468,12 +484,12 @@ public class AdcsDbReader : IDisposable {
         IEnumCERTVIEWCOLUMN columns = schemaView.EnumCertViewColumn(0);
         while (columns.Next() != -1) {
             var column = new AdcsDbColumnSchema {
-                                                    Name = columns.GetName(),
-                                                    DisplayName = columns.GetDisplayName(),
-                                                    DataType = (AdcsDbColumnDataType)columns.GetType(),
-                                                    MaxLength = columns.GetMaxLength(),
-                                                    IsIndexed = Convert.ToBoolean(columns.IsIndexed())
-                                                };
+                Name = columns.GetName(),
+                DisplayName = columns.GetDisplayName(),
+                DataType = (AdcsDbColumnDataType)columns.GetType(),
+                MaxLength = columns.GetMaxLength(),
+                IsIndexed = Convert.ToBoolean(columns.IsIndexed())
+            };
             items.Add(column);
         }
         CryptographyUtils.ReleaseCom(columns, schemaView);
