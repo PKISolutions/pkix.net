@@ -1,7 +1,9 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
 using SysadminsLV.Asn1Parser;
 using SysadminsLV.Asn1Parser.Universal;
 
@@ -9,15 +11,16 @@ namespace SysadminsLV.PKI.Cryptography.X509Certificates;
 
 /// <summary>
 /// Represents a certificate policy qualifier as specified in the <see href="http://tools.ietf.org/html/rfc5280">RFC 5280</see>.
-/// <para>Certificate policy qualifier may be either an URL to a online policy repository or textual policy information.</para>
+/// <para>Certificate policy qualifier may be either a URL to an online policy repository or textual policy information.</para>
 /// </summary>
 public class X509PolicyQualifier {
     /// <summary>
-    /// Initializes a new instance of the <see cref="X509PolicyQualifier"/> class from a string that contains an URL
-    /// to a online certificate policy repository.
+    /// Initializes a new instance of the <see cref="X509PolicyQualifier"/> class from a string that contains a URL
+    /// to an online certificate policy repository.
     /// </summary>
     /// <param name="url">A string that contains URL information.</param>
     /// <exception cref="ArgumentNullException"><strong>url</strong> parameter is null.</exception>
+    /// <exception cref="UriFormatException"><strong>url</strong> parameter doesn't represent well-formed <see cref="Uri"/>.</exception>
     public X509PolicyQualifier(String url) {
         if (String.IsNullOrEmpty(url)) {
             throw new ArgumentNullException(nameof(url));
@@ -62,21 +65,21 @@ public class X509PolicyQualifier {
     /// </summary>
     public X509PolicyQualifierType Type { get; private set; }
     /// <summary>
-    /// Gets an URL to a online policy repository.
+    /// Gets a URL to an online policy repository.
     /// </summary>
-    public Uri PolicyUrl { get; private set; }
+    public Uri? PolicyUrl { get; private set; }
     /// <summary>
     /// Gets a raw value of <see cref="PolicyUrl">CPS Pointer</see> property as a string.
     /// </summary>
     public String? PolicyUrlString { get; private set; }
     /// <summary>
-    /// Gets a organization name associated with a qualifier.
+    /// Gets an organization name associated with a qualifier.
     /// </summary>
-    public String NoticeReference { get; private set; }
+    public String? NoticeReference { get; private set; }
     /// <summary>
-    /// Gets a explicit notice text which is displayed in the certificate view UI.
+    /// Gets an explicit notice text which is displayed in the certificate view UI.
     /// </summary>
-    public String NoticeText { get; private set; }
+    public String? NoticeText { get; private set; }
     /// <summary>
     /// Gets notice number in the collection of policy qualifiers. This property is set automatically
     /// when calling <see cref="X509PolicyQualifierCollection.Encode()">Encode</see> method on an
@@ -118,16 +121,16 @@ public class X509PolicyQualifier {
                 if (asn.Tag == 48) {
                     Int32 offset = asn.Offset;
                     asn.MoveNext();
-                    NoticeReference = Asn1String.DecodeAnyString(asn.GetTagRawData(), new[] { Asn1Type.IA5String, Asn1Type.VisibleString, Asn1Type.BMPString, Asn1Type.UTF8String }).Value;
+                    NoticeReference = Asn1String.DecodeAnyString(asn.GetTagRawData(), [Asn1Type.IA5String, Asn1Type.VisibleString, Asn1Type.BMPString, Asn1Type.UTF8String]).Value;
                     asn.MoveNext();
                     asn.MoveNext();
                     NoticeNumber = (Int32)((Asn1Integer)asn.GetTagObject()).Value;
                     asn.Seek(offset);
                     if (asn.MoveNextSibling()) {
-                        NoticeText = Asn1String.DecodeAnyString(asn.GetTagRawData(), new[] { Asn1Type.IA5String, Asn1Type.VisibleString, Asn1Type.BMPString, Asn1Type.UTF8String }).Value;
+                        NoticeText = Asn1String.DecodeAnyString(asn.GetTagRawData(), [Asn1Type.IA5String, Asn1Type.VisibleString, Asn1Type.BMPString, Asn1Type.UTF8String]).Value;
                     }
                 } else {
-                    NoticeText = Asn1String.DecodeAnyString(asn.GetTagRawData(), new[] { Asn1Type.IA5String, Asn1Type.VisibleString, Asn1Type.BMPString, Asn1Type.UTF8String }).Value;
+                    NoticeText = Asn1String.DecodeAnyString(asn.GetTagRawData(), [Asn1Type.IA5String, Asn1Type.VisibleString, Asn1Type.BMPString, Asn1Type.UTF8String]).Value;
                 }
                 break;
             default: m_reset(); return;
