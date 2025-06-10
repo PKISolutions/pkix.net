@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Columns>
+  <column table="Request" id="4096" data-type="65537" max-length="4" col-name="Request.RequestID" adm-name="Request_Request_ID">Request ID</column>
+  <column table="Request" id="4097" data-type="3" max-length="65536" col-name="Request.RawRequest" adm-name="Request_Raw_Request">Binary Request</column>
+  <column table="Request" id="4098" data-type="3" max-length="65536" col-name="Request.RawArchivedKey" adm-name="Request_Raw_Archived_Key">Archived Key</column>
+  <column table="Request" id="4099" data-type="4" max-length="8192" col-name="Request.KeyRecoveryHashes" adm-name="Request_Key_Recovery_Hashes">Key Recovery Agent Hashes</column>
+  <column table="Request" id="4100" data-type="3" max-length="16384" col-name="Request.RawOldCertificate" adm-name="Request_Raw_Old_Certificate">Old Certificate</column>
+  <column table="Request" id="4101" data-type="4" max-length="32768" col-name="Request.RequestAttributes" adm-name="Request_Request_Attributes">Request Attributes</column>
+  <column table="Request" id="4102" data-type="1" max-length="4" col-name="Request.RequestType" adm-name="Request_Request_Type">Request Type</column>
+  <column table="Request" id="4103" data-type="1" max-length="4" col-name="Request.RequestFlags" adm-name="Request_Request_Flags">Request Flags</column>
+  <column table="Request" id="4104" data-type="1" max-length="4" col-name="Request.StatusCode" adm-name="Request_Status_Code">Request Status Code</column>
+  <column table="Request" id="4105" data-type="65537" max-length="4" col-name="Request.Disposition" adm-name="Request_Disposition">Request Disposition</column>
+  <column table="Request" id="4106" data-type="4" max-length="8192" col-name="Request.DispositionMessage" adm-name="Request_Disposition_Message">Request Disposition Message</column>
+  <column table="Request" id="4107" data-type="65538" max-length="8" col-name="Request.SubmittedWhen" adm-name="Request_Submitted_When">Request Submission Date</column>
+  <column table="Request" id="4108" data-type="65538" max-length="8" col-name="Request.ResolvedWhen" adm-name="Request_Resolved_When">Request Resolution Date</column>
+  <column table="Request" id="4109" data-type="2" max-length="8" col-name="Request.RevokedWhen" adm-name="Request_Revoked_When">Revocation Date</column>
+  <column table="Request" id="4110" data-type="65538" max-length="8" col-name="Request.RevokedEffectiveWhen" adm-name="Request_Revocation_Date">Effective Revocation Date</column>
+  <column table="Request" id="4111" data-type="1" max-length="4" col-name="Request.RevokedReason" adm-name="Request_Revoked_Reason">Revocation Reason</column>
+  <column table="Request" id="4112" data-type="65540" max-length="2048" col-name="Request.RequesterName" adm-name="Request_Requester_Name">Requester Name</column>
+  <column table="Request" id="4113" data-type="65540" max-length="2048" col-name="Request.CallerName" adm-name="Request_Caller_Name">Caller Name</column>
+  <column table="Request" id="4114" data-type="4" max-length="8192" col-name="Request.SignerPolicies" adm-name="Request_Signer_Policies">Signer Policies</column>
+  <column table="Request" id="4115" data-type="4" max-length="8192" col-name="Request.SignerApplicationPolicies" adm-name="Request_Signer_Application_Policies">Signer Application Policies</column>
+  <column table="Request" id="4116" data-type="1" max-length="4" col-name="Request.Officer" adm-name="Request_Officer">Officer</column>
+  <column table="Request" id="4117" data-type="4" max-length="8192" col-name="Request.DistinguishedName" adm-name="Request_Distinguished_Name">Request Distinguished Name</column>
+  <column table="Request" id="4118" data-type="3" max-length="4096" col-name="Request.RawName" adm-name="Request_Raw_Name">Request Binary Name</column>
+  <column table="Request" id="4119" data-type="4" max-length="8192" col-name="Request.Country" adm-name="Request_Country">Request Country/Region</column>
+  <column table="Request" id="4120" data-type="4" max-length="8192" col-name="Request.Organization" adm-name="Request_Organization">Request Organization</column>
+  <column table="Request" id="4121" data-type="4" max-length="8192" col-name="Request.OrgUnit" adm-name="Request_Org_Unit">Request Organization Unit</column>
+  <column table="Request" id="4122" data-type="4" max-length="8192" col-name="Request.CommonName" adm-name="Request_Common_Name">Request Common Name</column>
+  <column table="Request" id="4123" data-type="4" max-length="8192" col-name="Request.Locality" adm-name="Request_Locality">Request City</column>
+  <column table="Request" id="4124" data-type="4" max-length="8192" col-name="Request.State" adm-name="Request_State">Request State</column>
+  <column table="Request" id="4125" data-type="4" max-length="8192" col-name="Request.Title" adm-name="Request_Title">Request Title</column>
+  <column table="Request" id="4126" data-type="4" max-length="8192" col-name="Request.GivenName" adm-name="Request_Given_Name">Request First Name</column>
+  <column table="Request" id="4127" data-type="4" max-length="8192" col-name="Request.Initials" adm-name="Request_Initials">Request Initials</column>
+  <column table="Request" id="4128" data-type="4" max-length="8192" col-name="Request.SurName" adm-name="Request_SurName">Request Last Name</column>
+  <column table="Request" id="4129" data-type="4" max-length="8192" col-name="Request.DomainComponent" adm-name="Request_Domain_Component">Request Domain Component</column>
+  <column table="Request" id="4130" data-type="4" max-length="8192" col-name="Request.EMail" adm-name="Request_Email">Request Email Address</column>
+  <column table="Request" id="4131" data-type="4" max-length="8192" col-name="Request.StreetAddress" adm-name="Request_Street_Address">Request Street Address</column>
+  <column table="Request" id="4132" data-type="4" max-length="8192" col-name="Request.UnstructuredName" adm-name="Request_Unstructured_Name">Request Unstructured Name</column>
+  <column table="Request" id="4133" data-type="4" max-length="8192" col-name="Request.UnstructuredAddress" adm-name="Request_Unstructured_Address">Request Unstructured Address</column>
+  <column table="Request" id="4134" data-type="4" max-length="8192" col-name="Request.DeviceSerialNumber" adm-name="Request_Device_Serial_Number">Request Device Serial Number</column>
+  <column table="Request" id="4135" data-type="3" max-length="4096" col-name="Request.AttestationChallenge" adm-name="Request_Attestation_Challenge">Attestation Challenge</column>
+  <column table="Request" id="4136" data-type="4" max-length="144" col-name="Request.EndorsementKeyHash" adm-name="Request_Endorsement_Key_Hash">Endorsement Key Hash</column>
+  <column table="Request" id="4137" data-type="4" max-length="144" col-name="Request.EndorsementCertificateHash" adm-name="Request_Endorsement_Certificate_Hash">Endorsement Certificate Hash</column>
+  <column table="Request" id="8192" data-type="65537" max-length="4" col-name="RequestID" adm-name="Request_ID">Issued Request ID</column>
+  <column table="Request" id="8193" data-type="3" max-length="16384" col-name="RawCertificate" adm-name="Raw_Certificate">Binary Certificate</column>
+  <column table="Request" id="8194" data-type="65540" max-length="128" col-name="CertificateHash" adm-name="Certificate_Hash">Certificate Hash</column>
+  <column table="Request" id="8195" data-type="65540" max-length="254" col-name="CertificateTemplate" adm-name="Certificate_Template">Certificate Template</column>
+  <column table="Request" id="8196" data-type="1" max-length="4" col-name="EnrollmentFlags" adm-name="Enrollment_Flags">Template Enrollment Flags</column>
+  <column table="Request" id="8197" data-type="1" max-length="4" col-name="GeneralFlags" adm-name="General_Flags">Template General Flags</column>
+  <column table="Request" id="8198" data-type="1" max-length="4" col-name="PrivateKeyFlags" adm-name="PrivateKey_Flags">Private Key Flags</column>
+  <column table="Request" id="8199" data-type="65540" max-length="128" col-name="SerialNumber" adm-name="Serial_Number">Serial Number</column>
+  <column table="Request" id="8200" data-type="1" max-length="4" col-name="IssuerNameId" adm-name="Issuer_Name_Id">Issuer Name ID</column>
+  <column table="Request" id="8201" data-type="2" max-length="8" col-name="NotBefore" adm-name="Not_Before">Certificate Effective Date</column>
+  <column table="Request" id="8202" data-type="65538" max-length="8" col-name="NotAfter" adm-name="Not_After">Certificate Expiration Date</column>
+  <column table="Request" id="8203" data-type="4" max-length="128" col-name="SubjectKeyIdentifier" adm-name="Subject_Key_Identifier">Issued Subject Key Identifier</column>
+  <column table="Request" id="8204" data-type="3" max-length="4096" col-name="RawPublicKey" adm-name="Raw_Public_Key">Binary Public Key</column>
+  <column table="Request" id="8205" data-type="1" max-length="4" col-name="PublicKeyLength" adm-name="Public_Key_Length">Public Key Length</column>
+  <column table="Request" id="8206" data-type="4" max-length="254" col-name="PublicKeyAlgorithm" adm-name="Public_Key_Algorithm">Public Key Algorithm</column>
+  <column table="Request" id="8207" data-type="3" max-length="4096" col-name="RawPublicKeyAlgorithmParameters" adm-name="Raw_Public_Key_Algorithm_Parameters">Public Key Algorithm Parameters</column>
+  <column table="Request" id="8208" data-type="1" max-length="4" col-name="PublishExpiredCertInCRL" adm-name="Publish_Expired_Cert_In_CRL">Publish Expired Certificate in CRL</column>
+  <column table="Request" id="8209" data-type="65540" max-length="2048" col-name="UPN" adm-name="UPN">User Principal Name</column>
+  <column table="Request" id="8210" data-type="4" max-length="8192" col-name="DistinguishedName" adm-name="Distinguished_Name">Issued Distinguished Name</column>
+  <column table="Request" id="8211" data-type="3" max-length="4096" col-name="RawName" adm-name="Raw_Name">Issued Binary Name</column>
+  <column table="Request" id="8212" data-type="4" max-length="8192" col-name="Country" adm-name="Country">Issued Country/Region</column>
+  <column table="Request" id="8213" data-type="4" max-length="8192" col-name="Organization" adm-name="Organization">Issued Organization</column>
+  <column table="Request" id="8214" data-type="4" max-length="8192" col-name="OrgUnit" adm-name="Org_Unit">Issued Organization Unit</column>
+  <column table="Request" id="8215" data-type="65540" max-length="8192" col-name="CommonName" adm-name="Common_Name">Issued Common Name</column>
+  <column table="Request" id="8216" data-type="4" max-length="8192" col-name="Locality" adm-name="Locality">Issued City</column>
+  <column table="Request" id="8217" data-type="4" max-length="8192" col-name="State" adm-name="State">Issued State</column>
+  <column table="Request" id="8218" data-type="4" max-length="8192" col-name="Title" adm-name="Title">Issued Title</column>
+  <column table="Request" id="8219" data-type="4" max-length="8192" col-name="GivenName" adm-name="Given_Name">Issued First Name</column>
+  <column table="Request" id="8220" data-type="4" max-length="8192" col-name="Initials" adm-name="Initials">Issued Initials</column>
+  <column table="Request" id="8221" data-type="4" max-length="8192" col-name="SurName" adm-name="SurName">Issued Last Name</column>
+  <column table="Request" id="8222" data-type="4" max-length="8192" col-name="DomainComponent" adm-name="Domain_Component">Issued Domain Component</column>
+  <column table="Request" id="8223" data-type="4" max-length="8192" col-name="EMail" adm-name="Email">Issued Email address</column>
+  <column table="Request" id="8224" data-type="4" max-length="8192" col-name="StreetAddress" adm-name="Street_Address">Issued Street Address</column>
+  <column table="Request" id="8225" data-type="4" max-length="8192" col-name="UnstructuredName" adm-name="Unstructured_Name">Issued Unstructured Name</column>
+  <column table="Request" id="8226" data-type="4" max-length="8192" col-name="UnstructuredAddress" adm-name="Unstructured_Address">Issued Unstructured Address</column>
+  <column table="Request" id="8227" data-type="4" max-length="8192" col-name="DeviceSerialNumber" adm-name="Device_Serial_Number">Issued Device Serial Number</column>
+  <column table="Extension" id="16384" data-type="4097" max-length="4" col-name="ExtensionRequestId" adm-name="Extension_Request_ID">Extension Request Id</column>
+  <column table="Extension" id="16385" data-type="4" max-length="254" col-name="ExtensionName" adm-name="Extension_Name">Extension Name</column>
+  <column table="Extension" id="16386" data-type="1" max-length="4" col-name="ExtensionFlags" adm-name="Extension_Flags">Extension Flags</column>
+  <column table="Extension" id="16387" data-type="3" max-length="4096" col-name="ExtensionRawValue" adm-name="Extension_Raw_Value">Extension Raw Value</column>
+  <column table="Attribute" id="12288" data-type="65537" max-length="4" col-name="AttributeRequestId" adm-name="Attribute_Request_ID">Attribute Request Id</column>
+  <column table="Attribute" id="12289" data-type="4" max-length="254" col-name="AttributeName" adm-name="Attribute_Name">Attribute Name</column>
+  <column table="Attribute" id="12290" data-type="4" max-length="8192" col-name="AttributeValue" adm-name="Attribute_Value">Attribute Value</column>
+  <column table="CRL" id="20480" data-type="65537" max-length="4" col-name="CRLRowId" adm-name="CRL_Row_ID">CRL Row ID</column>
+  <column table="CRL" id="20481" data-type="65537" max-length="4" col-name="CRLNumber" adm-name="CRL_Number">CRL Number</column>
+  <column table="CRL" id="20482" data-type="1" max-length="4" col-name="CRLMinBase" adm-name="CRL_Min_Base">CRL Minimum Base</column>
+  <column table="CRL" id="20483" data-type="1" max-length="4" col-name="CRLNameId" adm-name="CRL_Name_Id">CRL Name ID</column>
+  <column table="CRL" id="20484" data-type="1" max-length="4" col-name="CRLCount" adm-name="CRL_Count">CRL Count</column>
+  <column table="CRL" id="20485" data-type="2" max-length="8" col-name="CRLThisUpdate" adm-name="CRL_This_Update">CRL This Update</column>
+  <column table="CRL" id="20486" data-type="65538" max-length="8" col-name="CRLNextUpdate" adm-name="CRL_Next_Update">CRL Next Update</column>
+  <column table="CRL" id="20487" data-type="2" max-length="8" col-name="CRLThisPublish" adm-name="CRL_This_Publish">CRL This Publish</column>
+  <column table="CRL" id="20488" data-type="65538" max-length="8" col-name="CRLNextPublish" adm-name="CRL_Next_Publish">CRL Next Publish</column>
+  <column table="CRL" id="20489" data-type="2" max-length="8" col-name="CRLEffective" adm-name="CRL_Effective">CRL Effective</column>
+  <column table="CRL" id="20490" data-type="65538" max-length="8" col-name="CRLPropagationComplete" adm-name="CRL_Propagation_Complete">CRL Propagation Complete</column>
+  <column table="CRL" id="20491" data-type="65538" max-length="8" col-name="CRLLastPublish" adm-name="CRL_Last_Published">CRL Last Published</column>
+  <column table="CRL" id="20492" data-type="65537" max-length="4" col-name="CRLPublishAttempts" adm-name="CRL_Publish_Attempts">CRL Publish Attempts</column>
+  <column table="CRL" id="20493" data-type="1" max-length="4" col-name="CRLPublishFlags" adm-name="CRL_Publish_Flags">CRL Publish Flags</column>
+  <column table="CRL" id="20494" data-type="65537" max-length="4" col-name="CRLPublishStatusCode" adm-name="CRL_Publish_Status_Code">CRL Publish Status Code</column>
+  <column table="CRL" id="20495" data-type="4" max-length="8192" col-name="CRLPublishError" adm-name="CRL_Publish_Error">CRL Publish Error Information</column>
+  <column table="CRL" id="20496" data-type="3" max-length="536870912" col-name="CRLRawCRL" adm-name="CRL_Raw_CRL">CRL Raw CRL</column>
+</Columns>
