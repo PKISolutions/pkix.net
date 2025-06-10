@@ -6,7 +6,7 @@ namespace SysadminsLV.PKI.Management.CertificateServices.Database;
 /// This enumeration has a <see cref="FlagsAttribute"/> attribute that allows a bitwise combination of its member values.
 /// </summary>
 [Flags]
-public enum RequestExtensionFlags {
+public enum AdcsDbExtensionFlags {
     /// <summary>
     /// None.
     /// </summary>
