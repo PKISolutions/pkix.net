@@ -15,67 +15,67 @@ namespace SysadminsLV.PKI.Management.CertificateServices.Database;
 /// </summary>
 public class AdcsDbReader : IDisposable {
     #region predefined columns per view table
-    static readonly String[] _revokedColumns = {
-                                                   "RequestID",
-                                                   "Request.RevokedWhen",
-                                                   "Request.RevokedReason",
-                                                   "CommonName",
-                                                   "SerialNumber",
-                                                   "CertificateTemplate"
-                                               };
-    static readonly String[] _issuedColumns = {
-                                                  "RequestID",
-                                                  "Request.RequesterName",
-                                                  "CommonName",
-                                                  "NotBefore",
-                                                  "NotAfter",
-                                                  "SerialNumber",
-                                                  "CertificateTemplate"
-                                              };
-    static readonly String[] _pendingColumns = {
-                                                   "RequestID",
-                                                   "Request.RequesterName",
-                                                   "Request.SubmittedWhen",
-                                                   "Request.CommonName",
-                                                   "CertificateTemplate"
-                                               };
-    static readonly String[] _failedColumns = {
-                                                  "RequestID",
-                                                  "Request.StatusCode",
-                                                  "Request.DispositionMessage",
-                                                  "Request.RequesterName",
-                                                  "Request.SubmittedWhen",
-                                                  "Request.CommonName",
-                                                  "CertificateTemplate"
-                                              };
-    static readonly String[] _requestColumns = {
-                                                   "RequestID",
-                                                   "Request.StatusCode",
-                                                   "Request.DispositionMessage",
-                                                   "Request.RequesterName",
-                                                   "Request.SubmittedWhen",
-                                                   "Request.CommonName",
-                                                   "CertificateTemplate"
-                                               };
-    static readonly String[] _extensionColumns = {
-                                                     "ExtensionRequestId",
-                                                     "ExtensionName",
-                                                     "ExtensionFlags",
-                                                     "ExtensionRawValue"
-                                                 };
-    static readonly String[] _attributeColumns = {
-                                                     "AttributeRequestId",
-                                                     "AttributeName",
-                                                     "AttributeValue"
-                                                 };
-    static readonly String[] _crlColumns = {
-                                               "CRLRowId",
-                                               "CRLNumber",
-                                               "CRLThisUpdate",
-                                               "CRLNextUpdate",
-                                               "CRLPublishStatusCode",
-                                               "CRLPublishError"
-                                           };
+    static readonly String[] _revokedColumns = [
+        "RequestID",
+        "Request.RevokedWhen",
+        "Request.RevokedReason",
+        "CommonName",
+        "SerialNumber",
+        "CertificateTemplate"
+    ];
+    static readonly String[] _issuedColumns = [
+        "RequestID",
+        "Request.RequesterName",
+        "CommonName",
+        "NotBefore",
+        "NotAfter",
+        "SerialNumber",
+        "CertificateTemplate"
+    ];
+    static readonly String[] _pendingColumns = [
+        "RequestID",
+        "Request.RequesterName",
+        "Request.SubmittedWhen",
+        "Request.CommonName",
+        "CertificateTemplate"
+    ];
+    static readonly String[] _failedColumns = [
+        "RequestID",
+        "Request.StatusCode",
+        "Request.DispositionMessage",
+        "Request.RequesterName",
+        "Request.SubmittedWhen",
+        "Request.CommonName",
+        "CertificateTemplate"
+    ];
+    static readonly String[] _requestColumns = [
+        "RequestID",
+        "Request.StatusCode",
+        "Request.DispositionMessage",
+        "Request.RequesterName",
+        "Request.SubmittedWhen",
+        "Request.CommonName",
+        "CertificateTemplate"
+    ];
+    static readonly String[] _extensionColumns = [
+        "ExtensionRequestId",
+        "ExtensionName",
+        "ExtensionFlags",
+        "ExtensionRawValue"
+    ];
+    static readonly String[] _attributeColumns = [
+        "AttributeRequestId",
+        "AttributeName",
+        "AttributeValue"
+    ];
+    static readonly String[] _crlColumns = [
+        "CRLRowId",
+        "CRLNumber",
+        "CRLThisUpdate",
+        "CRLNextUpdate",
+        "CRLPublishStatusCode",
+        "CRLPublishError"
+    ];
     #endregion
     readonly ICertView2 _caView = CertAdminFactory.CreateICertView();
     IEnumCERTVIEWROW dbRow;
