@@ -66,6 +66,10 @@ public class X509PolicyQualifier {
     /// </summary>
     public Uri PolicyUrl { get; private set; }
     /// <summary>
+    /// Gets a raw value of <see cref="PolicyUrl">CPS Pointer</see> property as a string.
+    /// </summary>
+    public String? PolicyUrlString { get; private set; }
+    /// <summary>
     /// Gets a organization name associated with a qualifier.
     /// </summary>
     public String NoticeReference { get; private set; }
@@ -101,7 +105,10 @@ public class X509PolicyQualifier {
             case "1.3.6.1.5.5.7.2.1":
                 Type = X509PolicyQualifierType.CpsUrl;
                 asn.MoveNext();
-                PolicyUrl = new Uri(((Asn1IA5String)asn.GetTagObject()).Value.Replace("\0", null));
+                PolicyUrlString = Encoding.UTF8.GetString(asn.GetPayload()).TrimEnd();
+                try {
+                    PolicyUrl = new Uri(PolicyUrlString);
+                } catch { }
                 break;
             case "1.3.6.1.5.5.7.2.2":
                 Type = X509PolicyQualifierType.UserNotice;
