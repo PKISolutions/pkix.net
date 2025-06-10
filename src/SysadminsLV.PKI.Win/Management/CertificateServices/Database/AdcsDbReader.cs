@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using CERTADMINLib;
 using PKI.CertificateServices;
+using PKI.CertificateTemplates;
 using PKI.Structs;
 using SysadminsLV.PKI.Cryptography.X509Certificates;
 using SysadminsLV.PKI.Dcom.Implementations;
@@ -345,8 +346,16 @@ public class AdcsDbReader : IDisposable {
         CryptographyUtils.ReleaseCom(dbColumn);
     }
     static void postProcessRow(AdcsDbRow row) {
+        setPropertyFlags<AdcsDbRequestType>(row, AdcsDbColumnName.Request_Request_Type);
+        setPropertyFlags<AdcsDbRequestFlags>(row, AdcsDbColumnName.Request_Request_Flags);
+        setPropertyFlags<CertificateTemplateEnrollmentFlags>(row, AdcsDbColumnName.Enrollment_Flags);
+        setPropertyFlags<CertificateTemplateFlags>(row, AdcsDbColumnName.General_Flags);
+        setPropertyFlags<PrivateKeyFlags>(row, AdcsDbColumnName.PrivateKey_Flags);
+        setPropertyFlags<AdcsDbExtensionFlags>(row, AdcsDbColumnName.Extension_Flags);
+        setPropertyFlags<AdcsDbCrlPublishFlags>(row, AdcsDbColumnName.CRL_Publish_Flags);
+        
         if (row.Properties.TryGetValue(AdcsDbColumnName.Certificate_Template, out Object templateName) && !String.IsNullOrWhiteSpace((String)templateName)) {
-            row.Properties.Add(AdcsDbColumnName.Certificate_Template + "Oid", new Oid((String)templateName));
+            row.Properties[AdcsDbColumnName.Certificate_Template + "Oid"] = new Oid((String)templateName);
         }
         if (row.Table == AdcsDbTableName.Extension) {
             if (row.Properties.TryGetValue(AdcsDbColumnName.Extension_Name, out Object name)) {
@@ -354,20 +363,25 @@ public class AdcsDbReader : IDisposable {
                 row.Properties.Add(AdcsDbColumnName.Extension_Name + "Oid", new Oid((String)name));
                 if (row.Properties.TryGetValue(AdcsDbColumnName.Extension_Flags, out Object rawFlags) && row.Properties.TryGetValue(AdcsDbColumnName.Extension_Raw_Value, out Object value)) {
                     // add X509Extension object to the row.
-                    RequestExtensionFlags flags = (RequestExtensionFlags)rawFlags;
-                    Boolean critical = (flags & RequestExtensionFlags.Critical) != 0;
+                    AdcsDbExtensionFlags flags = (AdcsDbExtensionFlags)rawFlags;
+                    Boolean critical = (flags & AdcsDbExtensionFlags.Critical) != 0;
                     var baseExtension = new X509Extension((String)name, Convert.FromBase64String((String)value), critical);
                     try {
-                        row.Properties.Add("ExtensionObject", baseExtension.ConvertExtension());
+                        row.Properties["ExtensionObject"] = baseExtension.ConvertExtension();
                     } catch {
-                        row.Properties.Add("ExtensionObject", baseExtension);
+                        row.Properties["ExtensionObject"] = baseExtension;
                     }
                 }
             }
         }
     }
     
-        
+    static void setPropertyFlags<TEnum>(AdcsDbRow row, String columnName) where TEnum : Enum {
+        const String propSuffix = "Enum";
+        if (row.Properties.TryGetValue(columnName, out Object columnValue)) {
+            row.Properties.Add(columnName + propSuffix, (TEnum)columnValue);
+        }
+    }
 
     /// <summary>
     /// Adds database table column to output.
