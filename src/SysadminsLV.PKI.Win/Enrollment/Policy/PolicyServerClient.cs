@@ -65,7 +65,7 @@ public class PolicyServerClient {
     public String Name {
         get => name;
         set {
-            set_property("Name", value);
+            setProperty("Name", value);
             name = value;
         }
     }
@@ -81,9 +81,9 @@ public class PolicyServerClient {
     /// Gets or sets the enrollment policy authentication type.
     /// </summary>
     public PolicyAuthenticationEnum Authentication {
-        get { return authentication; }
+        get => authentication;
         set {
-            set_property("Authentication", value);
+            setProperty("Authentication", value);
             authentication = value;
         }
     }
@@ -92,9 +92,9 @@ public class PolicyServerClient {
     /// Gets or sets the enrollment policy priority. The lower number means higher priority.
     /// </summary>
     public Int32 Priority {
-        get { return priority; }
+        get => priority;
         set {
-            set_property("Priority", value);
+            setProperty("Priority", value);
             priority = value;
         }
     }
@@ -102,9 +102,9 @@ public class PolicyServerClient {
     /// Gets or sets enrollment policy settings.
     /// </summary>
     public PolicyServerUrlFlagsEnum Flags {
-        get { return flags; }
+        get => flags;
         set {
-            set_property("Flags", value);
+            setProperty("Flags", value);
             flags = value;
         }
     }
@@ -167,13 +167,13 @@ public class PolicyServerClient {
             CryptographyUtils.ReleaseCom(policy);
         }
     }
-    void get_templates() {
+    void getTemplates() {
         Templates = policy.GetTemplates()
             .Cast<IX509CertificateTemplate>()
             .Select(CertificateTemplateFactory.CreateFromCertEnrollTemplate)
             .ToArray();
     }
-    void set_property(String propName, Object propValue) {
+    void setProperty(String propName, Object propValue) {
         if (FromPolicy) { return; }
         if (propValue == null) { return; }
         IX509PolicyServerListManager serverManager = CertEnrollFactory.CreateX509PolicyServerListManager();
@@ -216,8 +216,8 @@ public class PolicyServerClient {
     /// <see cref="Templates"/> property if the method succeeds.
     /// </summary>
     /// <param name="userName">
-    /// Specifies the user name to authenticate in enrollment policy server.
-    /// <para>If the authentication type is set to <strong>ClientCertificate</strong>, this parameter must contains
+    /// Specifies the username to authenticate in enrollment policy server.
+    /// <para>If the authentication type is set to <strong>ClientCertificate</strong>, this parameter must contain
     /// authentication certificate's thumbprint.</para>
     /// <para>This parameter must be omitted when <strong>Kerberos</strong> authentication is used.</para>
     /// </param>
@@ -232,7 +232,9 @@ public class PolicyServerClient {
         if (password != null) { uPassword = password; }
         policy = CertEnrollFactory.CreateX509EnrollmentPolicyWebService();
         try {
-            if (!String.IsNullOrEmpty(uName)) {
+            if (Authentication == PolicyAuthenticationEnum.Kerberos) {
+                policy.SetCredential(0, X509EnrollmentAuthFlags.X509AuthKerberos, null, null);
+            } else if (!String.IsNullOrEmpty(uName)) {
                 switch (Authentication) {
                     case PolicyAuthenticationEnum.UserNameAndPassword:
                         policy.SetCredential(0, (X509EnrollmentAuthFlags)Authentication, uName, Marshal.PtrToStringAuto(Marshal.SecureStringToBSTR(uPassword)));
@@ -247,7 +249,7 @@ public class PolicyServerClient {
                 : X509CertificateEnrollmentContext.ContextMachine;
             policy.Initialize(URL.AbsoluteUri, PolicyId, (X509EnrollmentAuthFlags)Authentication, false, context);
             policy.LoadPolicy(X509EnrollmentPolicyLoadOption.LoadOptionDefault);
-            get_templates();
+            getTemplates();
             PolicyLoaded = true;
         } catch (Exception e) {
             throw ErrorHelper.ComExceptionHandler(e);
