@@ -134,7 +134,9 @@ public class PolicyServerClient {
     void m_initialize2(String url, Boolean userContext, PolicyAuthenticationEnum auth, Boolean Private) {
         policy = new CX509EnrollmentPolicyWebService();
         try {
-            if (!Private) {
+            if (Authentication == PolicyAuthenticationEnum.Kerberos) {
+                policy.SetCredential(0, X509EnrollmentAuthFlags.X509AuthKerberos, null, null);
+            } else if (!Private) {
                 switch (auth) {
                     case PolicyAuthenticationEnum.UserNameAndPassword:
                         policy.SetCredential(0, (X509EnrollmentAuthFlags)auth, uName, Marshal.PtrToStringAuto(Marshal.SecureStringToBSTR(uPassword)));
