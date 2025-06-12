@@ -184,23 +184,23 @@ public class PolicyServerClient {
             serverManager.Initialize(context, PolicyServerUrlFlags.PsfLocationRegistry);
             IEnumerator enumerator = serverManager.GetEnumerator();
             do {
-                if (enumerator.Current != null) {
-                    if (((IX509PolicyServerUrl)enumerator.Current).GetStringProperty(PolicyServerUrlPropertyID.PsPolicyID) == PolicyId) {
+                if (enumerator.Current is IX509PolicyServerUrl current) {
+                    if (current.GetStringProperty(PolicyServerUrlPropertyID.PsPolicyID) == PolicyId) {
                         switch (propName) {
                             case "Name":
-                                ((IX509PolicyServerUrl)enumerator.Current).SetStringProperty(PolicyServerUrlPropertyID.PsFriendlyName, (String)propValue);
+                                current.SetStringProperty(PolicyServerUrlPropertyID.PsFriendlyName, (String)propValue);
                                 break;
                             case "Priority":
-                                ((IX509PolicyServerUrl)enumerator.Current).Cost = (UInt32)propValue;
+                                current.Cost = (UInt32)propValue;
                                 break;
                             case "Authentication":
-                                ((IX509PolicyServerUrl)enumerator.Current).AuthFlags = (X509EnrollmentAuthFlags)propValue;
+                                current.AuthFlags = (X509EnrollmentAuthFlags)propValue;
                                 break;
                             case "Flags":
-                                ((IX509PolicyServerUrl)enumerator.Current).Flags = (PolicyServerUrlFlags)propValue;
+                                current.Flags = (PolicyServerUrlFlags)propValue;
                                 break;
                         }
-                        ((IX509PolicyServerUrl)enumerator.Current).UpdateRegistry(context);
+                        current.UpdateRegistry(context);
                         CryptographyUtils.ReleaseCom(serverManager);
                         return;
                     }
