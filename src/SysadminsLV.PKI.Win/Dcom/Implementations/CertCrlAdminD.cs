@@ -17,26 +17,26 @@ public class CertCrlAdminD : ICertCrlAdminD {
         _configString = configString;
     }
 
-    void publishCRL(AdcsCrlPublishType crlFlags, DateTime? nexUpdate = null) {
+    void publishCRL(AdcsCrlPublishType crlFlags, DateTime? nextUpdate = null) {
         ICertAdmin2 certAdmin = CertAdminFactory.CreateICertAdmin();
         try {
-            certAdmin.PublishCRLs(_configString, nexUpdate ?? DateTime.MinValue, (Int32)crlFlags);
+            certAdmin.PublishCRLs(_configString, nextUpdate ?? DateTime.MinValue, (Int32)crlFlags);
         } finally {
             CryptographyUtils.ReleaseCom(certAdmin);
         }
     }
 
     /// <inheritdoc />
-    public void PublishBaseCrl(DateTime? nexUpdate = null) {
-        publishCRL(AdcsCrlPublishType.BaseCRL, nexUpdate);
+    public void PublishBaseCrl(DateTime? nextUpdate = null) {
+        publishCRL(AdcsCrlPublishType.BaseCRL, nextUpdate);
     }
     /// <inheritdoc />
-    public void PublishDeltaCrl(DateTime? nexUpdate = null) {
-        publishCRL(AdcsCrlPublishType.DeltaCRL, nexUpdate);
+    public void PublishDeltaCrl(DateTime? nextUpdate = null) {
+        publishCRL(AdcsCrlPublishType.DeltaCRL, nextUpdate);
     }
     /// <inheritdoc />
-    public void PublishAllCrl(DateTime? nexUpdate = null) {
-        publishCRL(AdcsCrlPublishType.BaseCRL | AdcsCrlPublishType.DeltaCRL, nexUpdate);
+    public void PublishAllCrl(DateTime? nextUpdate = null) {
+        publishCRL(AdcsCrlPublishType.BaseCRL | AdcsCrlPublishType.DeltaCRL, nextUpdate);
     }
     /// <inheritdoc />
     public void RepublishDistributionPoints() {
