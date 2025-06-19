@@ -1,6 +1,7 @@
-﻿using System;
-using CERTADMINLib;
+﻿using CERTADMINLib;
+using SysadminsLV.PKI.Management.CertificateServices;
 using SysadminsLV.PKI.Utils;
+using System;
 
 namespace SysadminsLV.PKI.Dcom.Implementations;
 /// <summary>
@@ -36,10 +37,25 @@ public class CertCrlAdminD : ICertCrlAdminD {
     }
     /// <inheritdoc />
     public void PublishAllCrl(DateTime? nextUpdate = null) {
-        publishCRL(AdcsCrlPublishType.BaseCRL | AdcsCrlPublishType.DeltaCRL, nextUpdate);
+        publishCRL(getEffectivePublishFlags(AdcsCrlPublishType.BaseCRL | AdcsCrlPublishType.DeltaCRL), nextUpdate);
     }
     /// <inheritdoc />
     public void RepublishDistributionPoints() {
-        publishCRL(AdcsCrlPublishType.BaseCRL | AdcsCrlPublishType.DeltaCRL | AdcsCrlPublishType.RePublish);
+        publishCRL(getEffectivePublishFlags(AdcsCrlPublishType.BaseCRL | AdcsCrlPublishType.DeltaCRL | AdcsCrlPublishType.RePublish));
+    }
+    /// <summary>
+    /// Gets effective CRL publish flags based on the CA configuration. If Delta CRL is not enabled, it is removed from the flags.
+    /// </summary>
+    /// <param name="desiredFlags">Desired CRL publish flags.</param>
+    /// <returns>Allowed flags based on CA configuration.</returns>
+    AdcsCrlPublishType getEffectivePublishFlags(AdcsCrlPublishType desiredFlags) {
+        var certConfigReader = new CertSrvConfigUtil(_configString.Split('\\')[0]);
+        certConfigReader.SetRootNode(true);
+        Boolean deltaEnabled = certConfigReader.GetNumericEntry("DeltaCRLPeriodUnits") > 0;
+        if (!deltaEnabled) {
+            return desiredFlags & ~AdcsCrlPublishType.DeltaCRL;
+        }
+        
+        return desiredFlags;
     }
 }
