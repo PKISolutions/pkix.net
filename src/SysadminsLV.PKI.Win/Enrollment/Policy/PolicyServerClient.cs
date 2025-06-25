@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
 using Interop.CERTENROLLLib;
@@ -65,7 +66,7 @@ public class PolicyServerClient {
     public String Name {
         get => name;
         set {
-            setProperty("Name", value);
+            setProperty(value);
             name = value;
         }
     }
@@ -83,7 +84,7 @@ public class PolicyServerClient {
     public PolicyAuthenticationEnum Authentication {
         get => authentication;
         set {
-            setProperty("Authentication", value);
+            setProperty(value);
             authentication = value;
         }
     }
@@ -94,7 +95,7 @@ public class PolicyServerClient {
     public Int32 Priority {
         get => priority;
         set {
-            setProperty("Priority", value);
+            setProperty(value);
             priority = value;
         }
     }
@@ -104,7 +105,7 @@ public class PolicyServerClient {
     public PolicyServerUrlFlagsEnum Flags {
         get => flags;
         set {
-            setProperty("Flags", value);
+            setProperty(value);
             flags = value;
         }
     }
@@ -173,7 +174,7 @@ public class PolicyServerClient {
             .Select(CertificateTemplateFactory.CreateFromCertEnrollTemplate)
             .ToArray();
     }
-    void setProperty(String propName, Object propValue) {
+    void setProperty(Object propValue, [CallerMemberName] String propName = null) {
         if (FromPolicy) { return; }
         if (propValue == null) { return; }
         IX509PolicyServerListManager serverManager = CertEnrollFactory.CreateX509PolicyServerListManager();
@@ -187,16 +188,16 @@ public class PolicyServerClient {
                 if (enumerator.Current is IX509PolicyServerUrl current) {
                     if (current.GetStringProperty(PolicyServerUrlPropertyID.PsPolicyID) == PolicyId) {
                         switch (propName) {
-                            case "Name":
+                            case nameof(Name):
                                 current.SetStringProperty(PolicyServerUrlPropertyID.PsFriendlyName, (String)propValue);
                                 break;
-                            case "Priority":
+                            case nameof(Priority):
                                 current.Cost = (UInt32)propValue;
                                 break;
-                            case "Authentication":
+                            case nameof(Authentication):
                                 current.AuthFlags = (X509EnrollmentAuthFlags)propValue;
                                 break;
-                            case "Flags":
+                            case nameof(Flags):
                                 current.Flags = (PolicyServerUrlFlags)propValue;
                                 break;
                         }
